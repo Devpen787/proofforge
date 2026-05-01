@@ -13,6 +13,7 @@ export const demoWork = [
     reward: "$12",
     runtime: "45 min",
     risk: "Low risk",
+    owner: "Repo maintainer",
     tone: "safe"
   },
   {
@@ -21,6 +22,7 @@ export const demoWork = [
     reward: "$8",
     runtime: "30 min",
     risk: "Safe",
+    owner: "Commons reviewer",
     tone: "safe"
   },
   {
@@ -29,8 +31,17 @@ export const demoWork = [
     reward: "$18",
     runtime: "60 min",
     risk: "Approval",
+    owner: "Maintainer",
     tone: "warning"
   }
+];
+
+export const demoProofLoop = [
+  { label: "Work", detail: "Existing issue or task" },
+  { label: "Run", detail: "Sandboxed agent work" },
+  { label: "Verify", detail: "Independent checks" },
+  { label: "Packet", detail: "Evidence case file" },
+  { label: "Credit", detail: "Reputation or payout" }
 ];
 
 export const demoSourcePipeline = [

@@ -7,6 +7,7 @@ import {
   demoMission,
   demoPacket,
   demoProject,
+  demoProofLoop,
   demoPublicArtifacts,
   demoSourcePipeline,
   demoWork,
@@ -118,13 +119,7 @@ function OpportunityScreen({ onStart }: { onStart: () => void }) {
           Run your first proof packet
         </button>
       </div>
-      <div className="proof-orbit" aria-label="Proof workflow visual">
-        <div className="shield">✓</div>
-        <span className="orbit-node node-one">Work</span>
-        <span className="orbit-node node-two">Run</span>
-        <span className="orbit-node node-three">Verify</span>
-        <span className="orbit-node node-four">Credit</span>
-      </div>
+      <ProofLoopCard />
       <MetricStrip />
       <WorkList onStart={onStart} />
     </section>
@@ -142,6 +137,27 @@ function MetricStrip() {
   );
 }
 
+function ProofLoopCard() {
+  return (
+    <section className="proof-loop-card" aria-label="ProofForge proof loop">
+      <p className="small-label">How proof moves</p>
+      <h2>Work becomes proof, then credit.</h2>
+      <div className="proof-loop-list">
+        {demoProofLoop.map((step, index) => (
+          <div className="proof-loop-step" key={step.label}>
+            <span>{index + 1}</span>
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.detail}</small>
+            </div>
+          </div>
+        ))}
+      </div>
+      <p className="quiet-copy">Raw work never skips the gate. Agents run locally, evidence is reviewed, then accepted proof becomes credit.</p>
+    </section>
+  );
+}
+
 function WorkList({ onStart }: { onStart: () => void }) {
   return (
     <section className="panel wide">
@@ -151,13 +167,18 @@ function WorkList({ onStart }: { onStart: () => void }) {
       </div>
       {demoWork.map((work) => (
         <button className="work-row" key={work.title} onClick={onStart}>
-          <span>
+          <span className="work-main">
             <strong>{work.title}</strong>
             <small>{work.repo}</small>
+          </span>
+          <span className="work-owner">
+            <small>Accepts proof</small>
+            <b>{work.owner}</b>
           </span>
           <b>{work.reward}</b>
           <small>{work.runtime}</small>
           <span className={`status-pill ${work.tone}`}>{work.risk}</span>
+          <span className="start-pill">Start</span>
         </button>
       ))}
     </section>

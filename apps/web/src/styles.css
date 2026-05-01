@@ -121,7 +121,7 @@ button {
 .panel,
 .terminal-card,
 .decision-panel,
-.proof-orbit,
+.proof-loop-card,
 .metric,
 .work-row {
   border: 1px solid #e2e8f0;
@@ -244,61 +244,61 @@ button {
   width: 100%;
 }
 
-.proof-orbit {
-  min-height: 320px;
-  position: relative;
-  display: grid;
-  place-items: center;
-  overflow: hidden;
+.proof-loop-card {
+  padding: 28px;
 }
 
-.proof-orbit::before,
-.proof-orbit::after {
-  content: "";
-  position: absolute;
+.proof-loop-card h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.05;
+  letter-spacing: 0;
+}
+
+.proof-loop-list {
+  display: grid;
+  gap: 10px;
+  margin: 22px 0 18px;
+}
+
+.proof-loop-step {
+  display: grid;
+  grid-template-columns: 36px 1fr;
+  gap: 12px;
+  align-items: center;
   border: 1px solid #e2e8f0;
-  border-radius: 999px;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 12px;
 }
 
-.proof-orbit::before {
-  width: 230px;
-  height: 230px;
-}
-
-.proof-orbit::after {
-  width: 150px;
-  height: 150px;
-}
-
-.shield {
-  z-index: 1;
-  width: 86px;
-  height: 86px;
+.proof-loop-step > span {
+  width: 36px;
+  height: 36px;
   display: grid;
   place-items: center;
-  color: white;
+  border-radius: 13px;
   background: #047857;
-  border-radius: 28px;
-  font-size: 42px;
+  color: white;
   font-weight: 900;
 }
 
-.orbit-node {
-  position: absolute;
-  z-index: 2;
-  border: 1px solid #e2e8f0;
-  background: white;
-  border-radius: 999px;
-  padding: 8px 10px;
-  font-size: 12px;
-  font-weight: 800;
-  color: #475569;
+.proof-loop-step strong,
+.proof-loop-step small {
+  display: block;
+  overflow-wrap: anywhere;
 }
 
-.node-one { top: 56px; left: 70px; }
-.node-two { top: 64px; right: 62px; }
-.node-three { bottom: 72px; left: 52px; }
-.node-four { bottom: 64px; right: 70px; }
+.proof-loop-step strong {
+  font-size: 15px;
+}
+
+.proof-loop-step small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
 
 .metric-strip {
   display: grid;
@@ -365,6 +365,29 @@ button {
   margin-top: 10px;
   padding: 15px;
   text-align: left;
+}
+
+.work-main {
+  min-width: 220px;
+}
+
+.work-owner {
+  min-width: 140px;
+}
+
+.work-owner b {
+  display: block;
+  color: #020617;
+  font-size: 13px;
+}
+
+.start-pill {
+  border-radius: 999px;
+  background: #047857;
+  color: white;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 900;
 }
 
 .work-row small,
