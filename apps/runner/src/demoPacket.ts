@@ -1,5 +1,6 @@
 import { rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
+import { pathToFileURL } from "node:url";
 import { runLocalMission } from "./index";
 import { buildEvidencePacket, createPublicPacketView, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
 import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
@@ -8,7 +9,22 @@ import { addMissionToProject, addWorkLeadToProject, createProject, recordAccepte
 import { createLocalStorageAdapter, createZeroGStorageAdapter } from "../../../packages/storage/src/index";
 import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
 
-const outputDir = resolve("demo-output/docs-install");
+export interface DemoPacketResult {
+  evidencePacketPath: string;
+  caseFilePath: string;
+  publicPacketPath: string;
+  payoutPath: string;
+  projectPath: string;
+  storageProvider: string;
+  storageUri: string;
+  storageTxHash?: string;
+  verifierStatus: string;
+  humanApprovalStatus: string;
+  payoutStatus: string;
+  projectAcceptedPackets: number;
+}
+
+const defaultOutputDir = resolve("demo-output/docs-install");
 
 const lead = workLeadSchema.parse({
   id: "lead_docs_install_001",
@@ -31,100 +47,121 @@ const lead = workLeadSchema.parse({
   blockedActions: ["open pull request", "post public comment", "access private repositories"]
 });
 
-await rm(outputDir, { recursive: true, force: true });
+export async function runDemoPacket(outputDir = defaultOutputDir): Promise<DemoPacketResult> {
+  await rm(outputDir, { recursive: true, force: true });
 
-const mission = convertWorkLeadToMission(lead);
-const project = addMissionToProject(
-  addWorkLeadToProject(
-    createProject({
-      id: "project_docs_onboarding",
-      name: "Docs Onboarding Sprint",
-      handle: "docs-onboarding",
-      purpose: "Turn install friction into accepted proof packets.",
-      founder: "alex",
-      lanes: ["Docs validation", "Bug reproduction"],
-      rewardPool: 240
-    }),
-    lead
-  ),
-  mission
-);
-const runnerResult = await runLocalMission({
-  fixtureDir: resolve("apps/runner/fixtures/docs-install"),
-  outputDir,
-  command: "npm run proof:check",
-  runId: "run_docs_install_demo"
-});
-const verifierResult = await verifyRunnerArtifacts({
-  runnerResult,
-  expectedCommand: "npm run proof:check"
-});
-const packet = await buildEvidencePacket({
-  id: "packet_docs_install_demo",
-  mission,
-  runnerResult,
-  verifierResult,
-  approvedBy: "alex"
-});
-let files = await writeEvidencePacketFiles(packet, resolve(outputDir, "packet"));
-const storageAdapter = createStorageAdapter();
-const storageReceipt = await storageAdapter.putFile({
-  path: files.jsonPath,
-  contentType: "application/json"
-});
+  const mission = convertWorkLeadToMission(lead);
+  const project = addMissionToProject(
+    addWorkLeadToProject(
+      createProject({
+        id: "project_docs_onboarding",
+        name: "Docs Onboarding Sprint",
+        handle: "docs-onboarding",
+        purpose: "Turn install friction into accepted proof packets.",
+        founder: "alex",
+        lanes: ["Docs validation", "Bug reproduction"],
+        rewardPool: 240
+      }),
+      lead
+    ),
+    mission
+  );
+  const runnerResult = await runLocalMission({
+    fixtureDir: resolve("apps/runner/fixtures/docs-install"),
+    outputDir,
+    command: "npm run proof:check",
+    runId: "run_docs_install_demo"
+  });
+  const verifierResult = await verifyRunnerArtifacts({
+    runnerResult,
+    expectedCommand: "npm run proof:check"
+  });
+  const packet = await buildEvidencePacket({
+    id: "packet_docs_install_demo",
+    mission,
+    runnerResult,
+    verifierResult,
+    approvedBy: "alex"
+  });
+  let files = await writeEvidencePacketFiles(packet, resolve(outputDir, "packet"));
+  const storageAdapter = createStorageAdapter(outputDir);
+  const storageReceipt = await storageAdapter.putFile({
+    path: files.jsonPath,
+    contentType: "application/json"
+  });
 
-const packetWithStorageRef = {
-  ...packet,
-  status: "accepted" as const,
-  protocolRefs: {
-    ...packet.protocolRefs,
-    storageUri: storageReceipt.uri
-  }
-};
+  const packetWithStorageRef = {
+    ...packet,
+    status: "accepted" as const,
+    protocolRefs: {
+      ...packet.protocolRefs,
+      storageUri: storageReceipt.uri
+    }
+  };
 
-files = await writeEvidencePacketFiles(packetWithStorageRef, resolve(outputDir, "packet"));
-const payout = createEarnedPayout({
-  packet: packetWithStorageRef,
-  mission,
-  projectId: "project_docs_onboarding",
-  recipient: "alex",
-  approvedBy: "fixture-maintainer"
-});
-const payoutPath = resolve(outputDir, "packet", "payout.json");
-await writeFile(payoutPath, JSON.stringify(payout, null, 2), "utf8");
-const projectWithCredit = recordAcceptedProof(project, {
-  packet: packetWithStorageRef,
-  payout,
-  contributor: "alex"
-});
-const projectPath = resolve(outputDir, "packet", "project.json");
-await writeFile(projectPath, JSON.stringify(projectWithCredit, null, 2), "utf8");
-const publicPacket = createPublicPacketView({
-  packet: packetWithStorageRef,
-  project: "Docs Onboarding Sprint",
-  acceptedBy: "fixture-maintainer",
-  acceptedAt: payout.createdAt
-});
-const publicPacketPath = resolve(outputDir, "packet", "public-packet.json");
-await writeFile(publicPacketPath, JSON.stringify(publicPacket, null, 2), "utf8");
+  files = await writeEvidencePacketFiles(packetWithStorageRef, resolve(outputDir, "packet"));
+  const payout = createEarnedPayout({
+    packet: packetWithStorageRef,
+    mission,
+    projectId: "project_docs_onboarding",
+    recipient: "alex",
+    approvedBy: "fixture-maintainer"
+  });
+  const payoutPath = resolve(outputDir, "packet", "payout.json");
+  await writeFile(payoutPath, JSON.stringify(payout, null, 2), "utf8");
 
-console.log("ProofForge demo packet generated.");
-console.log(`Evidence packet: ${files.jsonPath}`);
-console.log(`Case file: ${files.markdownPath}`);
-console.log(`Public packet: ${publicPacketPath}`);
-console.log(`Earned payout: ${payoutPath}`);
-console.log(`Project state: ${projectPath}`);
-console.log(`Storage provider: ${storageReceipt.provider}`);
-console.log(`Storage URI: ${storageReceipt.uri}`);
-if (storageReceipt.txHash) {
-  console.log(`0G tx: ${storageReceipt.txHash}`);
+  const projectWithCredit = recordAcceptedProof(project, {
+    packet: packetWithStorageRef,
+    payout,
+    contributor: "alex"
+  });
+  const projectPath = resolve(outputDir, "packet", "project.json");
+  await writeFile(projectPath, JSON.stringify(projectWithCredit, null, 2), "utf8");
+
+  const publicPacket = createPublicPacketView({
+    packet: packetWithStorageRef,
+    project: "Docs Onboarding Sprint",
+    acceptedBy: "fixture-maintainer",
+    acceptedAt: payout.createdAt
+  });
+  const publicPacketPath = resolve(outputDir, "packet", "public-packet.json");
+  await writeFile(publicPacketPath, JSON.stringify(publicPacket, null, 2), "utf8");
+
+  return {
+    evidencePacketPath: files.jsonPath,
+    caseFilePath: files.markdownPath,
+    publicPacketPath,
+    payoutPath,
+    projectPath,
+    storageProvider: storageReceipt.provider,
+    storageUri: storageReceipt.uri,
+    storageTxHash: storageReceipt.txHash,
+    verifierStatus: packet.verifierResult.status,
+    humanApprovalStatus: packet.humanApproval.status,
+    payoutStatus: payout.status,
+    projectAcceptedPackets: projectWithCredit.acceptedPacketIds.length
+  };
 }
-console.log(`Verifier status: ${packet.verifierResult.status}`);
-console.log(`Human approval: ${packet.humanApproval.status}`);
-console.log(`Payout status: ${payout.status}`);
-console.log(`Project accepted packets: ${projectWithCredit.acceptedPacketIds.length}`);
 
-function createStorageAdapter() {
+function printDemoPacketResult(result: DemoPacketResult): void {
+  console.log("ProofForge demo packet generated.");
+  console.log(`Evidence packet: ${result.evidencePacketPath}`);
+  console.log(`Case file: ${result.caseFilePath}`);
+  console.log(`Public packet: ${result.publicPacketPath}`);
+  console.log(`Earned payout: ${result.payoutPath}`);
+  console.log(`Project state: ${result.projectPath}`);
+  console.log(`Storage provider: ${result.storageProvider}`);
+  console.log(`Storage URI: ${result.storageUri}`);
+  if (result.storageTxHash) {
+    console.log(`0G tx: ${result.storageTxHash}`);
+  }
+  console.log(`Verifier status: ${result.verifierStatus}`);
+  console.log(`Human approval: ${result.humanApprovalStatus}`);
+  console.log(`Payout status: ${result.payoutStatus}`);
+  console.log(`Project accepted packets: ${result.projectAcceptedPackets}`);
+}
+
+function createStorageAdapter(outputDir: string) {
   const evmRpc = process.env.ZERO_G_EVM_RPC;
   const indexerRpc = process.env.ZERO_G_INDEXER_RPC;
   const privateKey = process.env.ZERO_G_PRIVATE_KEY;
@@ -138,4 +175,13 @@ function createStorageAdapter() {
   }
 
   return createLocalStorageAdapter(resolve(outputDir, "storage"));
+}
+
+if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+  runDemoPacket()
+    .then(printDemoPacketResult)
+    .catch((error: unknown) => {
+      console.error(error instanceof Error ? error.message : error);
+      process.exitCode = 1;
+    });
 }
