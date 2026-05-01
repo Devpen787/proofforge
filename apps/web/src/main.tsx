@@ -1172,6 +1172,17 @@ function MaintainerScreen({
 }) {
   const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const hasReviewPacket = submitted || !accepted;
+  const evidenceChecks = [
+    { label: "Proof summary", value: "Readable in under 60 seconds", tone: "good" as const },
+    { label: "Artifacts", value: `${packet.artifacts.length} attached`, tone: "good" as const },
+    { label: "Verifier", value: "Independent check passed", tone: "good" as const },
+    { label: "Privacy", value: "Secrets and local paths safe", tone: "good" as const },
+    { label: "Risk", value: mission.risk, tone: mission.risk === "Medium" ? "bad" as const : "good" as const }
+  ];
+  const revisionReasons = activeMission === "checkout"
+    ? ["Ask for Safari confirmation logs", "Request exact browser build numbers", "Require screenshot annotation"]
+    : ["Ask for full command transcript", "Request environment details", "Clarify missing docs-ready.flag step"];
   return (
     <section className="page-grid maintainer-grid">
       <header className="page-header">
@@ -1180,21 +1191,25 @@ function MaintainerScreen({
           {accepted ? "Accepted" : "Accept & Mark Earned"}
         </button>
       </header>
+      <div className="maintainer-hero">
+        <div>
+          <p className="small-label">Decision queue</p>
+          <h2>Review clean proof, not agent noise.</h2>
+          <p>One submitted packet is ready. Acceptance creates earned value, revision sends structured feedback, rejection closes the packet without payout.</p>
+        </div>
+        <div className="maintainer-hero-state">
+          <StatusRow label="Queue" value={accepted ? "Closed" : hasReviewPacket ? "1 submitted" : "No packet"} tone={hasReviewPacket || accepted ? "good" : "bad"} />
+          <StatusRow label="Decision needed" value={accepted ? "No" : "Yes"} tone={accepted ? "good" : "bad"} />
+          <StatusRow label="Economic action" value="Earned only on accept" tone="good" />
+        </div>
+      </div>
       <div className="metric-strip compact">
-        <Metric label="Submitted" value={submitted ? "1" : "0"} />
+        <Metric label="Submitted" value={accepted ? "0" : hasReviewPacket ? "1" : "0"} />
         <Metric label="Unresolved" value={accepted ? "0" : "1"} />
         <Metric label="Accepted" value={accepted ? "1" : "0"} />
         <Metric label="Revision" value="0" />
       </div>
-      <div className="panel">
-        <h2>Review standards</h2>
-        <StatusRow label="Proof summary" value="Required" tone="good" />
-        <StatusRow label="Artifacts" value="Attached" tone="good" />
-        <StatusRow label="Privacy" value="Passed" tone="good" />
-        <StatusRow label="Payout" value="Manual" tone="good" />
-        <p className="quiet-copy">Maintainers decide from evidence, not raw agent logs.</p>
-      </div>
-      <div className="panel">
+      <div className="panel maintainer-side-panel">
         <h2>Recent packets</h2>
         {demoMaintainerPackets.map((packet) => (
           <div className="compact-row" key={packet.title}>
@@ -1206,10 +1221,22 @@ function MaintainerScreen({
           </div>
         ))}
       </div>
-      <div className="panel wide">
-        <p className="small-label">Review clean proof, not agent noise.</p>
-        <h2>Proof Packet Ready</h2>
-        <p>{packet.summary}</p>
+      <div className="panel maintainer-side-panel">
+        <h2>Review standard</h2>
+        {evidenceChecks.map((check) => (
+          <StatusRow key={check.label} label={check.label} value={check.value} tone={check.tone} />
+        ))}
+        <p className="quiet-copy">Maintainers decide from evidence, not raw agent logs.</p>
+      </div>
+      <div className="maintainer-decision-card wide">
+        <div className="maintainer-card-header">
+          <div>
+            <p className="small-label">Submitted evidence packet</p>
+            <h2>{mission.title}</h2>
+            <p>{packet.summary}</p>
+          </div>
+          <span className={accepted ? "status-pill safe" : "status-pill warning"}>{accepted ? "Accepted" : "Needs decision"}</span>
+        </div>
         <div className="maintainer-decision-grid">
           <div className="decision-summary">
             <h3>What was proven</h3>
@@ -1228,6 +1255,32 @@ function MaintainerScreen({
             <StatusRow label="Public action" value="None yet" tone="good" />
             <StatusRow label="Missing info" value="None" tone="good" />
             <StatusRow label="Recommended action" value="Accept" tone="good" />
+          </div>
+        </div>
+        <div className="maintainer-evidence-grid">
+          <div>
+            <h3>Evidence bundle</h3>
+            {packet.artifacts.slice(0, 5).map((artifact) => (
+              <div className="compact-row" key={artifact}>
+                <span>
+                  <strong>{artifact}</strong>
+                  <small>{artifact.includes("payout") ? "Private accounting" : "Maintainer evidence"}</small>
+                </span>
+                <span className="status-pill safe">Ready</span>
+              </div>
+            ))}
+          </div>
+          <div>
+            <h3>Decision consequences</h3>
+            <StatusRow label="Accept" value={`${mission.reward} earned + reputation`} tone="good" />
+            <StatusRow label="Revision" value="No payout yet" tone="bad" />
+            <StatusRow label="Reject" value="No payout or public proof" tone="bad" />
+            <div className="revision-reasons">
+              <strong>Structured revision options</strong>
+              {revisionReasons.map((reason) => (
+                <span key={reason}>{reason}</span>
+              ))}
+            </div>
           </div>
         </div>
         <div className="decision-row">

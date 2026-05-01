@@ -115,6 +115,8 @@ async function runSmoke() {
     await requireText(page, "Evidence first. Code later.");
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await requireText(page, "Review clean proof, not agent noise.");
+    await requireText(page, "Decision consequences");
+    await requireText(page, "Structured revision options");
     await page.getByRole("button", { name: "Accept & Mark Earned" }).first().click();
     await requireText(page, "Release the earned payout.");
     await page.getByRole("button", { name: "Release payout" }).first().click();
