@@ -401,6 +401,19 @@ stderr.log
 environment.json`}</pre>
       </div>
       <div className="panel">
+        <h2>Packet output preview</h2>
+        <p className="quiet-copy">If approved, this run becomes a reviewable evidence packet. Private files stay local until submission.</p>
+        {demoArtifacts.slice(0, 4).map((artifact) => (
+          <div className="artifact-row rich-artifact-row" key={artifact.name}>
+            <span>
+              <strong>{artifact.name}</strong>
+              <small>{artifact.purpose}</small>
+            </span>
+            <small>{artifact.visibility}</small>
+          </div>
+        ))}
+      </div>
+      <div className="panel">
         <h2>Runner security</h2>
         <StatusRow label="Sandbox" value="Required" tone="good" />
         <StatusRow label="Write access" value="Blocked" tone="bad" />
@@ -408,7 +421,9 @@ environment.json`}</pre>
         <StatusRow label="External" value="Locked" tone="bad" />
         <div className="approval-box">
           <strong>Approval checkpoint</strong>
-          <p>This run created a proof packet. Nothing leaves your workspace unless you approve.</p>
+          <p>This run created a proof packet draft. Nothing leaves your workspace unless you approve.</p>
+          <StatusRow label="Public action" value="Requires approval" tone="bad" />
+          <StatusRow label="Submission" value="Locked until approved" tone="bad" />
           <button className="primary-action full" onClick={onPacket}>
             Approve Packet
           </button>
