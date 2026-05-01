@@ -118,6 +118,9 @@ async function runSmoke() {
     await requireText(page, "Decision consequences");
     await requireText(page, "Structured revision options");
     await page.getByRole("button", { name: "Accept & Mark Earned" }).first().click();
+    await requireText(page, "Accepted proof is what earns value.");
+    await requireText(page, "Work becomes credit in stages.");
+    await requireText(page, "Public-safe proof appears only after accepted proof.");
     await requireText(page, "Release the earned payout.");
     await page.getByRole("button", { name: "Release payout" }).first().click();
     await requireText(page, "$8 released");

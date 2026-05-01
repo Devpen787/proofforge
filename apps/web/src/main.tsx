@@ -14,7 +14,6 @@ import {
   demoPublicArtifacts,
   demoImportExample,
   demoMaintainerPackets,
-  demoPayoutTimeline,
   demoProjectWorkLead,
   demoSafetyDefaults,
   demoSourcePipeline,
@@ -1318,15 +1317,47 @@ function ScoreboardScreen({
   onPublicProof: () => void;
 }) {
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const payoutAmount = mission.reward;
+  const packetState = rejected ? "Rejected" : released ? "Released" : accepted ? "Earned" : revisionRequested ? "Revision requested" : "Pending review";
+  const packetStateTone = rejected || revisionRequested ? "bad" as const : accepted || released ? "good" as const : "good" as const;
+  const ledgerSteps = [
+    { label: "Packet submitted", value: rejected ? "Closed without acceptance" : submittedLabel(accepted, released), tone: rejected ? "bad" as const : "good" as const },
+    { label: "Maintainer decision", value: rejected ? "Rejected" : accepted ? "Accepted" : revisionRequested ? "Revision requested" : "Waiting", tone: rejected || revisionRequested ? "bad" as const : accepted ? "good" as const : "good" as const },
+    { label: "Earned payout", value: accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Not earned yet", tone: accepted ? "good" as const : "bad" as const },
+    { label: "Released payout", value: released ? `${payoutAmount} released` : "Manual release pending", tone: released ? "good" as const : "bad" as const },
+    { label: "Project credit", value: accepted && !rejected ? `+${demoProject.credit.points} points` : "Not issued", tone: accepted && !rejected ? "good" as const : "bad" as const }
+  ];
+  const proofHistory = [
+    { title: packet.id, detail: accepted ? "Accepted proof created an earned payout record." : rejected ? "Closed without payout. Feedback remains useful." : "Submitted packet waiting for decision.", value: packetState },
+    { title: "project-credit.json", detail: "Credits the contributor and project only after acceptance.", value: accepted && !rejected ? "Ready" : "Blocked" },
+    { title: "public-packet.json", detail: "Public-safe proof appears only after accepted proof.", value: accepted && !rejected ? "Shareable" : "Hidden" }
+  ];
   return (
     <section className="page-grid scoreboard-grid">
       <header className="page-header">
-        <span>Earnings</span>
+        <span>Contribution Ledger</span>
         <button className="primary-action" onClick={onNext}>
           Generate Proof Packet
         </button>
       </header>
+      <div className="ledger-hero wide">
+        <div>
+          <p className="small-label">Proof before payout</p>
+          <h2>Accepted proof is what earns value.</h2>
+          <p>
+            This is the consequence layer: a useful packet becomes accepted proof, accepted proof creates earned payout and reputation,
+            and released payout stays a separate manual accounting step.
+          </p>
+        </div>
+        <div className="ledger-current-packet">
+          <span className={packetStateTone === "good" ? "status-pill safe" : "status-pill warning"}>{packetState}</span>
+          <strong>{mission.title}</strong>
+          <small>{packet.summary}</small>
+          <StatusRow label="Agent work" value="Credited only if accepted" tone="good" />
+          <StatusRow label="Public proof" value={accepted && !rejected ? "Allowed" : "Hidden until accepted"} tone={accepted && !rejected ? "good" : "bad"} />
+        </div>
+      </div>
       <div className="metric-strip wide">
         <Metric label="Available" value="$63" />
         <Metric label="Pending" value={accepted || rejected ? "$0" : payoutAmount} />
@@ -1358,8 +1389,9 @@ function ScoreboardScreen({
         </button>
         {(accepted || released) && <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>}
       </div>
-      <div className="panel">
-        <h2>Earned value</h2>
+      <div className="panel ledger-value-card">
+        <p className="small-label">Payout state</p>
+        <h2>Earned is not released.</h2>
         <StatusRow label="Earned payout" value={accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
         <StatusRow label="Released payout" value={released ? `${payoutAmount} released` : "Not released"} tone={released ? "good" : "bad"} />
         <StatusRow label="Method" value="Manual accounting" tone="good" />
@@ -1370,16 +1402,25 @@ function ScoreboardScreen({
           {!rejected && !released && "Release payout"}
         </button>
       </div>
-      <div className="panel">
-        <h2>Payout timeline</h2>
-        {demoPayoutTimeline.map((item) => {
-          const rejectedValue = item.label === "Packet submitted" ? "reviewed" : item.label === "Packet accepted" ? "not accepted" : "not available";
-          return <StatusRow key={item.label} label={item.label} value={rejected ? rejectedValue : item.value} tone={rejected && item.label !== "Packet submitted" ? "bad" : "good"} />;
-        })}
-        <p className="quiet-copy">The MVP records state transitions. It does not move funds automatically.</p>
+      <div className="panel ledger-timeline-card">
+        <p className="small-label">Ledger path</p>
+        <h2>Work becomes credit in stages.</h2>
+        <div className="ledger-step-list">
+          {ledgerSteps.map((item, index) => (
+            <div className="ledger-step" key={item.label}>
+              <span>{index + 1}</span>
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.value}</small>
+              </div>
+              <i className={item.tone === "good" ? "status-dot good" : "status-dot bad"} />
+            </div>
+          ))}
+        </div>
       </div>
       <div className="panel">
-        <h2>Reputation unlock</h2>
+        <p className="small-label">Reputation</p>
+        <h2>Proof history unlocks better missions.</h2>
         <StatusRow label="Current tier" value={demoUnlockProgress.currentTier} tone="good" />
         <StatusRow label="Next unlock" value={demoUnlockProgress.nextTier} tone="good" />
         <div className="unlock-progress" aria-label="Accepted packet progress">
@@ -1389,8 +1430,22 @@ function ScoreboardScreen({
           {demoUnlockProgress.acceptedPackets} / {demoUnlockProgress.neededPackets} accepted packets. {demoUnlockProgress.nextReward}
         </p>
       </div>
+      <div className="panel ledger-proof-history">
+        <p className="small-label">Proof history</p>
+        <h2>What changed because of this packet.</h2>
+        {proofHistory.map((item) => (
+          <div className="ledger-proof-row" key={item.title}>
+            <span>
+              <strong>{item.title}</strong>
+              <small>{item.detail}</small>
+            </span>
+            <b>{item.value}</b>
+          </div>
+        ))}
+      </div>
       <div className="panel">
-        <h2>Recent activity</h2>
+        <p className="small-label">Recent activity</p>
+        <h2>Human-readable audit trail.</h2>
         {[...demoActivity, accepted ? "Earned payout created" : "", released ? "Released payout marked paid" : ""]
           .concat(rejected ? ["Packet rejected without payout"] : [])
           .filter(Boolean)
@@ -1401,7 +1456,8 @@ function ScoreboardScreen({
           ))}
       </div>
       <div className="panel">
-        <h2>Project credit</h2>
+        <p className="small-label">Shared project credit</p>
+        <h2>The project grows when proof holds up.</h2>
         <StatusRow label="Project" value={demoProject.name} tone="good" />
         <StatusRow label="Contributor" value={demoProject.credit.contributor} tone="good" />
         <StatusRow label="Packet" value={demoProject.credit.packet} tone="good" />
@@ -1409,6 +1465,12 @@ function ScoreboardScreen({
       </div>
     </section>
   );
+}
+
+function submittedLabel(accepted: boolean, released: boolean) {
+  if (released) return "Released record exists";
+  if (accepted) return "Accepted packet";
+  return "In maintainer review";
 }
 
 function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMission; onBack: () => void }) {
