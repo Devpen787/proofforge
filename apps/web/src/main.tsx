@@ -518,10 +518,22 @@ function ProjectsScreen({
   onSuggestWork: () => void;
   onQueue: () => void;
 }) {
+  const capacityRows = [
+    { label: "People", value: demoProject.people, detail: "contributors and reviewers" },
+    { label: "Agents", value: projectAgentCount(agentAttached), detail: "constrained project helpers" },
+    { label: "Accepted proof", value: demoProject.acceptedProof, detail: "shared project assets" },
+    { label: "Reward pool", value: demoProject.pool, detail: "funds useful work" }
+  ];
+  const sharedMissionSteps = [
+    { label: "Open work", value: "Docs friction", tone: "good" as const },
+    { label: "Next mission", value: "Clean install proof", tone: "good" as const },
+    { label: "Who accepts", value: "Commons reviewer", tone: "good" as const },
+    { label: "Credit path", value: "Accepted packet", tone: "good" as const }
+  ];
   return (
     <section className="page-grid projects-grid">
       <header className="page-header">
-        <span>Projects</span>
+        <span>Projects / Commons</span>
         <button className="primary-action" onClick={onStartProject}>
           {projectStarted ? "Project Started" : "Start Project"}
         </button>
@@ -535,39 +547,49 @@ function ProjectsScreen({
           <span className="status-pill safe">Launch draft</span>
         </div>
       )}
-      <div className="panel wide project-hero">
+      <div className="project-commons-hero wide">
         <div>
-          <p className="small-label">Community project layer</p>
+          <p className="small-label">Build together, prove together, receive credit together</p>
           <h2>{demoProject.name}</h2>
-          <p>{demoProject.purpose}</p>
+          <p>{demoProject.purpose} People bring judgment, agents do constrained work, and accepted packets become shared proof, payout records, and project credit.</p>
+          <div className="project-action-strip" aria-label="Project actions">
+            <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite pending" : "Invite contributor"}</button>
+            <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent attached" : "Attach agent"}</button>
+            <button className="secondary-action" onClick={onSuggestWork}>{workSuggested ? "Work lead created" : "Suggest work"}</button>
+            <button className="primary-action" onClick={onQueue}>Open Work Queue</button>
+          </div>
         </div>
-        <span className="status-pill safe">{demoProject.status}</span>
+        <div className="shared-mission-card">
+          <span className="status-pill safe">{demoProject.status}</span>
+          <strong>Current shared mission</strong>
+          <p>Make the first install path easier by converting docs problems into accepted evidence packets.</p>
+          {sharedMissionSteps.map((item) => (
+            <StatusRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
+          ))}
+        </div>
       </div>
-      <div className="metric-strip wide">
-        <Metric label="People" value={demoProject.people} />
-        <Metric label="Agents" value={demoProject.agents} />
-        <Metric label="Proof accepted" value={demoProject.acceptedProof} />
-        <Metric label="Reward pool" value={demoProject.pool} />
+      <div className="project-capacity-strip wide">
+        {capacityRows.map((item) => (
+          <div className="project-capacity-card" key={item.label}>
+            <strong>{item.value}</strong>
+            <span>{item.label}</span>
+            <small>{item.detail}</small>
+          </div>
+        ))}
       </div>
-      <div className="panel command-room">
-        <h2>Project command room</h2>
-        <p>Start project to invite people, attach agents, suggest work, and grow through accepted proof.</p>
+      <div className="panel command-room project-next-panel">
+        <p className="small-label">Next coordination move</p>
+        <h2>{workSuggested ? "Turn the new Work Lead into a scoped Mission." : inviteSent || agentAttached ? "Add one proofable Work Lead." : "Bring in one person and one constrained agent."}</h2>
+        <p>Projects are not folders. They are shared work agreements: people, nodes, and agents coordinate around proofable missions and receive credit only when packets are accepted.</p>
         <div className="command-state-grid">
           <StatusRow label="Project shell" value={projectStarted ? "Created" : "Ready"} tone="good" />
           <StatusRow label="Invite" value={inviteSent ? "Pending" : "Not sent"} tone={inviteSent ? "good" : "bad"} />
           <StatusRow label="Agent" value={agentAttached ? "Attached" : "Not attached"} tone={agentAttached ? "good" : "bad"} />
           <StatusRow label="Work lead" value={workSuggested ? "Created" : "Not suggested"} tone={workSuggested ? "good" : "bad"} />
         </div>
-        <div className="decision-row">
-          <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite Pending" : "Invite"}</button>
-          <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent Attached" : "Attach Agent"}</button>
-          <button className="secondary-action" onClick={onSuggestWork}>{workSuggested ? "Work Lead Created" : "Suggest Work"}</button>
-          <button className="primary-action" onClick={onQueue}>
-            Open Work Queue
-          </button>
-        </div>
       </div>
-      <div className="panel">
+      <div className="panel project-lanes-panel">
+        <p className="small-label">Open mission lanes</p>
         <h2>Mission lanes</h2>
         <div className="tag-row">
           {demoProject.lanes.map((lane) => (
@@ -576,8 +598,10 @@ function ProjectsScreen({
             </span>
           ))}
         </div>
+        <p className="quiet-copy">Each lane must produce a maintainer-ready Evidence Packet before any payout or project credit.</p>
       </div>
-      <div className="panel">
+      <div className="panel project-backlog-panel">
+        <p className="small-label">Work becoming missions</p>
         <h2>Backlog</h2>
         {workSuggested && (
           <div className="artifact-row">
@@ -592,16 +616,23 @@ function ProjectsScreen({
           </div>
         ))}
       </div>
-      <div className="panel">
-        <h2>Project proof ledger</h2>
-        <StatusRow label="Accepted packets" value={demoProject.proofLedger.acceptedPackets} tone="good" />
-        <StatusRow label="Pending packets" value={demoProject.proofLedger.pendingPackets} tone="good" />
-        <StatusRow label="Earned payouts" value={demoProject.proofLedger.earnedPayouts} tone="good" />
-        <StatusRow label="Latest proof" value={demoProject.proofLedger.latestProof} tone="good" />
-        <p className="quiet-copy">Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</p>
-        <div className="compact-list">
+      <div className="project-ledger-panel wide">
+        <div className="project-ledger-summary">
+          <div>
+            <p className="small-label">Shared proof ledger</p>
+            <h2>Accepted packets are the project asset.</h2>
+            <p>Commercial work can fund the commons, but the project only counts work after accepted evidence. That keeps rewards tied to useful proof instead of noise.</p>
+          </div>
+          <div className="ledger-mini-grid">
+            <StatusBlock label="Accepted packets" value={demoProject.proofLedger.acceptedPackets} />
+            <StatusBlock label="Pending packets" value={demoProject.proofLedger.pendingPackets} />
+            <StatusBlock label="Earned payouts" value={demoProject.proofLedger.earnedPayouts} />
+            <StatusBlock label="Latest proof" value={demoProject.proofLedger.latestProof} />
+          </div>
+        </div>
+        <div className="project-proof-history">
           {demoProject.proofLedger.history.map((item) => (
-            <div className="compact-row" key={item.label}>
+            <div className="project-proof-row" key={item.label}>
               <span>
                 <strong>{item.label}</strong>
                 <small>{item.detail}</small>
@@ -610,8 +641,10 @@ function ProjectsScreen({
             </div>
           ))}
         </div>
+        <p className="quiet-copy">Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</p>
       </div>
       <div className="panel">
+        <p className="small-label">People capacity</p>
         <h2>People</h2>
         {inviteSent && (
           <div className="compact-row">
@@ -636,7 +669,7 @@ function ProjectsScreen({
         <div className="section-heading">
           <div>
             <h2>Agent delegations</h2>
-            <p className="quiet-copy">Delegate capability, not control. Project agents can help, but blocked actions stay blocked.</p>
+            <p className="quiet-copy">Delegate capability, not control. Agents help with project lanes, but blocked actions stay blocked.</p>
           </div>
           <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent Attached" : "Attach Agent"}</button>
         </div>
@@ -665,6 +698,10 @@ function ProjectsScreen({
       </div>
     </section>
   );
+}
+
+function projectAgentCount(agentAttached: boolean) {
+  return String(Number(demoProject.agents) + (agentAttached ? 1 : 0));
 }
 
 function WorkQueueScreen({

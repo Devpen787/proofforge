@@ -883,20 +883,168 @@ button {
   color: #475569;
 }
 
-.project-hero {
-  display: flex;
-  align-items: flex-start;
-  justify-content: space-between;
-  gap: 20px;
+.project-commons-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: stretch;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
-.project-hero h2 {
-  font-size: 32px;
+.project-commons-hero h2 {
+  max-width: 780px;
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.02;
 }
 
-.project-hero p,
-.command-room p {
+.project-commons-hero p:not(.small-label),
+.command-room p,
+.project-ledger-summary p {
   color: #475569;
+  line-height: 1.55;
+}
+
+.project-action-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.shared-mission-card {
+  display: grid;
+  gap: 11px;
+  align-content: start;
+  border: 1px solid #a7f3d0;
+  border-radius: 22px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.shared-mission-card strong,
+.shared-mission-card p {
+  display: block;
+  margin: 0;
+}
+
+.shared-mission-card .status-row {
+  border-color: #a7f3d0;
+}
+
+.project-capacity-strip {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 14px;
+  grid-column: 1 / -1;
+}
+
+.project-capacity-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 18px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-capacity-card strong,
+.project-capacity-card span,
+.project-capacity-card small {
+  display: block;
+}
+
+.project-capacity-card strong {
+  color: #047857;
+  font-size: 30px;
+  line-height: 1;
+}
+
+.project-capacity-card span {
+  margin-top: 4px;
+  color: #020617;
+  font-weight: 900;
+}
+
+.project-capacity-card small {
+  margin-top: 4px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.project-next-panel {
+  grid-column: span 2;
+  border-color: #a7f3d0;
+}
+
+.project-lanes-panel,
+.project-backlog-panel {
+  align-self: start;
+}
+
+.project-ledger-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-ledger-summary {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 430px;
+  gap: 20px;
+  align-items: start;
+}
+
+.project-ledger-summary h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.08;
+}
+
+.ledger-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.project-proof-history {
+  display: grid;
+  gap: 10px;
+  margin: 18px 0;
+}
+
+.project-proof-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 13px;
+}
+
+.project-proof-row strong,
+.project-proof-row small {
+  display: block;
+}
+
+.project-proof-row small {
+  margin-top: 2px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.project-proof-row b {
+  color: #047857;
+  white-space: nowrap;
 }
 
 .mission-brief {
@@ -1780,6 +1928,12 @@ code {
   .ledger-hero,
   .ledger-timeline-card,
   .ledger-proof-history,
+  .project-commons-hero,
+  .project-next-panel,
+  .project-ledger-summary,
+  .project-ledger-panel,
+  .project-capacity-strip,
+  .ledger-mini-grid,
   .source-grid,
   .import-command,
   .import-result-card,
@@ -1824,7 +1978,7 @@ code {
 
   .page-header,
   .section-heading,
-  .project-hero {
+  .project-action-strip {
     align-items: stretch;
     flex-direction: column;
   }
@@ -1836,7 +1990,7 @@ code {
 
   .page-header button,
   .section-heading button,
-  .project-hero button,
+  .project-action-strip button,
   .decision-row button {
     width: 100%;
   }
@@ -1845,8 +1999,8 @@ code {
   .page-header code,
   .pipeline-step,
   .case-dossier,
-  .project-hero h2,
-  .project-hero p {
+  .project-commons-hero h2,
+  .project-commons-hero p {
     max-width: 100%;
   }
 
@@ -1866,6 +2020,15 @@ code {
   .ledger-hero,
   .ledger-timeline-card,
   .ledger-proof-history {
+    grid-column: 1;
+  }
+
+  .project-action-banner,
+  .project-commons-hero,
+  .project-next-panel,
+  .project-ledger-panel,
+  .project-capacity-strip,
+  .agent-card-grid {
     grid-column: 1;
   }
 
