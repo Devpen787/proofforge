@@ -113,12 +113,69 @@ export type RunnerResult = z.infer<typeof runnerResultSchema>;
 export type VerifierResult = z.infer<typeof verifierResultSchema>;
 export type EvidencePacket = z.infer<typeof evidencePacketSchema>;
 
+export const publicPacketViewSchema = z.object({
+  id: z.string().min(1),
+  packetId: z.string().min(1),
+  status: z.enum(["accepted", "needs_revision", "rejected", "submitted"]),
+  project: z.string().min(1),
+  mission: z.string().min(1),
+  acceptedBy: z.string().min(1).optional(),
+  acceptedAt: z.string().datetime().optional(),
+  whatWasProven: z.string().min(1),
+  evidenceSummary: z.string().min(1),
+  publicArtifacts: z.array(
+    z.object({
+      label: z.string().min(1),
+      mediaType: z.string().min(1),
+      sha256: z.string().regex(/^[a-f0-9]{64}$/)
+    })
+  ),
+  proofRefs: z.object({
+    storageUri: z.string().optional(),
+    identityRef: z.string().optional()
+  })
+});
+
+export type PublicPacketView = z.infer<typeof publicPacketViewSchema>;
+
 export function parseEvidencePacket(input: unknown): EvidencePacket {
   return evidencePacketSchema.parse(input);
 }
 
 export function isEvidencePacket(input: unknown): input is EvidencePacket {
   return evidencePacketSchema.safeParse(input).success;
+}
+
+export function createPublicPacketView(input: {
+  packet: EvidencePacket;
+  project: string;
+  acceptedBy?: string;
+  acceptedAt?: string;
+}): PublicPacketView {
+  if (!["accepted", "needs_revision", "rejected", "submitted"].includes(input.packet.status)) {
+    throw new Error("Only submitted or reviewed packets can produce a public view.");
+  }
+
+  return publicPacketViewSchema.parse({
+    id: `public_${input.packet.id}`,
+    packetId: input.packet.id,
+    status: input.packet.status,
+    project: input.project,
+    mission: input.packet.mission.title,
+    acceptedBy: input.acceptedBy,
+    acceptedAt: input.acceptedAt,
+    whatWasProven: input.packet.objective,
+    evidenceSummary: input.packet.maintainerSummary,
+    publicArtifacts: input.packet.artifacts.map((artifact) => ({
+      label: artifact.label,
+      mediaType: artifact.mediaType,
+      sha256: artifact.sha256
+    })),
+    proofRefs: {
+      storageUri: input.packet.protocolRefs.storageUri,
+      identityRef: input.packet.protocolRefs.identityRef
+    }
+  });
 }
 
 export interface BuildEvidencePacketInput {
