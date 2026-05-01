@@ -6,6 +6,24 @@ export const demoMission = {
   risk: "Safe"
 };
 
+export const demoFirstRunSteps = [
+  { label: "Choose mission", detail: "Use a safe starter task." },
+  { label: "Confirm safety", detail: "No public action or payment." },
+  { label: "Run agent", detail: "Execute locally and capture logs." },
+  { label: "Review packet", detail: "Check evidence before sharing." },
+  { label: "Submit or save", detail: "Human approval decides." },
+  { label: "See outcome", detail: "Earn credit only if accepted." }
+];
+
+export const demoSafetyDefaults = [
+  "No public posts",
+  "No pull requests",
+  "No payments",
+  "No secrets mounted",
+  "Local sandbox only",
+  "Human approval before submission"
+];
+
 export const demoWork = [
   {
     title: "Reproduce CLI crash on Windows",

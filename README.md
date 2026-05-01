@@ -275,6 +275,7 @@ The web app shows the core product loop:
 
 ```text
 Opportunity
+-> First Run
 -> Projects
 -> Work Queue
 -> Runner
@@ -288,6 +289,7 @@ Useful local routes:
 
 ```text
 http://localhost:5173/#opportunity
+http://localhost:5173/#first-run
 http://localhost:5173/#projects
 http://localhost:5173/#work-queue
 http://localhost:5173/#run
@@ -300,6 +302,7 @@ http://localhost:5173/#public-proof
 The current web prototype shows:
 
 - Opportunity: the proof loop and ready work with acceptance owners.
+- First Run: guided six-step activation from safe mission to runner.
 - Projects: proof ledger, project backlog, and constrained agent delegations.
 - Work Queue: source import categories, GitHub import command, Work Lead diagnosis, and clarification gate.
 - Runner: local execution, packet output preview, security state, and human approval checkpoint.

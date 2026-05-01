@@ -4,12 +4,14 @@ import "./styles.css";
 import {
   demoActivity,
   demoArtifacts,
+  demoFirstRunSteps,
   demoMission,
   demoPacket,
   demoProject,
   demoProofLoop,
   demoPublicArtifacts,
   demoImportExample,
+  demoSafetyDefaults,
   demoSourcePipeline,
   demoSourceTypes,
   demoUnlockProgress,
@@ -19,6 +21,7 @@ import {
 
 type Screen =
   | "opportunity"
+  | "first-run"
   | "projects"
   | "work-queue"
   | "run"
@@ -27,7 +30,17 @@ type Screen =
   | "scoreboard"
   | "public-proof";
 
-const screens = ["opportunity", "projects", "work-queue", "run", "case-file", "maintainer", "scoreboard", "public-proof"] as const;
+const screens = [
+  "opportunity",
+  "first-run",
+  "projects",
+  "work-queue",
+  "run",
+  "case-file",
+  "maintainer",
+  "scoreboard",
+  "public-proof"
+] as const;
 
 function screenFromHash(): Screen {
   const candidate = window.location.hash.replace("#", "");
@@ -58,6 +71,7 @@ function App() {
         </div>
         <nav className="nav-list" aria-label="Primary">
           <NavButton label="Opportunity" active={screen === "opportunity"} onClick={() => setScreen("opportunity")} />
+          <NavButton label="First Run" active={screen === "first-run"} onClick={() => setScreen("first-run")} />
           <NavButton label="Projects" active={screen === "projects"} onClick={() => setScreen("projects")} />
           <NavButton label="Work Queue" active={screen === "work-queue"} onClick={() => setScreen("work-queue")} />
           <NavButton label="Runner" active={screen === "run"} onClick={() => setScreen("run")} />
@@ -76,7 +90,8 @@ function App() {
       </aside>
 
       <main className="main">
-        {screen === "opportunity" && <OpportunityScreen onStart={() => setScreen("work-queue")} />}
+        {screen === "opportunity" && <OpportunityScreen onStart={() => setScreen("first-run")} />}
+        {screen === "first-run" && <FirstRunScreen onRun={() => setScreen("run")} onQueue={() => setScreen("work-queue")} />}
         {screen === "projects" && <ProjectsScreen onQueue={() => setScreen("work-queue")} />}
         {screen === "work-queue" && <WorkQueueScreen onRun={() => setScreen("run")} />}
         {screen === "run" && <RunnerScreen onPacket={() => setScreen("case-file")} />}
@@ -96,7 +111,7 @@ function App() {
             accepted={accepted}
             released={released}
             onRelease={() => setReleased(true)}
-            onNext={() => setScreen("opportunity")}
+            onNext={() => setScreen("first-run")}
             onPublicProof={() => setScreen("public-proof")}
           />
         )}
@@ -157,6 +172,58 @@ function ProofLoopCard() {
         ))}
       </div>
       <p className="quiet-copy">Raw work never skips the gate. Agents run locally, evidence is reviewed, then accepted proof becomes credit.</p>
+    </section>
+  );
+}
+
+function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => void }) {
+  return (
+    <section className="page-grid first-run-grid">
+      <header className="page-header">
+        <span>First Run</span>
+        <button className="secondary-action" onClick={onQueue}>Choose another mission</button>
+      </header>
+      <div className="panel first-run-steps">
+        <p className="small-label">Guided first proof</p>
+        <h2>Your first win in six steps.</h2>
+        {demoFirstRunSteps.map((step, index) => (
+          <div className="wizard-step" key={step.label}>
+            <span>{index + 1}</span>
+            <div>
+              <strong>{step.label}</strong>
+              <small>{step.detail}</small>
+            </div>
+          </div>
+        ))}
+      </div>
+      <div className="panel first-run-mission">
+        <p className="small-label">Starter mission</p>
+        <h2>{demoMission.title}</h2>
+        <p className="quiet-copy">Start with a safe docs validation mission. Your agent runs locally, captures evidence, and stops for approval before anything is submitted.</p>
+        <div className="triage-grid">
+          <StatusBlock label="Repo" value={demoMission.repo} />
+          <StatusBlock label="Risk" value={demoMission.risk} />
+          <StatusBlock label="Runtime" value={demoMission.runtime} />
+          <StatusBlock label="Reward" value={`${demoMission.reward} + rep + credits`} />
+        </div>
+        <div className="first-run-agent">
+          <h3>What the agent will do</h3>
+          <ul className="check-list">
+            <li>Clone or load the fixture repo</li>
+            <li>Run the documented install check</li>
+            <li>Capture logs and environment</li>
+            <li>Build the evidence packet draft</li>
+          </ul>
+        </div>
+        <button className="primary-action full" onClick={onRun}>Run safest starter mission</button>
+      </div>
+      <div className="panel">
+        <h2>Safety defaults</h2>
+        <p className="quiet-copy">This is the rule that keeps ProofForge useful instead of noisy.</p>
+        {demoSafetyDefaults.map((item) => (
+          <StatusRow key={item} label={item} value="Locked" tone="good" />
+        ))}
+      </div>
     </section>
   );
 }

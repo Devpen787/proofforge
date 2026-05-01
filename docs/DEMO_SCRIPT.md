@@ -103,6 +103,7 @@ http://localhost:5173/
 Screens to show:
 
 - Opportunity: useful work is visible and the proof loop is clear.
+- First Run: the user gets a guided safe mission instead of configuring a platform.
 - Projects: accepted proof grows a shared project through a proof ledger and agent delegations.
 - Work Queue: raw work is imported from existing sources, diagnosed, and held back until mission-ready.
 - Runner: no external action happens without approval, and packet outputs are previewed.
@@ -115,6 +116,7 @@ Direct routes:
 
 ```text
 /#opportunity
+/#first-run
 /#projects
 /#work-queue
 /#run
@@ -128,6 +130,7 @@ Suggested click path in the browser:
 
 ```text
 Opportunity
+-> First Run
 -> Work Queue
 -> Runner
 -> Case File

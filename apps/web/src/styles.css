@@ -107,7 +107,8 @@ button {
 .maintainer-grid,
 .scoreboard-grid,
 .work-queue-grid,
-.projects-grid {
+.projects-grid,
+.first-run-grid {
   grid-template-columns: 1fr 1fr 320px;
 }
 
@@ -298,6 +299,56 @@ button {
   color: #64748b;
   font-size: 12px;
   font-weight: 700;
+}
+
+.first-run-steps h2,
+.first-run-mission h2 {
+  font-size: 30px;
+}
+
+.wizard-step {
+  display: grid;
+  grid-template-columns: 34px 1fr;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 13px 0;
+}
+
+.wizard-step > span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  font-weight: 900;
+}
+
+.wizard-step strong,
+.wizard-step small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.wizard-step small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.first-run-agent {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 16px;
+  margin: 16px 0;
+}
+
+.first-run-agent h3 {
+  margin: 0 0 10px;
 }
 
 .metric-strip {
@@ -826,6 +877,7 @@ code {
   .scoreboard-grid,
   .work-queue-grid,
   .projects-grid,
+  .first-run-grid,
   .metric-strip {
     grid-template-columns: 1fr;
   }

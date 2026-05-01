@@ -47,6 +47,7 @@ The current web prototype also shows the product journey:
 
 ```text
 Opportunity
+-> First Run
 -> Projects
 -> Work Queue
 -> Runner
