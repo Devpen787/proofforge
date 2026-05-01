@@ -106,7 +106,8 @@ button {
 .case-grid,
 .maintainer-grid,
 .scoreboard-grid,
-.work-queue-grid {
+.work-queue-grid,
+.projects-grid {
   grid-template-columns: 1fr 1fr 320px;
 }
 
@@ -414,6 +415,22 @@ button {
   color: #475569;
 }
 
+.project-hero {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 20px;
+}
+
+.project-hero h2 {
+  font-size: 32px;
+}
+
+.project-hero p,
+.command-room p {
+  color: #475569;
+}
+
 .tag-row,
 .triage-grid {
   justify-content: flex-start;
@@ -548,6 +565,7 @@ code {
   .maintainer-grid,
   .scoreboard-grid,
   .work-queue-grid,
+  .projects-grid,
   .metric-strip {
     grid-template-columns: 1fr;
   }
@@ -560,7 +578,8 @@ code {
 
   .page-header,
   .section-heading,
-  .decision-row {
+  .decision-row,
+  .project-hero {
     align-items: stretch;
     flex-direction: column;
   }
@@ -572,8 +591,12 @@ code {
 
   .section-heading h2,
   .section-heading .secondary-action,
+  .page-header .primary-action,
   .page-header code,
-  .pipeline-step {
+  .pipeline-step,
+  .project-hero h2,
+  .project-hero p,
+  .project-hero .status-pill {
     max-width: 300px;
   }
 }
@@ -603,8 +626,12 @@ code {
 
   .section-heading h2,
   .section-heading .secondary-action,
+  .page-header .primary-action,
   .page-header code,
-  .pipeline-step {
+  .pipeline-step,
+  .project-hero h2,
+  .project-hero p,
+  .project-hero .status-pill {
     max-width: 260px;
   }
 

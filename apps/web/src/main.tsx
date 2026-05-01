@@ -1,11 +1,11 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
-import { demoActivity, demoMission, demoPacket, demoSourcePipeline, demoWork, demoWorkLead } from "./demoData";
+import { demoActivity, demoMission, demoPacket, demoProject, demoSourcePipeline, demoWork, demoWorkLead } from "./demoData";
 
-type Screen = "opportunity" | "work-queue" | "run" | "case-file" | "maintainer" | "scoreboard";
+type Screen = "opportunity" | "projects" | "work-queue" | "run" | "case-file" | "maintainer" | "scoreboard";
 
-const screens = ["opportunity", "work-queue", "run", "case-file", "maintainer", "scoreboard"] as const;
+const screens = ["opportunity", "projects", "work-queue", "run", "case-file", "maintainer", "scoreboard"] as const;
 
 function screenFromHash(): Screen {
   const candidate = window.location.hash.replace("#", "");
@@ -35,6 +35,7 @@ function App() {
         </div>
         <nav className="nav-list" aria-label="Primary">
           <NavButton label="Opportunity" active={screen === "opportunity"} onClick={() => setScreen("opportunity")} />
+          <NavButton label="Projects" active={screen === "projects"} onClick={() => setScreen("projects")} />
           <NavButton label="Work Queue" active={screen === "work-queue"} onClick={() => setScreen("work-queue")} />
           <NavButton label="Runner" active={screen === "run"} onClick={() => setScreen("run")} />
           <NavButton label="Case Files" active={screen === "case-file"} onClick={() => setScreen("case-file")} />
@@ -52,6 +53,7 @@ function App() {
 
       <main className="main">
         {screen === "opportunity" && <OpportunityScreen onStart={() => setScreen("work-queue")} />}
+        {screen === "projects" && <ProjectsScreen onQueue={() => setScreen("work-queue")} />}
         {screen === "work-queue" && <WorkQueueScreen onRun={() => setScreen("run")} />}
         {screen === "run" && <RunnerScreen onPacket={() => setScreen("case-file")} />}
         {screen === "case-file" && <CaseFileScreen onSubmit={() => setScreen("maintainer")} />}
@@ -128,6 +130,69 @@ function WorkList({ onStart }: { onStart: () => void }) {
           <span className={`status-pill ${work.tone}`}>{work.risk}</span>
         </button>
       ))}
+    </section>
+  );
+}
+
+function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
+  return (
+    <section className="page-grid projects-grid">
+      <header className="page-header">
+        <span>Projects</span>
+        <button className="primary-action">Start Project</button>
+      </header>
+      <div className="panel wide project-hero">
+        <div>
+          <p className="small-label">Community project layer</p>
+          <h2>{demoProject.name}</h2>
+          <p>{demoProject.purpose}</p>
+        </div>
+        <span className="status-pill safe">{demoProject.status}</span>
+      </div>
+      <div className="metric-strip wide">
+        <Metric label="People" value={demoProject.people} />
+        <Metric label="Agents" value={demoProject.agents} />
+        <Metric label="Proof accepted" value={demoProject.acceptedProof} />
+        <Metric label="Reward pool" value={demoProject.pool} />
+      </div>
+      <div className="panel command-room">
+        <h2>Project command room</h2>
+        <p>Start project to invite people, attach agents, suggest work, and grow through accepted proof.</p>
+        <div className="decision-row">
+          <button className="secondary-action">Invite</button>
+          <button className="secondary-action">Attach Agent</button>
+          <button className="secondary-action">Suggest Work</button>
+          <button className="primary-action" onClick={onQueue}>
+            Open Work Queue
+          </button>
+        </div>
+      </div>
+      <div className="panel">
+        <h2>Mission lanes</h2>
+        <div className="tag-row">
+          {demoProject.lanes.map((lane) => (
+            <span className="status-pill safe" key={lane}>
+              {lane}
+            </span>
+          ))}
+        </div>
+      </div>
+      <div className="panel">
+        <h2>Backlog</h2>
+        {demoProject.backlog.map((item) => (
+          <div className="artifact-row" key={item.title}>
+            <span>{item.title}</span>
+            <small>{item.status}</small>
+          </div>
+        ))}
+      </div>
+      <div className="panel">
+        <h2>Contributor credit</h2>
+        <StatusRow label="Contributor" value={demoProject.credit.contributor} tone="good" />
+        <StatusRow label="Packet" value={demoProject.credit.packet} tone="good" />
+        <StatusRow label="Points" value={demoProject.credit.points} tone="good" />
+        <StatusRow label="Payout" value="earned" tone="good" />
+      </div>
     </section>
   );
 }

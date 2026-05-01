@@ -40,6 +40,28 @@ export const demoSourcePipeline = [
   { label: "Triage", value: "3" }
 ];
 
+export const demoProject = {
+  name: "Docs Onboarding Sprint",
+  status: "Active",
+  purpose: "Turn install friction into accepted proof packets.",
+  pool: "$240",
+  people: "1",
+  agents: "0",
+  acceptedProof: "1",
+  lanes: ["Docs validation", "Bug reproduction"],
+  backlog: [
+    { title: "Validate installation docs", status: "mission-ready" },
+    { title: "Check Mac install flow", status: "proofable" },
+    { title: "Reproduce Windows build error", status: "needs triage" }
+  ],
+  credit: {
+    contributor: "alex",
+    packet: "packet_docs_install_demo",
+    points: "12",
+    payout: "payout_packet_docs_install_demo"
+  }
+};
+
 export const demoWorkLead = {
   title: "External QA task imported",
   source: "Marketplace",
