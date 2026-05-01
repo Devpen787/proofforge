@@ -1,7 +1,7 @@
 import { rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { runLocalMission } from "./index";
-import { buildEvidencePacket, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
+import { buildEvidencePacket, createPublicPacketView, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
 import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
 import { createEarnedPayout } from "../../../packages/payments/src/index";
 import { createLocalStorageAdapter, createZeroGStorageAdapter } from "../../../packages/storage/src/index";
@@ -76,10 +76,19 @@ const payout = createEarnedPayout({
 });
 const payoutPath = resolve(outputDir, "packet", "payout.json");
 await writeFile(payoutPath, JSON.stringify(payout, null, 2), "utf8");
+const publicPacket = createPublicPacketView({
+  packet: packetWithStorageRef,
+  project: "Docs Onboarding Sprint",
+  acceptedBy: "fixture-maintainer",
+  acceptedAt: payout.createdAt
+});
+const publicPacketPath = resolve(outputDir, "packet", "public-packet.json");
+await writeFile(publicPacketPath, JSON.stringify(publicPacket, null, 2), "utf8");
 
 console.log("ProofForge demo packet generated.");
 console.log(`Evidence packet: ${files.jsonPath}`);
 console.log(`Case file: ${files.markdownPath}`);
+console.log(`Public packet: ${publicPacketPath}`);
 console.log(`Earned payout: ${payoutPath}`);
 console.log(`Storage provider: ${storageReceipt.provider}`);
 console.log(`Storage URI: ${storageReceipt.uri}`);

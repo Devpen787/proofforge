@@ -202,6 +202,7 @@ That command writes:
 ```text
 demo-output/docs-install/packet/evidence-packet.json
 demo-output/docs-install/packet/case-file.md
+demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
 ```
 

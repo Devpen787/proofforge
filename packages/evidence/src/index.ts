@@ -172,10 +172,18 @@ export function createPublicPacketView(input: {
       sha256: artifact.sha256
     })),
     proofRefs: {
-      storageUri: input.packet.protocolRefs.storageUri,
+      storageUri: publicStorageUri(input.packet.protocolRefs.storageUri),
       identityRef: input.packet.protocolRefs.identityRef
     }
   });
+}
+
+function publicStorageUri(uri: string | undefined): string | undefined {
+  if (!uri || uri.startsWith("file://")) {
+    return undefined;
+  }
+
+  return uri;
 }
 
 export interface BuildEvidencePacketInput {

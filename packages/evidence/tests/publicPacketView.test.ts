@@ -51,4 +51,19 @@ describe("createPublicPacketView", () => {
       })
     ).toThrow("Only submitted or reviewed packets");
   });
+
+  it("does not expose local file storage references publicly", () => {
+    const view = createPublicPacketView({
+      packet: {
+        ...acceptedPacket,
+        protocolRefs: {
+          storageUri: "file:///Users/alex/demo-output/evidence-packet.json"
+        }
+      } as EvidencePacket,
+      project: "Docs Sprint"
+    });
+
+    expect(view.proofRefs.storageUri).toBeUndefined();
+    expect(JSON.stringify(view)).not.toContain("file://");
+  });
 });
