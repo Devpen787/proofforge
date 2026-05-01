@@ -253,6 +253,8 @@ The web app shows the core product loop:
 Opportunity -> Runner -> Case File -> Maintainer Review -> Scoreboard
 ```
 
+For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+
 ## Next Steps
 
 1. Wire imported GitHub Work Leads into the web Work Queue.
