@@ -13,6 +13,7 @@ import {
   demoImportExample,
   demoMaintainerPackets,
   demoPayoutTimeline,
+  demoProjectWorkLead,
   demoSafetyDefaults,
   demoSourcePipeline,
   demoSourceTypes,
@@ -37,6 +38,10 @@ function App() {
   const [revisionRequested, setRevisionRequested] = React.useState(false);
   const [rejected, setRejected] = React.useState(false);
   const [importedLead, setImportedLead] = React.useState(false);
+  const [projectStarted, setProjectStarted] = React.useState(false);
+  const [projectInviteSent, setProjectInviteSent] = React.useState(false);
+  const [projectAgentAttached, setProjectAgentAttached] = React.useState(false);
+  const [projectWorkSuggested, setProjectWorkSuggested] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
     setScreenState(nextScreen);
@@ -88,8 +93,30 @@ function App() {
           />
         )}
         {screen === "first-run" && <FirstRunScreen onRun={() => setScreen("run")} onQueue={() => setScreen("work-queue")} />}
-        {screen === "projects" && <ProjectsScreen onQueue={() => setScreen("work-queue")} />}
-        {screen === "work-queue" && <WorkQueueScreen importedLead={importedLead} onImport={() => setImportedLead(true)} onRun={() => setScreen("run")} />}
+        {screen === "projects" && (
+          <ProjectsScreen
+            projectStarted={projectStarted}
+            inviteSent={projectInviteSent}
+            agentAttached={projectAgentAttached}
+            workSuggested={projectWorkSuggested}
+            onStartProject={() => setProjectStarted(true)}
+            onInvite={() => setProjectInviteSent(true)}
+            onAttachAgent={() => setProjectAgentAttached(true)}
+            onSuggestWork={() => {
+              setProjectWorkSuggested(true);
+              setScreen("work-queue");
+            }}
+            onQueue={() => setScreen("work-queue")}
+          />
+        )}
+        {screen === "work-queue" && (
+          <WorkQueueScreen
+            importedLead={importedLead}
+            projectWorkSuggested={projectWorkSuggested}
+            onImport={() => setImportedLead(true)}
+            onRun={() => setScreen("run")}
+          />
+        )}
         {screen === "run" && (
           <RunnerScreen
             onPacket={() => {
@@ -349,13 +376,44 @@ function WorkList({ onStart }: { onStart: () => void }) {
   );
 }
 
-function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
+function ProjectsScreen({
+  projectStarted,
+  inviteSent,
+  agentAttached,
+  workSuggested,
+  onStartProject,
+  onInvite,
+  onAttachAgent,
+  onSuggestWork,
+  onQueue
+}: {
+  projectStarted: boolean;
+  inviteSent: boolean;
+  agentAttached: boolean;
+  workSuggested: boolean;
+  onStartProject: () => void;
+  onInvite: () => void;
+  onAttachAgent: () => void;
+  onSuggestWork: () => void;
+  onQueue: () => void;
+}) {
   return (
     <section className="page-grid projects-grid">
       <header className="page-header">
         <span>Projects</span>
-        <button className="primary-action">Start Project</button>
+        <button className="primary-action" onClick={onStartProject}>
+          {projectStarted ? "Project Started" : "Start Project"}
+        </button>
       </header>
+      {projectStarted && (
+        <div className="project-action-banner wide" role="status">
+          <div>
+            <strong>New project shell created</strong>
+            <span>Purpose, lanes, first steward, and reward pool are now visible. Next: invite one contributor or attach one constrained agent.</span>
+          </div>
+          <span className="status-pill safe">Launch draft</span>
+        </div>
+      )}
       <div className="panel wide project-hero">
         <div>
           <p className="small-label">Community project layer</p>
@@ -373,10 +431,16 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
       <div className="panel command-room">
         <h2>Project command room</h2>
         <p>Start project to invite people, attach agents, suggest work, and grow through accepted proof.</p>
+        <div className="command-state-grid">
+          <StatusRow label="Project shell" value={projectStarted ? "Created" : "Ready"} tone="good" />
+          <StatusRow label="Invite" value={inviteSent ? "Pending" : "Not sent"} tone={inviteSent ? "good" : "bad"} />
+          <StatusRow label="Agent" value={agentAttached ? "Attached" : "Not attached"} tone={agentAttached ? "good" : "bad"} />
+          <StatusRow label="Work lead" value={workSuggested ? "Created" : "Not suggested"} tone={workSuggested ? "good" : "bad"} />
+        </div>
         <div className="decision-row">
-          <button className="secondary-action">Invite</button>
-          <button className="secondary-action">Attach Agent</button>
-          <button className="secondary-action">Suggest Work</button>
+          <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite Pending" : "Invite"}</button>
+          <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent Attached" : "Attach Agent"}</button>
+          <button className="secondary-action" onClick={onSuggestWork}>{workSuggested ? "Work Lead Created" : "Suggest Work"}</button>
           <button className="primary-action" onClick={onQueue}>
             Open Work Queue
           </button>
@@ -394,6 +458,12 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
       </div>
       <div className="panel">
         <h2>Backlog</h2>
+        {workSuggested && (
+          <div className="artifact-row">
+            <span>{demoProjectWorkLead.title}</span>
+            <small>work lead</small>
+          </div>
+        )}
         {demoProject.backlog.map((item) => (
           <div className="artifact-row" key={item.title}>
             <span>{item.title}</span>
@@ -422,6 +492,15 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
       </div>
       <div className="panel">
         <h2>People</h2>
+        {inviteSent && (
+          <div className="compact-row">
+            <span>
+              <strong>sam@builder.dev</strong>
+              <small>Contributor invite</small>
+            </span>
+            <span className="status-pill warning">Pending</span>
+          </div>
+        )}
         {demoProject.peopleRoster.map((person) => (
           <div className="compact-row" key={person.name}>
             <span>
@@ -438,9 +517,19 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
             <h2>Agent delegations</h2>
             <p className="quiet-copy">Delegate capability, not control. Project agents can help, but blocked actions stay blocked.</p>
           </div>
-          <button className="secondary-action">Attach Agent</button>
+          <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent Attached" : "Attach Agent"}</button>
         </div>
         <div className="agent-card-grid">
+          {agentAttached && (
+            <div className="agent-card">
+              <div className="section-heading">
+                <strong>browser-qa-02</strong>
+                <span className="status-pill warning">Pending review</span>
+              </div>
+              <StatusRow label="Allowed" value="Browser checks, screenshots" tone="good" />
+              <StatusRow label="Blocked" value="PRs, posts, payments" tone="bad" />
+            </div>
+          )}
           {demoProject.agentDelegations.map((agent) => (
             <div className="agent-card" key={agent.name}>
               <div className="section-heading">
@@ -457,7 +546,17 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
   );
 }
 
-function WorkQueueScreen({ importedLead, onImport, onRun }: { importedLead: boolean; onImport: () => void; onRun: () => void }) {
+function WorkQueueScreen({
+  importedLead,
+  projectWorkSuggested,
+  onImport,
+  onRun
+}: {
+  importedLead: boolean;
+  projectWorkSuggested: boolean;
+  onImport: () => void;
+  onRun: () => void;
+}) {
   return (
     <section className="page-grid work-queue-grid">
       <header className="page-header">
@@ -509,6 +608,21 @@ function WorkQueueScreen({ importedLead, onImport, onRun }: { importedLead: bool
               <StatusRow label="Source" value="GitHub issue" tone="good" />
               <StatusRow label="External action" value="None" tone="good" />
               <StatusRow label="Mission status" value="Needs triage" tone="bad" />
+            </div>
+          </div>
+        )}
+        {projectWorkSuggested && (
+          <div className="project-work-lead-card" role="status">
+            <div>
+              <p className="small-label">Project Work Lead created</p>
+              <h3>{demoProjectWorkLead.title}</h3>
+              <p>{demoProjectWorkLead.rawRequest}</p>
+            </div>
+            <div className="diagnosis-grid">
+              <StatusRow label="Source" value={demoProjectWorkLead.source} tone="good" />
+              <StatusRow label="Proofability" value={demoProjectWorkLead.proofability} tone="good" />
+              <StatusRow label="Missing" value={demoProjectWorkLead.missing} tone="bad" />
+              <StatusRow label="Recommendation" value="Clarify before Mission" tone="bad" />
             </div>
           </div>
         )}

@@ -158,6 +158,18 @@ export const demoWorkLeadDiagnosis = [
   { label: "Conversion gate", value: "Blocked until clarified", tone: "bad" }
 ] as const;
 
+export const demoProjectWorkLead = {
+  title: "Project work lead created",
+  source: "Project steward",
+  rawRequest: "Docs Onboarding Sprint needs one more proof packet for the quickstart path on a clean machine.",
+  proofability: "84%",
+  risk: "Low",
+  reward: "$12 commons credit",
+  acceptsProof: "Project steward",
+  missing: "Exact OS target",
+  recommendation: "Ask the steward to confirm Ubuntu 24.04 or Mac before converting to a Mission."
+};
+
 export const demoPacket = {
   id: "packet_docs_install_demo",
   objective: "Run the documented install check and prove whether it works in a clean environment.",

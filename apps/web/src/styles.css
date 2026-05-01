@@ -571,11 +571,42 @@ button {
 .source-card,
 .import-command,
 .import-result-card,
+.project-action-banner,
+.project-work-lead-card,
 .clarification-box {
   border: 1px solid #e2e8f0;
   background: #f8fafc;
   border-radius: 18px;
   padding: 16px;
+}
+
+.project-action-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.project-action-banner strong,
+.project-action-banner span {
+  display: block;
+}
+
+.project-action-banner > div > span {
+  margin-top: 4px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.command-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
 }
 
 .agent-card-grid {
@@ -704,16 +735,29 @@ button {
   background: #ecfdf5;
 }
 
+.project-work-lead-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 16px;
+  margin-top: 14px;
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
 .import-result-card h3,
-.import-result-card p {
+.import-result-card p,
+.project-work-lead-card h3,
+.project-work-lead-card p {
   margin: 0;
 }
 
-.import-result-card h3 {
+.import-result-card h3,
+.project-work-lead-card h3 {
   font-size: 18px;
 }
 
-.import-result-card p:not(.small-label) {
+.import-result-card p:not(.small-label),
+.project-work-lead-card p:not(.small-label) {
   margin-top: 8px;
   color: #475569;
 }
@@ -1101,6 +1145,8 @@ code {
   .source-grid,
   .import-command,
   .import-result-card,
+  .project-work-lead-card,
+  .command-state-grid,
   .agent-card-grid,
   .review-grid,
   .share-split,
@@ -1114,7 +1160,8 @@ code {
   .artifact-row,
   .activity-row,
   .compact-row,
-  .decision-row {
+  .decision-row,
+  .project-action-banner {
     flex-wrap: wrap;
   }
 

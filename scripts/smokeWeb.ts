@@ -91,6 +91,16 @@ async function runSmoke() {
     }
 
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Start Project" }).click();
+    await requireText(page, "New project shell created");
+    await page.getByRole("button", { name: "Invite" }).click();
+    await requireText(page, "sam@builder.dev");
+    await page.getByRole("button", { name: "Attach Agent" }).first().click();
+    await requireText(page, "browser-qa-02");
+    await page.getByRole("button", { name: "Suggest Work" }).click();
+    await requireText(page, "Project Work Lead created");
+    await requireText(page, "Clarify before Mission");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Run your first proof packet" }).click();
     await requireText(page, "Your first win in six steps.");
