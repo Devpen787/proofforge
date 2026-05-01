@@ -165,6 +165,15 @@ export const demoArtifacts = [
 
 export const demoPublicArtifacts = demoArtifacts.filter((artifact) => artifact.visibility === "Public-safe");
 
+export const demoUnlockProgress = {
+  currentTier: "Trusted Starter",
+  nextTier: "Agent Delegation",
+  acceptedPackets: 2,
+  neededPackets: 5,
+  percent: 40,
+  nextReward: "Attach more project agents after 3 more accepted packets."
+};
+
 export const demoActivity = [
   "Proof packet generated",
   "Verifier checks passed",

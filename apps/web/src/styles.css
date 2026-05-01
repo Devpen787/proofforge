@@ -684,6 +684,34 @@ pre {
   margin-top: 12px;
 }
 
+.scoreboard-action-card {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.scoreboard-action-card h2 {
+  font-size: 28px;
+}
+
+.scoreboard-action-card .secondary-action {
+  margin-top: 10px;
+}
+
+.unlock-progress {
+  height: 10px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+  margin: 16px 0 12px;
+}
+
+.unlock-progress span {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #047857;
+}
+
 .check-list {
   margin: 0;
   padding-left: 20px;
@@ -730,7 +758,7 @@ code {
   .panel,
   .terminal-card,
   .decision-panel,
-  .proof-orbit,
+  .proof-loop-card,
   .metric,
   .work-row {
     max-width: calc(100vw - 56px);

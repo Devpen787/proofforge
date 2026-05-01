@@ -12,6 +12,7 @@ import {
   demoImportExample,
   demoSourcePipeline,
   demoSourceTypes,
+  demoUnlockProgress,
   demoWork,
   demoWorkLead
 } from "./demoData";
@@ -555,25 +556,43 @@ function ScoreboardScreen({
         <Metric label="Paid out" value={released ? "$8" : "$0"} />
         <Metric label="Reputation" value={accepted ? "176" : "164"} />
       </div>
-      <div className="panel">
-        <h2>Your next step</h2>
-        <p>
+      <div className="panel scoreboard-action-card">
+        <p className="small-label">Next best action</p>
+        <h2>
+          {!accepted && "Get the packet accepted."}
+          {accepted && !released && "Release the earned payout."}
+          {accepted && released && "Start the next proof mission."}
+        </h2>
+        <p className="quiet-copy">
           {!accepted && "Ask the maintainer to accept the submitted packet."}
           {accepted && !released && "Release the earned payout as a separate accounting step."}
           {accepted && released && "Public proof, project credit, and payout records are ready for the demo."}
         </p>
-        <button className="secondary-action full" onClick={onPublicProof}>
-          View public proof
+        <button className="primary-action full" onClick={accepted && !released ? onRelease : onNext}>
+          {accepted && !released ? "Release payout" : "Generate proof packet"}
         </button>
+        <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>
       </div>
       <div className="panel">
         <h2>Payout state</h2>
         <StatusRow label="Earned payout" value={accepted ? "$8 earned" : "Waiting"} tone={accepted ? "good" : "bad"} />
         <StatusRow label="Released payout" value={released ? "$8 released" : "Not released"} tone={released ? "good" : "bad"} />
+        <StatusRow label="Method" value="Manual accounting" tone="good" />
         <p className="quiet-copy">Release is manual in the MVP. No money moves automatically.</p>
         <button className="primary-action full" disabled={!accepted || released} onClick={onRelease}>
           {released ? "Payout released" : "Release payout"}
         </button>
+      </div>
+      <div className="panel">
+        <h2>Reputation unlock</h2>
+        <StatusRow label="Current tier" value={demoUnlockProgress.currentTier} tone="good" />
+        <StatusRow label="Next unlock" value={demoUnlockProgress.nextTier} tone="good" />
+        <div className="unlock-progress" aria-label="Accepted packet progress">
+          <span style={{ width: `${demoUnlockProgress.percent}%` }} />
+        </div>
+        <p className="quiet-copy">
+          {demoUnlockProgress.acceptedPackets} / {demoUnlockProgress.neededPackets} accepted packets. {demoUnlockProgress.nextReward}
+        </p>
       </div>
       <div className="panel">
         <h2>Recent activity</h2>
