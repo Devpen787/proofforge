@@ -95,8 +95,18 @@ export const demoProject = {
     pendingPackets: "3",
     earnedPayouts: "$240",
     latestProof: "packet_docs_install_demo",
-    topContributors: ["Alex", "docsnode.eth"]
+    topContributors: ["Alex", "docsnode.eth"],
+    history: [
+      { label: "Install docs validated", detail: "Accepted by commons reviewer", value: "$8" },
+      { label: "Windows crash reproduced", detail: "Maintainer-ready evidence", value: "$12" },
+      { label: "Mac setup checked", detail: "Revision requested", value: "revise" }
+    ]
   },
+  peopleRoster: [
+    { name: "Alex", role: "Proof node", status: "Active" },
+    { name: "docsnode.eth", role: "Reviewer", status: "Active" },
+    { name: "maintainer.alice", role: "Maintainer", status: "Pending" }
+  ],
   agentDelegations: [
     {
       name: "docs-runner-01",
@@ -140,6 +150,13 @@ export const demoWorkLead = {
   nextQuestion: "Which Chrome and Safari versions should be tested?",
   categories: ["Marketplace task", "Browser QA", "Evidence-only"]
 };
+
+export const demoWorkLeadDiagnosis = [
+  { label: "Acceptance owner", value: "External buyer identified", tone: "good" },
+  { label: "Evidence shape", value: "Browser logs + screenshots", tone: "good" },
+  { label: "Missing detail", value: "Exact browser versions", tone: "bad" },
+  { label: "Conversion gate", value: "Blocked until clarified", tone: "bad" }
+] as const;
 
 export const demoPacket = {
   id: "packet_docs_install_demo",
@@ -213,4 +230,16 @@ export const demoActivity = [
   "Verifier checks passed",
   "Storage URI recorded",
   "Maintainer packet ready"
+];
+
+export const demoMaintainerPackets = [
+  { title: "Validate installation docs", status: "Ready", detail: "86% confidence, privacy passed" },
+  { title: "CLI crash on Windows", status: "Needs review", detail: "Low risk reproduction packet" },
+  { title: "Mac install issue", status: "Revision", detail: "Missing environment detail" }
+];
+
+export const demoPayoutTimeline = [
+  { label: "Packet submitted", value: "pending review" },
+  { label: "Packet accepted", value: "earned payout" },
+  { label: "Manual release", value: "released payout" }
 ];

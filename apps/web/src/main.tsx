@@ -11,12 +11,15 @@ import {
   demoProofLoop,
   demoPublicArtifacts,
   demoImportExample,
+  demoMaintainerPackets,
+  demoPayoutTimeline,
   demoSafetyDefaults,
   demoSourcePipeline,
   demoSourceTypes,
   demoUnlockProgress,
   demoWork,
-  demoWorkLead
+  demoWorkLead,
+  demoWorkLeadDiagnosis
 } from "./demoData";
 import { routeLabels, screens, type Screen } from "./routes";
 
@@ -286,6 +289,29 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
         <StatusRow label="Earned payouts" value={demoProject.proofLedger.earnedPayouts} tone="good" />
         <StatusRow label="Latest proof" value={demoProject.proofLedger.latestProof} tone="good" />
         <p className="quiet-copy">Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</p>
+        <div className="compact-list">
+          {demoProject.proofLedger.history.map((item) => (
+            <div className="compact-row" key={item.label}>
+              <span>
+                <strong>{item.label}</strong>
+                <small>{item.detail}</small>
+              </span>
+              <b>{item.value}</b>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="panel">
+        <h2>People</h2>
+        {demoProject.peopleRoster.map((person) => (
+          <div className="compact-row" key={person.name}>
+            <span>
+              <strong>{person.name}</strong>
+              <small>{person.role}</small>
+            </span>
+            <span className="status-pill safe">{person.status}</span>
+          </div>
+        ))}
       </div>
       <div className="panel wide">
         <div className="section-heading">
@@ -383,6 +409,11 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
         <div className="recommendation-box">
           <strong>Recommendation</strong>
           <p>{demoWorkLead.recommendation}</p>
+          <div className="diagnosis-grid">
+            {demoWorkLeadDiagnosis.map((item) => (
+              <StatusRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
+            ))}
+          </div>
           <div className="clarification-box">
             <span>Next clarification question</span>
             <strong>{demoWorkLead.nextQuestion}</strong>
@@ -411,6 +442,14 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
           <li>Marketplace QA tasks</li>
           <li>Community project requests</li>
         </ul>
+      </div>
+      <div className="panel">
+        <h2>Mission readiness</h2>
+        <StatusRow label="Objective" value="Clear" tone="good" />
+        <StatusRow label="Reward path" value="External" tone="good" />
+        <StatusRow label="Acceptance owner" value="Known" tone="good" />
+        <StatusRow label="Missing data" value="Browser versions" tone="bad" />
+        <p className="quiet-copy">ProofForge can import the work now, but will not run the mission until the missing test target is clarified.</p>
       </div>
     </section>
   );
@@ -501,6 +540,12 @@ function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
             <strong>{demoPacket.recommendedAction}</strong>
           </div>
         </div>
+        <div className="packet-facts">
+          <StatusRow label="Packet status" value="Draft, approved locally" tone="good" />
+          <StatusRow label="Verifier" value="Passed" tone="good" />
+          <StatusRow label="Policy" value="Evidence-only" tone="good" />
+          <StatusRow label="Public action" value="None taken" tone="good" />
+        </div>
         <div className="review-grid">
           <div>
             <h2>Privacy review</h2>
@@ -578,6 +623,26 @@ function MaintainerScreen({ accepted, onAccept }: { accepted: boolean; onAccept:
         <Metric label="Accepted" value={accepted ? "1" : "0"} />
         <Metric label="Revision" value="0" />
         <Metric label="Rejected" value="0" />
+      </div>
+      <div className="panel">
+        <h2>Review standards</h2>
+        <StatusRow label="Proof summary" value="Required" tone="good" />
+        <StatusRow label="Artifacts" value="Attached" tone="good" />
+        <StatusRow label="Privacy" value="Passed" tone="good" />
+        <StatusRow label="Payout" value="Manual" tone="good" />
+        <p className="quiet-copy">Maintainers decide from evidence, not raw agent logs.</p>
+      </div>
+      <div className="panel">
+        <h2>Recent packets</h2>
+        {demoMaintainerPackets.map((packet) => (
+          <div className="compact-row" key={packet.title}>
+            <span>
+              <strong>{packet.title}</strong>
+              <small>{packet.detail}</small>
+            </span>
+            <span className={packet.status === "Revision" ? "status-pill warning" : "status-pill safe"}>{packet.status}</span>
+          </div>
+        ))}
       </div>
       <div className="panel wide">
         <p className="small-label">Review clean proof, not agent noise.</p>
@@ -672,6 +737,13 @@ function ScoreboardScreen({
         </button>
       </div>
       <div className="panel">
+        <h2>Payout timeline</h2>
+        {demoPayoutTimeline.map((item) => (
+          <StatusRow key={item.label} label={item.label} value={item.value} tone="good" />
+        ))}
+        <p className="quiet-copy">The MVP records state transitions. It does not move funds automatically.</p>
+      </div>
+      <div className="panel">
         <h2>Reputation unlock</h2>
         <StatusRow label="Current tier" value={demoUnlockProgress.currentTier} tone="good" />
         <StatusRow label="Next unlock" value={demoUnlockProgress.nextTier} tone="good" />
@@ -691,6 +763,13 @@ function ScoreboardScreen({
               {item}
             </div>
           ))}
+      </div>
+      <div className="panel">
+        <h2>Project credit</h2>
+        <StatusRow label="Project" value={demoProject.name} tone="good" />
+        <StatusRow label="Contributor" value={demoProject.credit.contributor} tone="good" />
+        <StatusRow label="Packet" value={demoProject.credit.packet} tone="good" />
+        <StatusRow label="Credit points" value={demoProject.credit.points} tone="good" />
       </div>
     </section>
   );

@@ -527,6 +527,47 @@ button {
   margin-top: 14px;
 }
 
+.compact-list,
+.diagnosis-grid,
+.packet-facts {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.compact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 11px 0;
+}
+
+.compact-row span,
+.compact-row strong,
+.compact-row small {
+  min-width: 0;
+}
+
+.compact-row strong,
+.compact-row small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.compact-row small {
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.compact-row > b,
+.compact-row > .status-pill {
+  flex: 0 0 auto;
+}
+
 .source-card small {
   display: block;
   color: #64748b;
@@ -912,6 +953,7 @@ code {
   .work-row,
   .artifact-row,
   .activity-row,
+  .compact-row,
   .decision-row {
     flex-wrap: wrap;
   }
