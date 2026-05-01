@@ -1,0 +1,9 @@
+{
+  "name": "proofforge-docs-install-fixture",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "proof:check": "node scripts/check-docs.mjs"
+  }
+}
