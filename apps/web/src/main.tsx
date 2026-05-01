@@ -1511,41 +1511,66 @@ function submittedLabel(accepted: boolean, released: boolean) {
 }
 
 function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMission; onBack: () => void }) {
+  const [copied, setCopied] = React.useState(false);
   const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const proofFacts = [
+    { label: "Status", value: "Accepted", tone: "good" as const },
+    { label: "Project", value: demoProject.name, tone: "good" as const },
+    { label: "Accepted by", value: activeMission === "checkout" ? "External buyer" : "Commons reviewer", tone: "good" as const },
+    { label: "Reward outcome", value: `${mission.reward} earned`, tone: "good" as const }
+  ];
+  const publicBoundary = [
+    { label: "Shared", value: "Summary, public packet, safe artifact refs", tone: "good" as const },
+    { label: "Hidden", value: "Raw logs, local paths, payout internals", tone: "bad" as const },
+    { label: "Agent notes", value: "Not public", tone: "bad" as const },
+    { label: "Private data", value: "Not exposed", tone: "good" as const }
+  ];
   return (
-    <section className="page-grid case-grid">
+    <section className="page-grid public-proof-grid">
       <header className="page-header">
         <span>Public Proof / {packet.id}</span>
         <button className="secondary-action" onClick={onBack}>
           Back to Earnings
         </button>
       </header>
-      <div className="hero-card public-proof-card">
-        <p className="small-label">Accepted Proof Packet</p>
-        <h1>{mission.title}</h1>
-        <p className="public-summary">
-          {packet.summary} The accepted packet includes a safe summary, generated artifacts, verifier status,
-          project credit, and payout outcome.
-        </p>
-        <div className="decision-row">
-          <span className="status-pill safe">Accepted</span>
-          <span className="status-pill safe">Public-safe</span>
-          <span className="status-pill safe">Maintainer reviewed</span>
+      <div className="public-share-hero wide">
+        <div>
+          <p className="small-label">Accepted Proof Packet</p>
+          <h1>{mission.title}</h1>
+          <p>
+            {packet.summary} This public page shows the proof someone can inspect without exposing raw logs,
+            local paths, private payout records, or internal agent notes.
+          </p>
+          <div className="public-badge-row">
+            <span className="status-pill safe">Accepted</span>
+            <span className="status-pill safe">Public-safe</span>
+            <span className="status-pill safe">Maintainer reviewed</span>
+          </div>
+        </div>
+        <aside className="public-proof-id-card" aria-label="Public proof reference">
+          <span className="status-pill safe">Shareable proof</span>
+          <strong>{packet.id}</strong>
+          <small>proof://proofforge/{packet.id}</small>
+          <button className="primary-action full" onClick={() => setCopied(true)}>{copied ? "Public link copied" : "Copy public link"}</button>
+          <button className="secondary-action full" onClick={onBack}>View ledger</button>
+        </aside>
+      </div>
+      <div className="public-proof-dossier">
+        <div className="public-proof-summary">
+          <p className="small-label">What was proven</p>
+          <h2>{packet.result}</h2>
+          <p>{packet.recommendedAction}</p>
+          <div className="public-fact-grid">
+            {proofFacts.map((fact) => (
+              <StatusBlock key={fact.label} label={fact.label} value={fact.value} />
+            ))}
+          </div>
         </div>
       </div>
-      <div className="panel">
-        <h2>What was proven</h2>
-        <ul className="check-list">
-          <li>{packet.result}</li>
-          <li>Verifier checks passed</li>
-          <li>No secrets or local paths exposed</li>
-          <li>Maintainer-safe summary available</li>
-        </ul>
-      </div>
-      <div className="panel">
-        <h2>Public artifacts</h2>
-        <p className="quiet-copy">This view only exposes the public-safe subset. Raw logs, local paths, and payout internals stay private.</p>
+      <div className="panel public-safe-panel">
+        <p className="small-label">Public-safe evidence</p>
+        <h2>Only the shareable subset leaves the workspace.</h2>
         {demoPublicArtifacts.map((artifact) => (
           <div className="artifact-row rich-artifact-row" key={artifact.name}>
             <span>
@@ -1563,12 +1588,21 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
           <small>Safe to share</small>
         </div>
       </div>
-      <div className="decision-panel">
+      <div className="panel public-boundary-panel">
+        <p className="small-label">Privacy boundary</p>
+        <h2>Public proof is not raw agent output.</h2>
+        {publicBoundary.map((item) => (
+          <StatusRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
+        ))}
+      </div>
+      <div className="decision-panel public-credit-panel">
         <p className="small-label">Credit and payout</p>
+        <h2>Credit is portable because the packet was accepted.</h2>
         <StatusRow label="Project" value={demoProject.name} tone="good" />
         <StatusRow label="Contributor" value="alex" tone="good" />
         <StatusRow label="Earned payout" value={mission.reward} tone="good" />
         <StatusRow label="Reputation" value="+12" tone="good" />
+        <p className="quiet-copy">This is the public proof someone can show. Released payout remains a separate accounting record.</p>
       </div>
     </section>
   );

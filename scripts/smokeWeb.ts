@@ -128,6 +128,11 @@ async function runSmoke() {
     await requireText(page, "$8 released");
     await page.getByRole("button", { name: "View public proof" }).click();
     await requireText(page, "Accepted Proof Packet");
+    await requireText(page, "Public proof is not raw agent output.");
+    await requireText(page, "Credit is portable because the packet was accepted.");
+    await requireText(page, "proof://proofforge/packet_docs_install_demo");
+    await page.getByRole("button", { name: "Copy public link" }).click();
+    await requireText(page, "Public link copied");
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Import external task" }).click();
     await requireText(page, "Imported Work Lead ready for triage");
