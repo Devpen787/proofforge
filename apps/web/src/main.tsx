@@ -1,13 +1,30 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
-import { demoActivity, demoMission, demoPacket, demoWork } from "./demoData";
+import { demoActivity, demoMission, demoPacket, demoSourcePipeline, demoWork, demoWorkLead } from "./demoData";
+
+type Screen = "opportunity" | "work-queue" | "run" | "case-file" | "maintainer" | "scoreboard";
+
+const screens = ["opportunity", "work-queue", "run", "case-file", "maintainer", "scoreboard"] as const;
+
+function screenFromHash(): Screen {
+  const candidate = window.location.hash.replace("#", "");
+  return screens.includes(candidate as Screen) ? (candidate as Screen) : "opportunity";
+}
 
 function App() {
-  const [screen, setScreen] = React.useState<"opportunity" | "run" | "case-file" | "maintainer" | "scoreboard">(
-    "opportunity"
-  );
+  const [screen, setScreenState] = React.useState<Screen>(screenFromHash);
   const [accepted, setAccepted] = React.useState(false);
+  const setScreen = React.useCallback((nextScreen: Screen) => {
+    window.location.hash = nextScreen;
+    setScreenState(nextScreen);
+  }, []);
+
+  React.useEffect(() => {
+    const onHashChange = () => setScreenState(screenFromHash());
+    window.addEventListener("hashchange", onHashChange);
+    return () => window.removeEventListener("hashchange", onHashChange);
+  }, []);
 
   return (
     <div className="app-shell">
@@ -18,6 +35,7 @@ function App() {
         </div>
         <nav className="nav-list" aria-label="Primary">
           <NavButton label="Opportunity" active={screen === "opportunity"} onClick={() => setScreen("opportunity")} />
+          <NavButton label="Work Queue" active={screen === "work-queue"} onClick={() => setScreen("work-queue")} />
           <NavButton label="Runner" active={screen === "run"} onClick={() => setScreen("run")} />
           <NavButton label="Case Files" active={screen === "case-file"} onClick={() => setScreen("case-file")} />
           <NavButton label="Maintainer" active={screen === "maintainer"} onClick={() => setScreen("maintainer")} />
@@ -33,7 +51,8 @@ function App() {
       </aside>
 
       <main className="main">
-        {screen === "opportunity" && <OpportunityScreen onStart={() => setScreen("run")} />}
+        {screen === "opportunity" && <OpportunityScreen onStart={() => setScreen("work-queue")} />}
+        {screen === "work-queue" && <WorkQueueScreen onRun={() => setScreen("run")} />}
         {screen === "run" && <RunnerScreen onPacket={() => setScreen("case-file")} />}
         {screen === "case-file" && <CaseFileScreen onSubmit={() => setScreen("maintainer")} />}
         {screen === "maintainer" && (
@@ -109,6 +128,86 @@ function WorkList({ onStart }: { onStart: () => void }) {
           <span className={`status-pill ${work.tone}`}>{work.risk}</span>
         </button>
       ))}
+    </section>
+  );
+}
+
+function WorkQueueScreen({ onRun }: { onRun: () => void }) {
+  return (
+    <section className="page-grid work-queue-grid">
+      <header className="page-header">
+        <span>Work Queue</span>
+        <code>npm run import:github -- --url https://github.com/owner/repo/issues/123</code>
+      </header>
+      <div className="panel wide">
+        <div className="section-heading">
+          <div>
+            <p className="small-label">Ready missions, not raw work</p>
+            <h2>Import existing work, then triage it before agents run.</h2>
+          </div>
+          <button className="secondary-action">Import external task</button>
+        </div>
+        <div className="pipeline-strip" aria-label="Work intake pipeline">
+          {demoSourcePipeline.map((item) => (
+            <div className="pipeline-step" key={item.label}>
+              <strong>{item.value}</strong>
+              <span>{item.label}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="panel wide work-lead-card">
+        <div>
+          <p className="small-label">Work Lead</p>
+          <h2>{demoWorkLead.title}</h2>
+          <p>{demoWorkLead.rawRequest}</p>
+          <div className="tag-row">
+            {demoWorkLead.categories.map((category) => (
+              <span className="status-pill safe" key={category}>
+                {category}
+              </span>
+            ))}
+          </div>
+        </div>
+        <div className="proof-score">
+          <span>Proofability</span>
+          <strong>{demoWorkLead.proofability}</strong>
+          <small>Good, but not mission-ready.</small>
+        </div>
+        <div className="triage-grid">
+          <StatusBlock label="Risk" value={demoWorkLead.risk} />
+          <StatusBlock label="Reward" value={demoWorkLead.reward} />
+          <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
+          <StatusBlock label="Missing" value={demoWorkLead.missing} />
+        </div>
+        <div className="recommendation-box">
+          <strong>Recommendation</strong>
+          <p>{demoWorkLead.recommendation}</p>
+          <div className="decision-row">
+            <button className="primary-action">Ask clarification</button>
+            <button className="secondary-action" onClick={onRun}>
+              Convert anyway
+            </button>
+            <button className="danger-action">Reject</button>
+          </div>
+        </div>
+      </div>
+      <div className="panel">
+        <h2>Scoped starter mission</h2>
+        <p>Validate installation docs in a clean fixture. This is safe, local, and evidence-only.</p>
+        <button className="primary-action full" onClick={onRun}>
+          Run safest mission
+        </button>
+      </div>
+      <div className="panel">
+        <h2>Source categories</h2>
+        <ul className="check-list">
+          <li>GitHub issues and PRs</li>
+          <li>Foundation backlogs</li>
+          <li>Marketplace QA tasks</li>
+          <li>Community project requests</li>
+        </ul>
+      </div>
     </section>
   );
 }
@@ -271,6 +370,15 @@ function Metric({ label, value }: { label: string; value: string }) {
     <div className="metric">
       <strong>{value}</strong>
       <span>{label}</span>
+    </div>
+  );
+}
+
+function StatusBlock({ label, value }: { label: string; value: string }) {
+  return (
+    <div className="status-block">
+      <span>{label}</span>
+      <strong>{value}</strong>
     </div>
   );
 }

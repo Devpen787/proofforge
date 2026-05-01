@@ -33,6 +33,26 @@ export const demoWork = [
   }
 ];
 
+export const demoSourcePipeline = [
+  { label: "Imported", value: "8" },
+  { label: "Proofable", value: "5" },
+  { label: "Ready", value: "2" },
+  { label: "Triage", value: "3" }
+];
+
+export const demoWorkLead = {
+  title: "External QA task imported",
+  source: "Marketplace",
+  rawRequest: "Buyer asks for proof checkout works in Chrome and Safari.",
+  proofability: "72%",
+  risk: "Medium",
+  reward: "$25 external payout",
+  acceptsProof: "External buyer",
+  missing: "Exact browser versions",
+  recommendation: "Ask one clarification before running.",
+  categories: ["Marketplace task", "Browser QA", "Evidence-only"]
+};
+
 export const demoPacket = {
   id: "packet_docs_install_demo",
   objective: "Run the documented install check and prove whether it works in a clean environment.",

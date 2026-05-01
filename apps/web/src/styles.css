@@ -105,7 +105,8 @@ button {
 .runner-grid,
 .case-grid,
 .maintainer-grid,
-.scoreboard-grid {
+.scoreboard-grid,
+.work-queue-grid {
   grid-template-columns: 1fr 1fr 320px;
 }
 
@@ -309,6 +310,8 @@ button {
 .decision-panel h2 {
   margin: 0 0 12px;
   font-size: 20px;
+  line-height: 1.15;
+  overflow-wrap: anywhere;
 }
 
 .section-heading,
@@ -317,11 +320,19 @@ button {
 .work-row,
 .status-row,
 .artifact-row,
-.activity-row {
+.activity-row,
+.pipeline-strip,
+.tag-row,
+.triage-grid {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 16px;
+}
+
+.section-heading > *,
+.page-header > * {
+  min-width: 0;
 }
 
 .work-row {
@@ -356,6 +367,71 @@ button {
 .status-pill.warning {
   color: #b45309;
   background: #fffbeb;
+}
+
+.pipeline-strip {
+  margin-top: 22px;
+}
+
+.pipeline-step,
+.status-block,
+.proof-score,
+.recommendation-box {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.pipeline-step {
+  flex: 1;
+}
+
+.pipeline-step strong,
+.proof-score strong {
+  display: block;
+  color: #047857;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.pipeline-step span,
+.status-block span,
+.proof-score span,
+.proof-score small {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.work-lead-card {
+  display: grid;
+  grid-template-columns: 1fr 190px;
+  gap: 18px;
+}
+
+.work-lead-card p {
+  color: #475569;
+}
+
+.tag-row,
+.triage-grid {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.triage-grid,
+.recommendation-box {
+  grid-column: 1 / -1;
+}
+
+.status-block {
+  min-width: 180px;
+}
+
+.status-block strong {
+  display: block;
+  margin-top: 6px;
 }
 
 .terminal-card {
@@ -421,10 +497,14 @@ pre {
 }
 
 code {
+  display: inline-block;
+  max-width: 100%;
   border-radius: 10px;
   background: #f8fafc;
   padding: 7px 10px;
   color: #334155;
+  overflow-wrap: anywhere;
+  white-space: normal;
 }
 
 @media (max-width: 920px) {
@@ -437,6 +517,8 @@ code {
   }
 
   .main {
+    width: 100vw;
+    max-width: 100vw;
     padding: 28px;
   }
 
@@ -451,13 +533,48 @@ code {
     line-height: 1.12;
   }
 
+  .panel,
+  .terminal-card,
+  .decision-panel,
+  .proof-orbit,
+  .metric,
+  .work-row {
+    max-width: calc(100vw - 56px);
+  }
+
   .page-grid-hero,
   .runner-grid,
   .case-grid,
   .maintainer-grid,
   .scoreboard-grid,
+  .work-queue-grid,
   .metric-strip {
     grid-template-columns: 1fr;
+  }
+
+  .pipeline-strip,
+  .work-lead-card {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .page-header,
+  .section-heading,
+  .decision-row {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .section-heading .secondary-action,
+  .decision-row button {
+    width: 100%;
+  }
+
+  .section-heading h2,
+  .section-heading .secondary-action,
+  .page-header code,
+  .pipeline-step {
+    max-width: 300px;
   }
 }
 
@@ -471,7 +588,27 @@ code {
     padding: 28px 22px;
   }
 
+  .panel,
+  .terminal-card,
+  .decision-panel,
+  .proof-orbit,
+  .metric,
+  .work-row {
+    max-width: calc(100vw - 36px);
+  }
+
   .hero-card h1 {
     font-size: 30px;
+  }
+
+  .section-heading h2,
+  .section-heading .secondary-action,
+  .page-header code,
+  .pipeline-step {
+    max-width: 260px;
+  }
+
+  .section-heading h2 {
+    font-size: 18px;
   }
 }
