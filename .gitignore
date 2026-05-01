@@ -4,13 +4,14 @@ node_modules/
 dist/
 build/
 coverage/
+demo-output/
 .env
 .env.*
 !.env.example
 *.log
+runs/
 tmp/
 temp/
 .cache/
 __pycache__/
 *.pyc
-

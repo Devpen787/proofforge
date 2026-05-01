@@ -10,12 +10,14 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "demo:packet": "tsx apps/runner/src/demoPacket.ts",
     "dev": "npm run dev -w apps/web",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
+    "tsx": "^4.19.4",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
   },
