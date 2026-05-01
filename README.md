@@ -226,6 +226,18 @@ Accepted Evidence Packet -> Earned Payout
 
 It does not move money automatically.
 
+Release the earned payout as a separate manual accounting step:
+
+```bash
+npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
+```
+
+That proves the second payment transition:
+
+```text
+Earned Payout -> Released Payout
+```
+
 The project file shows the companion coordination state:
 
 ```text

@@ -54,6 +54,12 @@ demo-output/docs-install/packet/payout.json
 demo-output/docs-install/packet/project.json
 ```
 
+Then show payout release as a separate action:
+
+```bash
+npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
+```
+
 ### 4. Explain The Artifact Chain
 
 The demo proves this loop:
@@ -67,6 +73,7 @@ Project
 -> Evidence Packet
 -> Public-Safe Packet
 -> Earned Payout
+-> Released Payout
 -> Project Credit
 ```
 
@@ -76,7 +83,7 @@ Important details:
 - The policy gate keeps the mission local and evidence-only before execution.
 - The verifier checks the runner artifacts independently.
 - The public packet strips local paths and private storage refs.
-- The payout is earned, not automatically released.
+- The payout is earned first, then released by a separate manual action.
 - Project credit records who contributed useful accepted proof.
 
 ### 5. Show The Web Prototype

@@ -14,6 +14,7 @@
     "import:github": "tsx apps/runner/src/importGitHubIssue.ts",
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",
     "dev": "npm run dev -w apps/web",
+    "release:payout": "tsx apps/runner/src/releasePayout.ts",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
