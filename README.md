@@ -148,9 +148,11 @@ This repository now has the first working proof slice:
 - npm workspace scaffold
 - Evidence Packet schema with validation tests
 - Mission Contract schema with Work Lead conversion tests
+- GitHub issue importer that turns existing public issues into Work Leads
 - constrained local runner that writes artifacts
 - independent verifier that checks runner artifacts
 - demo command that generates `evidence-packet.json` and `case-file.md`
+- proof command center UI for the core journey
 
 The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
 
@@ -173,6 +175,20 @@ Typecheck:
 ```bash
 npm run typecheck
 ```
+
+Import an existing GitHub issue as a Work Lead:
+
+```bash
+npm run import:github -- --url https://github.com/microsoft/vscode/issues/1
+```
+
+This writes a local Work Lead JSON file under:
+
+```text
+demo-output/imports/
+```
+
+The importer only reads public issue data. It does not post comments, open PRs, create payments, or contact maintainers.
 
 Generate the first evidence packet:
 
@@ -207,13 +223,25 @@ The 0G adapter uses the official `@0gfoundation/0g-storage-ts-sdk` package and r
 
 `demo-output/` is ignored by git because it is generated proof output.
 
+Run the web prototype:
+
+```bash
+npm run dev
+```
+
+The web app shows the core product loop:
+
+```text
+Opportunity -> Runner -> Case File -> Maintainer Review -> Scoreboard
+```
+
 ## Next Steps
 
-1. Add local storage adapter.
-2. Add 0G storage adapter for `evidence-packet.json`.
-3. Build minimal web app around the real packet data.
-4. Add human approval and maintainer review state in the UI.
-5. Add architecture diagram and demo script.
+1. Wire imported GitHub Work Leads into the web Work Queue.
+2. Add a public-safe packet share view.
+3. Add project creation, invite, and agent delegation flows.
+4. Add Docker-backed sandbox execution.
+5. Add demo video script and deployment notes.
 
 ## License
 
