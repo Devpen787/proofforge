@@ -478,7 +478,7 @@ function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
     <section className="page-grid case-grid">
       <header className="page-header">
         <span>Case File / {demoPacket.id}</span>
-        <code>Download JSON via npm run demo:packet</code>
+        <button className="primary-action" onClick={onSubmit}>Submit Packet</button>
       </header>
       <div className="panel">
         <p className="small-label">Maintainer summary</p>
@@ -537,6 +537,7 @@ function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
         <p className="small-label">Submit decision</p>
         <h2>Evidence first. Code later.</h2>
         <p>If accepted: $8 earned, +12 reputation, +2 credits.</p>
+        <code>Download JSON via npm run demo:packet</code>
         <div className="share-split">
           <div>
             <strong>Shared with maintainer</strong>
@@ -568,6 +569,9 @@ function MaintainerScreen({ accepted, onAccept }: { accepted: boolean; onAccept:
     <section className="page-grid maintainer-grid">
       <header className="page-header">
         <span>Maintainer Workspace</span>
+        <button className="primary-action" onClick={onAccept} disabled={accepted}>
+          {accepted ? "Accepted" : "Accept & Mark Earned"}
+        </button>
       </header>
       <div className="metric-strip compact">
         <Metric label="Unresolved" value={accepted ? "0" : "1"} />

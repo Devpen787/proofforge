@@ -842,21 +842,36 @@ code {
 
   .sidebar {
     min-height: auto;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav-button {
+    width: auto;
+    white-space: nowrap;
+    padding: 9px 11px;
+  }
+
+  .node-status {
+    display: none;
   }
 
   .main {
-    width: 100vw;
-    max-width: 100vw;
     padding: 28px;
+    overflow: visible;
   }
 
   .hero-card {
-    width: calc(100vw - 56px);
     padding: 34px 28px;
   }
 
   .hero-card h1 {
-    max-width: 300px;
     font-size: 26px;
     line-height: 1.12;
   }
@@ -867,7 +882,7 @@ code {
   .proof-loop-card,
   .metric,
   .work-row {
-    max-width: calc(100vw - 56px);
+    max-width: 100%;
   }
 
   .page-grid-hero,
@@ -882,15 +897,37 @@ code {
     grid-template-columns: 1fr;
   }
 
-  .pipeline-strip,
+  .maintainer-decision-grid,
+  .source-grid,
+  .import-command,
+  .agent-card-grid,
+  .review-grid,
+  .share-split,
   .work-lead-card {
     display: grid;
     grid-template-columns: 1fr;
   }
 
+  .pipeline-strip,
+  .work-row,
+  .artifact-row,
+  .activity-row,
+  .decision-row {
+    flex-wrap: wrap;
+  }
+
+  .work-main,
+  .work-owner {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .status-block {
+    min-width: min(100%, 180px);
+  }
+
   .page-header,
   .section-heading,
-  .decision-row,
   .project-hero {
     align-items: stretch;
     flex-direction: column;
@@ -901,15 +938,19 @@ code {
     width: 100%;
   }
 
+  .page-header button,
+  .section-heading button,
+  .project-hero button,
+  .decision-row button {
+    width: 100%;
+  }
+
   .section-heading h2,
-  .section-heading .secondary-action,
-  .page-header .primary-action,
   .page-header code,
   .pipeline-step,
   .project-hero h2,
-  .project-hero p,
-  .project-hero .status-pill {
-    max-width: 300px;
+  .project-hero p {
+    max-width: 100%;
   }
 }
 
@@ -919,32 +960,20 @@ code {
   }
 
   .hero-card {
-    width: calc(100vw - 36px);
     padding: 28px 22px;
   }
 
   .panel,
   .terminal-card,
   .decision-panel,
-  .proof-orbit,
+  .proof-loop-card,
   .metric,
   .work-row {
-    max-width: calc(100vw - 36px);
+    max-width: 100%;
   }
 
   .hero-card h1 {
     font-size: 30px;
-  }
-
-  .section-heading h2,
-  .section-heading .secondary-action,
-  .page-header .primary-action,
-  .page-header code,
-  .pipeline-step,
-  .project-hero h2,
-  .project-hero p,
-  .project-hero .status-pill {
-    max-width: 260px;
   }
 
   .section-heading h2 {
