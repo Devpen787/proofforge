@@ -280,8 +280,8 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
           <p>{demoWorkLead.recommendation}</p>
           <div className="decision-row">
             <button className="primary-action">Ask clarification</button>
-            <button className="secondary-action" onClick={onRun}>
-              Convert anyway
+            <button className="secondary-action" disabled title="Missing browser versions must be clarified first">
+              Convert when ready
             </button>
             <button className="danger-action">Reject</button>
           </div>

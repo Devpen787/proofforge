@@ -209,6 +209,13 @@ button {
   cursor: not-allowed;
 }
 
+.secondary-action:disabled,
+.warning-action:disabled,
+.danger-action:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 .secondary-action {
   background: #f8fafc;
   color: #334155;
