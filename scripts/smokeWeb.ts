@@ -120,6 +120,11 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Import external task" }).click();
     await requireText(page, "Imported Work Lead ready for triage");
     await requireText(page, "External actionNone");
+    await page.getByRole("button", { name: "Ask clarification" }).click();
+    await requireText(page, "Mission-ready after clarification.");
+    await page.getByRole("button", { name: "Convert to Mission" }).click();
+    await requireText(page, "Converted mission");
+    await requireText(page, "Checkout QA verification is now a scoped Mission");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Run your first proof packet" }).click();
     await page.getByRole("button", { name: "Run safest starter mission" }).click();

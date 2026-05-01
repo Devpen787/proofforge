@@ -42,6 +42,8 @@ function App() {
   const [projectInviteSent, setProjectInviteSent] = React.useState(false);
   const [projectAgentAttached, setProjectAgentAttached] = React.useState(false);
   const [projectWorkSuggested, setProjectWorkSuggested] = React.useState(false);
+  const [workLeadClarified, setWorkLeadClarified] = React.useState(false);
+  const [workLeadConverted, setWorkLeadConverted] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
     setScreenState(nextScreen);
@@ -113,7 +115,11 @@ function App() {
           <WorkQueueScreen
             importedLead={importedLead}
             projectWorkSuggested={projectWorkSuggested}
+            workLeadClarified={workLeadClarified}
+            workLeadConverted={workLeadConverted}
             onImport={() => setImportedLead(true)}
+            onClarifyLead={() => setWorkLeadClarified(true)}
+            onConvertLead={() => setWorkLeadConverted(true)}
             onRun={() => setScreen("run")}
           />
         )}
@@ -549,12 +555,20 @@ function ProjectsScreen({
 function WorkQueueScreen({
   importedLead,
   projectWorkSuggested,
+  workLeadClarified,
+  workLeadConverted,
   onImport,
+  onClarifyLead,
+  onConvertLead,
   onRun
 }: {
   importedLead: boolean;
   projectWorkSuggested: boolean;
+  workLeadClarified: boolean;
+  workLeadConverted: boolean;
   onImport: () => void;
+  onClarifyLead: () => void;
+  onConvertLead: () => void;
   onRun: () => void;
 }) {
   return (
@@ -642,38 +656,60 @@ function WorkQueueScreen({
         </div>
         <div className="proof-score">
           <span>Proofability</span>
-          <strong>{demoWorkLead.proofability}</strong>
-          <small>Good, but not mission-ready.</small>
+          <strong>{workLeadClarified ? "88%" : demoWorkLead.proofability}</strong>
+          <small>{workLeadConverted ? "Converted to Mission." : workLeadClarified ? "Mission-ready after clarification." : "Good, but not mission-ready."}</small>
         </div>
         <div className="triage-grid">
           <StatusBlock label="Risk" value={demoWorkLead.risk} />
           <StatusBlock label="Reward" value={demoWorkLead.reward} />
           <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
-          <StatusBlock label="Missing" value={demoWorkLead.missing} />
-          <StatusBlock label="Can convert?" value={demoWorkLead.canConvert} />
-          <StatusBlock label="Reason" value={demoWorkLead.conversionReason} />
+          <StatusBlock label="Missing" value={workLeadClarified ? "None" : demoWorkLead.missing} />
+          <StatusBlock label="Can convert?" value={workLeadClarified ? "Yes" : demoWorkLead.canConvert} />
+          <StatusBlock label="Reason" value={workLeadClarified ? "Browser targets confirmed by owner." : demoWorkLead.conversionReason} />
         </div>
         <div className="recommendation-box">
           <strong>Recommendation</strong>
-          <p>{demoWorkLead.recommendation}</p>
+          <p>{workLeadConverted ? "Mission created. The work is now scoped and safe to run." : workLeadClarified ? "Convert this clarified Work Lead into a scoped Mission." : demoWorkLead.recommendation}</p>
+          {workLeadClarified && (
+            <div className="mission-ready-card" role="status">
+              <span className="status-pill safe">{workLeadConverted ? "Mission created" : "Mission-ready"}</span>
+              <strong>Checkout QA verification has defined browser targets and an acceptance owner.</strong>
+              <small>Required evidence: Chrome and Safari screenshots, console logs, environment summary, and maintainer-safe packet.</small>
+            </div>
+          )}
           <div className="diagnosis-grid">
             {demoWorkLeadDiagnosis.map((item) => (
-              <StatusRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
+              <StatusRow
+                key={item.label}
+                label={item.label}
+                value={workLeadClarified && item.label === "Missing detail" ? "Browser versions confirmed" : workLeadClarified && item.label === "Conversion gate" ? "Mission-ready" : item.value}
+                tone={workLeadClarified && (item.label === "Missing detail" || item.label === "Conversion gate") ? "good" : item.tone}
+              />
             ))}
           </div>
-          <div className="clarification-box">
+          {!workLeadClarified && <div className="clarification-box">
             <span>Next clarification question</span>
             <strong>{demoWorkLead.nextQuestion}</strong>
-          </div>
+          </div>}
           <div className="decision-row">
-            <button className="primary-action">Ask clarification</button>
-            <button className="secondary-action" disabled title="Missing browser versions must be clarified first">
-              Convert when ready
+            <button className="primary-action" onClick={onClarifyLead} disabled={workLeadClarified}>{workLeadClarified ? "Clarification received" : "Ask clarification"}</button>
+            <button className="secondary-action" disabled={!workLeadClarified || workLeadConverted} title={workLeadClarified ? "Work Lead is ready to convert" : "Missing browser versions must be clarified first"} onClick={onConvertLead}>
+              {workLeadConverted ? "Converted to Mission" : workLeadClarified ? "Convert to Mission" : "Convert when ready"}
             </button>
             <button className="danger-action">Reject</button>
           </div>
         </div>
       </div>
+      {workLeadConverted && (
+        <div className="panel mission-created-panel">
+          <h2>Converted mission</h2>
+          <p>Checkout QA verification is now a scoped Mission with owner, artifacts, risk, and approval rules.</p>
+          <StatusRow label="Owner" value="External buyer" tone="good" />
+          <StatusRow label="Risk" value="Medium" tone="bad" />
+          <StatusRow label="Approval" value="Evidence-only before submit" tone="good" />
+          <button className="primary-action full" onClick={onRun}>Run converted mission</button>
+        </div>
+      )}
       <div className="panel">
         <h2>Scoped starter mission</h2>
         <p>Validate installation docs in a clean fixture. This is safe, local, and evidence-only.</p>
@@ -695,8 +731,14 @@ function WorkQueueScreen({
         <StatusRow label="Objective" value="Clear" tone="good" />
         <StatusRow label="Reward path" value="External" tone="good" />
         <StatusRow label="Acceptance owner" value="Known" tone="good" />
-        <StatusRow label="Missing data" value="Browser versions" tone="bad" />
-        <p className="quiet-copy">ProofForge can import the work now, but will not run the mission until the missing test target is clarified.</p>
+        <StatusRow label="Missing data" value={workLeadClarified ? "None" : "Browser versions"} tone={workLeadClarified ? "good" : "bad"} />
+        <p className="quiet-copy">
+          {workLeadConverted
+            ? "This Work Lead has been converted into a scoped Mission and can now be run with human approval gates."
+            : workLeadClarified
+              ? "The missing target was clarified. This Work Lead can become a Mission."
+              : "ProofForge can import the work now, but will not run the mission until the missing test target is clarified."}
+        </p>
       </div>
     </section>
   );

@@ -573,6 +573,7 @@ button {
 .import-result-card,
 .project-action-banner,
 .project-work-lead-card,
+.mission-ready-card,
 .clarification-box {
   border: 1px solid #e2e8f0;
   background: #f8fafc;
@@ -819,6 +820,31 @@ button {
 .clarification-box {
   margin: 12px 0;
   background: white;
+}
+
+.mission-ready-card {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.mission-ready-card strong,
+.mission-ready-card small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.mission-ready-card small {
+  color: #475569;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.mission-created-panel {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
 }
 
 .clarification-box span,
