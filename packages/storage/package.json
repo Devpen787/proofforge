@@ -1,0 +1,15 @@
+{
+  "name": "@proofforge/storage",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@0gfoundation/0g-storage-ts-sdk": "^1.2.8",
+    "ethers": "6.13.1"
+  }
+}
