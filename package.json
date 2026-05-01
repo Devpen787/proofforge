@@ -13,6 +13,7 @@
     "convert:lead": "tsx apps/runner/src/convertWorkLead.ts",
     "import:github": "tsx apps/runner/src/importGitHubIssue.ts",
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",
+    "sync:web-proof": "tsx scripts/generateWebProofData.ts",
     "dev": "npm run dev -w apps/web",
     "release:payout": "tsx apps/runner/src/releasePayout.ts",
     "smoke:web": "tsx scripts/smokeWeb.ts",

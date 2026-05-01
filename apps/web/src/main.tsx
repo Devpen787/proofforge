@@ -23,6 +23,7 @@ import {
   demoWorkLead,
   demoWorkLeadDiagnosis
 } from "./demoData";
+import { generatedProofSummary } from "./generatedProof";
 import { routeLabels, screens, type Screen } from "./routes";
 
 type ActiveMission = "docs" | "checkout";
@@ -1611,9 +1612,11 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
 }
 
 function ProofDemoScreen({ onStart, onEvidence }: { onStart: () => void; onEvidence: () => void }) {
+  const generated = generatedProofSummary;
   const proofCommands = [
     { label: "Run all tests", command: "npm test", result: "Validates schemas, conversion, verifier, payout, project, and route contracts." },
     { label: "Generate packet", command: "npm run demo:packet", result: "Writes evidence-packet.json, case-file.md, policy.json, public-packet.json, payout.json, and project.json." },
+    { label: "Sync web proof", command: "npm run sync:web-proof", result: "Copies sanitized generated artifact fields into the browser demo without exposing local paths." },
     { label: "Release payout record", command: "npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json", result: "Marks payout released without pretending money moved automatically." },
     { label: "Import real work", command: "npm run import:github -- --url https://github.com/microsoft/vscode/issues/1", result: "Reads a public GitHub issue into a local Work Lead. No public action is taken." },
     { label: "Smoke the product", command: "npm run smoke:web", result: "Checks desktop and phone routes plus the end-to-end proof journey." }
@@ -1645,11 +1648,12 @@ function ProofDemoScreen({ onStart, onEvidence }: { onStart: () => void; onEvide
           </div>
         </div>
         <aside className="proof-demo-result-card">
-          <strong>Core demo output</strong>
-          <small>demo-output/docs-install/packet/</small>
-          <StatusRow label="Packet" value="evidence-packet.json" tone="good" />
-          <StatusRow label="Case file" value="case-file.md" tone="good" />
-          <StatusRow label="Public proof" value="public-packet.json" tone="good" />
+          <strong>Synced generated output</strong>
+          <small>{generated.generatedFrom}</small>
+          <StatusRow label="Packet" value={generated.packetId} tone="good" />
+          <StatusRow label="Policy" value={generated.policyStatus} tone="good" />
+          <StatusRow label="Verifier" value={generated.verifierStatus} tone="good" />
+          <StatusRow label="Payout" value={`${generated.payout.amount} ${generated.payout.status}`} tone="good" />
           <button className="secondary-action full" onClick={onEvidence}>Open Case File</button>
         </aside>
       </div>
@@ -1660,6 +1664,31 @@ function ProofDemoScreen({ onStart, onEvidence }: { onStart: () => void; onEvide
             <strong>{step}</strong>
           </div>
         ))}
+      </div>
+      <div className="panel synced-proof-panel wide">
+        <p className="small-label">Synced from generated artifacts</p>
+        <h2>The web demo is reading sanitized proof output.</h2>
+        <div className="synced-proof-layout">
+          <div className="synced-proof-summary">
+            <strong>{generated.publicPacketId}</strong>
+            <p>{generated.evidenceSummary}</p>
+            <StatusRow label="Accepted by" value={generated.acceptedBy} tone="good" />
+            <StatusRow label="Human approval" value={generated.humanApprovalStatus} tone="good" />
+            <StatusRow label="Project credit" value={`+${generated.projectCredit.points} points for ${generated.projectCredit.contributor}`} tone="good" />
+            <StatusRow label="Reward pool" value={generated.projectCredit.rewardPool} tone="good" />
+          </div>
+          <div className="synced-proof-artifacts">
+            {generated.publicArtifacts.map((artifact) => (
+              <div className="artifact-row rich-artifact-row" key={artifact.label}>
+                <span>
+                  <strong>{artifact.label}</strong>
+                  <small>{artifact.mediaType}</small>
+                </span>
+                <code>{artifact.sha256Short}</code>
+              </div>
+            ))}
+          </div>
+        </div>
       </div>
       <div className="panel proof-command-panel">
         <p className="small-label">Commands reviewers can run</p>

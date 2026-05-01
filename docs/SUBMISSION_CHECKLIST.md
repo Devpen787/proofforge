@@ -22,10 +22,11 @@ Use this before final hackathon submission.
 
 1. State the problem: agents create more output, but maintainers need trusted proof.
 2. Run `npm run demo:packet`.
-3. Show generated artifacts under `demo-output/docs-install/packet/`.
-4. Run `npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json`.
-5. Open the web app at `http://localhost:5173/#opportunity`.
-6. Click through:
+3. Run `npm run sync:web-proof` to sync sanitized generated proof data into the browser demo.
+4. Show generated artifacts under `demo-output/docs-install/packet/`.
+5. Run `npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json`.
+6. Open the web app at `http://localhost:5173/#opportunity`.
+7. Click through:
    - Opportunity
    - First Run
    - Work Queue
@@ -34,7 +35,8 @@ Use this before final hackathon submission.
    - Maintainer
    - Scoreboard
    - Public Proof
-7. Close with: ProofForge turns existing work into safe missions, evidence packets, accepted proof, and credit.
+   - Proof Demo
+8. Close with: ProofForge turns existing work into safe missions, evidence packets, accepted proof, and credit.
 
 The exact terminal files and routes to show are listed in [DEMO_SCRIPT.md](DEMO_SCRIPT.md#recording-checklist).
 
@@ -45,6 +47,7 @@ npm install
 npm test
 npm run build
 npm run demo:packet
+npm run sync:web-proof
 npm run dev
 ```
 
@@ -102,6 +105,7 @@ Run:
 npm test
 npm run build
 npm run demo:packet
+npm run sync:web-proof
 ```
 
 Then verify the browser routes above and confirm the submission form has the repository, deployed demo URL, and demo video URL.

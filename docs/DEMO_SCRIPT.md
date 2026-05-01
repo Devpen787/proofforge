@@ -162,6 +162,7 @@ Show these terminal commands:
 npm test
 npm run build
 npm run demo:packet
+npm run sync:web-proof
 npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
 ```
 
@@ -188,6 +189,7 @@ Show these browser routes:
 /#maintainer
 /#scoreboard
 /#public-proof
+/#proof-demo
 ```
 
 Do not claim:

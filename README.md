@@ -206,6 +206,7 @@ Generate the first evidence packet:
 
 ```bash
 npm run demo:packet
+npm run sync:web-proof
 ```
 
 That command writes:
@@ -218,6 +219,8 @@ demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
 demo-output/docs-install/packet/project.json
 ```
+
+`sync:web-proof` copies sanitized generated packet, verifier, policy, payout, and project-credit fields into the browser demo without exposing local filesystem paths or raw logs.
 
 By default, the packet is stored through the local storage adapter and the packet records a `file://` storage URI.
 

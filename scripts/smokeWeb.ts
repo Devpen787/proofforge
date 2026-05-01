@@ -136,6 +136,9 @@ async function runSmoke() {
     await page.goto(`${baseUrl}/#proof-demo`, { waitUntil: "networkidle" });
     await requireText(page, "Working proof, not just a product sketch.");
     await requireText(page, "npm run demo:packet");
+    await requireText(page, "npm run sync:web-proof");
+    await requireText(page, "Synced from generated artifacts");
+    await requireText(page, "packet_docs_install_demo");
     await requireText(page, "Generated proof objects");
     await page.getByRole("button", { name: "Open Case File" }).click();
     await requireText(page, "Evidence packet preview");

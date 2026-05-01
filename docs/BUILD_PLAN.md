@@ -33,6 +33,7 @@ Run it with:
 
 ```bash
 npm run demo:packet
+npm run sync:web-proof
 ```
 
 This writes generated artifacts under:
@@ -40,6 +41,8 @@ This writes generated artifacts under:
 ```text
 demo-output/docs-install/
 ```
+
+`sync:web-proof` copies sanitized generated proof fields into the web prototype so the product can show real packet, policy, verifier, payout, and project-credit values without exposing raw local paths.
 
 The next critical step is real 0G storage for the generated packet.
 
