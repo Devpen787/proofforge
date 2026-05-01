@@ -92,6 +92,7 @@ http://localhost:5173/#public-proof
 - Payments are manual accounting artifacts only; no automatic transfer or escrow happens.
 - 0G storage is adapter-gated and uses local storage unless credentials are configured.
 - ProofForge does not post GitHub comments, open pull requests, or contact maintainers automatically.
+- Current dependency audit status is documented in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md).
 
 ## Final Pre-Submit Gate
 

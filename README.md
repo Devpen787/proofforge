@@ -317,6 +317,8 @@ For a route-by-route product walkthrough, see [docs/VISUAL_WALKTHROUGH.md](docs/
 
 For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md).
 
+For dependency audit status and current mitigations, see [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md).
+
 ## Next Steps
 
 1. Add a deployed demo URL.
