@@ -509,6 +509,29 @@ pre {
   border-bottom: 1px solid #e2e8f0;
 }
 
+.rich-artifact-row {
+  align-items: flex-start;
+}
+
+.rich-artifact-row span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.rich-artifact-row strong,
+.rich-artifact-row small {
+  overflow-wrap: anywhere;
+}
+
+.rich-artifact-row > small {
+  flex: 0 0 auto;
+  max-width: 112px;
+  text-align: right;
+  color: #047857;
+  font-weight: 850;
+}
+
 .good {
   color: #047857;
 }

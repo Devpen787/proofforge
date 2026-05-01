@@ -82,6 +82,41 @@ export const demoPacket = {
   artifacts: ["evidence-packet.json", "case-file.md", "runner-result.json", "stdout.log", "stderr.log", "environment.json"]
 };
 
+export const demoArtifacts = [
+  {
+    name: "evidence-packet.json",
+    visibility: "Maintainer",
+    purpose: "Full verified packet with mission, run, policy, verifier, and payout context."
+  },
+  {
+    name: "case-file.md",
+    visibility: "Maintainer",
+    purpose: "Human-readable review surface for the packet."
+  },
+  {
+    name: "policy.json",
+    visibility: "Maintainer",
+    purpose: "Policy decision showing the mission stayed local and evidence-only."
+  },
+  {
+    name: "public-packet.json",
+    visibility: "Public-safe",
+    purpose: "Shareable proof summary with local paths and private refs removed."
+  },
+  {
+    name: "payout.json",
+    visibility: "Private",
+    purpose: "Earned payout record created after acceptance."
+  },
+  {
+    name: "project.json",
+    visibility: "Project",
+    purpose: "Project credit ledger showing who earned credit for accepted proof."
+  }
+];
+
+export const demoPublicArtifacts = demoArtifacts.filter((artifact) => artifact.visibility === "Public-safe");
+
 export const demoActivity = [
   "Proof packet generated",
   "Verifier checks passed",
