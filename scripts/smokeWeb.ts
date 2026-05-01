@@ -3,7 +3,7 @@ import { chromium, type Page } from "playwright";
 
 const port = 5173;
 const baseUrl = `http://localhost:${port}`;
-const routes = ["opportunity", "first-run", "projects", "work-queue", "run", "case-file", "maintainer", "scoreboard", "public-proof"];
+const routes = ["opportunity", "first-run", "projects", "work-queue", "mission-detail", "run", "case-file", "maintainer", "scoreboard", "public-proof"];
 const viewports = [
   { name: "desktop", width: 1440, height: 950 },
   { name: "phone", width: 390, height: 844 }
@@ -105,6 +105,9 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Earn your first proof packet" }).click();
     await requireText(page, "Earn your first accepted proof in six steps.");
     await page.getByRole("button", { name: "Run safest earning mission" }).click();
+    await requireText(page, "Accept mission before agents run");
+    await requireText(page, "Proof earns value only after acceptance.");
+    await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await requireText(page, "Mission lifecycle");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Evidence first. Code later.");
@@ -126,12 +129,16 @@ async function runSmoke() {
     await requireText(page, "Converted mission");
     await requireText(page, "Checkout QA verification is now a scoped Mission");
     await page.getByRole("button", { name: "Run converted mission" }).click();
+    await requireText(page, "Checkout QA verification");
+    await requireText(page, "Earn if accepted");
+    await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await requireText(page, "Runner / Checkout QA verification");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Verified checkout QA with clarified browser targets.");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Earn your first proof packet" }).click();
     await page.getByRole("button", { name: "Run safest earning mission" }).click();
+    await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await page.getByRole("button", { name: "Request Revision" }).click();
@@ -140,6 +147,7 @@ async function runSmoke() {
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Earn your first proof packet" }).click();
     await page.getByRole("button", { name: "Run safest earning mission" }).click();
+    await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await page.getByRole("button", { name: "Reject Packet" }).click();

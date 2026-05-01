@@ -101,7 +101,7 @@ function App() {
         )}
         {screen === "first-run" && <FirstRunScreen onRun={() => {
           setActiveMission("docs");
-          setScreen("run");
+          setScreen("mission-detail");
         }} onQueue={() => setScreen("work-queue")} />}
         {screen === "projects" && (
           <ProjectsScreen
@@ -130,8 +130,15 @@ function App() {
             onConvertLead={() => setWorkLeadConverted(true)}
             onRun={(mission) => {
               setActiveMission(mission);
-              setScreen("run");
+              setScreen("mission-detail");
             }}
+          />
+        )}
+        {screen === "mission-detail" && (
+          <MissionDetailScreen
+            activeMission={activeMission}
+            onBack={() => setScreen("work-queue")}
+            onAccept={() => setScreen("run")}
           />
         )}
         {screen === "run" && (
@@ -226,6 +233,7 @@ function ProofProgressBand({
     "first-run": 1,
     projects: 1,
     "work-queue": 1,
+    "mission-detail": 1,
     run: 2,
     "case-file": 3,
     maintainer: 4,
@@ -393,6 +401,99 @@ function WorkList({ onStart }: { onStart: () => void }) {
           <span className="start-pill">Start</span>
         </button>
       ))}
+    </section>
+  );
+}
+
+function MissionDetailScreen({
+  activeMission,
+  onBack,
+  onAccept
+}: {
+  activeMission: ActiveMission;
+  onBack: () => void;
+  onAccept: () => void;
+}) {
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
+  const owner = activeMission === "checkout" ? demoWorkLead.acceptsProof : "Commons reviewer";
+  const proofShape = activeMission === "checkout" ? "Browser logs, screenshots, environment, and verifier notes." : "Install transcript, environment, runner output, and verifier notes.";
+  const successCriteria =
+    activeMission === "checkout"
+      ? ["Chrome checkout completes with expected confirmation", "Safari result is captured with logs", "No payment credentials or customer data are exposed"]
+      : ["Documented command is run in a clean fixture", "Failure or success is captured with logs", "Maintainer can understand the next fix"];
+  const blockedActions = ["Open PRs", "Post public comments", "Spend funds", "Access private repos"];
+
+  return (
+    <section className="page-grid mission-detail-grid">
+      <header className="page-header">
+        <span>Mission Detail / {mission.title}</span>
+        <button className="secondary-action" onClick={onBack}>Back to Work Queue</button>
+      </header>
+
+      <div className="mission-brief">
+        <div>
+          <p className="small-label">Accept mission before agents run</p>
+          <h2>{mission.title}</h2>
+          <p>{activeMission === "checkout" ? "This Work Lead was clarified and converted into a proofable browser QA mission." : "This starter mission is safe, local, and designed to create the first accepted proof packet."}</p>
+        </div>
+        <div className="mission-reward-card">
+          <span>Earn if accepted</span>
+          <strong>{mission.reward}</strong>
+          <small>+12 reputation, +2 credits</small>
+        </div>
+      </div>
+
+      <div className="panel mission-detail-main">
+        <p className="small-label">What must be proven</p>
+        <h2>{packet.objective}</h2>
+        <div className="mission-detail-facts">
+          <StatusBlock label="Accepts proof" value={owner} />
+          <StatusBlock label="Risk" value={mission.risk} />
+          <StatusBlock label="Runtime" value={mission.runtime} />
+          <StatusBlock label="Repo / source" value={mission.repo} />
+        </div>
+        <div className="mission-section-grid">
+          <div>
+            <h3>Success criteria</h3>
+            <ul className="check-list">
+              {successCriteria.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h3>Required proof</h3>
+            <p className="quiet-copy">{proofShape}</p>
+            <div className="tag-row">
+              {packet.artifacts.slice(0, 4).map((artifact) => (
+                <span className="status-pill safe" key={artifact}>{artifact}</span>
+              ))}
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div className="panel">
+        <p className="small-label">Agent permissions</p>
+        <h2>Useful, but boxed in.</h2>
+        <StatusRow label="Clone/load repo" value="Allowed" tone="good" />
+        <StatusRow label="Run commands" value="Allowed" tone="good" />
+        <StatusRow label="Capture logs" value="Allowed" tone="good" />
+        {blockedActions.map((action) => (
+          <StatusRow key={action} label={action} value="Blocked" tone="bad" />
+        ))}
+      </div>
+
+      <div className="decision-panel mission-accept-panel">
+        <p className="small-label">Mission terms</p>
+        <h2>Proof earns value only after acceptance.</h2>
+        <p>Run the agent locally, review the packet, then submit only if the evidence is safe and useful.</p>
+        <StatusRow label="Public action" value="None before approval" tone="good" />
+        <StatusRow label="Payout" value="Earned only if accepted" tone="good" />
+        <StatusRow label="Release" value="Manual accounting" tone="good" />
+        <button className="primary-action full" onClick={onAccept}>Accept mission and run agent</button>
+      </div>
     </section>
   );
 }

@@ -8,6 +8,7 @@ describe("web routes", () => {
       "first-run",
       "projects",
       "work-queue",
+      "mission-detail",
       "run",
       "case-file",
       "maintainer",
@@ -20,6 +21,7 @@ describe("web routes", () => {
     expect(Object.keys(routeLabels).sort()).toEqual([...screens].sort());
     expect(routeLabels["first-run"]).toBe("First Run");
     expect(routeLabels["work-queue"]).toBe("Work Queue");
+    expect(routeLabels["mission-detail"]).toBe("Mission Detail");
     expect(routeLabels["public-proof"]).toBe("Public Proof");
   });
 });

@@ -191,6 +191,7 @@ button {
 .scoreboard-grid,
 .work-queue-grid,
 .projects-grid,
+.mission-detail-grid,
 .first-run-grid {
   grid-template-columns: 1fr 1fr 320px;
 }
@@ -806,6 +807,94 @@ button {
   color: #475569;
 }
 
+.mission-brief {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 22px;
+  align-items: end;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.mission-brief h2 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.02;
+}
+
+.mission-brief p:not(.small-label) {
+  max-width: 720px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.mission-reward-card {
+  border: 1px solid #a7f3d0;
+  border-radius: 22px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.mission-reward-card span,
+.mission-reward-card small,
+.mission-reward-card strong {
+  display: block;
+}
+
+.mission-reward-card span,
+.mission-reward-card small {
+  color: #047857;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mission-reward-card strong {
+  margin: 8px 0 5px;
+  color: #047857;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.mission-detail-main {
+  grid-column: span 2;
+}
+
+.mission-detail-main h2 {
+  font-size: 28px;
+}
+
+.mission-detail-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.mission-section-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+}
+
+.mission-section-grid h3 {
+  margin: 0 0 12px;
+}
+
+.mission-accept-panel {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.mission-accept-panel p {
+  color: #475569;
+}
+
 .tag-row,
 .triage-grid {
   justify-content: flex-start;
@@ -1293,6 +1382,7 @@ code {
   .scoreboard-grid,
   .work-queue-grid,
   .projects-grid,
+  .mission-detail-grid,
   .first-run-grid,
   .metric-strip {
     grid-template-columns: 1fr;
@@ -1317,6 +1407,9 @@ code {
   .case-dossier-body,
   .compact-case-grid,
   .verification-section,
+  .mission-brief,
+  .mission-detail-facts,
+  .mission-section-grid,
   .review-grid,
   .share-split,
   .work-lead-card {
@@ -1373,6 +1466,11 @@ code {
   }
 
   .case-dossier {
+    grid-column: 1;
+  }
+
+  .mission-brief,
+  .mission-detail-main {
     grid-column: 1;
   }
 
