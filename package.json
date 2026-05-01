@@ -15,11 +15,13 @@
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",
     "dev": "npm run dev -w apps/web",
     "release:payout": "tsx apps/runner/src/releasePayout.ts",
+    "smoke:web": "tsx scripts/smokeWeb.ts",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
     "@types/node": "^20.12.12",
+    "playwright": "^1.59.1",
     "tsx": "^4.19.4",
     "typescript": "^5.4.5",
     "vitest": "^1.6.0"
