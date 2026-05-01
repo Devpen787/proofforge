@@ -425,7 +425,10 @@ button {
 .status-block,
 .proof-score,
 .recommendation-box,
-.agent-card {
+.agent-card,
+.source-card,
+.import-command,
+.clarification-box {
   border: 1px solid #e2e8f0;
   background: #f8fafc;
   border-radius: 18px;
@@ -441,6 +444,48 @@ button {
 
 .pipeline-step {
   flex: 1;
+}
+
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.source-card small {
+  display: block;
+  color: #64748b;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.import-command {
+  display: grid;
+  grid-template-columns: minmax(180px, 0.8fr) minmax(0, 1.2fr);
+  gap: 14px;
+  align-items: center;
+  margin-top: 14px;
+}
+
+.import-command span,
+.import-command small {
+  display: block;
+}
+
+.import-command small {
+  margin-top: 4px;
+  color: #64748b;
+  font-weight: 700;
+}
+
+.import-command code {
+  overflow-wrap: anywhere;
+  border-radius: 14px;
+  background: white;
+  color: #334155;
+  padding: 10px;
+  font-size: 12px;
 }
 
 .pipeline-step strong,
@@ -495,6 +540,28 @@ button {
 .triage-grid,
 .recommendation-box {
   grid-column: 1 / -1;
+}
+
+.clarification-box {
+  margin: 12px 0;
+  background: white;
+}
+
+.clarification-box span,
+.clarification-box strong {
+  display: block;
+}
+
+.clarification-box span {
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.clarification-box strong {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
 }
 
 .status-block {

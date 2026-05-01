@@ -51,6 +51,19 @@ export const demoSourcePipeline = [
   { label: "Triage", value: "3" }
 ];
 
+export const demoSourceTypes = [
+  { name: "GitHub issue", detail: "Public bugs, PRs, docs requests", status: "Live import" },
+  { name: "Foundation backlog", detail: "Ecosystem maintenance work", status: "Planned" },
+  { name: "Marketplace task", detail: "External QA and verification work", status: "Manual paste" },
+  { name: "Community request", detail: "Project steward suggestions", status: "Manual paste" }
+];
+
+export const demoImportExample = {
+  source: "GitHub issue",
+  command: "npm run import:github -- --url https://github.com/microsoft/vscode/issues/1 --out demo-output/imports",
+  result: "Creates a Work Lead. No comments, PRs, or payments are created."
+};
+
 export const demoProject = {
   name: "Docs Onboarding Sprint",
   status: "Active",
@@ -104,6 +117,9 @@ export const demoWorkLead = {
   acceptsProof: "External buyer",
   missing: "Exact browser versions",
   recommendation: "Ask one clarification before running.",
+  canConvert: "Not yet",
+  conversionReason: "Missing exact browser versions and acceptance contact.",
+  nextQuestion: "Which Chrome and Safari versions should be tested?",
   categories: ["Marketplace task", "Browser QA", "Evidence-only"]
 };
 

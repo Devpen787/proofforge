@@ -9,7 +9,9 @@ import {
   demoProject,
   demoProofLoop,
   demoPublicArtifacts,
+  demoImportExample,
   demoSourcePipeline,
+  demoSourceTypes,
   demoWork,
   demoWorkLead
 } from "./demoData";
@@ -293,6 +295,24 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
             </div>
           ))}
         </div>
+        <div className="source-grid" aria-label="Work source categories">
+          {demoSourceTypes.map((source) => (
+            <div className="source-card" key={source.name}>
+              <div className="section-heading">
+                <strong>{source.name}</strong>
+                <span className="status-pill safe">{source.status}</span>
+              </div>
+              <small>{source.detail}</small>
+            </div>
+          ))}
+        </div>
+        <div className="import-command">
+          <span>
+            <strong>{demoImportExample.source}</strong>
+            <small>{demoImportExample.result}</small>
+          </span>
+          <code>{demoImportExample.command}</code>
+        </div>
       </div>
       <div className="panel wide work-lead-card">
         <div>
@@ -317,10 +337,16 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
           <StatusBlock label="Reward" value={demoWorkLead.reward} />
           <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
           <StatusBlock label="Missing" value={demoWorkLead.missing} />
+          <StatusBlock label="Can convert?" value={demoWorkLead.canConvert} />
+          <StatusBlock label="Reason" value={demoWorkLead.conversionReason} />
         </div>
         <div className="recommendation-box">
           <strong>Recommendation</strong>
           <p>{demoWorkLead.recommendation}</p>
+          <div className="clarification-box">
+            <span>Next clarification question</span>
+            <strong>{demoWorkLead.nextQuestion}</strong>
+          </div>
           <div className="decision-row">
             <button className="primary-action">Ask clarification</button>
             <button className="secondary-action" disabled title="Missing browser versions must be clarified first">
