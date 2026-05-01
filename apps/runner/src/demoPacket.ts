@@ -1,10 +1,11 @@
-import { rm, writeFile } from "node:fs/promises";
+import { mkdir, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { runLocalMission } from "./index";
 import { buildEvidencePacket, createPublicPacketView, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
 import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
 import { createEarnedPayout } from "../../../packages/payments/src/index";
+import { evaluateMissionPolicy } from "../../../packages/policy/src/index";
 import { addMissionToProject, addWorkLeadToProject, createProject, recordAcceptedProof } from "../../../packages/projects/src/index";
 import { createLocalStorageAdapter, createZeroGStorageAdapter } from "../../../packages/storage/src/index";
 import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
@@ -18,6 +19,8 @@ export interface DemoPacketResult {
   storageProvider: string;
   storageUri: string;
   storageTxHash?: string;
+  policyPath: string;
+  policyStatus: string;
   verifierStatus: string;
   humanApprovalStatus: string;
   payoutStatus: string;
@@ -51,6 +54,15 @@ export async function runDemoPacket(outputDir = defaultOutputDir): Promise<DemoP
   await rm(outputDir, { recursive: true, force: true });
 
   const mission = convertWorkLeadToMission(lead);
+  const policyDecision = evaluateMissionPolicy(mission);
+  if (policyDecision.status === "blocked") {
+    throw new Error(`Mission blocked by policy: ${policyDecision.reasons.join(" ")}`);
+  }
+
+  const policyPath = resolve(outputDir, "packet", "policy.json");
+  await mkdir(resolve(outputDir, "packet"), { recursive: true });
+  await writeFile(policyPath, JSON.stringify(policyDecision, null, 2), "utf8");
+
   const project = addMissionToProject(
     addWorkLeadToProject(
       createProject({
@@ -136,6 +148,8 @@ export async function runDemoPacket(outputDir = defaultOutputDir): Promise<DemoP
     storageProvider: storageReceipt.provider,
     storageUri: storageReceipt.uri,
     storageTxHash: storageReceipt.txHash,
+    policyPath,
+    policyStatus: policyDecision.status,
     verifierStatus: packet.verifierResult.status,
     humanApprovalStatus: packet.humanApproval.status,
     payoutStatus: payout.status,
@@ -152,6 +166,8 @@ function printDemoPacketResult(result: DemoPacketResult): void {
   console.log(`Project state: ${result.projectPath}`);
   console.log(`Storage provider: ${result.storageProvider}`);
   console.log(`Storage URI: ${result.storageUri}`);
+  console.log(`Policy decision: ${result.policyPath}`);
+  console.log(`Policy status: ${result.policyStatus}`);
   if (result.storageTxHash) {
     console.log(`0G tx: ${result.storageTxHash}`);
   }

@@ -48,6 +48,7 @@ Point out the generated artifacts:
 ```text
 demo-output/docs-install/packet/evidence-packet.json
 demo-output/docs-install/packet/case-file.md
+demo-output/docs-install/packet/policy.json
 demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
 demo-output/docs-install/packet/project.json
@@ -72,6 +73,7 @@ Project
 Important details:
 
 - The runner captures logs and environment.
+- The policy gate keeps the mission local and evidence-only before execution.
 - The verifier checks the runner artifacts independently.
 - The public packet strips local paths and private storage refs.
 - The payout is earned, not automatically released.
