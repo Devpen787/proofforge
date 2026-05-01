@@ -570,6 +570,7 @@ button {
 .agent-card,
 .source-card,
 .import-command,
+.import-result-card,
 .clarification-box {
   border: 1px solid #e2e8f0;
   background: #f8fafc;
@@ -692,6 +693,29 @@ button {
   color: #334155;
   padding: 10px;
   font-size: 12px;
+}
+
+.import-result-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 16px;
+  margin-top: 14px;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.import-result-card h3,
+.import-result-card p {
+  margin: 0;
+}
+
+.import-result-card h3 {
+  font-size: 18px;
+}
+
+.import-result-card p:not(.small-label) {
+  margin-top: 8px;
+  color: #475569;
 }
 
 .pipeline-step strong,
@@ -1040,6 +1064,7 @@ code {
   .maintainer-decision-grid,
   .source-grid,
   .import-command,
+  .import-result-card,
   .agent-card-grid,
   .review-grid,
   .share-split,

@@ -34,6 +34,7 @@ function App() {
   const [submitted, setSubmitted] = React.useState(false);
   const [accepted, setAccepted] = React.useState(false);
   const [released, setReleased] = React.useState(false);
+  const [importedLead, setImportedLead] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
     setScreenState(nextScreen);
@@ -84,7 +85,7 @@ function App() {
         )}
         {screen === "first-run" && <FirstRunScreen onRun={() => setScreen("run")} onQueue={() => setScreen("work-queue")} />}
         {screen === "projects" && <ProjectsScreen onQueue={() => setScreen("work-queue")} />}
-        {screen === "work-queue" && <WorkQueueScreen onRun={() => setScreen("run")} />}
+        {screen === "work-queue" && <WorkQueueScreen importedLead={importedLead} onImport={() => setImportedLead(true)} onRun={() => setScreen("run")} />}
         {screen === "run" && (
           <RunnerScreen
             onPacket={() => {
@@ -429,7 +430,7 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
   );
 }
 
-function WorkQueueScreen({ onRun }: { onRun: () => void }) {
+function WorkQueueScreen({ importedLead, onImport, onRun }: { importedLead: boolean; onImport: () => void; onRun: () => void }) {
   return (
     <section className="page-grid work-queue-grid">
       <header className="page-header">
@@ -442,12 +443,12 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
             <p className="small-label">Ready missions, not raw work</p>
             <h2>Import existing work, then triage it before agents run.</h2>
           </div>
-          <button className="secondary-action">Import external task</button>
+          <button className="secondary-action" onClick={onImport}>{importedLead ? "Imported" : "Import external task"}</button>
         </div>
         <div className="pipeline-strip" aria-label="Work intake pipeline">
           {demoSourcePipeline.map((item) => (
             <div className="pipeline-step" key={item.label}>
-              <strong>{item.value}</strong>
+              <strong>{importedLead && item.label === "Imported" ? "9" : item.value}</strong>
               <span>{item.label}</span>
             </div>
           ))}
@@ -470,6 +471,20 @@ function WorkQueueScreen({ onRun }: { onRun: () => void }) {
           </span>
           <code>{demoImportExample.command}</code>
         </div>
+        {importedLead && (
+          <div className="import-result-card" role="status">
+            <div>
+              <p className="small-label">Imported Work Lead ready for triage</p>
+              <h3>GitHub issue imported locally.</h3>
+              <p>No comments, PRs, payments, or maintainer outreach happened. The imported work is now a Work Lead and still needs proofability checks before it can become a Mission.</p>
+            </div>
+            <div className="diagnosis-grid">
+              <StatusRow label="Source" value="GitHub issue" tone="good" />
+              <StatusRow label="External action" value="None" tone="good" />
+              <StatusRow label="Mission status" value="Needs triage" tone="bad" />
+            </div>
+          </div>
+        )}
       </div>
       <div className="panel wide work-lead-card">
         <div>

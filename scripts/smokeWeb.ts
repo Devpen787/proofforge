@@ -106,6 +106,10 @@ async function runSmoke() {
     await requireText(page, "$8 released");
     await page.getByRole("button", { name: "View public proof" }).click();
     await requireText(page, "Accepted Proof Packet");
+    await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Import external task" }).click();
+    await requireText(page, "Imported Work Lead ready for triage");
+    await requireText(page, "External actionNone");
     await page.close();
     await browser.close();
     console.log("End-to-end proof journey smoke passed.");
