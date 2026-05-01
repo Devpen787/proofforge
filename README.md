@@ -313,6 +313,8 @@ The current web prototype shows:
 
 For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
+For a route-by-route product walkthrough, see [docs/VISUAL_WALKTHROUGH.md](docs/VISUAL_WALKTHROUGH.md).
+
 For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md).
 
 ## Next Steps
