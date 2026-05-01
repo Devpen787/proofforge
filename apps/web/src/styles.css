@@ -489,6 +489,14 @@ button {
   gap: 16px;
 }
 
+.decision-row {
+  flex-wrap: wrap;
+}
+
+.decision-row button {
+  flex: 1 1 130px;
+}
+
 .section-heading > *,
 .page-header > * {
   min-width: 0;

@@ -145,20 +145,28 @@ function ProofProgressBand({
   accepted: boolean;
   released: boolean;
 }) {
-  const started = screen !== "opportunity";
+  const routeStage: Record<Screen, number> = {
+    opportunity: 0,
+    "first-run": 1,
+    projects: 1,
+    "work-queue": 1,
+    run: 2,
+    "case-file": 3,
+    maintainer: 4,
+    scoreboard: accepted || released ? 5 : 4,
+    "public-proof": released ? 6 : 5
+  };
   const stages = [
     { label: "Work Lead", detail: "Existing work", done: true },
-    { label: "Mission", detail: "Scoped and safe", done: started },
+    { label: "Mission", detail: "Scoped and safe", done: false },
     { label: "Safe Run", detail: "Local evidence", done: packetReady || submitted || accepted || released },
     { label: "Packet", detail: "Case file ready", done: packetReady || submitted || accepted || released },
     { label: "Review", detail: "Maintainer decision", done: submitted || accepted || released },
     { label: "Earned", detail: "Accepted proof", done: accepted || released },
     { label: "Released", detail: "Manual payout", done: released }
   ];
-  const activeIndex = Math.min(
-    stages.findIndex((stage) => !stage.done) === -1 ? stages.length - 1 : stages.findIndex((stage) => !stage.done),
-    stages.length - 1
-  );
+  const stateStage = released ? 6 : accepted ? 5 : submitted ? 4 : packetReady ? 3 : 0;
+  const activeIndex = Math.max(routeStage[screen], stateStage);
 
   return (
     <section className="proof-progress-band" aria-label="Proof progress">
@@ -169,7 +177,7 @@ function ProofProgressBand({
       </div>
       <ol>
         {stages.map((stage, index) => (
-          <li className={stage.done ? "done" : index === activeIndex ? "active" : ""} key={stage.label}>
+          <li className={index < activeIndex || stage.done ? "done" : index === activeIndex ? "active" : ""} key={stage.label}>
             <span>{index + 1}</span>
             <b>{stage.label}</b>
           </li>
