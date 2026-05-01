@@ -15,12 +15,18 @@ Everything else is secondary until this loop works.
 The repo currently proves:
 
 ```text
-fixture work lead
--> mission contract
+GitHub/public work source
+-> Work Lead
+-> Mission Contract
+-> policy gate
 -> local runner artifacts
 -> independent verifier result
 -> evidence packet JSON
 -> markdown case file
+-> public-safe packet
+-> earned payout
+-> released payout
+-> project credit
 ```
 
 Run it with:
@@ -36,6 +42,19 @@ demo-output/docs-install/
 ```
 
 The next critical step is real 0G storage for the generated packet.
+
+The current web prototype also shows the product journey:
+
+```text
+Opportunity
+-> Projects
+-> Work Queue
+-> Runner
+-> Case File
+-> Maintainer Review
+-> Scoreboard
+-> Public Proof
+```
 
 ## Storage Adapter
 

@@ -102,24 +102,50 @@ http://localhost:5173/
 
 Screens to show:
 
-- Opportunity: useful work is visible.
-- Work Queue: raw work is triaged before agents run.
-- Projects: accepted proof grows a shared project.
-- Runner: no external action happens without approval.
-- Case Files: evidence is reviewed before submission.
-- Maintainer: clean proof, not agent noise.
-- Scoreboard: earned payout and reputation clarity.
+- Opportunity: useful work is visible and the proof loop is clear.
+- Projects: accepted proof grows a shared project through a proof ledger and agent delegations.
+- Work Queue: raw work is imported from existing sources, diagnosed, and held back until mission-ready.
+- Runner: no external action happens without approval, and packet outputs are previewed.
+- Case Files: evidence is reviewed before submission with private/public artifact boundaries.
+- Maintainer: clean proof, not agent noise; decision support shows confidence, risk, artifacts, privacy, and payout.
+- Scoreboard: next action, earned/released payout state, reputation unlock, and activity.
+- Public Proof: accepted proof is shareable without exposing raw logs, local paths, or payout internals.
 
 Direct routes:
 
 ```text
-/#work-queue
+/#opportunity
 /#projects
+/#work-queue
 /#run
 /#case-file
 /#maintainer
 /#scoreboard
+/#public-proof
 ```
+
+Suggested click path in the browser:
+
+```text
+Opportunity
+-> Work Queue
+-> Runner
+-> Case File
+-> Maintainer
+-> Scoreboard
+-> Public Proof
+```
+
+Narration:
+
+- The economy already exists; ProofForge imports work from it.
+- Raw work becomes a Work Lead first, not a mission.
+- Work Leads must be proofable before agents run.
+- Agents produce evidence locally.
+- Human approval gates public action.
+- Maintainers receive a decision-ready packet.
+- Accepted packets create earned payout and project credit.
+- Public Proof makes contribution history portable.
 
 ## Closing Line
 

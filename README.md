@@ -151,8 +151,11 @@ This repository now has the first working proof slice:
 - GitHub issue importer that turns existing public issues into Work Leads
 - constrained local runner that writes artifacts
 - independent verifier that checks runner artifacts
-- demo command that generates `evidence-packet.json` and `case-file.md`
+- policy gate that keeps missions local and evidence-only before approval
+- demo command that generates `evidence-packet.json`, `case-file.md`, `policy.json`, `public-packet.json`, `payout.json`, and `project.json`
 - accepted proof simulation that creates an earned `payout.json`
+- manual release command that creates `released-payout.json`
+- project credit ledger for accepted proof
 - proof command center UI for the core journey
 
 The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
@@ -271,18 +274,49 @@ npm run dev
 The web app shows the core product loop:
 
 ```text
-Opportunity -> Runner -> Case File -> Maintainer Review -> Scoreboard
+Opportunity
+-> Projects
+-> Work Queue
+-> Runner
+-> Case File
+-> Maintainer Review
+-> Scoreboard
+-> Public Proof
 ```
+
+Useful local routes:
+
+```text
+http://localhost:5173/#opportunity
+http://localhost:5173/#projects
+http://localhost:5173/#work-queue
+http://localhost:5173/#run
+http://localhost:5173/#case-file
+http://localhost:5173/#maintainer
+http://localhost:5173/#scoreboard
+http://localhost:5173/#public-proof
+```
+
+The current web prototype shows:
+
+- Opportunity: the proof loop and ready work with acceptance owners.
+- Projects: proof ledger, project backlog, and constrained agent delegations.
+- Work Queue: source import categories, GitHub import command, Work Lead diagnosis, and clarification gate.
+- Runner: local execution, packet output preview, security state, and human approval checkpoint.
+- Case File: maintainer/private/public artifact split.
+- Maintainer: decision support with confidence, risk, privacy, artifacts, and payout if accepted.
+- Scoreboard: next action, payout state, reputation unlock, and recent activity.
+- Public Proof: shareable accepted proof view with private details removed.
 
 For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 ## Next Steps
 
-1. Wire imported GitHub Work Leads into the web Work Queue.
-2. Add a public-safe packet share view.
-3. Add project creation, invite, and agent delegation flows.
-4. Add Docker-backed sandbox execution.
-5. Add demo video script and deployment notes.
+1. Make the Case File feel more like a maintainer dossier.
+2. Add a deploy link and final demo screenshots.
+3. Add Docker-backed sandbox execution.
+4. Add live 0G upload instructions when credentials are available.
+5. Record the 2-4 minute hackathon demo video.
 
 ## License
 
