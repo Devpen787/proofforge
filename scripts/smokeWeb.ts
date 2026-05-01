@@ -105,7 +105,7 @@ async function runSmoke() {
     await requireText(page, "Project Work Lead created");
     await requireText(page, "Clarify before Mission");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Earn your first proof packet" }).click();
+    await page.getByRole("button", { name: "Start safest proof" }).click();
     await requireText(page, "Earn your first accepted proof in six steps.");
     await page.getByRole("button", { name: "Run safest earning mission" }).click();
     await requireText(page, "Accept mission before agents run");
@@ -161,7 +161,7 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Verified checkout QA with clarified browser targets.");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Earn your first proof packet" }).click();
+    await page.getByRole("button", { name: "Start safest proof" }).click();
     await page.getByRole("button", { name: "Run safest earning mission" }).click();
     await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await page.getByRole("button", { name: "Approve Packet" }).click();
@@ -170,7 +170,7 @@ async function runSmoke() {
     await requireText(page, "Revision requested");
     await requireText(page, "full command transcript");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Earn your first proof packet" }).click();
+    await page.getByRole("button", { name: "Start safest proof" }).click();
     await page.getByRole("button", { name: "Run safest earning mission" }).click();
     await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await page.getByRole("button", { name: "Approve Packet" }).click();

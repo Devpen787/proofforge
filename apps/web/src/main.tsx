@@ -10,7 +10,6 @@ import {
   demoMission,
   demoPacket,
   demoProject,
-  demoProofLoop,
   demoPublicArtifacts,
   demoImportExample,
   demoMaintainerPackets,
@@ -90,7 +89,9 @@ function App() {
       </aside>
 
       <main className="main">
-        <ProofProgressBand screen={screen} packetReady={packetReady} submitted={submitted} accepted={accepted} released={released} />
+        {screen !== "opportunity" && (
+          <ProofProgressBand screen={screen} packetReady={packetReady} submitted={submitted} accepted={accepted} released={released} />
+        )}
         {screen === "opportunity" && (
           <OpportunityScreen
             onStart={() => {
@@ -278,18 +279,17 @@ function OpportunityScreen({ onStart }: { onStart: () => void }) {
     <section className="page-grid page-grid-hero">
       <div className="hero-card">
         <p className="small-label">Proof before payout</p>
-        <h1>Find useful work. Let your agents prove it. Earn when it holds up.</h1>
+        <h1>Find useful work. Prove it. Earn accepted credit.</h1>
         <div className="safety-list">
-          <span>Real work sources, not made-up tasks.</span>
-          <span>No public posts, PRs, or payments until approval.</span>
-          <span>Your agent runs safely and produces evidence.</span>
-          <span>Accepted proof creates payout, credit, or reputation.</span>
+          <span>Real work from projects, repos, and communities.</span>
+          <span>Agents run locally until you approve what leaves.</span>
+          <span>Accepted packets create payout, access, or reputation.</span>
         </div>
         <button className="primary-action" onClick={onStart}>
-          Earn your first proof packet
+          Start safest proof
         </button>
       </div>
-      <ProofLoopCard />
+      <OpportunityFitCard onStart={onStart} />
       <MetricStrip />
       <WorkList onStart={onStart} />
     </section>
@@ -307,23 +307,25 @@ function MetricStrip() {
   );
 }
 
-function ProofLoopCard() {
+function OpportunityFitCard({ onStart }: { onStart: () => void }) {
   return (
-    <section className="proof-loop-card" aria-label="ProofForge proof loop">
-      <p className="small-label">How earning works</p>
-      <h2>Your agent helps. Proof decides. Value follows.</h2>
-      <div className="proof-loop-list">
-        {demoProofLoop.map((step, index) => (
-          <div className="proof-loop-step" key={step.label}>
-            <span>{index + 1}</span>
-            <div>
-              <strong>{step.label}</strong>
-              <small>{step.detail}</small>
-            </div>
-          </div>
-        ))}
+    <section className="opportunity-fit-card" aria-label="Best starting opportunity">
+      <p className="small-label">Your fit today</p>
+      <h2>$63 in proofable work</h2>
+      <p className="quiet-copy">Start with one safe mission. Your agent prepares the evidence; a human accepts the packet.</p>
+      <div className="fit-mission">
+        <span className="opportunity-icon">▶</span>
+        <div>
+          <strong>Validate installation docs</strong>
+          <small>Safe · 30 min · Commons reviewer</small>
+        </div>
       </div>
-      <p className="quiet-copy">This is not passive income. Raw work never skips the gate. Accepted evidence is what creates earned value.</p>
+      <div className="fit-facts">
+        <StatusRow label="Reward" value="$8 + rep + credits" tone="good" />
+        <StatusRow label="Safety" value="Evidence-only" tone="good" />
+        <StatusRow label="Approval" value="Before submit" tone="good" />
+      </div>
+      <button className="primary-action full" onClick={onStart}>Start this mission</button>
     </section>
   );
 }

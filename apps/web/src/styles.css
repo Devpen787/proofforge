@@ -206,7 +206,7 @@ button {
 .panel,
 .terminal-card,
 .decision-panel,
-.proof-loop-card,
+.opportunity-fit-card,
 .metric,
 .work-row {
   border: 1px solid #e2e8f0;
@@ -318,60 +318,51 @@ button {
   width: 100%;
 }
 
-.proof-loop-card {
+.opportunity-fit-card {
   padding: 28px;
+  align-self: start;
 }
 
-.proof-loop-card h2 {
+.opportunity-fit-card h2 {
   margin: 0;
-  font-size: 30px;
+  color: #020617;
+  font-size: 42px;
   line-height: 1.05;
   letter-spacing: 0;
 }
 
-.proof-loop-list {
-  display: grid;
-  gap: 10px;
-  margin: 22px 0 18px;
+.opportunity-fit-card .quiet-copy {
+  margin: 12px 0 20px;
 }
 
-.proof-loop-step {
+.fit-mission {
   display: grid;
-  grid-template-columns: 36px 1fr;
+  grid-template-columns: 36px minmax(0, 1fr);
   gap: 12px;
   align-items: center;
-  border: 1px solid #e2e8f0;
-  border-radius: 18px;
-  background: #f8fafc;
-  padding: 12px;
+  border: 1px solid #a7f3d0;
+  border-radius: 20px;
+  background: #ecfdf5;
+  padding: 14px;
 }
 
-.proof-loop-step > span {
-  width: 36px;
-  height: 36px;
-  display: grid;
-  place-items: center;
-  border-radius: 13px;
-  background: #047857;
-  color: white;
-  font-weight: 900;
-}
-
-.proof-loop-step strong,
-.proof-loop-step small {
+.fit-mission strong,
+.fit-mission small {
   display: block;
-  overflow-wrap: anywhere;
+  min-width: 0;
 }
 
-.proof-loop-step strong {
-  font-size: 15px;
-}
-
-.proof-loop-step small {
-  margin-top: 2px;
+.fit-mission small {
+  margin-top: 3px;
   color: #64748b;
   font-size: 12px;
-  font-weight: 700;
+  font-weight: 800;
+}
+
+.fit-facts {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
 }
 
 .first-run-steps h2,
@@ -2468,7 +2459,7 @@ code {
   .panel,
   .terminal-card,
   .decision-panel,
-  .proof-loop-card,
+  .opportunity-fit-card,
   .metric,
   .work-row {
     max-width: 100%;
@@ -2700,7 +2691,7 @@ code {
   .panel,
   .terminal-card,
   .decision-panel,
-  .proof-loop-card,
+  .opportunity-fit-card,
   .metric,
   .work-row {
     max-width: 100%;
