@@ -34,6 +34,7 @@ function App() {
   const [submitted, setSubmitted] = React.useState(false);
   const [accepted, setAccepted] = React.useState(false);
   const [released, setReleased] = React.useState(false);
+  const [revisionRequested, setRevisionRequested] = React.useState(false);
   const [importedLead, setImportedLead] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
@@ -44,6 +45,7 @@ function App() {
     setSubmitted(false);
     setAccepted(false);
     setReleased(false);
+    setRevisionRequested(false);
   }, []);
 
   React.useEffect(() => {
@@ -97,8 +99,10 @@ function App() {
         {screen === "case-file" && (
           <CaseFileScreen
             submitted={submitted}
+            revisionRequested={revisionRequested}
             onSubmit={() => {
               setSubmitted(true);
+              setRevisionRequested(false);
               setScreen("maintainer");
             }}
           />
@@ -109,9 +113,15 @@ function App() {
             accepted={accepted}
             onAccept={() => {
               setSubmitted(true);
+              setRevisionRequested(false);
               setAccepted(true);
               setReleased(false);
               setScreen("scoreboard");
+            }}
+            onRevision={() => {
+              setSubmitted(false);
+              setRevisionRequested(true);
+              setScreen("case-file");
             }}
           />
         )}
@@ -119,7 +129,9 @@ function App() {
           <ScoreboardScreen
             accepted={accepted}
             released={released}
+            revisionRequested={revisionRequested}
             onRelease={() => setReleased(true)}
+            onResolveRevision={() => setScreen("case-file")}
             onNext={() => {
               resetProof();
               setScreen("first-run");
@@ -618,7 +630,7 @@ environment.json`}</pre>
   );
 }
 
-function CaseFileScreen({ submitted, onSubmit }: { submitted: boolean; onSubmit: () => void }) {
+function CaseFileScreen({ submitted, revisionRequested, onSubmit }: { submitted: boolean; revisionRequested: boolean; onSubmit: () => void }) {
   return (
     <section className="page-grid case-grid">
       <header className="page-header">
@@ -628,6 +640,12 @@ function CaseFileScreen({ submitted, onSubmit }: { submitted: boolean; onSubmit:
       <div className="panel">
         <p className="small-label">Maintainer summary</p>
         <h2>Validated install docs in a clean fixture.</h2>
+        {revisionRequested && (
+          <div className="revision-banner" role="status">
+            <strong>Revision requested</strong>
+            <span>Maintainer asked for clearer environment notes and the full command transcript before acceptance.</span>
+          </div>
+        )}
         <div className="case-summary-grid">
           <div className="case-summary-block">
             <span>What was tested</span>
@@ -715,7 +733,17 @@ function CaseFileScreen({ submitted, onSubmit }: { submitted: boolean; onSubmit:
   );
 }
 
-function MaintainerScreen({ submitted, accepted, onAccept }: { submitted: boolean; accepted: boolean; onAccept: () => void }) {
+function MaintainerScreen({
+  submitted,
+  accepted,
+  onAccept,
+  onRevision
+}: {
+  submitted: boolean;
+  accepted: boolean;
+  onAccept: () => void;
+  onRevision: () => void;
+}) {
   return (
     <section className="page-grid maintainer-grid">
       <header className="page-header">
@@ -779,7 +807,7 @@ function MaintainerScreen({ submitted, accepted, onAccept }: { submitted: boolea
           <button className="primary-action" onClick={onAccept} disabled={accepted}>
             {accepted ? "Accepted" : "Accept & Mark Earned"}
           </button>
-          <button className="warning-action">Request Revision</button>
+          <button className="warning-action" onClick={onRevision}>Request Revision</button>
           <button className="danger-action">Reject Packet</button>
         </div>
       </div>
@@ -790,13 +818,17 @@ function MaintainerScreen({ submitted, accepted, onAccept }: { submitted: boolea
 function ScoreboardScreen({
   accepted,
   released,
+  revisionRequested,
   onRelease,
+  onResolveRevision,
   onNext,
   onPublicProof
 }: {
   accepted: boolean;
   released: boolean;
+  revisionRequested: boolean;
   onRelease: () => void;
+  onResolveRevision: () => void;
   onNext: () => void;
   onPublicProof: () => void;
 }) {
@@ -818,17 +850,21 @@ function ScoreboardScreen({
       <div className="panel scoreboard-action-card">
         <p className="small-label">Next best action</p>
         <h2>
-          {!accepted && "Get the packet accepted."}
+          {revisionRequested && "Resolve the requested revision."}
+          {!revisionRequested && !accepted && "Get the packet accepted."}
           {accepted && !released && "Release the earned payout."}
           {accepted && released && "Start the next proof mission."}
         </h2>
         <p className="quiet-copy">
-          {!accepted && "Ask the maintainer to accept the submitted packet."}
+          {revisionRequested && "Update the Case File with the missing environment notes, then resubmit."}
+          {!revisionRequested && !accepted && "Ask the maintainer to accept the submitted packet."}
           {accepted && !released && "Release the earned payout as a separate accounting step."}
           {accepted && released && "Public proof, project credit, and payout records are ready for the demo."}
         </p>
-        <button className="primary-action full" onClick={accepted && !released ? onRelease : onNext}>
-          {accepted && !released ? "Release payout" : "Generate proof packet"}
+        <button className="primary-action full" onClick={revisionRequested ? onResolveRevision : accepted && !released ? onRelease : onNext}>
+          {revisionRequested && "Open Case File"}
+          {!revisionRequested && accepted && !released && "Release payout"}
+          {!revisionRequested && (!accepted || released) && "Generate proof packet"}
         </button>
         <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>
       </div>

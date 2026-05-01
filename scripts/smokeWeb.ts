@@ -110,6 +110,14 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Import external task" }).click();
     await requireText(page, "Imported Work Lead ready for triage");
     await requireText(page, "External actionNone");
+    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Run your first proof packet" }).click();
+    await page.getByRole("button", { name: "Run safest starter mission" }).click();
+    await page.getByRole("button", { name: "Approve Packet" }).click();
+    await page.getByRole("button", { name: "Submit Packet" }).click();
+    await page.getByRole("button", { name: "Request Revision" }).click();
+    await requireText(page, "Revision requested");
+    await requireText(page, "full command transcript");
     await page.close();
     await browser.close();
     console.log("End-to-end proof journey smoke passed.");

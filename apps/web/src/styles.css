@@ -938,6 +938,24 @@ pre {
   padding: 18px;
 }
 
+.revision-banner {
+  display: grid;
+  gap: 5px;
+  border: 1px solid #fde68a;
+  border-radius: 18px;
+  background: #fffbeb;
+  color: #78350f;
+  padding: 14px;
+  margin: 14px 0 16px;
+}
+
+.revision-banner span {
+  color: #92400e;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
 .approval-box p {
   color: #78350f;
 }
