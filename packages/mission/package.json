@@ -1,0 +1,14 @@
+{
+  "name": "@proofforge/mission",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@proofforge/shared": "0.0.0"
+  }
+}
