@@ -153,3 +153,47 @@ Narration:
 ## Closing Line
 
 ProofForge is a coordination layer for builders who already have agents and tools. The point is not more generated code. The point is useful work that holds.
+
+## Recording Checklist
+
+Show these terminal commands:
+
+```bash
+npm test
+npm run build
+npm run demo:packet
+npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
+```
+
+Show these generated files:
+
+```text
+demo-output/docs-install/packet/evidence-packet.json
+demo-output/docs-install/packet/case-file.md
+demo-output/docs-install/packet/policy.json
+demo-output/docs-install/packet/public-packet.json
+demo-output/docs-install/packet/payout.json
+demo-output/docs-install/packet/released-payout.json
+demo-output/docs-install/packet/project.json
+```
+
+Show these browser routes:
+
+```text
+/#opportunity
+/#first-run
+/#work-queue
+/#run
+/#case-file
+/#maintainer
+/#scoreboard
+/#public-proof
+```
+
+Do not claim:
+
+- automatic payments
+- automatic pull requests
+- automatic maintainer outreach
+- live production sandboxing
+- live 0G upload unless credentials are configured and the command returns a `0g://` URI

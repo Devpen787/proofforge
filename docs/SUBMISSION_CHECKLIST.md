@@ -36,6 +36,8 @@ Use this before final hackathon submission.
    - Public Proof
 7. Close with: ProofForge turns existing work into safe missions, evidence packets, accepted proof, and credit.
 
+The exact terminal files and routes to show are listed in [DEMO_SCRIPT.md](DEMO_SCRIPT.md#recording-checklist).
+
 ## Judge Run Commands
 
 ```bash
