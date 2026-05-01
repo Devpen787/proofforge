@@ -1,0 +1,15 @@
+{
+  "name": "@proofforge/payments",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "main": "src/index.ts",
+  "scripts": {
+    "build": "tsc -p tsconfig.json --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@proofforge/evidence": "0.0.0",
+    "@proofforge/mission": "0.0.0"
+  }
+}
