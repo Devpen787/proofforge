@@ -1,4 +1,8 @@
 import { z } from "zod";
+import { createHash } from "node:crypto";
+import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { basename, join } from "node:path";
+import type { MissionContract } from "@proofforge/mission";
 
 export const evidencePacketStatuses = [
   "draft",
@@ -115,4 +119,147 @@ export function parseEvidencePacket(input: unknown): EvidencePacket {
 
 export function isEvidencePacket(input: unknown): input is EvidencePacket {
   return evidencePacketSchema.safeParse(input).success;
+}
+
+export interface BuildEvidencePacketInput {
+  id: string;
+  mission: MissionContract;
+  runnerResult: RunnerResult;
+  verifierResult: VerifierResult;
+  approvedBy?: string;
+}
+
+export async function buildEvidencePacket(input: BuildEvidencePacketInput): Promise<EvidencePacket> {
+  const artifacts = await buildArtifactRefs(input.runnerResult);
+  const status = input.verifierResult.status === "passed" ? "verified" : "generated";
+
+  return parseEvidencePacket({
+    id: input.id,
+    createdAt: new Date().toISOString(),
+    status,
+    mission: {
+      id: input.mission.id,
+      title: input.mission.title,
+      sourceUrl: input.mission.sourceUrl,
+      objective: input.mission.objective,
+      acceptanceOwner: input.mission.acceptanceOwner
+    },
+    source: {
+      type: input.mission.sourceUrl.includes("github.com") ? "github_issue" : "fixture",
+      url: input.mission.sourceUrl
+    },
+    objective: input.mission.objective,
+    runnerResult: input.runnerResult,
+    verifierResult: input.verifierResult,
+    artifacts,
+    riskFlags: [
+      {
+        level: input.mission.riskLevel,
+        label: "external actions locked",
+        detail: "The runner produced local evidence only. No public comment, PR, payout, or external submission was made."
+      }
+    ],
+    privacyReview: {
+      secretsDetected: 0,
+      localPathsMasked: true,
+      rawLogsPublic: false,
+      notes: ["Raw logs are private by default. Public packet views should use redacted summaries."]
+    },
+    humanApproval: {
+      required: input.mission.humanApprovalRequired,
+      status: input.approvedBy ? "approved" : "pending",
+      approvedBy: input.approvedBy,
+      approvedAt: input.approvedBy ? new Date().toISOString() : undefined
+    },
+    maintainerSummary: buildMaintainerSummary(input.mission, input.runnerResult, input.verifierResult),
+    protocolRefs: {}
+  });
+}
+
+export async function writeEvidencePacketFiles(packet: EvidencePacket, outputDir: string): Promise<{
+  jsonPath: string;
+  markdownPath: string;
+}> {
+  await mkdir(outputDir, { recursive: true });
+
+  const jsonPath = join(outputDir, "evidence-packet.json");
+  const markdownPath = join(outputDir, "case-file.md");
+
+  await writeFile(jsonPath, JSON.stringify(packet, null, 2), "utf8");
+  await writeFile(markdownPath, renderCaseFileMarkdown(packet), "utf8");
+
+  return { jsonPath, markdownPath };
+}
+
+export function renderCaseFileMarkdown(packet: EvidencePacket): string {
+  const checks = packet.verifierResult.checks
+    .map((check) => `- ${check.passed ? "[x]" : "[ ]"} ${check.name}: ${check.detail}`)
+    .join("\n");
+
+  const artifacts = packet.artifacts
+    .map((artifact) => `- ${artifact.label}: \`${artifact.path}\` (${artifact.mediaType})`)
+    .join("\n");
+
+  return `# Evidence Case File: ${packet.mission.title}
+
+## What Was Tested
+
+${packet.objective}
+
+## What Happened
+
+Runner command: \`${packet.runnerResult.command}\`
+
+Exit code: \`${packet.runnerResult.exitCode}\`
+
+Verifier status: \`${packet.verifierResult.status}\`
+
+## Maintainer Summary
+
+${packet.maintainerSummary}
+
+## Verification Checks
+
+${checks}
+
+## Privacy Review
+
+- Secrets detected: ${packet.privacyReview.secretsDetected}
+- Local paths masked: ${packet.privacyReview.localPathsMasked}
+- Raw logs public: ${packet.privacyReview.rawLogsPublic}
+
+## Artifacts
+
+${artifacts}
+
+## Human Approval
+
+Status: \`${packet.humanApproval.status}\`
+`;
+}
+
+async function buildArtifactRefs(runnerResult: RunnerResult): Promise<ArtifactRef[]> {
+  const paths = [runnerResult.stdoutPath, runnerResult.stderrPath, runnerResult.environmentPath];
+
+  return Promise.all(
+    paths.map(async (path) => {
+      const body = await readFile(path);
+      return {
+        id: `artifact_${basename(path).replace(/[^a-z0-9]/gi, "_").toLowerCase()}`,
+        label: basename(path),
+        path,
+        mediaType: path.endsWith(".json") ? "application/json" : "text/plain",
+        sha256: createHash("sha256").update(body).digest("hex")
+      };
+    })
+  );
+}
+
+function buildMaintainerSummary(
+  mission: MissionContract,
+  runnerResult: RunnerResult,
+  verifierResult: VerifierResult
+): string {
+  const verification = verifierResult.status === "passed" ? "Verifier checks passed." : "Verifier checks failed.";
+  return `${mission.title}: command \`${runnerResult.command}\` exited with code ${runnerResult.exitCode}. ${verification} No external action was taken.`;
 }
