@@ -152,6 +152,7 @@ This repository now has the first working proof slice:
 - constrained local runner that writes artifacts
 - independent verifier that checks runner artifacts
 - demo command that generates `evidence-packet.json` and `case-file.md`
+- accepted proof simulation that creates an earned `payout.json`
 - proof command center UI for the core journey
 
 The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
@@ -201,9 +202,18 @@ That command writes:
 ```text
 demo-output/docs-install/packet/evidence-packet.json
 demo-output/docs-install/packet/case-file.md
+demo-output/docs-install/packet/payout.json
 ```
 
 By default, the packet is stored through the local storage adapter and the packet records a `file://` storage URI.
+
+The payout file is manual accounting only. It proves the accepted-work state transition:
+
+```text
+Accepted Evidence Packet -> Earned Payout
+```
+
+It does not move money automatically.
 
 To use the real 0G storage adapter, set:
 
