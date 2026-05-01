@@ -8,7 +8,8 @@ export const screens = [
   "case-file",
   "maintainer",
   "scoreboard",
-  "public-proof"
+  "public-proof",
+  "proof-demo"
 ] as const;
 
 export type Screen = (typeof screens)[number];
@@ -23,5 +24,6 @@ export const routeLabels: Record<Screen, string> = {
   "case-file": "Case Files",
   maintainer: "Maintainer",
   scoreboard: "Earnings",
-  "public-proof": "Public Proof"
+  "public-proof": "Public Proof",
+  "proof-demo": "Proof Demo"
 };

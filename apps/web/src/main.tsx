@@ -209,6 +209,7 @@ function App() {
           />
         )}
         {screen === "public-proof" && <PublicProofScreen activeMission={activeMission} onBack={() => setScreen("scoreboard")} />}
+        {screen === "proof-demo" && <ProofDemoScreen onStart={() => setScreen("first-run")} onEvidence={() => setScreen("case-file")} />}
       </main>
     </div>
   );
@@ -237,7 +238,8 @@ function ProofProgressBand({
     "case-file": 3,
     maintainer: 4,
     scoreboard: accepted || released ? 5 : 4,
-    "public-proof": released ? 6 : 5
+    "public-proof": released ? 6 : 5,
+    "proof-demo": 6
   };
   const stages = [
     { label: "Work Lead", detail: "Existing work", done: true },
@@ -1603,6 +1605,94 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
         <StatusRow label="Earned payout" value={mission.reward} tone="good" />
         <StatusRow label="Reputation" value="+12" tone="good" />
         <p className="quiet-copy">This is the public proof someone can show. Released payout remains a separate accounting record.</p>
+      </div>
+    </section>
+  );
+}
+
+function ProofDemoScreen({ onStart, onEvidence }: { onStart: () => void; onEvidence: () => void }) {
+  const proofCommands = [
+    { label: "Run all tests", command: "npm test", result: "Validates schemas, conversion, verifier, payout, project, and route contracts." },
+    { label: "Generate packet", command: "npm run demo:packet", result: "Writes evidence-packet.json, case-file.md, policy.json, public-packet.json, payout.json, and project.json." },
+    { label: "Release payout record", command: "npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json", result: "Marks payout released without pretending money moved automatically." },
+    { label: "Import real work", command: "npm run import:github -- --url https://github.com/microsoft/vscode/issues/1", result: "Reads a public GitHub issue into a local Work Lead. No public action is taken." },
+    { label: "Smoke the product", command: "npm run smoke:web", result: "Checks desktop and phone routes plus the end-to-end proof journey." }
+  ];
+  const proofClaims = [
+    { label: "Existing work enters", value: "GitHub issue import creates Work Lead", tone: "good" as const },
+    { label: "Raw work is gated", value: "Mission conversion blocks vague leads", tone: "good" as const },
+    { label: "Runner produces artifacts", value: "Local fixture command writes logs and environment", tone: "good" as const },
+    { label: "Builder does not self-grade", value: "Verifier checks runner output independently", tone: "good" as const },
+    { label: "Payout is disciplined", value: "Earned after acceptance, released manually", tone: "good" as const },
+    { label: "Public proof is safe", value: "Raw logs and private payout internals stay hidden", tone: "good" as const }
+  ];
+  return (
+    <section className="page-grid proof-demo-grid">
+      <header className="page-header">
+        <span>Working Proof</span>
+        <button className="primary-action" onClick={onStart}>Start proof journey</button>
+      </header>
+      <div className="proof-demo-hero wide">
+        <div>
+          <p className="small-label">Judge-run proof path</p>
+          <h1>Working proof, not just a product sketch.</h1>
+          <p>ProofForge has a local, reproducible loop: import work, scope it, run the fixture mission, verify artifacts, package evidence, accept it, create earned value, release the payout record, and expose a public-safe proof.</p>
+          <div className="public-badge-row">
+            <span className="status-pill safe">Local runner</span>
+            <span className="status-pill safe">Independent verifier</span>
+            <span className="status-pill safe">Evidence packet</span>
+            <span className="status-pill safe">Manual payout release</span>
+          </div>
+        </div>
+        <aside className="proof-demo-result-card">
+          <strong>Core demo output</strong>
+          <small>demo-output/docs-install/packet/</small>
+          <StatusRow label="Packet" value="evidence-packet.json" tone="good" />
+          <StatusRow label="Case file" value="case-file.md" tone="good" />
+          <StatusRow label="Public proof" value="public-packet.json" tone="good" />
+          <button className="secondary-action full" onClick={onEvidence}>Open Case File</button>
+        </aside>
+      </div>
+      <div className="proof-demo-loop wide">
+        {["Work Lead", "Mission", "Runner", "Verifier", "Packet", "Review", "Ledger", "Public Proof"].map((step, index) => (
+          <div className="proof-demo-loop-step" key={step}>
+            <span>{index + 1}</span>
+            <strong>{step}</strong>
+          </div>
+        ))}
+      </div>
+      <div className="panel proof-command-panel">
+        <p className="small-label">Commands reviewers can run</p>
+        <h2>Reproduce the proof locally.</h2>
+        {proofCommands.map((item) => (
+          <div className="proof-command-row" key={item.label}>
+            <span>
+              <strong>{item.label}</strong>
+              <code>{item.command}</code>
+              <small>{item.result}</small>
+            </span>
+          </div>
+        ))}
+      </div>
+      <div className="panel proof-claims-panel">
+        <p className="small-label">What this proves</p>
+        <h2>The MVP proves the narrow loop.</h2>
+        {proofClaims.map((claim) => (
+          <StatusRow key={claim.label} label={claim.label} value={claim.value} tone={claim.tone} />
+        ))}
+      </div>
+      <div className="panel proof-artifact-panel wide">
+        <p className="small-label">Generated proof objects</p>
+        <h2>Artifacts judges and maintainers can inspect.</h2>
+        <div className="proof-artifact-grid">
+          {demoArtifacts.map((artifact) => (
+            <div className="proof-artifact-card" key={artifact.name}>
+              <strong>{artifact.name}</strong>
+              <span>{artifact.visibility}</span>
+              <small>{artifact.purpose}</small>
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

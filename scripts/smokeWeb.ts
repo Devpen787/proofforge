@@ -3,7 +3,7 @@ import { chromium, type Page } from "playwright";
 
 const port = 5173;
 const baseUrl = `http://localhost:${port}`;
-const routes = ["opportunity", "first-run", "projects", "work-queue", "mission-detail", "run", "case-file", "maintainer", "scoreboard", "public-proof"];
+const routes = ["opportunity", "first-run", "projects", "work-queue", "mission-detail", "run", "case-file", "maintainer", "scoreboard", "public-proof", "proof-demo"];
 const viewports = [
   { name: "desktop", width: 1440, height: 950 },
   { name: "phone", width: 390, height: 844 }
@@ -133,6 +133,12 @@ async function runSmoke() {
     await requireText(page, "proof://proofforge/packet_docs_install_demo");
     await page.getByRole("button", { name: "Copy public link" }).click();
     await requireText(page, "Public link copied");
+    await page.goto(`${baseUrl}/#proof-demo`, { waitUntil: "networkidle" });
+    await requireText(page, "Working proof, not just a product sketch.");
+    await requireText(page, "npm run demo:packet");
+    await requireText(page, "Generated proof objects");
+    await page.getByRole("button", { name: "Open Case File" }).click();
+    await requireText(page, "Evidence packet preview");
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Import external task" }).click();
     await requireText(page, "Imported Work Lead ready for triage");

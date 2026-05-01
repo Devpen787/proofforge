@@ -13,7 +13,8 @@ describe("web routes", () => {
       "case-file",
       "maintainer",
       "scoreboard",
-      "public-proof"
+      "public-proof",
+      "proof-demo"
     ]);
   });
 
@@ -23,5 +24,6 @@ describe("web routes", () => {
     expect(routeLabels["work-queue"]).toBe("Work Queue");
     expect(routeLabels["mission-detail"]).toBe("Mission Detail");
     expect(routeLabels["public-proof"]).toBe("Public Proof");
+    expect(routeLabels["proof-demo"]).toBe("Proof Demo");
   });
 });
