@@ -1,8 +1,9 @@
-import { rm } from "node:fs/promises";
+import { rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { runLocalMission } from "./index";
 import { buildEvidencePacket, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
 import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
+import { createEarnedPayout } from "../../../packages/payments/src/index";
 import { createLocalStorageAdapter, createZeroGStorageAdapter } from "../../../packages/storage/src/index";
 import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
 
@@ -58,6 +59,7 @@ const storageReceipt = await storageAdapter.putFile({
 
 const packetWithStorageRef = {
   ...packet,
+  status: "accepted" as const,
   protocolRefs: {
     ...packet.protocolRefs,
     storageUri: storageReceipt.uri
@@ -65,10 +67,20 @@ const packetWithStorageRef = {
 };
 
 files = await writeEvidencePacketFiles(packetWithStorageRef, resolve(outputDir, "packet"));
+const payout = createEarnedPayout({
+  packet: packetWithStorageRef,
+  mission,
+  projectId: "project_docs_onboarding",
+  recipient: "alex",
+  approvedBy: "fixture-maintainer"
+});
+const payoutPath = resolve(outputDir, "packet", "payout.json");
+await writeFile(payoutPath, JSON.stringify(payout, null, 2), "utf8");
 
 console.log("ProofForge demo packet generated.");
 console.log(`Evidence packet: ${files.jsonPath}`);
 console.log(`Case file: ${files.markdownPath}`);
+console.log(`Earned payout: ${payoutPath}`);
 console.log(`Storage provider: ${storageReceipt.provider}`);
 console.log(`Storage URI: ${storageReceipt.uri}`);
 if (storageReceipt.txHash) {
@@ -76,6 +88,7 @@ if (storageReceipt.txHash) {
 }
 console.log(`Verifier status: ${packet.verifierResult.status}`);
 console.log(`Human approval: ${packet.humanApproval.status}`);
+console.log(`Payout status: ${payout.status}`);
 
 function createStorageAdapter() {
   const evmRpc = process.env.ZERO_G_EVM_RPC;
