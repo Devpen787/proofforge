@@ -317,11 +317,11 @@ For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSIO
 
 ## Next Steps
 
-1. Make the Case File feel more like a maintainer dossier.
-2. Add a deploy link and final demo screenshots.
-3. Add Docker-backed sandbox execution.
-4. Add live 0G upload instructions when credentials are available.
-5. Record the 2-4 minute hackathon demo video.
+1. Add a deployed demo URL.
+2. Record the 2-4 minute hackathon demo video.
+3. Add final demo screenshots or a short visual walkthrough.
+4. Add Docker-backed sandbox execution.
+5. Add live 0G upload instructions when credentials are available.
 
 ## License
 
