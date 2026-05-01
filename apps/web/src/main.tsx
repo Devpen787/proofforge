@@ -30,11 +30,19 @@ function screenFromHash(): Screen {
 
 function App() {
   const [screen, setScreenState] = React.useState<Screen>(screenFromHash);
+  const [packetReady, setPacketReady] = React.useState(false);
+  const [submitted, setSubmitted] = React.useState(false);
   const [accepted, setAccepted] = React.useState(false);
   const [released, setReleased] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
     setScreenState(nextScreen);
+  }, []);
+  const resetProof = React.useCallback(() => {
+    setPacketReady(false);
+    setSubmitted(false);
+    setAccepted(false);
+    setReleased(false);
   }, []);
 
   React.useEffect(() => {
@@ -65,16 +73,41 @@ function App() {
       </aside>
 
       <main className="main">
-        {screen === "opportunity" && <OpportunityScreen onStart={() => setScreen("first-run")} />}
+        <ProofProgressBand screen={screen} packetReady={packetReady} submitted={submitted} accepted={accepted} released={released} />
+        {screen === "opportunity" && (
+          <OpportunityScreen
+            onStart={() => {
+              resetProof();
+              setScreen("first-run");
+            }}
+          />
+        )}
         {screen === "first-run" && <FirstRunScreen onRun={() => setScreen("run")} onQueue={() => setScreen("work-queue")} />}
         {screen === "projects" && <ProjectsScreen onQueue={() => setScreen("work-queue")} />}
         {screen === "work-queue" && <WorkQueueScreen onRun={() => setScreen("run")} />}
-        {screen === "run" && <RunnerScreen onPacket={() => setScreen("case-file")} />}
-        {screen === "case-file" && <CaseFileScreen onSubmit={() => setScreen("maintainer")} />}
+        {screen === "run" && (
+          <RunnerScreen
+            onPacket={() => {
+              setPacketReady(true);
+              setScreen("case-file");
+            }}
+          />
+        )}
+        {screen === "case-file" && (
+          <CaseFileScreen
+            submitted={submitted}
+            onSubmit={() => {
+              setSubmitted(true);
+              setScreen("maintainer");
+            }}
+          />
+        )}
         {screen === "maintainer" && (
           <MaintainerScreen
+            submitted={submitted}
             accepted={accepted}
             onAccept={() => {
+              setSubmitted(true);
               setAccepted(true);
               setReleased(false);
               setScreen("scoreboard");
@@ -86,13 +119,63 @@ function App() {
             accepted={accepted}
             released={released}
             onRelease={() => setReleased(true)}
-            onNext={() => setScreen("first-run")}
+            onNext={() => {
+              resetProof();
+              setScreen("first-run");
+            }}
             onPublicProof={() => setScreen("public-proof")}
           />
         )}
         {screen === "public-proof" && <PublicProofScreen onBack={() => setScreen("scoreboard")} />}
       </main>
     </div>
+  );
+}
+
+function ProofProgressBand({
+  screen,
+  packetReady,
+  submitted,
+  accepted,
+  released
+}: {
+  screen: Screen;
+  packetReady: boolean;
+  submitted: boolean;
+  accepted: boolean;
+  released: boolean;
+}) {
+  const started = screen !== "opportunity";
+  const stages = [
+    { label: "Work Lead", detail: "Existing work", done: true },
+    { label: "Mission", detail: "Scoped and safe", done: started },
+    { label: "Safe Run", detail: "Local evidence", done: packetReady || submitted || accepted || released },
+    { label: "Packet", detail: "Case file ready", done: packetReady || submitted || accepted || released },
+    { label: "Review", detail: "Maintainer decision", done: submitted || accepted || released },
+    { label: "Earned", detail: "Accepted proof", done: accepted || released },
+    { label: "Released", detail: "Manual payout", done: released }
+  ];
+  const activeIndex = Math.min(
+    stages.findIndex((stage) => !stage.done) === -1 ? stages.length - 1 : stages.findIndex((stage) => !stage.done),
+    stages.length - 1
+  );
+
+  return (
+    <section className="proof-progress-band" aria-label="Proof progress">
+      <div>
+        <p className="small-label">Current proof loop</p>
+        <strong>{stages[activeIndex].label}</strong>
+        <span>{stages[activeIndex].detail}</span>
+      </div>
+      <ol>
+        {stages.map((stage, index) => (
+          <li className={stage.done ? "done" : index === activeIndex ? "active" : ""} key={stage.label}>
+            <span>{index + 1}</span>
+            <b>{stage.label}</b>
+          </li>
+        ))}
+      </ol>
+    </section>
   );
 }
 
@@ -512,12 +595,12 @@ environment.json`}</pre>
   );
 }
 
-function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
+function CaseFileScreen({ submitted, onSubmit }: { submitted: boolean; onSubmit: () => void }) {
   return (
     <section className="page-grid case-grid">
       <header className="page-header">
         <span>Case File / {demoPacket.id}</span>
-        <button className="primary-action" onClick={onSubmit}>Submit Packet</button>
+        <button className="primary-action" onClick={onSubmit} disabled={submitted}>{submitted ? "Submitted" : "Submit Packet"}</button>
       </header>
       <div className="panel">
         <p className="small-label">Maintainer summary</p>
@@ -601,15 +684,15 @@ function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
             </ul>
           </div>
         </div>
-        <button className="primary-action full" onClick={onSubmit}>
-          Submit to Maintainer Inbox
+        <button className="primary-action full" onClick={onSubmit} disabled={submitted}>
+          {submitted ? "Submitted to Maintainer Inbox" : "Submit to Maintainer Inbox"}
         </button>
       </div>
     </section>
   );
 }
 
-function MaintainerScreen({ accepted, onAccept }: { accepted: boolean; onAccept: () => void }) {
+function MaintainerScreen({ submitted, accepted, onAccept }: { submitted: boolean; accepted: boolean; onAccept: () => void }) {
   return (
     <section className="page-grid maintainer-grid">
       <header className="page-header">
@@ -619,10 +702,10 @@ function MaintainerScreen({ accepted, onAccept }: { accepted: boolean; onAccept:
         </button>
       </header>
       <div className="metric-strip compact">
+        <Metric label="Submitted" value={submitted ? "1" : "0"} />
         <Metric label="Unresolved" value={accepted ? "0" : "1"} />
         <Metric label="Accepted" value={accepted ? "1" : "0"} />
         <Metric label="Revision" value="0" />
-        <Metric label="Rejected" value="0" />
       </div>
       <div className="panel">
         <h2>Review standards</h2>

@@ -1,5 +1,5 @@
 import { spawn } from "node:child_process";
-import { chromium } from "playwright";
+import { chromium, type Page } from "playwright";
 
 const port = 5173;
 const baseUrl = `http://localhost:${port}`;
@@ -23,14 +23,33 @@ async function waitForServer() {
   throw new Error(`Timed out waiting for ${baseUrl}`);
 }
 
-async function runSmoke() {
-  const server = spawn("npm", ["run", "dev", "-w", "apps/web"], {
-    stdio: ["ignore", "pipe", "pipe"],
-    env: { ...process.env, FORCE_COLOR: "0" }
-  });
+async function serverIsRunning() {
+  try {
+    const response = await fetch(baseUrl);
+    return response.ok;
+  } catch {
+    return false;
+  }
+}
 
-  server.stdout.on("data", (chunk) => process.stdout.write(chunk));
-  server.stderr.on("data", (chunk) => process.stderr.write(chunk));
+async function requireText(page: Page, text: string) {
+  const content = await page.locator("body").textContent();
+  if (!content?.includes(text)) {
+    throw new Error(`Expected page to contain: ${text}`);
+  }
+}
+
+async function runSmoke() {
+  const useExistingServer = await serverIsRunning();
+  const server = useExistingServer
+    ? null
+    : spawn("npm", ["run", "dev", "-w", "apps/web", "--", "--port", String(port), "--strictPort"], {
+        stdio: ["ignore", "pipe", "pipe"],
+        env: { ...process.env, FORCE_COLOR: "0" }
+      });
+
+  server?.stdout.on("data", (chunk) => process.stdout.write(chunk));
+  server?.stderr.on("data", (chunk) => process.stderr.write(chunk));
 
   try {
     await waitForServer();
@@ -62,7 +81,6 @@ async function runSmoke() {
       await page.close();
     }
 
-    await browser.close();
     console.table(results);
 
     const failures = results.filter((result) => result.overflow || !result.hasAction);
@@ -71,8 +89,28 @@ async function runSmoke() {
       console.error(JSON.stringify(failures, null, 2));
       process.exitCode = 1;
     }
+
+    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Run your first proof packet" }).click();
+    await requireText(page, "Your first win in six steps.");
+    await page.getByRole("button", { name: "Run safest starter mission" }).click();
+    await requireText(page, "Mission lifecycle");
+    await page.getByRole("button", { name: "Approve Packet" }).click();
+    await requireText(page, "Evidence first. Code later.");
+    await page.getByRole("button", { name: "Submit Packet" }).click();
+    await requireText(page, "Review clean proof, not agent noise.");
+    await page.getByRole("button", { name: "Accept & Mark Earned" }).first().click();
+    await requireText(page, "Release the earned payout.");
+    await page.getByRole("button", { name: "Release payout" }).first().click();
+    await requireText(page, "$8 released");
+    await page.getByRole("button", { name: "View public proof" }).click();
+    await requireText(page, "Accepted Proof Packet");
+    await page.close();
+    await browser.close();
+    console.log("End-to-end proof journey smoke passed.");
   } finally {
-    server.kill("SIGTERM");
+    server?.kill("SIGTERM");
   }
 }
 
