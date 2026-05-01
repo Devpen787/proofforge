@@ -37,6 +37,32 @@ demo-output/docs-install/
 
 The next critical step is real 0G storage for the generated packet.
 
+## Storage Adapter
+
+The packet demo now stores generated evidence through a storage adapter.
+
+Default:
+
+```text
+local adapter -> file:// URI
+```
+
+0G path:
+
+```text
+0G adapter -> 0g:// root hash URI
+```
+
+The 0G adapter is enabled when these environment variables are present:
+
+```text
+ZERO_G_EVM_RPC
+ZERO_G_INDEXER_RPC
+ZERO_G_PRIVATE_KEY
+```
+
+The adapter uses the official `@0gfoundation/0g-storage-ts-sdk` SDK and `ethers`.
+
 ## What The Preview Gives Us
 
 The preview defines the right user journey:

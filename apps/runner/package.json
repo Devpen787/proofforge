@@ -9,6 +9,7 @@
     "test": "vitest run"
   },
   "dependencies": {
-    "@proofforge/evidence": "0.0.0"
+    "@proofforge/evidence": "0.0.0",
+    "@proofforge/storage": "0.0.0"
   }
 }

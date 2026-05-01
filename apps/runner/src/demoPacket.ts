@@ -3,6 +3,7 @@ import { resolve } from "node:path";
 import { runLocalMission } from "./index";
 import { buildEvidencePacket, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
 import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
+import { createLocalStorageAdapter, createZeroGStorageAdapter } from "../../../packages/storage/src/index";
 import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
 
 const outputDir = resolve("demo-output/docs-install");
@@ -48,10 +49,46 @@ const packet = await buildEvidencePacket({
   verifierResult,
   approvedBy: "alex"
 });
-const files = await writeEvidencePacketFiles(packet, resolve(outputDir, "packet"));
+let files = await writeEvidencePacketFiles(packet, resolve(outputDir, "packet"));
+const storageAdapter = createStorageAdapter();
+const storageReceipt = await storageAdapter.putFile({
+  path: files.jsonPath,
+  contentType: "application/json"
+});
+
+const packetWithStorageRef = {
+  ...packet,
+  protocolRefs: {
+    ...packet.protocolRefs,
+    storageUri: storageReceipt.uri
+  }
+};
+
+files = await writeEvidencePacketFiles(packetWithStorageRef, resolve(outputDir, "packet"));
 
 console.log("ProofForge demo packet generated.");
 console.log(`Evidence packet: ${files.jsonPath}`);
 console.log(`Case file: ${files.markdownPath}`);
+console.log(`Storage provider: ${storageReceipt.provider}`);
+console.log(`Storage URI: ${storageReceipt.uri}`);
+if (storageReceipt.txHash) {
+  console.log(`0G tx: ${storageReceipt.txHash}`);
+}
 console.log(`Verifier status: ${packet.verifierResult.status}`);
 console.log(`Human approval: ${packet.humanApproval.status}`);
+
+function createStorageAdapter() {
+  const evmRpc = process.env.ZERO_G_EVM_RPC;
+  const indexerRpc = process.env.ZERO_G_INDEXER_RPC;
+  const privateKey = process.env.ZERO_G_PRIVATE_KEY;
+
+  if (evmRpc && indexerRpc && privateKey) {
+    return createZeroGStorageAdapter({
+      evmRpc,
+      indexerRpc,
+      privateKey
+    });
+  }
+
+  return createLocalStorageAdapter(resolve(outputDir, "storage"));
+}

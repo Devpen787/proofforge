@@ -187,6 +187,24 @@ demo-output/docs-install/packet/evidence-packet.json
 demo-output/docs-install/packet/case-file.md
 ```
 
+By default, the packet is stored through the local storage adapter and the packet records a `file://` storage URI.
+
+To use the real 0G storage adapter, set:
+
+```bash
+ZERO_G_EVM_RPC=
+ZERO_G_INDEXER_RPC=
+ZERO_G_PRIVATE_KEY=
+```
+
+Then run:
+
+```bash
+npm run demo:packet
+```
+
+The 0G adapter uses the official `@0gfoundation/0g-storage-ts-sdk` package and returns a `0g://` storage URI plus transaction hash when upload succeeds.
+
 `demo-output/` is ignored by git because it is generated proof output.
 
 ## Next Steps
