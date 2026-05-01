@@ -424,11 +424,19 @@ button {
 .pipeline-step,
 .status-block,
 .proof-score,
-.recommendation-box {
+.recommendation-box,
+.agent-card {
   border: 1px solid #e2e8f0;
   background: #f8fafc;
   border-radius: 18px;
   padding: 16px;
+}
+
+.agent-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
 }
 
 .pipeline-step {

@@ -238,11 +238,33 @@ function ProjectsScreen({ onQueue }: { onQueue: () => void }) {
         ))}
       </div>
       <div className="panel">
-        <h2>Contributor credit</h2>
-        <StatusRow label="Contributor" value={demoProject.credit.contributor} tone="good" />
-        <StatusRow label="Packet" value={demoProject.credit.packet} tone="good" />
-        <StatusRow label="Points" value={demoProject.credit.points} tone="good" />
-        <StatusRow label="Payout" value="earned" tone="good" />
+        <h2>Project proof ledger</h2>
+        <StatusRow label="Accepted packets" value={demoProject.proofLedger.acceptedPackets} tone="good" />
+        <StatusRow label="Pending packets" value={demoProject.proofLedger.pendingPackets} tone="good" />
+        <StatusRow label="Earned payouts" value={demoProject.proofLedger.earnedPayouts} tone="good" />
+        <StatusRow label="Latest proof" value={demoProject.proofLedger.latestProof} tone="good" />
+        <p className="quiet-copy">Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</p>
+      </div>
+      <div className="panel wide">
+        <div className="section-heading">
+          <div>
+            <h2>Agent delegations</h2>
+            <p className="quiet-copy">Delegate capability, not control. Project agents can help, but blocked actions stay blocked.</p>
+          </div>
+          <button className="secondary-action">Attach Agent</button>
+        </div>
+        <div className="agent-card-grid">
+          {demoProject.agentDelegations.map((agent) => (
+            <div className="agent-card" key={agent.name}>
+              <div className="section-heading">
+                <strong>{agent.name}</strong>
+                <span className="status-pill safe">{agent.status}</span>
+              </div>
+              <StatusRow label="Allowed" value={agent.allowed} tone="good" />
+              <StatusRow label="Blocked" value={agent.blocked} tone="bad" />
+            </div>
+          ))}
+        </div>
       </div>
     </section>
   );

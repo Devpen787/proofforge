@@ -56,9 +56,30 @@ export const demoProject = {
   status: "Active",
   purpose: "Turn install friction into accepted proof packets.",
   pool: "$240",
-  people: "1",
-  agents: "0",
-  acceptedProof: "1",
+  people: "8",
+  agents: "2",
+  acceptedProof: "12",
+  proofLedger: {
+    acceptedPackets: "12",
+    pendingPackets: "3",
+    earnedPayouts: "$240",
+    latestProof: "packet_docs_install_demo",
+    topContributors: ["Alex", "docsnode.eth"]
+  },
+  agentDelegations: [
+    {
+      name: "docs-runner-01",
+      status: "Active",
+      allowed: "Docs checks, logs",
+      blocked: "PRs, posts, payments"
+    },
+    {
+      name: "issue-triage-01",
+      status: "Review",
+      allowed: "Import issues, score proofability",
+      blocked: "Public comments"
+    }
+  ],
   lanes: ["Docs validation", "Bug reproduction"],
   backlog: [
     { title: "Validate installation docs", status: "mission-ready" },
