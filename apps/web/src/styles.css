@@ -987,6 +987,10 @@ pre {
   margin: 16px 0;
 }
 
+.decision-panel .share-split {
+  grid-template-columns: 1fr;
+}
+
 .share-split strong {
   display: block;
   margin-bottom: 10px;

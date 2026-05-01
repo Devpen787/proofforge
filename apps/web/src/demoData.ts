@@ -6,6 +6,14 @@ export const demoMission = {
   risk: "Safe"
 };
 
+export const demoConvertedMission = {
+  title: "Checkout QA verification",
+  repo: "external/checkout-flow",
+  reward: "$25",
+  runtime: "45 min",
+  risk: "Medium"
+};
+
 export const demoFirstRunSteps = [
   { label: "Choose mission", detail: "Use a safe starter task." },
   { label: "Confirm safety", detail: "No public action or payment." },
@@ -191,6 +199,29 @@ export const demoPacket = {
   ],
   sharedWithMaintainer: ["summary", "evidence packet", "policy file", "environment summary"],
   keptPrivate: ["raw logs", "local paths", "payout record", "internal runner notes"]
+};
+
+export const demoConvertedPacket = {
+  id: "packet_checkout_qa_demo",
+  objective: "Verify checkout behavior in Chrome and Safari after the buyer clarified target browser versions.",
+  summary: "The checkout flow was tested with defined browser targets. Evidence includes screenshots, console logs, environment summary, and verifier notes.",
+  result: "Checkout completes in Chrome. Safari requires a follow-up because payment confirmation logs are incomplete.",
+  recommendedAction: "Accept as evidence-only QA proof and open a follow-up mission for the Safari confirmation gap.",
+  artifacts: ["evidence-packet.json", "case-file.md", "browser-report.json", "chrome.png", "safari.png", "environment.json"],
+  privacyReview: [
+    "Secrets detected: 0",
+    "Customer data absent",
+    "Screenshots reviewed",
+    "No external actions taken"
+  ],
+  securityReview: [
+    "Sandbox required",
+    "Network restricted to test target",
+    "No payment credentials mounted",
+    "Public submission locked until approval"
+  ],
+  sharedWithMaintainer: ["summary", "browser evidence", "policy file", "environment summary"],
+  keptPrivate: ["raw browser traces", "local paths", "payout record", "internal runner notes"]
 };
 
 export const demoArtifacts = [

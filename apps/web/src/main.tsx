@@ -4,6 +4,8 @@ import "./styles.css";
 import {
   demoActivity,
   demoArtifacts,
+  demoConvertedMission,
+  demoConvertedPacket,
   demoFirstRunSteps,
   demoMission,
   demoPacket,
@@ -23,6 +25,8 @@ import {
   demoWorkLeadDiagnosis
 } from "./demoData";
 import { routeLabels, screens, type Screen } from "./routes";
+
+type ActiveMission = "docs" | "checkout";
 
 function screenFromHash(): Screen {
   const candidate = window.location.hash.replace("#", "");
@@ -44,6 +48,7 @@ function App() {
   const [projectWorkSuggested, setProjectWorkSuggested] = React.useState(false);
   const [workLeadClarified, setWorkLeadClarified] = React.useState(false);
   const [workLeadConverted, setWorkLeadConverted] = React.useState(false);
+  const [activeMission, setActiveMission] = React.useState<ActiveMission>("docs");
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
     setScreenState(nextScreen);
@@ -94,7 +99,10 @@ function App() {
             }}
           />
         )}
-        {screen === "first-run" && <FirstRunScreen onRun={() => setScreen("run")} onQueue={() => setScreen("work-queue")} />}
+        {screen === "first-run" && <FirstRunScreen onRun={() => {
+          setActiveMission("docs");
+          setScreen("run");
+        }} onQueue={() => setScreen("work-queue")} />}
         {screen === "projects" && (
           <ProjectsScreen
             projectStarted={projectStarted}
@@ -120,11 +128,15 @@ function App() {
             onImport={() => setImportedLead(true)}
             onClarifyLead={() => setWorkLeadClarified(true)}
             onConvertLead={() => setWorkLeadConverted(true)}
-            onRun={() => setScreen("run")}
+            onRun={(mission) => {
+              setActiveMission(mission);
+              setScreen("run");
+            }}
           />
         )}
         {screen === "run" && (
           <RunnerScreen
+            activeMission={activeMission}
             onPacket={() => {
               setPacketReady(true);
               setScreen("case-file");
@@ -136,6 +148,7 @@ function App() {
             submitted={submitted}
             revisionRequested={revisionRequested}
             rejected={rejected}
+            activeMission={activeMission}
             onSubmit={() => {
               setSubmitted(true);
               setRevisionRequested(false);
@@ -148,6 +161,7 @@ function App() {
           <MaintainerScreen
             submitted={submitted}
             accepted={accepted}
+            activeMission={activeMission}
             onAccept={() => {
               setSubmitted(true);
               setRevisionRequested(false);
@@ -178,6 +192,7 @@ function App() {
             released={released}
             revisionRequested={revisionRequested}
             rejected={rejected}
+            activeMission={activeMission}
             onRelease={() => setReleased(true)}
             onResolveRevision={() => setScreen("case-file")}
             onNext={() => {
@@ -187,7 +202,7 @@ function App() {
             onPublicProof={() => setScreen("public-proof")}
           />
         )}
-        {screen === "public-proof" && <PublicProofScreen onBack={() => setScreen("scoreboard")} />}
+        {screen === "public-proof" && <PublicProofScreen activeMission={activeMission} onBack={() => setScreen("scoreboard")} />}
       </main>
     </div>
   );
@@ -569,7 +584,7 @@ function WorkQueueScreen({
   onImport: () => void;
   onClarifyLead: () => void;
   onConvertLead: () => void;
-  onRun: () => void;
+  onRun: (mission: ActiveMission) => void;
 }) {
   return (
     <section className="page-grid work-queue-grid">
@@ -707,13 +722,13 @@ function WorkQueueScreen({
           <StatusRow label="Owner" value="External buyer" tone="good" />
           <StatusRow label="Risk" value="Medium" tone="bad" />
           <StatusRow label="Approval" value="Evidence-only before submit" tone="good" />
-          <button className="primary-action full" onClick={onRun}>Run converted mission</button>
+          <button className="primary-action full" onClick={() => onRun("checkout")}>Run converted mission</button>
         </div>
       )}
       <div className="panel">
         <h2>Scoped starter mission</h2>
         <p>Validate installation docs in a clean fixture. This is safe, local, and evidence-only.</p>
-        <button className="primary-action full" onClick={onRun}>
+        <button className="primary-action full" onClick={() => onRun("docs")}>
           Run safest mission
         </button>
       </div>
@@ -744,20 +759,22 @@ function WorkQueueScreen({
   );
 }
 
-function RunnerScreen({ onPacket }: { onPacket: () => void }) {
-  return (
-    <section className="page-grid runner-grid">
-      <header className="page-header">
-        <span>Runner / {demoMission.title}</span>
-        <button className="danger-action">Cancel Run</button>
-      </header>
-      <div className="panel">
-        <h2>Mission lifecycle</h2>
-        <Timeline />
-      </div>
-      <div className="terminal-card">
-        <h2>Live output</h2>
-        <pre>{`$ npm run proof:check
+function RunnerScreen({ activeMission, onPacket }: { activeMission: ActiveMission; onPacket: () => void }) {
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const output =
+    activeMission === "checkout"
+      ? `$ npm run proof:browser
+
+Checking checkout flow in Chrome and Safari...
+Chrome checkout completed with expected confirmation.
+Safari confirmation logs are incomplete.
+
+Artifacts written:
+browser-report.json
+chrome.png
+safari.png
+environment.json`
+      : `$ npm run proof:check
 
 Checking documented install flow...
 Missing docs-ready.flag. The documented setup is incomplete.
@@ -766,7 +783,21 @@ Artifacts written:
 runner-result.json
 stdout.log
 stderr.log
-environment.json`}</pre>
+environment.json`;
+
+  return (
+    <section className="page-grid runner-grid">
+      <header className="page-header">
+        <span>Runner / {mission.title}</span>
+        <button className="danger-action">Cancel Run</button>
+      </header>
+      <div className="panel">
+        <h2>Mission lifecycle</h2>
+        <Timeline />
+      </div>
+      <div className="terminal-card">
+        <h2>Live output</h2>
+        <pre>{output}</pre>
       </div>
       <div className="panel">
         <h2>Packet output preview</h2>
@@ -805,22 +836,26 @@ function CaseFileScreen({
   submitted,
   revisionRequested,
   rejected,
+  activeMission,
   onSubmit
 }: {
   submitted: boolean;
   revisionRequested: boolean;
   rejected: boolean;
+  activeMission: ActiveMission;
   onSubmit: () => void;
 }) {
+  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
   return (
     <section className="page-grid case-grid">
       <header className="page-header">
-        <span>Case File / {demoPacket.id}</span>
+        <span>Case File / {packet.id}</span>
         <button className="primary-action" onClick={onSubmit} disabled={submitted}>{submitted ? "Submitted" : "Submit Packet"}</button>
       </header>
       <div className="panel">
         <p className="small-label">Maintainer summary</p>
-        <h2>Validated install docs in a clean fixture.</h2>
+        <h2>{activeMission === "checkout" ? "Verified checkout QA with clarified browser targets." : "Validated install docs in a clean fixture."}</h2>
         {revisionRequested && (
           <div className="revision-banner" role="status">
             <strong>Revision requested</strong>
@@ -836,19 +871,19 @@ function CaseFileScreen({
         <div className="case-summary-grid">
           <div className="case-summary-block">
             <span>What was tested</span>
-            <strong>{demoPacket.objective}</strong>
+            <strong>{packet.objective}</strong>
           </div>
           <div className="case-summary-block">
             <span>Result</span>
-            <strong>{demoPacket.result}</strong>
+            <strong>{packet.result}</strong>
           </div>
           <div className="case-summary-block">
             <span>Evidence summary</span>
-            <strong>{demoPacket.summary}</strong>
+            <strong>{packet.summary}</strong>
           </div>
           <div className="case-summary-block">
             <span>Recommended next action</span>
-            <strong>{demoPacket.recommendedAction}</strong>
+            <strong>{packet.recommendedAction}</strong>
           </div>
         </div>
         <div className="packet-facts">
@@ -861,7 +896,7 @@ function CaseFileScreen({
           <div>
             <h2>Privacy review</h2>
             <ul className="check-list">
-              {demoPacket.privacyReview.map((item) => (
+              {packet.privacyReview.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -869,7 +904,7 @@ function CaseFileScreen({
           <div>
             <h2>Security review</h2>
             <ul className="check-list">
-              {demoPacket.securityReview.map((item) => (
+              {packet.securityReview.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -879,26 +914,26 @@ function CaseFileScreen({
       <div className="panel">
         <h2>Proof artifacts</h2>
         <p className="quiet-copy">Generated by `npm run demo:packet`. Private artifacts stay inside the workspace unless approved.</p>
-        {demoArtifacts.map((artifact) => (
-          <div className="artifact-row rich-artifact-row" key={artifact.name}>
+        {packet.artifacts.map((artifact) => (
+          <div className="artifact-row rich-artifact-row" key={artifact}>
             <span>
-              <strong>{artifact.name}</strong>
-              <small>{artifact.purpose}</small>
+              <strong>{artifact}</strong>
+              <small>{activeMission === "checkout" ? "Browser QA proof artifact for maintainer review." : "Generated proof artifact for maintainer review."}</small>
             </span>
-            <small>{artifact.visibility}</small>
+            <small>{artifact.includes("payout") ? "Private" : "Maintainer"}</small>
           </div>
         ))}
       </div>
       <div className="decision-panel">
         <p className="small-label">Submit decision</p>
         <h2>Evidence first. Code later.</h2>
-        <p>If accepted: $8 earned, +12 reputation, +2 credits.</p>
+        <p>If accepted: {mission.reward} earned, +12 reputation, +2 credits.</p>
         <code>Download JSON via npm run demo:packet</code>
         <div className="share-split">
           <div>
             <strong>Shared with maintainer</strong>
             <ul className="check-list">
-              {demoPacket.sharedWithMaintainer.map((item) => (
+              {packet.sharedWithMaintainer.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -906,7 +941,7 @@ function CaseFileScreen({
           <div>
             <strong>Kept private</strong>
             <ul className="check-list">
-              {demoPacket.keptPrivate.map((item) => (
+              {packet.keptPrivate.map((item) => (
                 <li key={item}>{item}</li>
               ))}
             </ul>
@@ -923,16 +958,20 @@ function CaseFileScreen({
 function MaintainerScreen({
   submitted,
   accepted,
+  activeMission,
   onAccept,
   onRevision,
   onReject
 }: {
   submitted: boolean;
   accepted: boolean;
+  activeMission: ActiveMission;
   onAccept: () => void;
   onRevision: () => void;
   onReject: () => void;
 }) {
+  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
   return (
     <section className="page-grid maintainer-grid">
       <header className="page-header">
@@ -970,17 +1009,17 @@ function MaintainerScreen({
       <div className="panel wide">
         <p className="small-label">Review clean proof, not agent noise.</p>
         <h2>Proof Packet Ready</h2>
-        <p>Installer flow on Ubuntu fixture produced logs, environment details, and verifier checks.</p>
+        <p>{packet.summary}</p>
         <div className="maintainer-decision-grid">
           <div className="decision-summary">
             <h3>What was proven</h3>
-            <p>Docs install flow fails because `docs-ready.flag` is missing in the clean fixture.</p>
+            <p>{packet.result}</p>
             <div className="triage-grid">
               <StatusBlock label="Confidence" value="86%" />
-              <StatusBlock label="Risk" value="Low" />
-              <StatusBlock label="Artifacts" value="6 files" />
+              <StatusBlock label="Risk" value={mission.risk} />
+              <StatusBlock label="Artifacts" value={`${packet.artifacts.length} files`} />
               <StatusBlock label="Privacy" value="Passed" />
-              <StatusBlock label="Payout if accepted" value="$8 earned" />
+              <StatusBlock label="Payout if accepted" value={`${mission.reward} earned`} />
             </div>
           </div>
           <div className="decision-summary">
@@ -1009,6 +1048,7 @@ function ScoreboardScreen({
   released,
   revisionRequested,
   rejected,
+  activeMission,
   onRelease,
   onResolveRevision,
   onNext,
@@ -1018,11 +1058,14 @@ function ScoreboardScreen({
   released: boolean;
   revisionRequested: boolean;
   rejected: boolean;
+  activeMission: ActiveMission;
   onRelease: () => void;
   onResolveRevision: () => void;
   onNext: () => void;
   onPublicProof: () => void;
 }) {
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const payoutAmount = mission.reward;
   return (
     <section className="page-grid scoreboard-grid">
       <header className="page-header">
@@ -1033,9 +1076,9 @@ function ScoreboardScreen({
       </header>
       <div className="metric-strip wide">
         <Metric label="Available" value="$63" />
-        <Metric label="Pending" value={accepted || rejected ? "$0" : "$8"} />
-        <Metric label="Earned" value={accepted ? "$8" : "$0"} />
-        <Metric label="Paid out" value={released ? "$8" : "$0"} />
+        <Metric label="Pending" value={accepted || rejected ? "$0" : payoutAmount} />
+        <Metric label="Earned" value={accepted ? payoutAmount : "$0"} />
+        <Metric label="Paid out" value={released ? payoutAmount : "$0"} />
         <Metric label="Reputation" value={accepted ? "176" : "164"} />
       </div>
       <div className="panel scoreboard-action-card">
@@ -1064,8 +1107,8 @@ function ScoreboardScreen({
       </div>
       <div className="panel">
         <h2>Payout state</h2>
-        <StatusRow label="Earned payout" value={accepted ? "$8 earned" : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
-        <StatusRow label="Released payout" value={released ? "$8 released" : "Not released"} tone={released ? "good" : "bad"} />
+        <StatusRow label="Earned payout" value={accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
+        <StatusRow label="Released payout" value={released ? `${payoutAmount} released` : "Not released"} tone={released ? "good" : "bad"} />
         <StatusRow label="Method" value="Manual accounting" tone="good" />
         <p className="quiet-copy">Release is manual in the MVP. No money moves automatically.</p>
         <button className="primary-action full" disabled={!accepted || released} onClick={onRelease}>
@@ -1115,21 +1158,23 @@ function ScoreboardScreen({
   );
 }
 
-function PublicProofScreen({ onBack }: { onBack: () => void }) {
+function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMission; onBack: () => void }) {
+  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
   return (
     <section className="page-grid case-grid">
       <header className="page-header">
-        <span>Public Proof / {demoPacket.id}</span>
+        <span>Public Proof / {packet.id}</span>
         <button className="secondary-action" onClick={onBack}>
           Back to Scoreboard
         </button>
       </header>
       <div className="hero-card public-proof-card">
         <p className="small-label">Accepted Proof Packet</p>
-        <h1>Validate installation docs</h1>
+        <h1>{mission.title}</h1>
         <p className="public-summary">
-          Installation docs were tested in a clean environment. The accepted packet includes a safe summary,
-          generated artifacts, verifier status, project credit, and payout outcome.
+          {packet.summary} The accepted packet includes a safe summary, generated artifacts, verifier status,
+          project credit, and payout outcome.
         </p>
         <div className="decision-row">
           <span className="status-pill safe">Accepted</span>
@@ -1140,10 +1185,10 @@ function PublicProofScreen({ onBack }: { onBack: () => void }) {
       <div className="panel">
         <h2>What was proven</h2>
         <ul className="check-list">
-          <li>Commands executed in a clean fixture</li>
-          <li>Logs captured for review</li>
+          <li>{packet.result}</li>
           <li>Verifier checks passed</li>
           <li>No secrets or local paths exposed</li>
+          <li>Maintainer-safe summary available</li>
         </ul>
       </div>
       <div className="panel">
@@ -1170,7 +1215,7 @@ function PublicProofScreen({ onBack }: { onBack: () => void }) {
         <p className="small-label">Credit and payout</p>
         <StatusRow label="Project" value={demoProject.name} tone="good" />
         <StatusRow label="Contributor" value="alex" tone="good" />
-        <StatusRow label="Earned payout" value="$8" tone="good" />
+        <StatusRow label="Earned payout" value={mission.reward} tone="good" />
         <StatusRow label="Reputation" value="+12" tone="good" />
       </div>
     </section>
