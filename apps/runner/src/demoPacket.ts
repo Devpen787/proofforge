@@ -4,6 +4,7 @@ import { runLocalMission } from "./index";
 import { buildEvidencePacket, createPublicPacketView, writeEvidencePacketFiles } from "../../../packages/evidence/src/index";
 import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
 import { createEarnedPayout } from "../../../packages/payments/src/index";
+import { addMissionToProject, addWorkLeadToProject, createProject, recordAcceptedProof } from "../../../packages/projects/src/index";
 import { createLocalStorageAdapter, createZeroGStorageAdapter } from "../../../packages/storage/src/index";
 import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
 
@@ -33,6 +34,21 @@ const lead = workLeadSchema.parse({
 await rm(outputDir, { recursive: true, force: true });
 
 const mission = convertWorkLeadToMission(lead);
+const project = addMissionToProject(
+  addWorkLeadToProject(
+    createProject({
+      id: "project_docs_onboarding",
+      name: "Docs Onboarding Sprint",
+      handle: "docs-onboarding",
+      purpose: "Turn install friction into accepted proof packets.",
+      founder: "alex",
+      lanes: ["Docs validation", "Bug reproduction"],
+      rewardPool: 240
+    }),
+    lead
+  ),
+  mission
+);
 const runnerResult = await runLocalMission({
   fixtureDir: resolve("apps/runner/fixtures/docs-install"),
   outputDir,
@@ -76,6 +92,13 @@ const payout = createEarnedPayout({
 });
 const payoutPath = resolve(outputDir, "packet", "payout.json");
 await writeFile(payoutPath, JSON.stringify(payout, null, 2), "utf8");
+const projectWithCredit = recordAcceptedProof(project, {
+  packet: packetWithStorageRef,
+  payout,
+  contributor: "alex"
+});
+const projectPath = resolve(outputDir, "packet", "project.json");
+await writeFile(projectPath, JSON.stringify(projectWithCredit, null, 2), "utf8");
 const publicPacket = createPublicPacketView({
   packet: packetWithStorageRef,
   project: "Docs Onboarding Sprint",
@@ -90,6 +113,7 @@ console.log(`Evidence packet: ${files.jsonPath}`);
 console.log(`Case file: ${files.markdownPath}`);
 console.log(`Public packet: ${publicPacketPath}`);
 console.log(`Earned payout: ${payoutPath}`);
+console.log(`Project state: ${projectPath}`);
 console.log(`Storage provider: ${storageReceipt.provider}`);
 console.log(`Storage URI: ${storageReceipt.uri}`);
 if (storageReceipt.txHash) {
@@ -98,6 +122,7 @@ if (storageReceipt.txHash) {
 console.log(`Verifier status: ${packet.verifierResult.status}`);
 console.log(`Human approval: ${packet.humanApproval.status}`);
 console.log(`Payout status: ${payout.status}`);
+console.log(`Project accepted packets: ${projectWithCredit.acceptedPacketIds.length}`);
 
 function createStorageAdapter() {
   const evmRpc = process.env.ZERO_G_EVM_RPC;

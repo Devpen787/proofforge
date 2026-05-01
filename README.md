@@ -204,6 +204,7 @@ demo-output/docs-install/packet/evidence-packet.json
 demo-output/docs-install/packet/case-file.md
 demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
+demo-output/docs-install/packet/project.json
 ```
 
 By default, the packet is stored through the local storage adapter and the packet records a `file://` storage URI.
@@ -215,6 +216,12 @@ Accepted Evidence Packet -> Earned Payout
 ```
 
 It does not move money automatically.
+
+The project file shows the companion coordination state:
+
+```text
+Project -> Work Lead -> Mission -> Accepted Packet -> Contributor Credit
+```
 
 To use the real 0G storage adapter, set:
 
