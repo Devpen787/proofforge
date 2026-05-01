@@ -20,7 +20,7 @@ export const demoFirstRunSteps = [
   { label: "Run agent", detail: "Execute locally and capture logs." },
   { label: "Review packet", detail: "Check evidence before sharing." },
   { label: "Submit or save", detail: "Human approval decides." },
-  { label: "See outcome", detail: "Earn credit only if accepted." }
+  { label: "See outcome", detail: "Accepted proof creates earned value." }
 ];
 
 export const demoSafetyDefaults = [
@@ -64,10 +64,10 @@ export const demoWork = [
 
 export const demoProofLoop = [
   { label: "Work", detail: "Existing issue or task" },
-  { label: "Run", detail: "Sandboxed agent work" },
+  { label: "Agent", detail: "Sandboxed work" },
   { label: "Verify", detail: "Independent checks" },
-  { label: "Packet", detail: "Evidence case file" },
-  { label: "Credit", detail: "Reputation or payout" }
+  { label: "Accept", detail: "Human review" },
+  { label: "Earn", detail: "Payout, credit, access" }
 ];
 
 export const demoSourcePipeline = [

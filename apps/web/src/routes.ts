@@ -20,6 +20,6 @@ export const routeLabels: Record<Screen, string> = {
   run: "Runner",
   "case-file": "Case Files",
   maintainer: "Maintainer",
-  scoreboard: "Scoreboard",
+  scoreboard: "Earnings",
   "public-proof": "Public Proof"
 };

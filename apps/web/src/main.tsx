@@ -267,16 +267,16 @@ function OpportunityScreen({ onStart }: { onStart: () => void }) {
   return (
     <section className="page-grid page-grid-hero">
       <div className="hero-card">
-        <p className="small-label">Proof, not noise</p>
-        <h1>Turn messy open-source work into proof someone can trust.</h1>
+        <p className="small-label">Proof before payout</p>
+        <h1>Find useful work. Let your agents prove it. Earn when it holds up.</h1>
         <div className="safety-list">
-          <span>No public posts.</span>
-          <span>No PRs.</span>
-          <span>No payments.</span>
-          <span>Your agent runs safely until you approve.</span>
+          <span>Real work sources, not made-up tasks.</span>
+          <span>No public posts, PRs, or payments until approval.</span>
+          <span>Your agent runs safely and produces evidence.</span>
+          <span>Accepted proof creates payout, credit, or reputation.</span>
         </div>
         <button className="primary-action" onClick={onStart}>
-          Run your first proof packet
+          Earn your first proof packet
         </button>
       </div>
       <ProofLoopCard />
@@ -290,9 +290,9 @@ function MetricStrip() {
   return (
     <div className="metric-strip">
       <Metric label="Visible rewards" value="$1,240" />
-      <Metric label="Accepted this week" value="128" />
+      <Metric label="Proof accepted this week" value="128" />
       <Metric label="Active nodes" value="42" />
-      <Metric label="Your fit today" value="$63" />
+      <Metric label="Your earnable fit" value="$63" />
     </div>
   );
 }
@@ -300,8 +300,8 @@ function MetricStrip() {
 function ProofLoopCard() {
   return (
     <section className="proof-loop-card" aria-label="ProofForge proof loop">
-      <p className="small-label">How proof moves</p>
-      <h2>Work becomes proof, then credit.</h2>
+      <p className="small-label">How earning works</p>
+      <h2>Your agent helps. Proof decides. Value follows.</h2>
       <div className="proof-loop-list">
         {demoProofLoop.map((step, index) => (
           <div className="proof-loop-step" key={step.label}>
@@ -313,7 +313,7 @@ function ProofLoopCard() {
           </div>
         ))}
       </div>
-      <p className="quiet-copy">Raw work never skips the gate. Agents run locally, evidence is reviewed, then accepted proof becomes credit.</p>
+      <p className="quiet-copy">This is not passive income. Raw work never skips the gate. Accepted evidence is what creates earned value.</p>
     </section>
   );
 }
@@ -327,7 +327,7 @@ function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => 
       </header>
       <div className="panel first-run-steps">
         <p className="small-label">Guided first proof</p>
-        <h2>Your first win in six steps.</h2>
+        <h2>Earn your first accepted proof in six steps.</h2>
         {demoFirstRunSteps.map((step, index) => (
           <div className="wizard-step" key={step.label}>
             <span>{index + 1}</span>
@@ -341,7 +341,7 @@ function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => 
       <div className="panel first-run-mission">
         <p className="small-label">Starter mission</p>
         <h2>{demoMission.title}</h2>
-        <p className="quiet-copy">Start with a safe docs validation mission. Your agent runs locally, captures evidence, and stops for approval before anything is submitted.</p>
+        <p className="quiet-copy">Start with a safe docs validation mission. Your agent runs locally, captures evidence, and stops for approval before anything is submitted or earned.</p>
         <div className="triage-grid">
           <StatusBlock label="Repo" value={demoMission.repo} />
           <StatusBlock label="Risk" value={demoMission.risk} />
@@ -357,7 +357,7 @@ function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => 
             <li>Build the evidence packet draft</li>
           </ul>
         </div>
-        <button className="primary-action full" onClick={onRun}>Run safest starter mission</button>
+        <button className="primary-action full" onClick={onRun}>Run safest earning mission</button>
       </div>
       <div className="panel">
         <h2>Safety defaults</h2>
@@ -847,15 +847,27 @@ function CaseFileScreen({
 }) {
   const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const caseTitle = activeMission === "checkout" ? "Verified checkout QA with clarified browser targets." : "Validated install docs in a clean fixture.";
+  const artifactPurpose = activeMission === "checkout" ? "Browser QA proof artifact for maintainer review." : "Generated proof artifact for maintainer review.";
   return (
-    <section className="page-grid case-grid">
+    <section className="page-grid case-grid case-dossier-grid">
       <header className="page-header">
         <span>Case File / {packet.id}</span>
         <button className="primary-action" onClick={onSubmit} disabled={submitted}>{submitted ? "Submitted" : "Submit Packet"}</button>
       </header>
-      <div className="panel">
-        <p className="small-label">Maintainer summary</p>
-        <h2>{activeMission === "checkout" ? "Verified checkout QA with clarified browser targets." : "Validated install docs in a clean fixture."}</h2>
+      <div className="case-dossier">
+        <div className="case-dossier-hero">
+          <div>
+            <p className="small-label">Evidence packet preview</p>
+            <h2>{caseTitle}</h2>
+            <p>{packet.summary}</p>
+          </div>
+          <div className="case-dossier-meta" aria-label="Packet status">
+            <span className="status-pill safe">Verifier passed</span>
+            <span className="status-pill safe">Evidence-only</span>
+            <span className="status-pill safe">No public action</span>
+          </div>
+        </div>
         {revisionRequested && (
           <div className="revision-banner" role="status">
             <strong>Revision requested</strong>
@@ -868,61 +880,89 @@ function CaseFileScreen({
             <span>The evidence was closed without payout. Start a new mission or rebuild the packet with stronger proof.</span>
           </div>
         )}
-        <div className="case-summary-grid">
-          <div className="case-summary-block">
-            <span>What was tested</span>
-            <strong>{packet.objective}</strong>
-          </div>
-          <div className="case-summary-block">
-            <span>Result</span>
-            <strong>{packet.result}</strong>
-          </div>
-          <div className="case-summary-block">
-            <span>Evidence summary</span>
-            <strong>{packet.summary}</strong>
-          </div>
-          <div className="case-summary-block">
-            <span>Recommended next action</span>
-            <strong>{packet.recommendedAction}</strong>
+
+        <div className="case-dossier-body">
+          <aside className="case-file-rail" aria-label="Case file sections">
+            {["Summary", "Artifacts", "Verifier", "Privacy", "Submit"].map((item, index) => (
+              <span className={index === 0 ? "active" : ""} key={item}>{item}</span>
+            ))}
+          </aside>
+
+          <div className="case-file-document">
+            <section className="case-document-section">
+              <p className="small-label">Maintainer summary</p>
+              <div className="case-summary-grid compact-case-grid">
+                <div className="case-summary-block">
+                  <span>What was tested</span>
+                  <strong>{packet.objective}</strong>
+                </div>
+                <div className="case-summary-block result-block">
+                  <span>Observed result</span>
+                  <strong>{packet.result}</strong>
+                </div>
+                <div className="case-summary-block">
+                  <span>Recommended next action</span>
+                  <strong>{packet.recommendedAction}</strong>
+                </div>
+              </div>
+            </section>
+
+            <section className="case-document-section">
+              <div className="section-heading">
+                <div>
+                  <p className="small-label">Proof artifacts</p>
+                  <h2>Maintainer-ready evidence bundle</h2>
+                </div>
+                <span className="status-pill safe">{packet.artifacts.length} files</span>
+              </div>
+              <div className="artifact-manifest">
+                {packet.artifacts.map((artifact) => (
+                  <div className="artifact-manifest-row" key={artifact}>
+                    <span>
+                      <strong>{artifact}</strong>
+                      <small>{artifactPurpose}</small>
+                    </span>
+                    <small>{artifact.includes("payout") ? "Private" : "Maintainer"}</small>
+                  </div>
+                ))}
+              </div>
+            </section>
+
+            <section className="case-document-section verification-section">
+              <div>
+                <p className="small-label">Verifier result</p>
+                <h2>Builder does not grade its own work.</h2>
+                <div className="packet-facts">
+                  <StatusRow label="Packet status" value="Draft, approved locally" tone="good" />
+                  <StatusRow label="Verifier" value="Passed" tone="good" />
+                  <StatusRow label="Policy" value="Evidence-only" tone="good" />
+                  <StatusRow label="Public action" value="None taken" tone="good" />
+                </div>
+              </div>
+              <div>
+                <p className="small-label">Safety reviews</p>
+                <div className="review-grid">
+                  <div>
+                    <h2>Privacy</h2>
+                    <ul className="check-list">
+                      {packet.privacyReview.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  <div>
+                    <h2>Security</h2>
+                    <ul className="check-list">
+                      {packet.securityReview.map((item) => (
+                        <li key={item}>{item}</li>
+                      ))}
+                    </ul>
+                  </div>
+                </div>
+              </div>
+            </section>
           </div>
         </div>
-        <div className="packet-facts">
-          <StatusRow label="Packet status" value="Draft, approved locally" tone="good" />
-          <StatusRow label="Verifier" value="Passed" tone="good" />
-          <StatusRow label="Policy" value="Evidence-only" tone="good" />
-          <StatusRow label="Public action" value="None taken" tone="good" />
-        </div>
-        <div className="review-grid">
-          <div>
-            <h2>Privacy review</h2>
-            <ul className="check-list">
-              {packet.privacyReview.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-          <div>
-            <h2>Security review</h2>
-            <ul className="check-list">
-              {packet.securityReview.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
-          </div>
-        </div>
-      </div>
-      <div className="panel">
-        <h2>Proof artifacts</h2>
-        <p className="quiet-copy">Generated by `npm run demo:packet`. Private artifacts stay inside the workspace unless approved.</p>
-        {packet.artifacts.map((artifact) => (
-          <div className="artifact-row rich-artifact-row" key={artifact}>
-            <span>
-              <strong>{artifact}</strong>
-              <small>{activeMission === "checkout" ? "Browser QA proof artifact for maintainer review." : "Generated proof artifact for maintainer review."}</small>
-            </span>
-            <small>{artifact.includes("payout") ? "Private" : "Maintainer"}</small>
-          </div>
-        ))}
       </div>
       <div className="decision-panel">
         <p className="small-label">Submit decision</p>
@@ -1069,7 +1109,7 @@ function ScoreboardScreen({
   return (
     <section className="page-grid scoreboard-grid">
       <header className="page-header">
-        <span>Scoreboard</span>
+        <span>Earnings</span>
         <button className="primary-action" onClick={onNext}>
           Generate Proof Packet
         </button>
@@ -1106,7 +1146,7 @@ function ScoreboardScreen({
         {(accepted || released) && <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>}
       </div>
       <div className="panel">
-        <h2>Payout state</h2>
+        <h2>Earned value</h2>
         <StatusRow label="Earned payout" value={accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
         <StatusRow label="Released payout" value={released ? `${payoutAmount} released` : "Not released"} tone={released ? "good" : "bad"} />
         <StatusRow label="Method" value="Manual accounting" tone="good" />
@@ -1166,7 +1206,7 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
       <header className="page-header">
         <span>Public Proof / {packet.id}</span>
         <button className="secondary-action" onClick={onBack}>
-          Back to Scoreboard
+          Back to Earnings
         </button>
       </header>
       <div className="hero-card public-proof-card">

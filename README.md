@@ -156,7 +156,7 @@ This repository now has the first working proof slice:
 - accepted proof simulation that creates an earned `payout.json`
 - manual release command that creates `released-payout.json`
 - project credit ledger for accepted proof
-- proof command center UI for the core journey
+- proof-to-earn product UI for the core journey
 
 The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
 
