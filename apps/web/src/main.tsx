@@ -494,6 +494,26 @@ function MaintainerScreen({ accepted, onAccept }: { accepted: boolean; onAccept:
         <p className="small-label">Review clean proof, not agent noise.</p>
         <h2>Proof Packet Ready</h2>
         <p>Installer flow on Ubuntu fixture produced logs, environment details, and verifier checks.</p>
+        <div className="maintainer-decision-grid">
+          <div className="decision-summary">
+            <h3>What was proven</h3>
+            <p>Docs install flow fails because `docs-ready.flag` is missing in the clean fixture.</p>
+            <div className="triage-grid">
+              <StatusBlock label="Confidence" value="86%" />
+              <StatusBlock label="Risk" value="Low" />
+              <StatusBlock label="Artifacts" value="6 files" />
+              <StatusBlock label="Privacy" value="Passed" />
+              <StatusBlock label="Payout if accepted" value="$8 earned" />
+            </div>
+          </div>
+          <div className="decision-summary">
+            <h3>Decision support</h3>
+            <StatusRow label="Policy" value="Evidence-only" tone="good" />
+            <StatusRow label="Public action" value="None yet" tone="good" />
+            <StatusRow label="Missing info" value="None" tone="good" />
+            <StatusRow label="Recommended action" value="Accept" tone="good" />
+          </div>
+        </div>
         <div className="decision-row">
           <button className="secondary-action">Review Packet</button>
           <button className="primary-action" onClick={onAccept} disabled={accepted}>

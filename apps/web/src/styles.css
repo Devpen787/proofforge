@@ -442,6 +442,29 @@ button {
   margin-top: 16px;
 }
 
+.maintainer-decision-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 16px;
+  margin: 18px 0;
+}
+
+.decision-summary {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 16px;
+}
+
+.decision-summary h3 {
+  margin: 0 0 8px;
+  font-size: 16px;
+}
+
+.decision-summary p {
+  color: #475569;
+}
+
 .pipeline-step {
   flex: 1;
 }
