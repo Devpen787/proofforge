@@ -442,17 +442,44 @@ function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
         <code>Download JSON via npm run demo:packet</code>
       </header>
       <div className="panel">
-        <h2>What was tested</h2>
-        <p>{demoPacket.objective}</p>
-        <h2>What happened</h2>
-        <p>{demoPacket.summary}</p>
-        <h2>Privacy review</h2>
-        <ul className="check-list">
-          <li>Secrets detected: 0</li>
-          <li>Local paths masked</li>
-          <li>Raw logs private</li>
-          <li>No external actions taken</li>
-        </ul>
+        <p className="small-label">Maintainer summary</p>
+        <h2>Validated install docs in a clean fixture.</h2>
+        <div className="case-summary-grid">
+          <div className="case-summary-block">
+            <span>What was tested</span>
+            <strong>{demoPacket.objective}</strong>
+          </div>
+          <div className="case-summary-block">
+            <span>Result</span>
+            <strong>{demoPacket.result}</strong>
+          </div>
+          <div className="case-summary-block">
+            <span>Evidence summary</span>
+            <strong>{demoPacket.summary}</strong>
+          </div>
+          <div className="case-summary-block">
+            <span>Recommended next action</span>
+            <strong>{demoPacket.recommendedAction}</strong>
+          </div>
+        </div>
+        <div className="review-grid">
+          <div>
+            <h2>Privacy review</h2>
+            <ul className="check-list">
+              {demoPacket.privacyReview.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <h2>Security review</h2>
+            <ul className="check-list">
+              {demoPacket.securityReview.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
       </div>
       <div className="panel">
         <h2>Proof artifacts</h2>
@@ -471,6 +498,24 @@ function CaseFileScreen({ onSubmit }: { onSubmit: () => void }) {
         <p className="small-label">Submit decision</p>
         <h2>Evidence first. Code later.</h2>
         <p>If accepted: $8 earned, +12 reputation, +2 credits.</p>
+        <div className="share-split">
+          <div>
+            <strong>Shared with maintainer</strong>
+            <ul className="check-list">
+              {demoPacket.sharedWithMaintainer.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+          <div>
+            <strong>Kept private</strong>
+            <ul className="check-list">
+              {demoPacket.keptPrivate.map((item) => (
+                <li key={item}>{item}</li>
+              ))}
+            </ul>
+          </div>
+        </div>
         <button className="primary-action full" onClick={onSubmit}>
           Submit to Maintainer Inbox
         </button>

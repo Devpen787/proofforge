@@ -660,6 +660,61 @@ pre {
   font-weight: 850;
 }
 
+.case-summary-grid,
+.review-grid,
+.share-split {
+  display: grid;
+  gap: 14px;
+}
+
+.case-summary-grid {
+  margin: 16px 0 20px;
+}
+
+.case-summary-block {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.case-summary-block span {
+  display: block;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.case-summary-block strong {
+  display: block;
+  margin-top: 5px;
+  color: #020617;
+  line-height: 1.45;
+}
+
+.review-grid,
+.share-split {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.review-grid > div,
+.share-split > div {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.share-split {
+  margin: 16px 0;
+}
+
+.share-split strong {
+  display: block;
+  margin-bottom: 10px;
+}
+
 .good {
   color: #047857;
 }

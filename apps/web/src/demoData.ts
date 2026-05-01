@@ -127,7 +127,23 @@ export const demoPacket = {
   id: "packet_docs_install_demo",
   objective: "Run the documented install check and prove whether it works in a clean environment.",
   summary: "The fixture install check failed because docs-ready.flag is missing. Runner artifacts and verifier checks passed.",
-  artifacts: ["evidence-packet.json", "case-file.md", "runner-result.json", "stdout.log", "stderr.log", "environment.json"]
+  result: "Docs install flow fails in a clean fixture because docs-ready.flag is missing.",
+  recommendedAction: "Accept the packet as a valid docs validation proof and open a follow-up mission for the missing setup step.",
+  artifacts: ["evidence-packet.json", "case-file.md", "runner-result.json", "stdout.log", "stderr.log", "environment.json"],
+  privacyReview: [
+    "Secrets detected: 0",
+    "Local paths masked",
+    "Raw logs private",
+    "No external actions taken"
+  ],
+  securityReview: [
+    "Sandbox required",
+    "Write access blocked",
+    "Secrets never mounted",
+    "Public submission locked until approval"
+  ],
+  sharedWithMaintainer: ["summary", "evidence packet", "policy file", "environment summary"],
+  keptPrivate: ["raw logs", "local paths", "payout record", "internal runner notes"]
 };
 
 export const demoArtifacts = [
