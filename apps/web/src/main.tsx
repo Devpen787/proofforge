@@ -35,6 +35,7 @@ function App() {
   const [accepted, setAccepted] = React.useState(false);
   const [released, setReleased] = React.useState(false);
   const [revisionRequested, setRevisionRequested] = React.useState(false);
+  const [rejected, setRejected] = React.useState(false);
   const [importedLead, setImportedLead] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
@@ -46,6 +47,7 @@ function App() {
     setAccepted(false);
     setReleased(false);
     setRevisionRequested(false);
+    setRejected(false);
   }, []);
 
   React.useEffect(() => {
@@ -100,9 +102,11 @@ function App() {
           <CaseFileScreen
             submitted={submitted}
             revisionRequested={revisionRequested}
+            rejected={rejected}
             onSubmit={() => {
               setSubmitted(true);
               setRevisionRequested(false);
+              setRejected(false);
               setScreen("maintainer");
             }}
           />
@@ -114,6 +118,7 @@ function App() {
             onAccept={() => {
               setSubmitted(true);
               setRevisionRequested(false);
+              setRejected(false);
               setAccepted(true);
               setReleased(false);
               setScreen("scoreboard");
@@ -121,7 +126,16 @@ function App() {
             onRevision={() => {
               setSubmitted(false);
               setRevisionRequested(true);
+              setRejected(false);
               setScreen("case-file");
+            }}
+            onReject={() => {
+              setSubmitted(false);
+              setAccepted(false);
+              setReleased(false);
+              setRevisionRequested(false);
+              setRejected(true);
+              setScreen("scoreboard");
             }}
           />
         )}
@@ -130,6 +144,7 @@ function App() {
             accepted={accepted}
             released={released}
             revisionRequested={revisionRequested}
+            rejected={rejected}
             onRelease={() => setReleased(true)}
             onResolveRevision={() => setScreen("case-file")}
             onNext={() => {
@@ -630,7 +645,17 @@ environment.json`}</pre>
   );
 }
 
-function CaseFileScreen({ submitted, revisionRequested, onSubmit }: { submitted: boolean; revisionRequested: boolean; onSubmit: () => void }) {
+function CaseFileScreen({
+  submitted,
+  revisionRequested,
+  rejected,
+  onSubmit
+}: {
+  submitted: boolean;
+  revisionRequested: boolean;
+  rejected: boolean;
+  onSubmit: () => void;
+}) {
   return (
     <section className="page-grid case-grid">
       <header className="page-header">
@@ -644,6 +669,12 @@ function CaseFileScreen({ submitted, revisionRequested, onSubmit }: { submitted:
           <div className="revision-banner" role="status">
             <strong>Revision requested</strong>
             <span>Maintainer asked for clearer environment notes and the full command transcript before acceptance.</span>
+          </div>
+        )}
+        {rejected && (
+          <div className="rejection-banner" role="status">
+            <strong>Packet rejected</strong>
+            <span>The evidence was closed without payout. Start a new mission or rebuild the packet with stronger proof.</span>
           </div>
         )}
         <div className="case-summary-grid">
@@ -737,12 +768,14 @@ function MaintainerScreen({
   submitted,
   accepted,
   onAccept,
-  onRevision
+  onRevision,
+  onReject
 }: {
   submitted: boolean;
   accepted: boolean;
   onAccept: () => void;
   onRevision: () => void;
+  onReject: () => void;
 }) {
   return (
     <section className="page-grid maintainer-grid">
@@ -808,7 +841,7 @@ function MaintainerScreen({
             {accepted ? "Accepted" : "Accept & Mark Earned"}
           </button>
           <button className="warning-action" onClick={onRevision}>Request Revision</button>
-          <button className="danger-action">Reject Packet</button>
+          <button className="danger-action" onClick={onReject}>Reject Packet</button>
         </div>
       </div>
     </section>
@@ -819,6 +852,7 @@ function ScoreboardScreen({
   accepted,
   released,
   revisionRequested,
+  rejected,
   onRelease,
   onResolveRevision,
   onNext,
@@ -827,6 +861,7 @@ function ScoreboardScreen({
   accepted: boolean;
   released: boolean;
   revisionRequested: boolean;
+  rejected: boolean;
   onRelease: () => void;
   onResolveRevision: () => void;
   onNext: () => void;
@@ -842,7 +877,7 @@ function ScoreboardScreen({
       </header>
       <div className="metric-strip wide">
         <Metric label="Available" value="$63" />
-        <Metric label="Pending" value={accepted ? "$0" : "$8"} />
+        <Metric label="Pending" value={accepted || rejected ? "$0" : "$8"} />
         <Metric label="Earned" value={accepted ? "$8" : "$0"} />
         <Metric label="Paid out" value={released ? "$8" : "$0"} />
         <Metric label="Reputation" value={accepted ? "176" : "164"} />
@@ -851,38 +886,44 @@ function ScoreboardScreen({
         <p className="small-label">Next best action</p>
         <h2>
           {revisionRequested && "Resolve the requested revision."}
-          {!revisionRequested && !accepted && "Get the packet accepted."}
+          {rejected && "Packet rejected. Start again with stronger proof."}
+          {!revisionRequested && !rejected && !accepted && "Get the packet accepted."}
           {accepted && !released && "Release the earned payout."}
           {accepted && released && "Start the next proof mission."}
         </h2>
         <p className="quiet-copy">
           {revisionRequested && "Update the Case File with the missing environment notes, then resubmit."}
-          {!revisionRequested && !accepted && "Ask the maintainer to accept the submitted packet."}
+          {rejected && "No payout is earned for this packet. Use the feedback to run or package better proof."}
+          {!revisionRequested && !rejected && !accepted && "Ask the maintainer to accept the submitted packet."}
           {accepted && !released && "Release the earned payout as a separate accounting step."}
           {accepted && released && "Public proof, project credit, and payout records are ready for the demo."}
         </p>
         <button className="primary-action full" onClick={revisionRequested ? onResolveRevision : accepted && !released ? onRelease : onNext}>
           {revisionRequested && "Open Case File"}
+          {rejected && "Start new mission"}
           {!revisionRequested && accepted && !released && "Release payout"}
-          {!revisionRequested && (!accepted || released) && "Generate proof packet"}
+          {!revisionRequested && !rejected && (!accepted || released) && "Generate proof packet"}
         </button>
-        <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>
+        {(accepted || released) && <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>}
       </div>
       <div className="panel">
         <h2>Payout state</h2>
-        <StatusRow label="Earned payout" value={accepted ? "$8 earned" : "Waiting"} tone={accepted ? "good" : "bad"} />
+        <StatusRow label="Earned payout" value={accepted ? "$8 earned" : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
         <StatusRow label="Released payout" value={released ? "$8 released" : "Not released"} tone={released ? "good" : "bad"} />
         <StatusRow label="Method" value="Manual accounting" tone="good" />
         <p className="quiet-copy">Release is manual in the MVP. No money moves automatically.</p>
         <button className="primary-action full" disabled={!accepted || released} onClick={onRelease}>
-          {released ? "Payout released" : "Release payout"}
+          {rejected && "No payout to release"}
+          {!rejected && released && "Payout released"}
+          {!rejected && !released && "Release payout"}
         </button>
       </div>
       <div className="panel">
         <h2>Payout timeline</h2>
-        {demoPayoutTimeline.map((item) => (
-          <StatusRow key={item.label} label={item.label} value={item.value} tone="good" />
-        ))}
+        {demoPayoutTimeline.map((item) => {
+          const rejectedValue = item.label === "Packet submitted" ? "reviewed" : item.label === "Packet accepted" ? "not accepted" : "not available";
+          return <StatusRow key={item.label} label={item.label} value={rejected ? rejectedValue : item.value} tone={rejected && item.label !== "Packet submitted" ? "bad" : "good"} />;
+        })}
         <p className="quiet-copy">The MVP records state transitions. It does not move funds automatically.</p>
       </div>
       <div className="panel">
@@ -899,6 +940,7 @@ function ScoreboardScreen({
       <div className="panel">
         <h2>Recent activity</h2>
         {[...demoActivity, accepted ? "Earned payout created" : "", released ? "Released payout marked paid" : ""]
+          .concat(rejected ? ["Packet rejected without payout"] : [])
           .filter(Boolean)
           .map((item) => (
             <div className="activity-row" key={item}>
@@ -911,7 +953,7 @@ function ScoreboardScreen({
         <StatusRow label="Project" value={demoProject.name} tone="good" />
         <StatusRow label="Contributor" value={demoProject.credit.contributor} tone="good" />
         <StatusRow label="Packet" value={demoProject.credit.packet} tone="good" />
-        <StatusRow label="Credit points" value={demoProject.credit.points} tone="good" />
+        <StatusRow label="Credit points" value={rejected ? "0 - not accepted" : demoProject.credit.points} tone={rejected ? "bad" : "good"} />
       </div>
     </section>
   );

@@ -118,6 +118,14 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Request Revision" }).click();
     await requireText(page, "Revision requested");
     await requireText(page, "full command transcript");
+    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Run your first proof packet" }).click();
+    await page.getByRole("button", { name: "Run safest starter mission" }).click();
+    await page.getByRole("button", { name: "Approve Packet" }).click();
+    await page.getByRole("button", { name: "Submit Packet" }).click();
+    await page.getByRole("button", { name: "Reject Packet" }).click();
+    await requireText(page, "Packet rejected. Start again with stronger proof.");
+    await requireText(page, "Earned payoutCancelled");
     await page.close();
     await browser.close();
     console.log("End-to-end proof journey smoke passed.");
