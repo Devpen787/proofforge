@@ -94,13 +94,14 @@ async function runSmoke() {
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start Project" }).click();
     await requireText(page, "New project shell created");
-    await requireText(page, "Build together, prove together, receive credit together");
+    await requireText(page, "Useful work ready to prove.");
+    await requireText(page, "Benefits and unlocks");
     await requireText(page, "Accepted packets are the project asset.");
-    await page.getByRole("button", { name: "Invite contributor" }).click();
+    await page.getByRole("button", { name: "Invite" }).click();
     await requireText(page, "sam@builder.dev");
-    await page.getByRole("button", { name: "Attach agent" }).first().click();
+    await page.getByRole("button", { name: "Attach Agent" }).click();
     await requireText(page, "browser-qa-02");
-    await page.getByRole("button", { name: "Suggest work" }).click();
+    await page.getByRole("button", { name: "Suggest Work" }).click();
     await requireText(page, "Project Work Lead created");
     await requireText(page, "Clarify before Mission");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });

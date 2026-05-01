@@ -98,6 +98,82 @@ export const demoProject = {
   people: "8",
   agents: "2",
   acceptedProof: "12",
+  successRate: "91%",
+  availablePool: "$160",
+  opportunities: [
+    {
+      title: "Validate installation docs",
+      detail: "Ensure install works on a clean Ubuntu machine.",
+      reward: "$8",
+      safety: "Safe",
+      proofability: "91%",
+      action: "Run"
+    },
+    {
+      title: "Reproduce Windows build error",
+      detail: "Capture logs and environment details.",
+      reward: "$12",
+      safety: "Low risk",
+      proofability: "84%",
+      action: "Run"
+    },
+    {
+      title: "Improve quick start guide",
+      detail: "Make first 5 minutes crystal clear.",
+      reward: "$10",
+      safety: "Safe",
+      proofability: "88%",
+      action: "Plan"
+    },
+    {
+      title: "Verify PR fixes issue #4821",
+      detail: "Confirm the fix works in all supported OS.",
+      reward: "$18",
+      safety: "Approval",
+      proofability: "76%",
+      action: "Review"
+    }
+  ],
+  activeWork: [
+    {
+      lane: "Ready",
+      count: "3",
+      cards: [
+        { title: "Check Mac install flow", meta: "$6 · 89%" },
+        { title: "Validate config docs", meta: "$8 · 90%" },
+        { title: "Fix broken links", meta: "$5 · 87%" }
+      ]
+    },
+    {
+      lane: "Running",
+      count: "2",
+      cards: [
+        { title: "Validate install docs", meta: "docs-runner-01 · 60%" },
+        { title: "Reproduce CLI crash", meta: "cli-runner-02 · 30%" }
+      ]
+    },
+    {
+      lane: "Needs review",
+      count: "1",
+      cards: [
+        { title: "Starter guide clarity", meta: "packet-4821 · 2h ago" }
+      ]
+    },
+    {
+      lane: "Accepted",
+      count: "2",
+      cards: [
+        { title: "Ubuntu install flow", meta: "+12 rep" },
+        { title: "Docs fixes batch 1", meta: "+8 rep" }
+      ]
+    }
+  ],
+  benefits: [
+    { label: "Contributor badge", threshold: "1 proof", status: "Unlocked", progress: 100 },
+    { label: "Reviewer eligibility", threshold: "3 proofs", status: "2 / 3", progress: 66 },
+    { label: "Early access tools", threshold: "5 proofs", status: "2 / 5", progress: 40 },
+    { label: "Steward role", threshold: "10 proofs", status: "2 / 10", progress: 20 }
+  ],
   proofLedger: {
     acceptedPackets: "12",
     pendingPackets: "3",

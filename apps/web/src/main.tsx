@@ -522,55 +522,43 @@ function ProjectsScreen({
   onQueue: () => void;
 }) {
   const capacityRows = [
-    { label: "People", value: demoProject.people, detail: "contributors and reviewers" },
-    { label: "Agents", value: projectAgentCount(agentAttached), detail: "constrained project helpers" },
-    { label: "Accepted proof", value: demoProject.acceptedProof, detail: "shared project assets" },
-    { label: "Reward pool", value: demoProject.pool, detail: "funds useful work" }
-  ];
-  const sharedMissionSteps = [
-    { label: "Open work", value: "Docs friction", tone: "good" as const },
-    { label: "Next mission", value: "Clean install proof", tone: "good" as const },
-    { label: "Who accepts", value: "Commons reviewer", tone: "good" as const },
-    { label: "Credit path", value: "Accepted packet", tone: "good" as const }
+    { label: "Reward pool", value: demoProject.pool, detail: `${demoProject.availablePool} available` },
+    { label: "Accepted proofs", value: demoProject.acceptedProof, detail: "2 this week" },
+    { label: "Contributors", value: demoProject.people, detail: "3 this week" },
+    { label: "Active agents", value: projectAgentCount(agentAttached), detail: "all healthy" },
+    { label: "Proof success", value: demoProject.successRate, detail: "last 30 days" }
   ];
   return (
     <section className="page-grid projects-grid">
-      <header className="page-header">
-        <span>Projects / Commons</span>
-        <button className="primary-action" onClick={onStartProject}>
-          {projectStarted ? "Project Started" : "Start Project"}
-        </button>
+      <header className="project-command-header wide">
+        <div>
+          <span>Projects / {demoProject.name}</span>
+          <h1>{demoProject.name}</h1>
+          <p>{demoProject.purpose}</p>
+          <div className="tag-row">
+            <span className="status-pill safe">Active</span>
+            {demoProject.lanes.map((lane) => (
+              <span className="status-pill" key={lane}>{lane}</span>
+            ))}
+            <span className="status-pill safe">Built on open rails</span>
+          </div>
+        </div>
+        <div className="project-header-actions">
+          <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite pending" : "Invite"}</button>
+          <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent attached" : "Attach Agent"}</button>
+          <button className="primary-action" onClick={onSuggestWork}>{workSuggested ? "Work suggested" : "Suggest Work"}</button>
+          <button className="secondary-action" onClick={onStartProject}>{projectStarted ? "Project Started" : "Start Project"}</button>
+        </div>
       </header>
       {projectStarted && (
         <div className="project-action-banner wide" role="status">
           <div>
             <strong>New project shell created</strong>
-            <span>Purpose, lanes, first steward, and reward pool are now visible. Next: invite one contributor or attach one constrained agent.</span>
+            <span>Purpose, lanes, first steward, and reward pool are visible. Next: invite one contributor or attach one constrained agent.</span>
           </div>
           <span className="status-pill safe">Launch draft</span>
         </div>
       )}
-      <div className="project-commons-hero wide">
-        <div>
-          <p className="small-label">Build together, prove together, receive credit together</p>
-          <h2>{demoProject.name}</h2>
-          <p>{demoProject.purpose} People bring judgment, agents do constrained work, and accepted packets become shared proof, payout records, and project credit.</p>
-          <div className="project-action-strip" aria-label="Project actions">
-            <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite pending" : "Invite contributor"}</button>
-            <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent attached" : "Attach agent"}</button>
-            <button className="secondary-action" onClick={onSuggestWork}>{workSuggested ? "Work lead created" : "Suggest work"}</button>
-            <button className="primary-action" onClick={onQueue}>Open Work Queue</button>
-          </div>
-        </div>
-        <div className="shared-mission-card">
-          <span className="status-pill safe">{demoProject.status}</span>
-          <strong>Current shared mission</strong>
-          <p>Make the first install path easier by converting docs problems into accepted evidence packets.</p>
-          {sharedMissionSteps.map((item) => (
-            <StatusRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
-          ))}
-        </div>
-      </div>
       <div className="project-capacity-strip wide">
         {capacityRows.map((item) => (
           <div className="project-capacity-card" key={item.label}>
@@ -580,57 +568,105 @@ function ProjectsScreen({
           </div>
         ))}
       </div>
-      <div className="panel command-room project-next-panel">
-        <p className="small-label">Next coordination move</p>
-        <h2>{workSuggested ? "Turn the new Work Lead into a scoped Mission." : inviteSent || agentAttached ? "Add one proofable Work Lead." : "Bring in one person and one constrained agent."}</h2>
-        <p>Projects are not folders. They are shared work agreements: people, nodes, and agents coordinate around proofable missions and receive credit only when packets are accepted.</p>
-        <div className="command-state-grid">
-          <StatusRow label="Project shell" value={projectStarted ? "Created" : "Ready"} tone="good" />
-          <StatusRow label="Invite" value={inviteSent ? "Pending" : "Not sent"} tone={inviteSent ? "good" : "bad"} />
-          <StatusRow label="Agent" value={agentAttached ? "Attached" : "Not attached"} tone={agentAttached ? "good" : "bad"} />
-          <StatusRow label="Work lead" value={workSuggested ? "Created" : "Not suggested"} tone={workSuggested ? "good" : "bad"} />
-        </div>
-      </div>
-      <div className="panel project-lanes-panel">
-        <p className="small-label">Open mission lanes</p>
-        <h2>Mission lanes</h2>
-        <div className="tag-row">
-          {demoProject.lanes.map((lane) => (
-            <span className="status-pill safe" key={lane}>
-              {lane}
-            </span>
-          ))}
-        </div>
-        <p className="quiet-copy">Each lane must produce a maintainer-ready Evidence Packet before any payout or project credit.</p>
-      </div>
-      <div className="panel project-backlog-panel">
-        <p className="small-label">Work becoming missions</p>
-        <h2>Backlog</h2>
-        {workSuggested && (
-          <div className="artifact-row">
-            <span>{demoProjectWorkLead.title}</span>
-            <small>work lead</small>
+      <div className="project-command-main wide">
+        <div className="panel project-opportunities-panel">
+          <div className="section-heading">
+            <div>
+              <p className="small-label">Open opportunities</p>
+              <h2>Useful work ready to prove.</h2>
+            </div>
+            <button className="secondary-action" onClick={onQueue}>View all</button>
           </div>
-        )}
-        {demoProject.backlog.map((item) => (
-          <div className="artifact-row" key={item.title}>
-            <span>{item.title}</span>
-            <small>{item.status}</small>
+          <div className="project-opportunity-list">
+            {workSuggested && (
+              <div className="project-opportunity-row project-opportunity-new">
+                <span className="opportunity-icon">+</span>
+                <div>
+                  <strong>Project Work Lead created</strong>
+                  <small>Clarify before Mission</small>
+                </div>
+                <button className="secondary-action" onClick={onQueue}>Triage</button>
+              </div>
+            )}
+            {demoProject.opportunities.map((item) => (
+              <div className="project-opportunity-row" key={item.title}>
+                <span className="opportunity-icon">{item.action === "Run" ? "▶" : item.action === "Plan" ? "◇" : "✓"}</span>
+                <div>
+                  <strong>{item.title}</strong>
+                  <small>{item.detail}</small>
+                  <span className="project-opportunity-meta">{item.reward} · {item.safety} · {item.proofability} proofable</span>
+                </div>
+                <button className={item.action === "Run" ? "primary-action" : "secondary-action"} onClick={item.action === "Run" ? onQueue : undefined}>{item.action}</button>
+              </div>
+            ))}
           </div>
-        ))}
+        </div>
+        <div className="panel project-active-work-panel">
+          <p className="small-label">Active work</p>
+          <h2>From opportunity to accepted proof.</h2>
+          <div className="project-work-board">
+            {demoProject.activeWork.map((lane) => (
+              <div className="project-work-lane" key={lane.lane}>
+                <div className="project-work-lane-header">
+                  <strong>{lane.lane}</strong>
+                  <span>{lane.count}</span>
+                </div>
+                {lane.cards.map((card) => (
+                  <div className="project-work-card" key={card.title}>
+                    <strong>{card.title}</strong>
+                    <small>{card.meta}</small>
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+        <aside className="project-side-rail">
+          <div className="panel project-people-agents-panel">
+            <p className="small-label">People and agents</p>
+            {inviteSent && (
+              <CompactPerson name="sam@builder.dev" role="Contributor invite" status="Pending" tone="warning" />
+            )}
+            {demoProject.peopleRoster.slice(0, 3).map((person) => (
+              <CompactPerson key={person.name} name={person.name} role={person.role} status={person.status} tone={person.status === "Pending" ? "warning" : "safe"} />
+            ))}
+            <div className="project-agent-list">
+              {agentAttached && (
+                <CompactAgent name="browser-qa-02" detail="Browser checks" status="Pending review" tone="warning" />
+              )}
+              {demoProject.agentDelegations.map((agent) => (
+                <CompactAgent key={agent.name} name={agent.name} detail={agent.allowed} status={agent.status} tone={agent.status === "Review" ? "warning" : "safe"} />
+              ))}
+            </div>
+          </div>
+          <div className="panel project-benefits-panel">
+            <p className="small-label">Benefits and unlocks</p>
+            {demoProject.benefits.map((benefit) => (
+              <div className="benefit-row" key={benefit.label}>
+                <div>
+                  <strong>{benefit.threshold}</strong>
+                  <small>{benefit.label}</small>
+                </div>
+                <span>{benefit.status}</span>
+                <div className="benefit-progress" aria-hidden="true">
+                  <i style={{ width: `${benefit.progress}%` }} />
+                </div>
+              </div>
+            ))}
+          </div>
+        </aside>
       </div>
       <div className="project-ledger-panel wide">
         <div className="project-ledger-summary">
           <div>
-            <p className="small-label">Shared proof ledger</p>
+            <p className="small-label">Proof and credit ledger</p>
             <h2>Accepted packets are the project asset.</h2>
-            <p>Commercial work can fund the commons, but the project only counts work after accepted evidence. That keeps rewards tied to useful proof instead of noise.</p>
           </div>
           <div className="ledger-mini-grid">
-            <StatusBlock label="Accepted packets" value={demoProject.proofLedger.acceptedPackets} />
-            <StatusBlock label="Pending packets" value={demoProject.proofLedger.pendingPackets} />
-            <StatusBlock label="Earned payouts" value={demoProject.proofLedger.earnedPayouts} />
-            <StatusBlock label="Latest proof" value={demoProject.proofLedger.latestProof} />
+            <StatusBlock label="Accepted" value={demoProject.proofLedger.acceptedPackets} />
+            <StatusBlock label="Pending" value={demoProject.proofLedger.pendingPackets} />
+            <StatusBlock label="Earned" value={demoProject.proofLedger.earnedPayouts} />
+            <StatusBlock label="Latest" value={demoProject.proofLedger.latestProof} />
           </div>
         </div>
         <div className="project-proof-history">
@@ -644,62 +680,38 @@ function ProjectsScreen({
             </div>
           ))}
         </div>
-        <p className="quiet-copy">Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</p>
-      </div>
-      <div className="panel">
-        <p className="small-label">People capacity</p>
-        <h2>People</h2>
-        {inviteSent && (
-          <div className="compact-row">
-            <span>
-              <strong>sam@builder.dev</strong>
-              <small>Contributor invite</small>
-            </span>
-            <span className="status-pill warning">Pending</span>
-          </div>
-        )}
-        {demoProject.peopleRoster.map((person) => (
-          <div className="compact-row" key={person.name}>
-            <span>
-              <strong>{person.name}</strong>
-              <small>{person.role}</small>
-            </span>
-            <span className="status-pill safe">{person.status}</span>
-          </div>
-        ))}
-      </div>
-      <div className="panel wide">
-        <div className="section-heading">
-          <div>
-            <h2>Agent delegations</h2>
-            <p className="quiet-copy">Delegate capability, not control. Agents help with project lanes, but blocked actions stay blocked.</p>
-          </div>
-          <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent Attached" : "Attach Agent"}</button>
-        </div>
-        <div className="agent-card-grid">
-          {agentAttached && (
-            <div className="agent-card">
-              <div className="section-heading">
-                <strong>browser-qa-02</strong>
-                <span className="status-pill warning">Pending review</span>
-              </div>
-              <StatusRow label="Allowed" value="Browser checks, screenshots" tone="good" />
-              <StatusRow label="Blocked" value="PRs, posts, payments" tone="bad" />
-            </div>
-          )}
-          {demoProject.agentDelegations.map((agent) => (
-            <div className="agent-card" key={agent.name}>
-              <div className="section-heading">
-                <strong>{agent.name}</strong>
-                <span className="status-pill safe">{agent.status}</span>
-              </div>
-              <StatusRow label="Allowed" value={agent.allowed} tone="good" />
-              <StatusRow label="Blocked" value={agent.blocked} tone="bad" />
-            </div>
-          ))}
+        <div className="project-ledger-footer">
+          <span>Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</span>
+          <button className="secondary-action" onClick={onQueue}>View opportunities</button>
         </div>
       </div>
     </section>
+  );
+}
+
+function CompactPerson({ name, role, status, tone }: { name: string; role: string; status: string; tone: "safe" | "warning" }) {
+  return (
+    <div className="compact-person-row">
+      <span className="mini-avatar">{name.charAt(0).toUpperCase()}</span>
+      <div>
+        <strong>{name}</strong>
+        <small>{role}</small>
+      </div>
+      <span className={tone === "safe" ? "status-pill safe" : "status-pill warning"}>{status}</span>
+    </div>
+  );
+}
+
+function CompactAgent({ name, detail, status, tone }: { name: string; detail: string; status: string; tone: "safe" | "warning" }) {
+  return (
+    <div className="compact-agent-row">
+      <span className="mini-agent">PF</span>
+      <div>
+        <strong>{name}</strong>
+        <small>{detail}</small>
+      </div>
+      <span className={tone === "safe" ? "status-pill safe" : "status-pill warning"}>{status}</span>
+    </div>
   );
 }
 

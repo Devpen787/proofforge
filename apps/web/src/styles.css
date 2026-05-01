@@ -927,7 +927,7 @@ button {
 
 .project-capacity-strip {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 14px;
   grid-column: 1 / -1;
 }
@@ -936,7 +936,7 @@ button {
   border: 1px solid #e2e8f0;
   border-radius: 24px;
   background: white;
-  padding: 18px;
+  padding: 16px;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
@@ -948,7 +948,7 @@ button {
 
 .project-capacity-card strong {
   color: #047857;
-  font-size: 30px;
+  font-size: 28px;
   line-height: 1;
 }
 
@@ -1034,6 +1034,303 @@ button {
 .project-proof-row b {
   color: #047857;
   white-space: nowrap;
+}
+
+.project-command-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 24px;
+  align-items: start;
+}
+
+.project-command-header span {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.project-command-header h1 {
+  margin: 10px 0 6px;
+  color: #020617;
+  font-size: clamp(34px, 4vw, 54px);
+  line-height: 1;
+}
+
+.project-command-header p {
+  max-width: 620px;
+  margin: 0 0 14px;
+  color: #475569;
+  font-weight: 750;
+}
+
+.project-header-actions {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-end;
+  gap: 10px;
+}
+
+.project-command-main {
+  display: grid;
+  grid-template-columns: minmax(300px, 0.82fr) minmax(520px, 1.35fr) minmax(280px, 0.72fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.project-opportunities-panel,
+.project-active-work-panel,
+.project-side-rail {
+  min-width: 0;
+}
+
+.project-opportunity-list {
+  display: grid;
+  gap: 2px;
+}
+
+.project-opportunity-row {
+  display: grid;
+  grid-template-columns: 36px minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 0;
+}
+
+.project-opportunity-row:last-child {
+  border-bottom: 0;
+}
+
+.project-opportunity-new {
+  border: 1px solid #a7f3d0;
+  border-radius: 18px;
+  background: #ecfdf5;
+  padding: 12px;
+}
+
+.opportunity-icon {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 12px;
+  background: #eef2ff;
+  color: #4338ca;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.project-opportunity-row strong,
+.project-opportunity-row small,
+.project-opportunity-meta {
+  display: block;
+  min-width: 0;
+}
+
+.project-opportunity-row small {
+  margin-top: 2px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.project-opportunity-meta {
+  margin-top: 8px;
+  width: fit-content;
+  border-radius: 999px;
+  background: #ecfdf5;
+  padding: 4px 8px;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.project-work-board {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 8px;
+}
+
+.project-work-lane {
+  display: grid;
+  gap: 8px;
+  align-content: start;
+  min-height: 232px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 10px;
+}
+
+.project-work-lane-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  color: #475569;
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.project-work-lane-header span {
+  display: grid;
+  min-width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 999px;
+  background: white;
+  color: #64748b;
+}
+
+.project-work-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: white;
+  padding: 10px;
+}
+
+.project-work-card strong,
+.project-work-card small {
+  display: block;
+  min-width: 0;
+}
+
+.project-work-card strong {
+  overflow: hidden;
+  font-size: 13px;
+  line-height: 1.15;
+  text-overflow: ellipsis;
+}
+
+.project-work-card small {
+  margin-top: 7px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+  line-height: 1.25;
+}
+
+.project-side-rail {
+  display: grid;
+  gap: 16px;
+}
+
+.project-people-agents-panel,
+.project-benefits-panel {
+  align-self: start;
+}
+
+.compact-person-row,
+.compact-agent-row {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr) auto;
+  gap: 10px;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 10px 0;
+}
+
+.compact-person-row:last-child,
+.compact-agent-row:last-child {
+  border-bottom: 0;
+}
+
+.compact-person-row strong,
+.compact-person-row small,
+.compact-agent-row strong,
+.compact-agent-row small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.compact-person-row small,
+.compact-agent-row small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.mini-avatar,
+.mini-agent {
+  display: grid;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  border-radius: 999px;
+  background: #e0f2fe;
+  color: #0369a1;
+  font-size: 12px;
+  font-weight: 950;
+}
+
+.mini-agent {
+  border-radius: 12px;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.project-agent-list {
+  margin-top: 12px;
+}
+
+.benefit-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 8px;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 0;
+}
+
+.benefit-row:last-child {
+  border-bottom: 0;
+}
+
+.benefit-row strong,
+.benefit-row small,
+.benefit-row span {
+  display: block;
+}
+
+.benefit-row small {
+  margin-top: 2px;
+  color: #64748b;
+  font-weight: 750;
+}
+
+.benefit-row > span {
+  color: #047857;
+  font-size: 12px;
+  font-weight: 900;
+  text-align: right;
+}
+
+.benefit-progress {
+  grid-column: 1 / -1;
+  height: 4px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e2e8f0;
+}
+
+.benefit-progress i {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: #047857;
+}
+
+.project-ledger-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.project-ledger-footer span {
+  color: #64748b;
+  font-weight: 800;
 }
 
 .public-proof-grid {
@@ -2205,10 +2502,13 @@ code {
   .ledger-timeline-card,
   .ledger-proof-history,
   .project-commons-hero,
+  .project-command-header,
+  .project-command-main,
   .project-next-panel,
   .project-ledger-summary,
   .project-ledger-panel,
   .project-capacity-strip,
+  .project-work-board,
   .ledger-mini-grid,
   .public-proof-grid,
   .public-share-hero,
@@ -2263,6 +2563,7 @@ code {
 
   .page-header,
   .section-heading,
+  .project-command-header,
   .project-action-strip {
     align-items: stretch;
     flex-direction: column;
@@ -2310,9 +2611,12 @@ code {
 
   .project-action-banner,
   .project-commons-hero,
+  .project-command-header,
+  .project-command-main,
   .project-next-panel,
   .project-ledger-panel,
   .project-capacity-strip,
+  .project-work-board,
   .agent-card-grid,
   .public-share-hero,
   .public-proof-dossier,
@@ -2342,6 +2646,27 @@ code {
 
   .case-dossier-meta {
     justify-items: start;
+  }
+
+  .project-header-actions {
+    justify-content: stretch;
+  }
+
+  .project-header-actions button,
+  .project-opportunity-row button {
+    width: 100%;
+  }
+
+  .project-opportunity-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .project-opportunity-row button {
+    grid-column: 1 / -1;
+  }
+
+  .project-work-lane {
+    min-height: auto;
   }
 
   .proof-demo-result-card .status-row {
