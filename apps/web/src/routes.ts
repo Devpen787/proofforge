@@ -14,16 +14,24 @@ export const screens = [
 
 export type Screen = (typeof screens)[number];
 
+export const primaryNavScreens = [
+  "opportunity",
+  "projects",
+  "work-queue",
+  "case-file",
+  "scoreboard"
+] as const satisfies readonly Screen[];
+
 export const routeLabels: Record<Screen, string> = {
-  opportunity: "Opportunity",
+  opportunity: "Home",
   "first-run": "First Run",
   projects: "Projects",
-  "work-queue": "Work Queue",
+  "work-queue": "Opportunities",
   "mission-detail": "Mission Detail",
   run: "Runner",
-  "case-file": "Case Files",
+  "case-file": "Packets",
   maintainer: "Maintainer",
-  scoreboard: "Earnings",
+  scoreboard: "Scoreboard",
   "public-proof": "Public Proof",
   "proof-demo": "Proof Demo"
 };

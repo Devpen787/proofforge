@@ -23,9 +23,17 @@ import {
   demoWorkLeadDiagnosis
 } from "./demoData";
 import { generatedProofSummary } from "./generatedProof";
-import { routeLabels, screens, type Screen } from "./routes";
+import { primaryNavScreens, routeLabels, screens, type Screen } from "./routes";
 
 type ActiveMission = "docs" | "checkout";
+
+function activeNavScreen(screen: Screen): (typeof primaryNavScreens)[number] {
+  if (screen === "first-run" || screen === "mission-detail" || screen === "run") return "work-queue";
+  if (screen === "maintainer" || screen === "public-proof" || screen === "proof-demo") return "case-file";
+  return primaryNavScreens.includes(screen as (typeof primaryNavScreens)[number])
+    ? (screen as (typeof primaryNavScreens)[number])
+    : "opportunity";
+}
 
 function screenFromHash(): Screen {
   const candidate = window.location.hash.replace("#", "");
@@ -75,8 +83,8 @@ function App() {
           <strong>ProofForge</strong>
         </div>
         <nav className="nav-list" aria-label="Primary">
-          {screens.map((route) => (
-            <NavButton key={route} label={routeLabels[route]} active={screen === route} onClick={() => setScreen(route)} />
+          {primaryNavScreens.map((route) => (
+            <NavButton key={route} label={routeLabels[route]} active={activeNavScreen(screen) === route} onClick={() => setScreen(route)} />
           ))}
         </nav>
         <div className="node-status">
