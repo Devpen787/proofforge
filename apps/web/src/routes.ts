@@ -1,0 +1,25 @@
+export const screens = [
+  "opportunity",
+  "first-run",
+  "projects",
+  "work-queue",
+  "run",
+  "case-file",
+  "maintainer",
+  "scoreboard",
+  "public-proof"
+] as const;
+
+export type Screen = (typeof screens)[number];
+
+export const routeLabels: Record<Screen, string> = {
+  opportunity: "Opportunity",
+  "first-run": "First Run",
+  projects: "Projects",
+  "work-queue": "Work Queue",
+  run: "Runner",
+  "case-file": "Case Files",
+  maintainer: "Maintainer",
+  scoreboard: "Scoreboard",
+  "public-proof": "Public Proof"
+};

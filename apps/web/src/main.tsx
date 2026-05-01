@@ -18,29 +18,7 @@ import {
   demoWork,
   demoWorkLead
 } from "./demoData";
-
-type Screen =
-  | "opportunity"
-  | "first-run"
-  | "projects"
-  | "work-queue"
-  | "run"
-  | "case-file"
-  | "maintainer"
-  | "scoreboard"
-  | "public-proof";
-
-const screens = [
-  "opportunity",
-  "first-run",
-  "projects",
-  "work-queue",
-  "run",
-  "case-file",
-  "maintainer",
-  "scoreboard",
-  "public-proof"
-] as const;
+import { routeLabels, screens, type Screen } from "./routes";
 
 function screenFromHash(): Screen {
   const candidate = window.location.hash.replace("#", "");
@@ -70,15 +48,9 @@ function App() {
           <strong>ProofForge</strong>
         </div>
         <nav className="nav-list" aria-label="Primary">
-          <NavButton label="Opportunity" active={screen === "opportunity"} onClick={() => setScreen("opportunity")} />
-          <NavButton label="First Run" active={screen === "first-run"} onClick={() => setScreen("first-run")} />
-          <NavButton label="Projects" active={screen === "projects"} onClick={() => setScreen("projects")} />
-          <NavButton label="Work Queue" active={screen === "work-queue"} onClick={() => setScreen("work-queue")} />
-          <NavButton label="Runner" active={screen === "run"} onClick={() => setScreen("run")} />
-          <NavButton label="Case Files" active={screen === "case-file"} onClick={() => setScreen("case-file")} />
-          <NavButton label="Maintainer" active={screen === "maintainer"} onClick={() => setScreen("maintainer")} />
-          <NavButton label="Scoreboard" active={screen === "scoreboard"} onClick={() => setScreen("scoreboard")} />
-          <NavButton label="Public Proof" active={screen === "public-proof"} onClick={() => setScreen("public-proof")} />
+          {screens.map((route) => (
+            <NavButton key={route} label={routeLabels[route]} active={screen === route} onClick={() => setScreen(route)} />
+          ))}
         </nav>
         <div className="node-status">
           <span className="avatar">A</span>
