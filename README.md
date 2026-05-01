@@ -313,6 +313,8 @@ The current web prototype shows:
 
 For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
+For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md).
+
 ## Next Steps
 
 1. Make the Case File feel more like a maintainer dossier.
