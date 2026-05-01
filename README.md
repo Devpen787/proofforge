@@ -143,15 +143,59 @@ We are building ProofForge the same way ProofForge expects work to be done.
 
 ## Current Status
 
-This repository is at the initial project-definition stage.
+This repository now has the first working proof slice:
 
-Next steps:
+- npm workspace scaffold
+- Evidence Packet schema with validation tests
+- Mission Contract schema with Work Lead conversion tests
+- constrained local runner that writes artifacts
+- independent verifier that checks runner artifacts
+- demo command that generates `evidence-packet.json` and `case-file.md`
 
-1. Define the evidence packet schema.
-2. Add a sample mission contract.
-3. Build a local runner proof.
-4. Generate the first packet from a real or fixture GitHub issue.
-5. Add verifier and human approval flow.
+The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
+
+## Run Locally
+
+Install dependencies:
+
+```bash
+npm install
+```
+
+Run tests:
+
+```bash
+npm test
+```
+
+Typecheck:
+
+```bash
+npm run typecheck
+```
+
+Generate the first evidence packet:
+
+```bash
+npm run demo:packet
+```
+
+That command writes:
+
+```text
+demo-output/docs-install/packet/evidence-packet.json
+demo-output/docs-install/packet/case-file.md
+```
+
+`demo-output/` is ignored by git because it is generated proof output.
+
+## Next Steps
+
+1. Add local storage adapter.
+2. Add 0G storage adapter for `evidence-packet.json`.
+3. Build minimal web app around the real packet data.
+4. Add human approval and maintainer review state in the UI.
+5. Add architecture diagram and demo script.
 
 ## License
 

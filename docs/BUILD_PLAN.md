@@ -10,6 +10,33 @@ Build one working loop:
 
 Everything else is secondary until this loop works.
 
+## Current Working Slice
+
+The repo currently proves:
+
+```text
+fixture work lead
+-> mission contract
+-> local runner artifacts
+-> independent verifier result
+-> evidence packet JSON
+-> markdown case file
+```
+
+Run it with:
+
+```bash
+npm run demo:packet
+```
+
+This writes generated artifacts under:
+
+```text
+demo-output/docs-install/
+```
+
+The next critical step is real 0G storage for the generated packet.
+
 ## What The Preview Gives Us
 
 The preview defines the right user journey:
@@ -222,4 +249,3 @@ Every commit should answer:
 - What remains fake or mocked?
 
 The work must hold.
-
