@@ -191,6 +191,14 @@ demo-output/imports/
 
 The importer only reads public issue data. It does not post comments, open PRs, create payments, or contact maintainers.
 
+Convert a mission-ready Work Lead into a Mission Contract:
+
+```bash
+npm run convert:lead -- --in demo-output/imports/example.work-lead.json
+```
+
+Vague Work Leads fail conversion until the required evidence and missing details are clear.
+
 Generate the first evidence packet:
 
 ```bash

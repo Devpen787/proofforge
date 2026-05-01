@@ -10,6 +10,7 @@
   ],
   "scripts": {
     "build": "npm run build --workspaces --if-present",
+    "convert:lead": "tsx apps/runner/src/convertWorkLead.ts",
     "import:github": "tsx apps/runner/src/importGitHubIssue.ts",
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",
     "dev": "npm run dev -w apps/web",

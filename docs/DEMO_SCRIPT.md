@@ -31,7 +31,13 @@ Point out:
 
 ### 3. Generate The Proof Packet
 
-Run:
+If the imported Work Lead is mission-ready, convert it:
+
+```bash
+npm run convert:lead -- --in demo-output/imports/example.work-lead.json
+```
+
+For the deterministic demo mission, run:
 
 ```bash
 npm run demo:packet
