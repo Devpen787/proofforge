@@ -144,6 +144,17 @@ button {
   overflow-wrap: anywhere;
 }
 
+.public-proof-card {
+  grid-column: 1 / -1;
+}
+
+.public-summary {
+  max-width: 760px;
+  color: #475569;
+  font-size: 16px;
+  line-height: 1.6;
+}
+
 .small-label {
   margin: 0 0 14px;
   color: #047857;

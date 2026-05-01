@@ -3,9 +3,17 @@ import { createRoot } from "react-dom/client";
 import "./styles.css";
 import { demoActivity, demoMission, demoPacket, demoProject, demoSourcePipeline, demoWork, demoWorkLead } from "./demoData";
 
-type Screen = "opportunity" | "projects" | "work-queue" | "run" | "case-file" | "maintainer" | "scoreboard";
+type Screen =
+  | "opportunity"
+  | "projects"
+  | "work-queue"
+  | "run"
+  | "case-file"
+  | "maintainer"
+  | "scoreboard"
+  | "public-proof";
 
-const screens = ["opportunity", "projects", "work-queue", "run", "case-file", "maintainer", "scoreboard"] as const;
+const screens = ["opportunity", "projects", "work-queue", "run", "case-file", "maintainer", "scoreboard", "public-proof"] as const;
 
 function screenFromHash(): Screen {
   const candidate = window.location.hash.replace("#", "");
@@ -42,6 +50,7 @@ function App() {
           <NavButton label="Case Files" active={screen === "case-file"} onClick={() => setScreen("case-file")} />
           <NavButton label="Maintainer" active={screen === "maintainer"} onClick={() => setScreen("maintainer")} />
           <NavButton label="Scoreboard" active={screen === "scoreboard"} onClick={() => setScreen("scoreboard")} />
+          <NavButton label="Public Proof" active={screen === "public-proof"} onClick={() => setScreen("public-proof")} />
         </nav>
         <div className="node-status">
           <span className="avatar">A</span>
@@ -74,8 +83,10 @@ function App() {
             released={released}
             onRelease={() => setReleased(true)}
             onNext={() => setScreen("opportunity")}
+            onPublicProof={() => setScreen("public-proof")}
           />
         )}
+        {screen === "public-proof" && <PublicProofScreen onBack={() => setScreen("scoreboard")} />}
       </main>
     </div>
   );
@@ -402,12 +413,14 @@ function ScoreboardScreen({
   accepted,
   released,
   onRelease,
-  onNext
+  onNext,
+  onPublicProof
 }: {
   accepted: boolean;
   released: boolean;
   onRelease: () => void;
   onNext: () => void;
+  onPublicProof: () => void;
 }) {
   return (
     <section className="page-grid scoreboard-grid">
@@ -431,6 +444,9 @@ function ScoreboardScreen({
           {accepted && !released && "Release the earned payout as a separate accounting step."}
           {accepted && released && "Public proof, project credit, and payout records are ready for the demo."}
         </p>
+        <button className="secondary-action full" onClick={onPublicProof}>
+          View public proof
+        </button>
       </div>
       <div className="panel">
         <h2>Payout state</h2>
@@ -450,6 +466,57 @@ function ScoreboardScreen({
               {item}
             </div>
           ))}
+      </div>
+    </section>
+  );
+}
+
+function PublicProofScreen({ onBack }: { onBack: () => void }) {
+  return (
+    <section className="page-grid case-grid">
+      <header className="page-header">
+        <span>Public Proof / {demoPacket.id}</span>
+        <button className="secondary-action" onClick={onBack}>
+          Back to Scoreboard
+        </button>
+      </header>
+      <div className="hero-card public-proof-card">
+        <p className="small-label">Accepted Proof Packet</p>
+        <h1>Validate installation docs</h1>
+        <p className="public-summary">
+          Installation docs were tested in a clean environment. The accepted packet includes a safe summary,
+          generated artifacts, verifier status, project credit, and payout outcome.
+        </p>
+        <div className="decision-row">
+          <span className="status-pill safe">Accepted</span>
+          <span className="status-pill safe">Public-safe</span>
+          <span className="status-pill safe">Maintainer reviewed</span>
+        </div>
+      </div>
+      <div className="panel">
+        <h2>What was proven</h2>
+        <ul className="check-list">
+          <li>Commands executed in a clean fixture</li>
+          <li>Logs captured for review</li>
+          <li>Verifier checks passed</li>
+          <li>No secrets or local paths exposed</li>
+        </ul>
+      </div>
+      <div className="panel">
+        <h2>Public artifacts</h2>
+        {["public-packet.json", "summary.md", "verifier.json", "environment-summary.json"].map((artifact) => (
+          <div className="artifact-row" key={artifact}>
+            <span>{artifact}</span>
+            <small>Safe to share</small>
+          </div>
+        ))}
+      </div>
+      <div className="decision-panel">
+        <p className="small-label">Credit and payout</p>
+        <StatusRow label="Project" value={demoProject.name} tone="good" />
+        <StatusRow label="Contributor" value="alex" tone="good" />
+        <StatusRow label="Earned payout" value="$8" tone="good" />
+        <StatusRow label="Reputation" value="+12" tone="good" />
       </div>
     </section>
   );
