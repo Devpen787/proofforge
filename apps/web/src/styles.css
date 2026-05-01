@@ -170,6 +170,12 @@ button {
   overflow-wrap: anywhere;
 }
 
+.quiet-copy {
+  color: #64748b;
+  font-size: 13px;
+  line-height: 1.5;
+}
+
 .primary-action,
 .secondary-action,
 .warning-action,

@@ -15,6 +15,7 @@ function screenFromHash(): Screen {
 function App() {
   const [screen, setScreenState] = React.useState<Screen>(screenFromHash);
   const [accepted, setAccepted] = React.useState(false);
+  const [released, setReleased] = React.useState(false);
   const setScreen = React.useCallback((nextScreen: Screen) => {
     window.location.hash = nextScreen;
     setScreenState(nextScreen);
@@ -62,11 +63,19 @@ function App() {
             accepted={accepted}
             onAccept={() => {
               setAccepted(true);
+              setReleased(false);
               setScreen("scoreboard");
             }}
           />
         )}
-        {screen === "scoreboard" && <ScoreboardScreen accepted={accepted} onNext={() => setScreen("opportunity")} />}
+        {screen === "scoreboard" && (
+          <ScoreboardScreen
+            accepted={accepted}
+            released={released}
+            onRelease={() => setReleased(true)}
+            onNext={() => setScreen("opportunity")}
+          />
+        )}
       </main>
     </div>
   );
@@ -389,7 +398,17 @@ function MaintainerScreen({ accepted, onAccept }: { accepted: boolean; onAccept:
   );
 }
 
-function ScoreboardScreen({ accepted, onNext }: { accepted: boolean; onNext: () => void }) {
+function ScoreboardScreen({
+  accepted,
+  released,
+  onRelease,
+  onNext
+}: {
+  accepted: boolean;
+  released: boolean;
+  onRelease: () => void;
+  onNext: () => void;
+}) {
   return (
     <section className="page-grid scoreboard-grid">
       <header className="page-header">
@@ -402,17 +421,35 @@ function ScoreboardScreen({ accepted, onNext }: { accepted: boolean; onNext: () 
         <Metric label="Available" value="$63" />
         <Metric label="Pending" value={accepted ? "$0" : "$8"} />
         <Metric label="Earned" value={accepted ? "$8" : "$0"} />
+        <Metric label="Paid out" value={released ? "$8" : "$0"} />
         <Metric label="Reputation" value={accepted ? "176" : "164"} />
       </div>
       <div className="panel">
         <h2>Your next step</h2>
-        <p>{accepted ? "Store the packet on 0G with env credentials." : "Ask the maintainer to accept the submitted packet."}</p>
+        <p>
+          {!accepted && "Ask the maintainer to accept the submitted packet."}
+          {accepted && !released && "Release the earned payout as a separate accounting step."}
+          {accepted && released && "Public proof, project credit, and payout records are ready for the demo."}
+        </p>
+      </div>
+      <div className="panel">
+        <h2>Payout state</h2>
+        <StatusRow label="Earned payout" value={accepted ? "$8 earned" : "Waiting"} tone={accepted ? "good" : "bad"} />
+        <StatusRow label="Released payout" value={released ? "$8 released" : "Not released"} tone={released ? "good" : "bad"} />
+        <p className="quiet-copy">Release is manual in the MVP. No money moves automatically.</p>
+        <button className="primary-action full" disabled={!accepted || released} onClick={onRelease}>
+          {released ? "Payout released" : "Release payout"}
+        </button>
       </div>
       <div className="panel">
         <h2>Recent activity</h2>
-        {demoActivity.map((item) => (
-          <div className="activity-row" key={item}>{item}</div>
-        ))}
+        {[...demoActivity, accepted ? "Earned payout created" : "", released ? "Released payout marked paid" : ""]
+          .filter(Boolean)
+          .map((item) => (
+            <div className="activity-row" key={item}>
+              {item}
+            </div>
+          ))}
       </div>
     </section>
   );
