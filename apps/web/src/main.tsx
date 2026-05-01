@@ -862,6 +862,30 @@ function WorkQueueScreen({
 
 function RunnerScreen({ activeMission, onPacket }: { activeMission: ActiveMission; onPacket: () => void }) {
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const runSteps =
+    activeMission === "checkout"
+      ? [
+          { label: "Sandbox created", detail: "Browser test profile isolated", status: "complete", artifact: "policy.json" },
+          { label: "Source prepared", detail: "Checkout target loaded from Work Lead", status: "complete", artifact: "environment.json" },
+          { label: "Commands executed", detail: "Chrome and Safari checks completed", status: "complete", artifact: "browser-report.json" },
+          { label: "Logs captured", detail: "Console and screenshot evidence saved", status: "complete", artifact: "chrome.png, safari.png" },
+          { label: "Verifier checked", detail: "Artifacts and policy reviewed independently", status: "complete", artifact: "verifier.json" },
+          { label: "Packet draft ready", detail: "Human approval required before submission", status: "approval", artifact: "evidence-packet.json" }
+        ]
+      : [
+          { label: "Sandbox created", detail: "Clean fixture workspace prepared", status: "complete", artifact: "policy.json" },
+          { label: "Source prepared", detail: "Docs validation fixture loaded", status: "complete", artifact: "environment.json" },
+          { label: "Command executed", detail: "Install check produced a reproducible failure", status: "complete", artifact: "runner-result.json" },
+          { label: "Logs captured", detail: "stdout and stderr saved for review", status: "complete", artifact: "stdout.log, stderr.log" },
+          { label: "Verifier checked", detail: "Independent checks confirmed packet evidence", status: "complete", artifact: "verifier.json" },
+          { label: "Packet draft ready", detail: "Human approval required before submission", status: "approval", artifact: "evidence-packet.json" }
+        ];
+  const agentRows = [
+    { name: "Runner", work: activeMission === "checkout" ? "Runs browser QA checks" : "Runs install proof command", status: "Passed" },
+    { name: "Verifier", work: "Checks artifacts independently", status: "Passed" },
+    { name: "Skeptic", work: "Looks for false positives", status: "Passed" },
+    { name: "Packager", work: "Builds maintainer case file", status: "Ready" }
+  ];
   const output =
     activeMission === "checkout"
       ? `$ npm run proof:browser
@@ -892,16 +916,50 @@ environment.json`;
         <span>Runner / {mission.title}</span>
         <button className="danger-action">Cancel Run</button>
       </header>
-      <div className="panel">
-        <h2>Mission lifecycle</h2>
-        <Timeline />
+      <div className="runner-hero">
+        <div>
+          <p className="small-label">Agent run, still local</p>
+          <h2>Agents did the work. You decide what leaves.</h2>
+          <p>No public action has been taken. This run created evidence only inside the workspace.</p>
+        </div>
+        <div className="runner-hero-stats">
+          <StatusRow label="Earn if accepted" value={mission.reward} tone="good" />
+          <StatusRow label="External actions" value="Locked" tone="bad" />
+          <StatusRow label="Packet state" value="Draft ready" tone="good" />
+        </div>
+      </div>
+      <div className="panel runner-timeline-panel">
+        <div className="section-heading">
+          <div>
+            <p className="small-label">Mission lifecycle</p>
+            <h2>Evidence packet draft ready</h2>
+          </div>
+          <span className="status-pill warning">Approval needed</span>
+        </div>
+        <RunnerTimeline steps={runSteps} />
       </div>
       <div className="terminal-card">
         <h2>Live output</h2>
         <pre>{output}</pre>
       </div>
       <div className="panel">
-        <h2>Packet output preview</h2>
+        <p className="small-label">Agent work stack</p>
+        <h2>Specialized agents, bounded jobs.</h2>
+        <div className="agent-run-list">
+          {agentRows.map((agent) => (
+            <div className="agent-run-row" key={agent.name}>
+              <span>
+                <strong>{agent.name}</strong>
+                <small>{agent.work}</small>
+              </span>
+              <span className="status-pill safe">{agent.status}</span>
+            </div>
+          ))}
+        </div>
+      </div>
+      <div className="panel">
+        <p className="small-label">Output preview</p>
+        <h2>Packet files produced</h2>
         <p className="quiet-copy">If approved, this run becomes a reviewable evidence packet. Private files stay local until submission.</p>
         {demoArtifacts.slice(0, 4).map((artifact) => (
           <div className="artifact-row rich-artifact-row" key={artifact.name}>
@@ -914,14 +972,15 @@ environment.json`;
         ))}
       </div>
       <div className="panel">
-        <h2>Runner security</h2>
+        <p className="small-label">Runner security</p>
+        <h2>Useful work, locked boundaries.</h2>
         <StatusRow label="Sandbox" value="Required" tone="good" />
         <StatusRow label="Write access" value="Blocked" tone="bad" />
         <StatusRow label="Secrets" value="None" tone="good" />
         <StatusRow label="External" value="Locked" tone="bad" />
         <div className="approval-box">
-          <strong>Approval checkpoint</strong>
-          <p>This run created a proof packet draft. Nothing leaves your workspace unless you approve.</p>
+          <strong>Human approval checkpoint</strong>
+          <p>This run created a proof packet draft. Nothing leaves your workspace and nothing is earned unless a human approves and a maintainer accepts.</p>
           <StatusRow label="Public action" value="Requires approval" tone="bad" />
           <StatusRow label="Submission" value="Locked until approved" tone="bad" />
           <button className="primary-action full" onClick={onPacket}>
@@ -1363,14 +1422,23 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
   );
 }
 
-function Timeline() {
+function RunnerTimeline({
+  steps
+}: {
+  steps: Array<{ label: string; detail: string; status: string; artifact: string }>;
+}) {
   return (
-    <ol className="timeline">
-      {["Sandbox created", "Fixture copied", "Command executed", "Logs captured", "Verifier passed", "Packet ready"].map(
-        (step) => (
-          <li key={step}>{step}</li>
-        )
-      )}
+    <ol className="runner-timeline">
+      {steps.map((step, index) => (
+        <li className={step.status === "approval" ? "approval" : "complete"} key={step.label}>
+          <span>{index + 1}</span>
+          <div>
+            <strong>{step.label}</strong>
+            <small>{step.detail}</small>
+            <code>{step.artifact}</code>
+          </div>
+        </li>
+      ))}
     </ol>
   );
 }

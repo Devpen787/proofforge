@@ -967,6 +967,135 @@ button {
   color: white;
 }
 
+.runner-hero {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 22px;
+  align-items: end;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 30px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.runner-hero h2 {
+  margin: 0;
+  font-size: 38px;
+  line-height: 1.03;
+}
+
+.runner-hero p:not(.small-label) {
+  max-width: 680px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.runner-hero-stats {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.runner-timeline-panel {
+  grid-column: span 2;
+}
+
+.runner-timeline {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 12px;
+  list-style: none;
+  margin: 18px 0 0;
+  padding: 0;
+}
+
+.runner-timeline li {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  border: 1px solid #a7f3d0;
+  border-radius: 18px;
+  background: #ecfdf5;
+  padding: 14px;
+}
+
+.runner-timeline li.approval {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.runner-timeline li > span {
+  width: 34px;
+  height: 34px;
+  display: grid;
+  place-items: center;
+  border-radius: 999px;
+  background: #047857;
+  color: white;
+  font-weight: 900;
+}
+
+.runner-timeline li.approval > span {
+  background: #b45309;
+}
+
+.runner-timeline strong,
+.runner-timeline small,
+.runner-timeline code {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.runner-timeline small {
+  margin: 3px 0 8px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.runner-timeline code {
+  background: white;
+  color: #334155;
+  font-size: 11px;
+}
+
+.agent-run-list {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.agent-run-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.agent-run-row span:first-child,
+.agent-run-row strong,
+.agent-run-row small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.agent-run-row small {
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
 pre {
   overflow: auto;
   white-space: pre-wrap;
@@ -1407,6 +1536,8 @@ code {
   .case-dossier-body,
   .compact-case-grid,
   .verification-section,
+  .runner-hero,
+  .runner-timeline,
   .mission-brief,
   .mission-detail-facts,
   .mission-section-grid,
@@ -1466,6 +1597,11 @@ code {
   }
 
   .case-dossier {
+    grid-column: 1;
+  }
+
+  .runner-hero,
+  .runner-timeline-panel {
     grid-column: 1;
   }
 

@@ -108,7 +108,9 @@ async function runSmoke() {
     await requireText(page, "Accept mission before agents run");
     await requireText(page, "Proof earns value only after acceptance.");
     await page.getByRole("button", { name: "Accept mission and run agent" }).click();
-    await requireText(page, "Mission lifecycle");
+    await requireText(page, "Agents did the work. You decide what leaves.");
+    await requireText(page, "Evidence packet draft ready");
+    await requireText(page, "Human approval checkpoint");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Evidence first. Code later.");
     await page.getByRole("button", { name: "Submit Packet" }).click();
@@ -133,6 +135,7 @@ async function runSmoke() {
     await requireText(page, "Earn if accepted");
     await page.getByRole("button", { name: "Accept mission and run agent" }).click();
     await requireText(page, "Runner / Checkout QA verification");
+    await requireText(page, "Browser test profile isolated");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Verified checkout QA with clarified browser targets.");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
