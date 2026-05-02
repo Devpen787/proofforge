@@ -136,6 +136,7 @@ button {
 .packet-document,
 .packet-artifacts-panel,
 .packet-advanced,
+.home-command-panel,
 .opportunity-fit-card,
 .home-ledger-panel,
 .metric,
@@ -221,6 +222,123 @@ button {
   display: grid;
   grid-template-columns: minmax(320px, 0.62fr) minmax(0, 1fr);
   gap: 20px;
+}
+
+.home-command-panel {
+  display: grid;
+  grid-template-columns: minmax(240px, 0.9fr) minmax(220px, 0.8fr) minmax(260px, 1fr) minmax(220px, 0.8fr);
+  gap: 14px;
+  align-items: stretch;
+  padding: 24px;
+}
+
+.home-command-copy {
+  display: grid;
+  align-content: center;
+  gap: 12px;
+  min-width: 0;
+}
+
+.home-command-copy h2,
+.home-command-card h3 {
+  margin: 0;
+  color: #020617;
+  letter-spacing: 0;
+}
+
+.home-command-copy h2 {
+  max-width: 420px;
+  font-size: clamp(28px, 3vw, 42px);
+  line-height: 1.02;
+}
+
+.home-command-copy p:not(.small-label),
+.home-command-card p:not(.small-label) {
+  margin: 0;
+  color: #64748b;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.home-command-copy .primary-action {
+  justify-self: start;
+}
+
+.home-command-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  min-width: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 22px;
+  background: #f8fafc;
+  padding: 18px;
+}
+
+.home-command-card.highlighted {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.home-command-card .small-label {
+  margin-bottom: 2px;
+}
+
+.home-command-card h3 {
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.compact-fit-mission {
+  background: white;
+}
+
+.mini-proof-path {
+  display: grid;
+  gap: 7px;
+}
+
+.mini-proof-path div {
+  display: grid;
+  grid-template-columns: 24px minmax(0, 1fr);
+  gap: 3px 9px;
+  align-items: center;
+  min-width: 0;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: white;
+  padding: 9px 10px;
+}
+
+.mini-proof-path span {
+  display: grid;
+  width: 24px;
+  height: 24px;
+  place-items: center;
+  border-radius: 999px;
+  background: #047857;
+  color: white;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mini-proof-path strong,
+.mini-proof-path small {
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.mini-proof-path strong {
+  font-size: 12px;
+  line-height: 1.1;
+}
+
+.mini-proof-path small {
+  grid-column: 2;
+  color: #64748b;
+  font-size: 11px;
+  font-weight: 750;
+  line-height: 1.2;
 }
 
 .home-ledger-panel,
@@ -3267,6 +3385,7 @@ code {
   .project-capacity-strip,
   .home-metrics,
   .home-focus-panel,
+  .home-command-panel,
   .source-grid,
   .pipeline-strip {
     display: grid;
@@ -3302,6 +3421,7 @@ code {
   .decision-panel,
   .home-hero,
   .home-focus-panel,
+  .home-command-panel,
   .triage-hero,
   .opportunity-command-panel,
   .work-lead-diagnosis-panel,
@@ -3518,6 +3638,7 @@ code {
   }
 
   .home-hero,
+  .home-command-panel,
   .home-ledger-panel,
   .home-proof-panel,
   .triage-hero,
@@ -3527,6 +3648,7 @@ code {
 
   .project-action-banner,
   .home-hero,
+  .home-command-panel,
   .home-ledger-panel,
   .home-proof-panel,
   .triage-hero,
@@ -3646,6 +3768,19 @@ code {
 
   .home-hero {
     padding: 24px;
+  }
+
+  .home-command-panel {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .home-command-copy .primary-action {
+    width: 100%;
+  }
+
+  .mini-proof-path {
+    grid-template-columns: 1fr;
   }
 
   .home-hero h1 {

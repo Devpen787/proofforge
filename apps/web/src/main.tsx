@@ -291,33 +291,52 @@ function OpportunityScreen({
         </aside>
       </div>
 
-      <div className="home-focus-panel wide">
-        <OpportunityFitCard onStart={onStart} />
+      <section className="home-command-panel wide" aria-label="Today in ProofForge">
+        <div className="home-command-copy">
+          <p className="small-label">Today</p>
+          <h2>One safe mission starts the project loop.</h2>
+          <p>Pick useful work, let the agent produce evidence, then let acceptance create credit and payout state.</p>
+          <button className="primary-action" onClick={onStart}>Run docs validation</button>
+        </div>
 
-        <section className="home-ledger-panel">
-          <p className="small-label">Ledger path</p>
-          <h2>Work becomes credit in stages.</h2>
-          <div className="ledger-step-list compact-ledger-list">
+        <div className="home-command-card highlighted">
+          <p className="small-label">Best mission</p>
+          <h3>Validate installation docs</h3>
+          <div className="fit-mission compact-fit-mission">
+            <span className="opportunity-icon">▶</span>
+            <div>
+              <strong>Safe · 30 min</strong>
+              <small>Accepted by Commons reviewer</small>
+            </div>
+          </div>
+          <StatusRow label="Reward" value="$8 + rep + credits" tone="good" />
+          <StatusRow label="Approval" value="Before submit" tone="good" />
+        </div>
+
+        <div className="home-command-card">
+          <p className="small-label">Credit path</p>
+          <h3>Work becomes credit in stages.</h3>
+          <div className="mini-proof-path">
             {ledgerSteps.slice(0, 4).map((item, index) => (
-              <div className="ledger-step" key={item.label}>
+              <div key={item.label}>
                 <span>{index + 1}</span>
-                <div>
-                  <strong>{item.label}</strong>
-                  <small>{item.value}</small>
-                </div>
-                <i className={item.tone === "good" ? "status-dot good" : "status-dot bad"} />
+                <strong>{item.label}</strong>
+                <small>{item.value}</small>
               </div>
             ))}
           </div>
-          <div className="ledger-proof-row">
-            <span>
-              <strong>Public proof</strong>
-              <small>Public-safe proof appears only after accepted proof.</small>
-            </span>
-            <b>{accepted && !rejected ? "Shareable" : "Hidden"}</b>
-          </div>
-        </section>
-      </div>
+          <p className="quiet-copy">Public-safe proof appears only after accepted proof.</p>
+        </div>
+
+        <div className="home-command-card">
+          <p className="small-label">Project impact</p>
+          <h3>Docs Onboarding Sprint</h3>
+          <StatusRow label="Accepted proofs" value={demoProject.acceptedProof} tone="good" />
+          <StatusRow label="Next benefit" value="Reviewer eligibility" tone="good" />
+          <StatusRow label="Top proof" value="Install docs validated" tone="good" />
+          <button className="secondary-action full" onClick={onPublicProof} disabled={!accepted || rejected}>Open proof record</button>
+        </div>
+      </section>
 
       <WorkList onStart={onStart} />
     </section>
