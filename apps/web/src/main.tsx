@@ -292,58 +292,33 @@ function OpportunityScreen({
         </aside>
       </div>
 
-      <div className="metric-strip wide home-metrics">
-        <Metric label="Available" value="$63" />
-        <Metric label="Pending" value={accepted || rejected ? "$0" : payoutAmount} />
-        <Metric label="Earned" value={accepted ? payoutAmount : "$0"} />
-        <Metric label="Paid out" value={released ? payoutAmount : "$0"} />
-        <Metric label="Reputation" value={accepted ? "176" : "164"} />
-      </div>
+      <div className="home-focus-panel wide">
+        <OpportunityFitCard onStart={onStart} />
 
-      <OpportunityFitCard onStart={onStart} />
-
-      <section className="panel home-ledger-panel">
-        <p className="small-label">Ledger path</p>
-        <h2>Work becomes credit in stages.</h2>
-        <div className="ledger-step-list compact-ledger-list">
-          {ledgerSteps.map((item, index) => (
-            <div className="ledger-step" key={item.label}>
-              <span>{index + 1}</span>
-              <div>
-                <strong>{item.label}</strong>
-                <small>{item.value}</small>
+        <section className="home-ledger-panel">
+          <p className="small-label">Ledger path</p>
+          <h2>Work becomes credit in stages.</h2>
+          <div className="ledger-step-list compact-ledger-list">
+            {ledgerSteps.slice(0, 4).map((item, index) => (
+              <div className="ledger-step" key={item.label}>
+                <span>{index + 1}</span>
+                <div>
+                  <strong>{item.label}</strong>
+                  <small>{item.value}</small>
+                </div>
+                <i className={item.tone === "good" ? "status-dot good" : "status-dot bad"} />
               </div>
-              <i className={item.tone === "good" ? "status-dot good" : "status-dot bad"} />
-            </div>
-          ))}
-        </div>
-      </section>
-
-      <section className="panel home-proof-panel">
-        <p className="small-label">Proof history</p>
-        <h2>What changes when proof holds up.</h2>
-        <div className="ledger-proof-row">
-          <span>
-            <strong>{packet.id}</strong>
-            <small>{accepted ? "Accepted proof created an earned payout record." : rejected ? "Closed without payout. Feedback remains useful." : "Submitted packet waiting for decision."}</small>
-          </span>
-          <b>{packetState}</b>
-        </div>
-        <div className="ledger-proof-row">
-          <span>
-            <strong>public-packet.json</strong>
-            <small>Public-safe proof appears only after accepted proof.</small>
-          </span>
-          <b>{accepted && !rejected ? "Shareable" : "Hidden"}</b>
-        </div>
-        <div className="ledger-proof-row">
-          <span>
-            <strong>project-credit.json</strong>
-            <small>Credits the contributor and project only after acceptance.</small>
-          </span>
-          <b>{accepted && !rejected ? "Ready" : "Blocked"}</b>
-        </div>
-      </section>
+            ))}
+          </div>
+          <div className="ledger-proof-row">
+            <span>
+              <strong>public-packet.json</strong>
+              <small>Public-safe proof appears only after accepted proof.</small>
+            </span>
+            <b>{accepted && !rejected ? "Shareable" : "Hidden"}</b>
+          </div>
+        </section>
+      </div>
 
       <WorkList onStart={onStart} />
     </section>

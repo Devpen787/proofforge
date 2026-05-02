@@ -137,6 +137,7 @@ button {
 .packet-artifacts-panel,
 .packet-advanced,
 .opportunity-fit-card,
+.home-ledger-panel,
 .metric,
 .work-row {
   border: 1px solid #e2e8f0;
@@ -214,6 +215,12 @@ button {
 
 .home-metrics {
   grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.home-focus-panel {
+  display: grid;
+  grid-template-columns: minmax(320px, 0.62fr) minmax(0, 1fr);
+  gap: 20px;
 }
 
 .home-ledger-panel,
@@ -319,12 +326,22 @@ button {
   align-self: start;
 }
 
+.home-ledger-panel {
+  padding: 28px;
+}
+
 .opportunity-fit-card h2 {
   margin: 0;
   color: #020617;
   font-size: 42px;
   line-height: 1.05;
   letter-spacing: 0;
+}
+
+.home-ledger-panel h2 {
+  margin: 0 0 18px;
+  font-size: 30px;
+  line-height: 1.06;
 }
 
 .opportunity-fit-card .quiet-copy {
@@ -2989,6 +3006,7 @@ code {
 
   .project-capacity-strip,
   .home-metrics,
+  .home-focus-panel,
   .source-grid,
   .pipeline-strip {
     display: grid;
@@ -3023,6 +3041,7 @@ code {
   .terminal-card,
   .decision-panel,
   .home-hero,
+  .home-focus-panel,
   .triage-hero,
   .opportunity-command-panel,
   .work-lead-diagnosis-panel,
