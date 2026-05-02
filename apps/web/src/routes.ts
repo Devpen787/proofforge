@@ -18,8 +18,7 @@ export const primaryNavScreens = [
   "opportunity",
   "projects",
   "work-queue",
-  "case-file",
-  "scoreboard"
+  "case-file"
 ] as const satisfies readonly Screen[];
 
 export const routeLabels: Record<Screen, string> = {
@@ -31,7 +30,7 @@ export const routeLabels: Record<Screen, string> = {
   run: "Runner",
   "case-file": "Packets",
   maintainer: "Maintainer",
-  scoreboard: "Scoreboard",
+  scoreboard: "Home",
   "public-proof": "Public Proof",
   "proof-demo": "Proof Demo"
 };

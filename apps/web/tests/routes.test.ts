@@ -25,12 +25,12 @@ describe("web routes", () => {
     expect(routeLabels["work-queue"]).toBe("Opportunities");
     expect(routeLabels["mission-detail"]).toBe("Mission Detail");
     expect(routeLabels["case-file"]).toBe("Packets");
-    expect(routeLabels.scoreboard).toBe("Scoreboard");
+    expect(routeLabels.scoreboard).toBe("Home");
     expect(routeLabels["public-proof"]).toBe("Public Proof");
     expect(routeLabels["proof-demo"]).toBe("Proof Demo");
   });
 
   it("keeps the public navigation focused on user intent", () => {
-    expect(primaryNavScreens).toEqual(["opportunity", "projects", "work-queue", "case-file", "scoreboard"]);
+    expect(primaryNavScreens).toEqual(["opportunity", "projects", "work-queue", "case-file"]);
   });
 });

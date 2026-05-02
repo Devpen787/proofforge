@@ -2,7 +2,6 @@ import React from "react";
 import { createRoot } from "react-dom/client";
 import "./styles.css";
 import {
-  demoActivity,
   demoArtifacts,
   demoConvertedMission,
   demoConvertedPacket,
@@ -17,7 +16,6 @@ import {
   demoSafetyDefaults,
   demoSourcePipeline,
   demoSourceTypes,
-  demoUnlockProgress,
   demoWork,
   demoWorkLead
 } from "./demoData";
@@ -98,10 +96,18 @@ function App() {
       <main className="main">
         {screen === "opportunity" && (
           <OpportunityScreen
+            accepted={accepted}
+            released={released}
+            revisionRequested={revisionRequested}
+            rejected={rejected}
+            activeMission={activeMission}
+            onRelease={() => setReleased(true)}
+            onResolveRevision={() => setScreen("case-file")}
             onStart={() => {
               resetProof();
               setScreen("first-run");
             }}
+            onPublicProof={() => setScreen("public-proof")}
           />
         )}
         {screen === "first-run" && <FirstRunScreen onRun={() => {
@@ -180,7 +186,7 @@ function App() {
               setRejected(false);
               setAccepted(true);
               setReleased(false);
-              setScreen("scoreboard");
+              setScreen("opportunity");
             }}
             onRevision={() => {
               setSubmitted(false);
@@ -194,12 +200,12 @@ function App() {
               setReleased(false);
               setRevisionRequested(false);
               setRejected(true);
-              setScreen("scoreboard");
+              setScreen("opportunity");
             }}
           />
         )}
         {screen === "scoreboard" && (
-          <ScoreboardScreen
+          <OpportunityScreen
             accepted={accepted}
             released={released}
             revisionRequested={revisionRequested}
@@ -207,14 +213,14 @@ function App() {
             activeMission={activeMission}
             onRelease={() => setReleased(true)}
             onResolveRevision={() => setScreen("case-file")}
-            onNext={() => {
+            onStart={() => {
               resetProof();
               setScreen("first-run");
             }}
             onPublicProof={() => setScreen("public-proof")}
           />
         )}
-        {screen === "public-proof" && <PublicProofScreen activeMission={activeMission} onBack={() => setScreen("scoreboard")} />}
+        {screen === "public-proof" && <PublicProofScreen activeMission={activeMission} onBack={() => setScreen("opportunity")} />}
         {screen === "proof-demo" && <ProofDemoScreen onStart={() => setScreen("first-run")} onEvidence={() => setScreen("case-file")} />}
       </main>
     </div>
@@ -278,36 +284,129 @@ function ProofProgressBand({
   );
 }
 
-function OpportunityScreen({ onStart }: { onStart: () => void }) {
+function OpportunityScreen({
+  accepted,
+  released,
+  revisionRequested,
+  rejected,
+  activeMission,
+  onRelease,
+  onResolveRevision,
+  onStart,
+  onPublicProof
+}: {
+  accepted: boolean;
+  released: boolean;
+  revisionRequested: boolean;
+  rejected: boolean;
+  activeMission: ActiveMission;
+  onRelease: () => void;
+  onResolveRevision: () => void;
+  onStart: () => void;
+  onPublicProof: () => void;
+}) {
+  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
+  const payoutAmount = mission.reward;
+  const packetState = rejected ? "Rejected" : released ? "Released" : accepted ? "Earned" : revisionRequested ? "Revision requested" : "Ready to start";
+  const heroTitle =
+    revisionRequested ? "Fix the packet. Keep the credit path clear." :
+    rejected ? "Packet rejected. Start again with stronger proof." :
+    accepted || released ? "Accepted proof is what earns value." :
+    "Find useful work. Prove it. Earn accepted credit.";
+  const heroBody =
+    revisionRequested ? "A maintainer asked for a cleaner packet. Update the case file, then resubmit." :
+    rejected ? "No payout was earned. The feedback still helps you generate a stronger packet." :
+    accepted && !released ? "Release the earned payout. Earned payout exists, release stays a separate manual accounting step." :
+    released ? "Proof, public credit, and payout records are ready. Start the next useful mission." :
+    "Start with safe work your agent can run locally. Proof creates credit only after human acceptance.";
+  const primaryAction = revisionRequested ? "Open Case File" : accepted && !released ? "Release payout" : "Start safest proof";
+  const handlePrimary = revisionRequested ? onResolveRevision : accepted && !released ? onRelease : onStart;
+  const ledgerSteps = [
+    { label: "Packet submitted", value: rejected ? "Closed without acceptance" : submittedLabel(accepted, released), tone: rejected ? "bad" as const : "good" as const },
+    { label: "Maintainer decision", value: rejected ? "Rejected" : accepted ? "Accepted" : revisionRequested ? "Revision requested" : "Waiting", tone: rejected || revisionRequested ? "bad" as const : "good" as const },
+    { label: "Earned payout", value: accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Not earned yet", tone: accepted ? "good" as const : "bad" as const },
+    { label: "Released payout", value: released ? `${payoutAmount} released` : "Manual release pending", tone: released ? "good" as const : "bad" as const },
+    { label: "Project credit", value: accepted && !rejected ? `+${demoProject.credit.points} points` : "Not issued", tone: accepted && !rejected ? "good" as const : "bad" as const }
+  ];
   return (
-    <section className="page-grid page-grid-hero">
-      <div className="hero-card">
-        <p className="small-label">Proof before payout</p>
-        <h1>Find useful work. Prove it. Earn accepted credit.</h1>
-        <div className="safety-list">
-          <span>Real work from projects, repos, and communities.</span>
-          <span>Agents run locally until you approve what leaves.</span>
-          <span>Accepted packets create payout, access, or reputation.</span>
+    <section className="page-grid home-grid">
+      <div className="home-hero wide">
+        <div>
+          <span className="status-pill safe">{packetState}</span>
+          <h1>{heroTitle}</h1>
+          <p>{heroBody}</p>
+          <div className="home-actions">
+            <button className="primary-action" onClick={handlePrimary}>{primaryAction}</button>
+            {revisionRequested && <button className="secondary-action" onClick={onStart}>Start safest proof</button>}
+            {(accepted || released) && <button className="secondary-action" onClick={onPublicProof}>View public proof</button>}
+          </div>
         </div>
-        <button className="primary-action" onClick={onStart}>
-          Start safest proof
-        </button>
+        <aside className="home-earning-card">
+          <p className="small-label">Earning state</p>
+          <StatusRow label="Available" value="$63" tone="good" />
+          <StatusRow label="Earned payout" value={accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
+          <StatusRow label="Released payout" value={released ? `${payoutAmount} released` : "Not released"} tone={released ? "good" : "bad"} />
+          <StatusRow label="Public proof" value={accepted && !rejected ? "Allowed" : "Hidden until accepted"} tone={accepted && !rejected ? "good" : "bad"} />
+          <p className="quiet-copy">Earned is not released. No money moves automatically in the MVP.</p>
+        </aside>
       </div>
+
+      <div className="metric-strip wide home-metrics">
+        <Metric label="Available" value="$63" />
+        <Metric label="Pending" value={accepted || rejected ? "$0" : payoutAmount} />
+        <Metric label="Earned" value={accepted ? payoutAmount : "$0"} />
+        <Metric label="Paid out" value={released ? payoutAmount : "$0"} />
+        <Metric label="Reputation" value={accepted ? "176" : "164"} />
+      </div>
+
       <OpportunityFitCard onStart={onStart} />
-      <MetricStrip />
+
+      <section className="panel home-ledger-panel">
+        <p className="small-label">Ledger path</p>
+        <h2>Work becomes credit in stages.</h2>
+        <div className="ledger-step-list compact-ledger-list">
+          {ledgerSteps.map((item, index) => (
+            <div className="ledger-step" key={item.label}>
+              <span>{index + 1}</span>
+              <div>
+                <strong>{item.label}</strong>
+                <small>{item.value}</small>
+              </div>
+              <i className={item.tone === "good" ? "status-dot good" : "status-dot bad"} />
+            </div>
+          ))}
+        </div>
+      </section>
+
+      <section className="panel home-proof-panel">
+        <p className="small-label">Proof history</p>
+        <h2>What changes when proof holds up.</h2>
+        <div className="ledger-proof-row">
+          <span>
+            <strong>{packet.id}</strong>
+            <small>{accepted ? "Accepted proof created an earned payout record." : rejected ? "Closed without payout. Feedback remains useful." : "Submitted packet waiting for decision."}</small>
+          </span>
+          <b>{packetState}</b>
+        </div>
+        <div className="ledger-proof-row">
+          <span>
+            <strong>public-packet.json</strong>
+            <small>Public-safe proof appears only after accepted proof.</small>
+          </span>
+          <b>{accepted && !rejected ? "Shareable" : "Hidden"}</b>
+        </div>
+        <div className="ledger-proof-row">
+          <span>
+            <strong>project-credit.json</strong>
+            <small>Credits the contributor and project only after acceptance.</small>
+          </span>
+          <b>{accepted && !rejected ? "Ready" : "Blocked"}</b>
+        </div>
+      </section>
+
       <WorkList onStart={onStart} />
     </section>
-  );
-}
-
-function MetricStrip() {
-  return (
-    <div className="metric-strip">
-      <Metric label="Visible rewards" value="$1,240" />
-      <Metric label="Proof accepted this week" value="128" />
-      <Metric label="Active nodes" value="42" />
-      <Metric label="Your earnable fit" value="$63" />
-    </div>
   );
 }
 
@@ -1367,178 +1466,6 @@ function MaintainerScreen({
           <button className="warning-action" onClick={onRevision}>Request Revision</button>
           <button className="danger-action" onClick={onReject}>Reject Packet</button>
         </div>
-      </div>
-    </section>
-  );
-}
-
-function ScoreboardScreen({
-  accepted,
-  released,
-  revisionRequested,
-  rejected,
-  activeMission,
-  onRelease,
-  onResolveRevision,
-  onNext,
-  onPublicProof
-}: {
-  accepted: boolean;
-  released: boolean;
-  revisionRequested: boolean;
-  rejected: boolean;
-  activeMission: ActiveMission;
-  onRelease: () => void;
-  onResolveRevision: () => void;
-  onNext: () => void;
-  onPublicProof: () => void;
-}) {
-  const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
-  const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
-  const payoutAmount = mission.reward;
-  const packetState = rejected ? "Rejected" : released ? "Released" : accepted ? "Earned" : revisionRequested ? "Revision requested" : "Pending review";
-  const packetStateTone = rejected || revisionRequested ? "bad" as const : accepted || released ? "good" as const : "good" as const;
-  const ledgerSteps = [
-    { label: "Packet submitted", value: rejected ? "Closed without acceptance" : submittedLabel(accepted, released), tone: rejected ? "bad" as const : "good" as const },
-    { label: "Maintainer decision", value: rejected ? "Rejected" : accepted ? "Accepted" : revisionRequested ? "Revision requested" : "Waiting", tone: rejected || revisionRequested ? "bad" as const : accepted ? "good" as const : "good" as const },
-    { label: "Earned payout", value: accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Not earned yet", tone: accepted ? "good" as const : "bad" as const },
-    { label: "Released payout", value: released ? `${payoutAmount} released` : "Manual release pending", tone: released ? "good" as const : "bad" as const },
-    { label: "Project credit", value: accepted && !rejected ? `+${demoProject.credit.points} points` : "Not issued", tone: accepted && !rejected ? "good" as const : "bad" as const }
-  ];
-  const proofHistory = [
-    { title: packet.id, detail: accepted ? "Accepted proof created an earned payout record." : rejected ? "Closed without payout. Feedback remains useful." : "Submitted packet waiting for decision.", value: packetState },
-    { title: "project-credit.json", detail: "Credits the contributor and project only after acceptance.", value: accepted && !rejected ? "Ready" : "Blocked" },
-    { title: "public-packet.json", detail: "Public-safe proof appears only after accepted proof.", value: accepted && !rejected ? "Shareable" : "Hidden" }
-  ];
-  return (
-    <section className="page-grid scoreboard-grid">
-      <header className="page-header">
-        <span>Contribution Ledger</span>
-        <button className="primary-action" onClick={onNext}>
-          Generate Proof Packet
-        </button>
-      </header>
-      <div className="ledger-hero wide">
-        <div>
-          <p className="small-label">Proof before payout</p>
-          <h2>Accepted proof is what earns value.</h2>
-          <p>
-            This is the consequence layer: a useful packet becomes accepted proof, accepted proof creates earned payout and reputation,
-            and released payout stays a separate manual accounting step.
-          </p>
-        </div>
-        <div className="ledger-current-packet">
-          <span className={packetStateTone === "good" ? "status-pill safe" : "status-pill warning"}>{packetState}</span>
-          <strong>{mission.title}</strong>
-          <small>{packet.summary}</small>
-          <StatusRow label="Agent work" value="Credited only if accepted" tone="good" />
-          <StatusRow label="Public proof" value={accepted && !rejected ? "Allowed" : "Hidden until accepted"} tone={accepted && !rejected ? "good" : "bad"} />
-        </div>
-      </div>
-      <div className="metric-strip wide">
-        <Metric label="Available" value="$63" />
-        <Metric label="Pending" value={accepted || rejected ? "$0" : payoutAmount} />
-        <Metric label="Earned" value={accepted ? payoutAmount : "$0"} />
-        <Metric label="Paid out" value={released ? payoutAmount : "$0"} />
-        <Metric label="Reputation" value={accepted ? "176" : "164"} />
-      </div>
-      <div className="panel scoreboard-action-card">
-        <p className="small-label">Next best action</p>
-        <h2>
-          {revisionRequested && "Resolve the requested revision."}
-          {rejected && "Packet rejected. Start again with stronger proof."}
-          {!revisionRequested && !rejected && !accepted && "Get the packet accepted."}
-          {accepted && !released && "Release the earned payout."}
-          {accepted && released && "Start the next proof mission."}
-        </h2>
-        <p className="quiet-copy">
-          {revisionRequested && "Update the Case File with the missing environment notes, then resubmit."}
-          {rejected && "No payout is earned for this packet. Use the feedback to run or package better proof."}
-          {!revisionRequested && !rejected && !accepted && "Ask the maintainer to accept the submitted packet."}
-          {accepted && !released && "Release the earned payout as a separate accounting step."}
-          {accepted && released && "Public proof, project credit, and payout records are ready for the demo."}
-        </p>
-        <button className="primary-action full" onClick={revisionRequested ? onResolveRevision : accepted && !released ? onRelease : onNext}>
-          {revisionRequested && "Open Case File"}
-          {rejected && "Start new mission"}
-          {!revisionRequested && accepted && !released && "Release payout"}
-          {!revisionRequested && !rejected && (!accepted || released) && "Generate proof packet"}
-        </button>
-        {(accepted || released) && <button className="secondary-action full" onClick={onPublicProof}>View public proof</button>}
-      </div>
-      <div className="panel ledger-value-card">
-        <p className="small-label">Payout state</p>
-        <h2>Earned is not released.</h2>
-        <StatusRow label="Earned payout" value={accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
-        <StatusRow label="Released payout" value={released ? `${payoutAmount} released` : "Not released"} tone={released ? "good" : "bad"} />
-        <StatusRow label="Method" value="Manual accounting" tone="good" />
-        <p className="quiet-copy">Release is manual in the MVP. No money moves automatically.</p>
-        <button className="primary-action full" disabled={!accepted || released} onClick={onRelease}>
-          {rejected && "No payout to release"}
-          {!rejected && released && "Payout released"}
-          {!rejected && !released && "Release payout"}
-        </button>
-      </div>
-      <div className="panel ledger-timeline-card">
-        <p className="small-label">Ledger path</p>
-        <h2>Work becomes credit in stages.</h2>
-        <div className="ledger-step-list">
-          {ledgerSteps.map((item, index) => (
-            <div className="ledger-step" key={item.label}>
-              <span>{index + 1}</span>
-              <div>
-                <strong>{item.label}</strong>
-                <small>{item.value}</small>
-              </div>
-              <i className={item.tone === "good" ? "status-dot good" : "status-dot bad"} />
-            </div>
-          ))}
-        </div>
-      </div>
-      <div className="panel">
-        <p className="small-label">Reputation</p>
-        <h2>Proof history unlocks better missions.</h2>
-        <StatusRow label="Current tier" value={demoUnlockProgress.currentTier} tone="good" />
-        <StatusRow label="Next unlock" value={demoUnlockProgress.nextTier} tone="good" />
-        <div className="unlock-progress" aria-label="Accepted packet progress">
-          <span style={{ width: `${demoUnlockProgress.percent}%` }} />
-        </div>
-        <p className="quiet-copy">
-          {demoUnlockProgress.acceptedPackets} / {demoUnlockProgress.neededPackets} accepted packets. {demoUnlockProgress.nextReward}
-        </p>
-      </div>
-      <div className="panel ledger-proof-history">
-        <p className="small-label">Proof history</p>
-        <h2>What changed because of this packet.</h2>
-        {proofHistory.map((item) => (
-          <div className="ledger-proof-row" key={item.title}>
-            <span>
-              <strong>{item.title}</strong>
-              <small>{item.detail}</small>
-            </span>
-            <b>{item.value}</b>
-          </div>
-        ))}
-      </div>
-      <div className="panel">
-        <p className="small-label">Recent activity</p>
-        <h2>Human-readable audit trail.</h2>
-        {[...demoActivity, accepted ? "Earned payout created" : "", released ? "Released payout marked paid" : ""]
-          .concat(rejected ? ["Packet rejected without payout"] : [])
-          .filter(Boolean)
-          .map((item) => (
-            <div className="activity-row" key={item}>
-              {item}
-            </div>
-          ))}
-      </div>
-      <div className="panel">
-        <p className="small-label">Shared project credit</p>
-        <h2>The project grows when proof holds up.</h2>
-        <StatusRow label="Project" value={demoProject.name} tone="good" />
-        <StatusRow label="Contributor" value={demoProject.credit.contributor} tone="good" />
-        <StatusRow label="Packet" value={demoProject.credit.packet} tone="good" />
-        <StatusRow label="Credit points" value={rejected ? "0 - not accepted" : demoProject.credit.points} tone={rejected ? "bad" : "good"} />
       </div>
     </section>
   );

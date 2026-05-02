@@ -185,11 +185,14 @@ button {
   grid-template-columns: 1.2fr 0.8fr;
 }
 
+.home-grid {
+  grid-template-columns: minmax(0, 0.82fr) minmax(0, 1fr);
+}
+
 .runner-grid,
 .case-grid,
 .packet-grid,
 .maintainer-grid,
-.scoreboard-grid,
 .work-queue-grid,
 .projects-grid,
 .mission-detail-grid,
@@ -204,6 +207,7 @@ button {
 }
 
 .hero-card,
+.home-hero,
 .panel,
 .terminal-card,
 .decision-panel,
@@ -234,6 +238,72 @@ button {
   line-height: 0.98;
   letter-spacing: 0;
   overflow-wrap: anywhere;
+}
+
+.home-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.42fr);
+  gap: 24px;
+  align-items: stretch;
+  padding: 30px;
+}
+
+.home-hero h1 {
+  max-width: 760px;
+  margin: 14px 0 12px;
+  font-size: clamp(36px, 4.4vw, 58px);
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.home-hero p:not(.small-label) {
+  max-width: 720px;
+  color: #475569;
+  font-size: 16px;
+  font-weight: 650;
+  line-height: 1.55;
+}
+
+.home-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 20px;
+}
+
+.home-earning-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid #a7f3d0;
+  border-radius: 22px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.home-earning-card .small-label {
+  margin-bottom: 4px;
+}
+
+.home-earning-card .status-row {
+  background: white;
+}
+
+.home-earning-card .quiet-copy {
+  margin: 2px 0 0;
+}
+
+.home-metrics {
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+}
+
+.home-ledger-panel,
+.home-proof-panel {
+  align-self: start;
+}
+
+.compact-ledger-list {
+  margin-top: 16px;
 }
 
 .small-label {
@@ -2763,82 +2833,6 @@ pre {
   margin-top: 12px;
 }
 
-.scoreboard-action-card {
-  border-color: #a7f3d0;
-  background: #ecfdf5;
-}
-
-.ledger-hero {
-  display: grid;
-  grid-template-columns: minmax(0, 1fr) 360px;
-  gap: 22px;
-  align-items: stretch;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  background: #020617;
-  color: white;
-  padding: 30px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.06);
-}
-
-.ledger-hero h2 {
-  max-width: 760px;
-  margin: 0;
-  font-size: 42px;
-  line-height: 1;
-}
-
-.ledger-hero p:not(.small-label) {
-  max-width: 780px;
-  color: #cbd5e1;
-  line-height: 1.55;
-}
-
-.ledger-current-packet {
-  display: grid;
-  gap: 12px;
-  align-content: start;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  border-radius: 20px;
-  background: rgba(255, 255, 255, 0.08);
-  padding: 18px;
-}
-
-.ledger-current-packet strong,
-.ledger-current-packet small {
-  display: block;
-}
-
-.ledger-current-packet small {
-  color: #cbd5e1;
-  line-height: 1.45;
-}
-
-.ledger-current-packet .status-row {
-  background: rgba(255, 255, 255, 0.08);
-  border-color: rgba(255, 255, 255, 0.12);
-}
-
-.ledger-current-packet .status-row span {
-  color: #cbd5e1;
-}
-
-.scoreboard-action-card h2 {
-  font-size: 28px;
-}
-
-.scoreboard-action-card .secondary-action {
-  margin-top: 10px;
-}
-
-.ledger-value-card {
-  border-color: #a7f3d0;
-}
-
-.ledger-timeline-card {
-  grid-column: span 2;
-}
-
 .ledger-step-list {
   display: grid;
   gap: 10px;
@@ -2891,10 +2885,6 @@ pre {
 
 .status-dot.bad {
   background: #b91c1c;
-}
-
-.ledger-proof-history {
-  grid-column: span 2;
 }
 
 .ledger-proof-row {
@@ -2986,6 +2976,7 @@ code {
   }
 
   .project-capacity-strip,
+  .home-metrics,
   .source-grid,
   .pipeline-strip {
     display: grid;
@@ -3019,6 +3010,7 @@ code {
   .panel,
   .terminal-card,
   .decision-panel,
+  .home-hero,
   .opportunity-command-panel,
   .work-lead-diagnosis-panel,
   .opportunity-source-strip,
@@ -3032,11 +3024,11 @@ code {
   }
 
   .page-grid-hero,
+  .home-grid,
   .runner-grid,
   .case-grid,
   .packet-grid,
   .maintainer-grid,
-  .scoreboard-grid,
   .work-queue-grid,
   .projects-grid,
   .mission-detail-grid,
@@ -3054,11 +3046,9 @@ code {
   }
 
   .maintainer-decision-grid,
+  .home-hero,
   .maintainer-hero,
   .maintainer-evidence-grid,
-  .ledger-hero,
-  .ledger-timeline-card,
-  .ledger-proof-history,
   .project-commons-hero,
   .project-command-header,
   .project-command-main,
@@ -3112,6 +3102,7 @@ code {
   }
 
   .project-capacity-strip,
+  .home-metrics,
   .source-grid,
   .pipeline-strip,
   .ledger-mini-grid,
@@ -3207,13 +3198,17 @@ code {
     grid-column: 1;
   }
 
-  .ledger-hero,
-  .ledger-timeline-card,
-  .ledger-proof-history {
+  .home-hero,
+  .home-ledger-panel,
+  .home-proof-panel,
+  .project-commons-hero {
     grid-column: 1;
   }
 
   .project-action-banner,
+  .home-hero,
+  .home-ledger-panel,
+  .home-proof-panel,
   .opportunity-starter-strip,
   .opportunity-command-panel,
   .work-lead-diagnosis-panel,
@@ -3323,6 +3318,19 @@ code {
 
   .hero-card h1 {
     font-size: 30px;
+  }
+
+  .home-hero {
+    padding: 24px;
+  }
+
+  .home-hero h1 {
+    font-size: 34px;
+    line-height: 1.04;
+  }
+
+  .home-actions button {
+    width: 100%;
   }
 
   .section-heading h2 {
