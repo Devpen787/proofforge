@@ -826,27 +826,14 @@ function WorkQueueScreen({
     return (
       <section className="page-grid work-queue-flow">
         <header className="page-header">
-          <span>Opportunities / Work Lead Triage</span>
+          <span>Opportunities / Work Lead</span>
           <button className="secondary-action" onClick={() => onRun("docs")}>Run safest mission</button>
         </header>
 
-        <div className="triage-hero wide">
-          <div>
-            <p className="small-label">Triage mode</p>
-            <h1>Turn raw work into one safe mission.</h1>
-            <p>ProofForge imported the request locally. No comments, PRs, payments, or maintainer outreach happened.</p>
-          </div>
-          <div className="triage-hero-state">
-            <StatusRow label="External action" value="None" tone="good" />
-            <StatusRow label="Mission status" value={workLeadConverted ? "Converted" : workLeadClarified ? "Ready" : "Needs triage"} tone={workLeadConverted || workLeadClarified ? "good" : "bad"} />
-            <StatusRow label="Next gate" value={workLeadConverted ? "Run mission" : workLeadClarified ? "Convert" : "Clarify"} tone={workLeadConverted || workLeadClarified ? "good" : "bad"} />
-          </div>
-        </div>
-
-        <div className="work-lead-diagnosis-panel wide">
-          <div className="work-lead-summary">
+        <div className="triage-workbench wide">
+          <div className="triage-workbench-main">
             <p className="small-label">{importedLead ? "Imported Work Lead ready for triage" : "Work Lead ready for triage"}</p>
-            <h2>{demoWorkLead.title}</h2>
+            <h1>{demoWorkLead.title}</h1>
             <p>{demoWorkLead.rawRequest}</p>
             <div className="tag-row">
               {demoWorkLead.categories.map((category) => (
@@ -854,20 +841,29 @@ function WorkQueueScreen({
               ))}
             </div>
           </div>
-          <div className="proof-score compact-proof-score">
+
+          <aside className="triage-gate-card">
             <span>Proofability</span>
             <strong>{proofability}</strong>
             <small>{leadStatus}</small>
-          </div>
-          <div className="triage-grid">
-            <StatusBlock label="Risk" value={demoWorkLead.risk} />
-            <StatusBlock label="Reward" value={demoWorkLead.reward} />
-            <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
-            <StatusBlock label="Missing" value={workLeadClarified ? "None" : demoWorkLead.missing} />
-          </div>
-          <div className="triage-decision-panel">
+            <StatusRow label="External action" value="None" tone="good" />
+            <StatusRow label="Next gate" value={workLeadConverted ? "Run mission" : workLeadClarified ? "Convert" : "Clarify"} tone={workLeadConverted || workLeadClarified ? "good" : "bad"} />
+          </aside>
+
+          <section className="triage-context-card">
+            <p className="small-label">What ProofForge knows</p>
+            <div className="triage-fact-grid">
+              <StatusBlock label="Risk" value={demoWorkLead.risk} />
+              <StatusBlock label="Reward" value={demoWorkLead.reward} />
+              <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
+              <StatusBlock label="Missing" value={workLeadClarified ? "None" : demoWorkLead.missing} />
+            </div>
+          </section>
+
+          <section className="triage-next-card">
             <div>
-              <strong>{workLeadConverted ? "Converted to a scoped mission." : workLeadClarified ? "Ready to become a mission." : "One detail blocks conversion."}</strong>
+              <p className="small-label">Next decision</p>
+              <h2>{workLeadConverted ? "Mission is scoped and ready." : workLeadClarified ? "Convert this lead into a Mission." : "Ask one question before agents run."}</h2>
               <p>{workLeadConverted ? "Checkout QA verification is now a scoped Mission with owner, artifacts, risk, and approval rules." : workLeadClarified ? "Browser targets are confirmed. The lead can safely become a Mission." : demoWorkLead.nextQuestion}</p>
             </div>
             <div className="decision-row">
@@ -877,7 +873,7 @@ function WorkQueueScreen({
               </button>
               <button className="danger-action">Reject</button>
             </div>
-          </div>
+          </section>
         </div>
 
         {projectWorkSuggested && (
@@ -923,7 +919,7 @@ function WorkQueueScreen({
         <div className="opportunity-list-panel">
           <div className="section-heading">
             <div>
-              <p className="small-label">Open opportunities</p>
+              <p className="small-label">Docs Onboarding Sprint</p>
               <h2>Useful work with proof, owner, and upside.</h2>
             </div>
             <button className="secondary-action" onClick={onImport}>Import work</button>
@@ -969,6 +965,10 @@ function WorkQueueScreen({
           <div className="opportunity-proof-box">
             <strong>Proof required</strong>
             <span>Run install docs in a clean fixture, capture logs, package maintainer-ready evidence.</span>
+          </div>
+          <div className="opportunity-proof-box subtle-proof-box">
+            <strong>After acceptance</strong>
+            <span>$8 earned, +12 reputation, +2 credits, and a public-safe proof record for the project ledger.</span>
           </div>
           <div className="decision-row">
             <button className="primary-action" onClick={() => onRun("docs")}>Run this mission</button>
