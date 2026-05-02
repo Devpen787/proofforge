@@ -91,6 +91,17 @@ async function runSmoke() {
     }
 
     const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "View all opportunities" }).click();
+    await requireText(page, "Useful work with proof, owner, and upside.");
+    await page.getByRole("button", { name: "Safe" }).click();
+    await page.getByRole("button", { name: "Plan" }).click();
+    await requireText(page, "Work Lead ready for triage");
+    await page.getByRole("button", { name: "Reject" }).click();
+    await requireText(page, "Useful work with proof, owner, and upside.");
+    await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Plan" }).click();
+    await requireText(page, "Useful work with proof, owner, and upside.");
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start project" }).click();
     await requireText(page, "New project shell created");
@@ -114,12 +125,19 @@ async function runSmoke() {
     await requireText(page, "Agents did the work. You decide what leaves.");
     await requireText(page, "Evidence packet draft ready");
     await requireText(page, "Human approval checkpoint");
+    await page.getByRole("button", { name: "Cancel Run" }).click();
+    await requireText(page, "Ready to run");
+    await page.getByRole("button", { name: "Accept and run" }).click();
+    await requireText(page, "Agents did the work. You decide what leaves.");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Evidence first. Code later.");
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await requireText(page, "Review clean proof, not agent noise.");
     await requireText(page, "Decision consequences");
     await requireText(page, "Structured revision options");
+    await page.getByRole("button", { name: "Review Packet" }).click();
+    await requireText(page, "Evidence packet preview");
+    await page.goto(`${baseUrl}/#maintainer`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Accept & Mark Earned" }).first().click();
     await requireText(page, "Accepted proof is what earns value.");
     await requireText(page, "Work becomes credit in stages.");

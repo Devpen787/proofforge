@@ -104,6 +104,7 @@ function App() {
               setScreen("first-run");
             }}
             onPublicProof={() => setScreen("public-proof")}
+            onViewOpportunities={() => setScreen("work-queue")}
           />
         )}
         {screen === "first-run" && <FirstRunScreen onRun={() => {
@@ -135,6 +136,11 @@ function App() {
             onImport={() => setImportedLead(true)}
             onClarifyLead={() => setWorkLeadClarified(true)}
             onConvertLead={() => setWorkLeadConverted(true)}
+            onRejectLead={() => {
+              setImportedLead(false);
+              setWorkLeadClarified(false);
+              setWorkLeadConverted(false);
+            }}
             onRun={(mission) => {
               setActiveMission(mission);
               setScreen("mission-detail");
@@ -151,6 +157,7 @@ function App() {
         {screen === "run" && (
           <RunnerScreen
             activeMission={activeMission}
+            onCancel={() => setScreen("mission-detail")}
             onPacket={() => {
               setPacketReady(true);
               setScreen("case-file");
@@ -184,6 +191,7 @@ function App() {
               setReleased(false);
               setScreen("opportunity");
             }}
+            onReview={() => setScreen("case-file")}
             onRevision={() => {
               setSubmitted(false);
               setRevisionRequested(true);
@@ -214,6 +222,7 @@ function App() {
               setScreen("first-run");
             }}
             onPublicProof={() => setScreen("public-proof")}
+            onViewOpportunities={() => setScreen("work-queue")}
           />
         )}
         {screen === "public-proof" && <PublicProofScreen activeMission={activeMission} onBack={() => setScreen("opportunity")} />}
@@ -232,7 +241,8 @@ function OpportunityScreen({
   onRelease,
   onResolveRevision,
   onStart,
-  onPublicProof
+  onPublicProof,
+  onViewOpportunities
 }: {
   accepted: boolean;
   released: boolean;
@@ -243,6 +253,7 @@ function OpportunityScreen({
   onResolveRevision: () => void;
   onStart: () => void;
   onPublicProof: () => void;
+  onViewOpportunities: () => void;
 }) {
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
   const packet = activeMission === "checkout" ? demoConvertedPacket : demoPacket;
@@ -338,7 +349,7 @@ function OpportunityScreen({
         </div>
       </section>
 
-      <WorkList onStart={onStart} />
+      <WorkList onStart={onStart} onViewAll={onViewOpportunities} />
     </section>
   );
 }
@@ -418,12 +429,12 @@ function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => 
   );
 }
 
-function WorkList({ onStart }: { onStart: () => void }) {
+function WorkList({ onStart, onViewAll }: { onStart: () => void; onViewAll: () => void }) {
   return (
     <section className="panel wide">
       <div className="section-heading">
         <h2>Ready work for you</h2>
-        <button className="link-button">View all opportunities</button>
+        <button className="link-button" onClick={onViewAll}>View all opportunities</button>
       </div>
       {demoWork.map((work) => (
         <button className="work-row" key={work.title} onClick={onStart}>
@@ -648,7 +659,7 @@ function ProjectsScreen({
                   <small>{item.detail}</small>
                   <span className="project-opportunity-meta">{item.reward} · {item.safety} · {item.proofability} proofable</span>
                 </div>
-                <button className={item.action === "Run" ? "primary-action" : "secondary-action"} onClick={item.action === "Run" ? onQueue : undefined}>{item.action}</button>
+                <button className={item.action === "Run" ? "primary-action" : "secondary-action"} onClick={onQueue}>{item.action}</button>
               </div>
             ))}
           </div>
@@ -806,6 +817,7 @@ function WorkQueueScreen({
   onImport,
   onClarifyLead,
   onConvertLead,
+  onRejectLead,
   onRun
 }: {
   importedLead: boolean;
@@ -815,8 +827,10 @@ function WorkQueueScreen({
   onImport: () => void;
   onClarifyLead: () => void;
   onConvertLead: () => void;
+  onRejectLead: () => void;
   onRun: (mission: ActiveMission) => void;
 }) {
+  const [activeFilter, setActiveFilter] = React.useState("Best fit");
   const selectedOpportunity = demoProject.opportunities[0];
   const proofability = workLeadClarified ? "88%" : demoWorkLead.proofability;
   const leadStatus = workLeadConverted ? "Converted to Mission." : workLeadClarified ? "Mission-ready after clarification." : "Needs one answer";
@@ -871,7 +885,7 @@ function WorkQueueScreen({
               <button className="secondary-action" aria-label="Convert to Mission" disabled={!workLeadClarified || workLeadConverted} onClick={onConvertLead}>
                 {workLeadConverted ? "Converted" : "Convert"}
               </button>
-              <button className="danger-action">Reject</button>
+              <button className="danger-action" onClick={onRejectLead}>Reject</button>
             </div>
           </section>
         </div>
@@ -925,8 +939,10 @@ function WorkQueueScreen({
             <button className="secondary-action" onClick={onImport}>Import work</button>
           </div>
           <div className="opportunity-filter-row" aria-label="Opportunity filters">
-            {["Best fit", "Safe", "Docs", "Bounties"].map((filter, index) => (
-              <span className={index === 0 ? "active" : ""} key={filter}>{filter}</span>
+            {["Best fit", "Safe", "Docs", "Bounties"].map((filter) => (
+              <button className={activeFilter === filter ? "active" : ""} key={filter} onClick={() => setActiveFilter(filter)}>
+                {filter}
+              </button>
             ))}
           </div>
           <div className="opportunity-card-list">
@@ -944,7 +960,7 @@ function WorkQueueScreen({
                     </div>
                   </div>
                 </div>
-                <button className={opportunity.action === "Run" ? "primary-action" : "secondary-action"} onClick={() => opportunity.action === "Run" && onRun("docs")}>
+                <button className={opportunity.action === "Run" ? "primary-action" : "secondary-action"} onClick={() => opportunity.action === "Run" ? onRun("docs") : onImport()}>
                   {opportunity.action}
                 </button>
               </article>
@@ -995,7 +1011,7 @@ function WorkQueueScreen({
   );
 }
 
-function RunnerScreen({ activeMission, onPacket }: { activeMission: ActiveMission; onPacket: () => void }) {
+function RunnerScreen({ activeMission, onCancel, onPacket }: { activeMission: ActiveMission; onCancel: () => void; onPacket: () => void }) {
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
   const runSteps =
     activeMission === "checkout"
@@ -1049,7 +1065,7 @@ environment.json`;
     <section className="page-grid runner-grid">
       <header className="page-header">
         <span>Runner / {mission.title}</span>
-        <button className="danger-action">Cancel Run</button>
+        <button className="danger-action" onClick={onCancel}>Cancel Run</button>
       </header>
       <div className="runner-hero">
         <div>
@@ -1320,6 +1336,7 @@ function MaintainerScreen({
   accepted,
   activeMission,
   onAccept,
+  onReview,
   onRevision,
   onReject
 }: {
@@ -1327,6 +1344,7 @@ function MaintainerScreen({
   accepted: boolean;
   activeMission: ActiveMission;
   onAccept: () => void;
+  onReview: () => void;
   onRevision: () => void;
   onReject: () => void;
 }) {
@@ -1390,7 +1408,7 @@ function MaintainerScreen({
           </div>
         </div>
         <div className="decision-row">
-          <button className="secondary-action">Review Packet</button>
+          <button className="secondary-action" onClick={onReview}>Review Packet</button>
           <button className="primary-action" onClick={onAccept} disabled={accepted}>
             {accepted ? "Accepted" : "Accept & Mark Earned"}
           </button>

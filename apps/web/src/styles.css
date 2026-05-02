@@ -1073,7 +1073,7 @@ button {
   margin: 14px 0;
 }
 
-.opportunity-filter-row span {
+.opportunity-filter-row button {
   border: 1px solid #e2e8f0;
   border-radius: 999px;
   background: #f8fafc;
@@ -1081,9 +1081,10 @@ button {
   padding: 7px 11px;
   font-size: 12px;
   font-weight: 900;
+  cursor: pointer;
 }
 
-.opportunity-filter-row span.active {
+.opportunity-filter-row button.active {
   border-color: #a7f3d0;
   background: #ecfdf5;
   color: #047857;
