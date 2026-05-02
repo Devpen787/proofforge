@@ -288,7 +288,7 @@ function OpportunityScreen({
           <StatusRow label="Earned payout" value={accepted ? `${payoutAmount} earned` : rejected ? "Cancelled" : "Waiting"} tone={accepted ? "good" : "bad"} />
           <StatusRow label="Released payout" value={released ? `${payoutAmount} released` : "Not released"} tone={released ? "good" : "bad"} />
           <StatusRow label="Public proof" value={accepted && !rejected ? "Allowed" : "Hidden until accepted"} tone={accepted && !rejected ? "good" : "bad"} />
-          <p className="quiet-copy">Earned is not released. No money moves automatically in the MVP.</p>
+          <p className="quiet-copy">Accepted proof creates the earned record. Release is a separate step.</p>
         </aside>
       </div>
 
@@ -312,7 +312,7 @@ function OpportunityScreen({
           </div>
           <div className="ledger-proof-row">
             <span>
-              <strong>public-packet.json</strong>
+              <strong>Public proof</strong>
               <small>Public-safe proof appears only after accepted proof.</small>
             </span>
             <b>{accepted && !rejected ? "Shareable" : "Hidden"}</b>
@@ -1170,20 +1170,25 @@ function CaseFileScreen({
               <div>
                 <strong>Private</strong>
                 {packet.keptPrivate.map((item) => (
-                  <span key={item}>{item}</span>
+                  <span key={item}>{humanizePrivateBoundary(item)}</span>
                 ))}
               </div>
             </div>
           </section>
+        </aside>
+      </div>
 
-          <section className="packet-artifacts-panel">
+      <details className="packet-advanced wide">
+        <summary>Open packet details and generated files</summary>
+        <div className="packet-full-review">
+          <div className="packet-artifacts-panel">
             <div className="section-heading">
               <div>
                 <p className="small-label">Evidence bundle</p>
-                <h2>{packet.artifacts.length} files ready</h2>
+                <h2>{packet.artifacts.length} generated files</h2>
               </div>
             </div>
-            <div className="artifact-manifest">
+            <div className="artifact-manifest compact-artifact-manifest">
               {packet.artifacts.map((artifact) => (
                 <div className="artifact-manifest-row" key={artifact}>
                   <span>
@@ -1194,13 +1199,7 @@ function CaseFileScreen({
                 </div>
               ))}
             </div>
-          </section>
-        </aside>
-      </div>
-
-      <details className="packet-advanced wide">
-        <summary>Open full case file view</summary>
-        <div className="packet-full-review">
+          </div>
           <div className="packet-check-card">
             <p className="small-label">Verifier</p>
             <h2>Builder does not grade its own work.</h2>
@@ -1244,6 +1243,17 @@ function CaseFileScreen({
       </details>
     </section>
   );
+}
+
+function humanizePrivateBoundary(item: string): string {
+  const labels: Record<string, string> = {
+    "raw logs": "Detailed logs",
+    "raw browser traces": "Browser traces",
+    "local paths": "Local machine paths",
+    "payout record": "Payout accounting",
+    "internal runner notes": "Runner notes"
+  };
+  return labels[item] || item;
 }
 
 function MaintainerScreen({

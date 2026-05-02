@@ -2584,11 +2584,12 @@ pre {
 
 .packet-full-review {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: minmax(0, 1fr) repeat(3, minmax(180px, 0.48fr));
   gap: 14px;
   margin-top: 16px;
 }
 
+.packet-full-review .packet-artifacts-panel,
 .packet-full-review .case-dossier {
   grid-column: 1 / -1;
 }
@@ -3107,6 +3108,7 @@ code {
   .packet-document-hero,
   .packet-readiness-strip,
   .packet-full-review,
+  .packet-full-review .compact-artifact-manifest,
   .packet-review-layout,
   .packet-summary-grid,
   .packet-checks-grid,
