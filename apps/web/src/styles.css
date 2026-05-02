@@ -654,6 +654,10 @@ button {
   margin: 18px 0;
 }
 
+.maintainer-focus-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
 .maintainer-hero {
   grid-column: span 2;
   display: grid;
@@ -665,6 +669,10 @@ button {
   background: white;
   padding: 30px;
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.maintainer-focus-grid .maintainer-hero {
+  grid-column: 1;
 }
 
 .maintainer-hero h2 {
@@ -760,6 +768,24 @@ button {
 
 .decision-summary p {
   color: #475569;
+}
+
+.maintainer-supporting-details {
+  margin-top: 16px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.maintainer-supporting-details summary {
+  cursor: pointer;
+  color: #334155;
+  font-weight: 900;
+}
+
+.maintainer-supporting-details .maintainer-evidence-grid {
+  margin-bottom: 0;
 }
 
 .pipeline-step {
@@ -1326,6 +1352,237 @@ button {
 .project-proof-row b {
   color: #047857;
   white-space: nowrap;
+}
+
+.project-room-grid {
+  grid-template-columns: 1fr;
+}
+
+.project-room-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  gap: 22px;
+  align-items: start;
+  border: 1px solid #e2e8f0;
+  border-radius: 28px;
+  background: white;
+  padding: 30px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-kicker {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.project-room-hero h1 {
+  max-width: 760px;
+  margin: 10px 0 8px;
+  font-size: clamp(38px, 4.4vw, 64px);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.project-room-hero p:not(.small-label) {
+  max-width: 640px;
+  margin: 0 0 16px;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.project-next-move {
+  border: 1px solid #a7f3d0;
+  border-radius: 24px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.project-next-move h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.08;
+}
+
+.project-next-move p:not(.small-label) {
+  margin-bottom: 14px;
+  color: #047857;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.project-secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.project-secondary-actions .secondary-action {
+  padding-inline: 10px;
+}
+
+.project-room-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.project-stat {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 13px;
+}
+
+.project-stat strong,
+.project-stat span,
+.project-stat small {
+  display: block;
+}
+
+.project-stat strong {
+  color: #047857;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.project-stat span {
+  margin-top: 5px;
+  font-weight: 900;
+}
+
+.project-stat small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.project-room-main {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.42fr) minmax(0, 1fr);
+  gap: 16px;
+  align-items: start;
+}
+
+.project-focus-card,
+.project-people-card,
+.project-credit-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-focus-card {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.project-focus-card h2,
+.project-people-card h2 {
+  margin: 0 0 10px;
+  font-size: 25px;
+  line-height: 1.06;
+}
+
+.project-focus-card p {
+  margin: 0;
+  color: #047857;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.project-focus-meta {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.project-flow-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.project-flow-columns h3 {
+  margin: 0 0 10px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.project-flow-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.project-flow-card.review {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.project-flow-card.accepted {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.project-flow-card strong,
+.project-flow-card small {
+  display: block;
+}
+
+.project-flow-card strong {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.project-flow-card small {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.project-people-card {
+  grid-column: 1 / -1;
+  align-self: stretch;
+}
+
+.project-people-list {
+  margin-top: 8px;
+}
+
+.project-active-work-panel {
+  grid-column: 1 / -1;
+}
+
+.project-credit-panel {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.42fr) minmax(0, 1fr);
+  gap: 20px;
+}
+
+.project-credit-body {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.62fr);
+  gap: 14px;
+}
+
+.project-benefit-stack {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 12px;
 }
 
 .project-command-header {
@@ -3078,13 +3335,18 @@ code {
   .maintainer-hero,
   .maintainer-evidence-grid,
   .project-commons-hero,
+  .project-room-hero,
   .project-command-header,
   .project-command-main,
+  .project-room-main,
   .project-next-panel,
   .project-ledger-summary,
   .project-ledger-panel,
+  .project-credit-panel,
+  .project-credit-body,
   .project-capacity-strip,
   .project-work-board,
+  .project-flow-columns,
   .ledger-mini-grid,
   .public-proof-grid,
   .public-share-hero,
@@ -3135,6 +3397,7 @@ code {
   }
 
   .project-capacity-strip,
+  .project-room-stats,
   .home-metrics,
   .source-grid,
   .pipeline-strip,
@@ -3158,6 +3421,16 @@ code {
     grid-template-columns: 1fr;
   }
 
+  .project-secondary-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .project-active-work-panel,
+  .project-people-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
   .pipeline-strip,
   .work-row,
   .artifact-row,
@@ -3165,6 +3438,7 @@ code {
   .compact-row,
   .decision-row,
   .project-action-banner,
+  .project-ledger-footer,
   .opportunity-starter-strip,
   .opportunity-card,
   .packet-summary-head {
@@ -3254,6 +3528,9 @@ code {
   .packet-checks-grid,
   .packet-advanced,
   .project-commons-hero,
+  .project-room-hero,
+  .project-room-main,
+  .project-credit-panel,
   .project-command-header,
   .project-command-main,
   .project-next-panel,

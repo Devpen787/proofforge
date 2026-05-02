@@ -542,18 +542,15 @@ function ProjectsScreen({
   onSuggestWork: () => void;
   onQueue: () => void;
 }) {
-  const capacityRows = [
-    { label: "Reward pool", value: demoProject.pool, detail: `${demoProject.availablePool} available` },
-    { label: "Accepted proofs", value: demoProject.acceptedProof, detail: "2 this week" },
-    { label: "Contributors", value: demoProject.people, detail: "3 this week" },
-    { label: "Active agents", value: projectAgentCount(agentAttached), detail: "all healthy" },
-    { label: "Proof success", value: demoProject.successRate, detail: "last 30 days" }
-  ];
+  const primaryOpportunity = demoProject.opportunities[0];
+  const activeRuns = demoProject.activeWork.find((lane) => lane.lane === "Running")?.cards || [];
+  const reviewLane = demoProject.activeWork.find((lane) => lane.lane === "Needs review")?.cards || [];
+  const acceptedLane = demoProject.activeWork.find((lane) => lane.lane === "Accepted")?.cards || [];
   return (
-    <section className="page-grid projects-grid">
-      <header className="project-command-header wide">
+    <section className="page-grid project-room-grid">
+      <header className="project-room-hero wide">
         <div>
-          <span>Projects / {demoProject.name}</span>
+          <span className="project-kicker">Projects / {demoProject.name}</span>
           <h1>{demoProject.name}</h1>
           <p>{demoProject.purpose}</p>
           <div className="tag-row">
@@ -564,13 +561,25 @@ function ProjectsScreen({
             <span className="status-pill safe">Built on open rails</span>
           </div>
         </div>
-        <div className="project-header-actions">
-          <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite pending" : "Invite"}</button>
-          <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent attached" : "Attach Agent"}</button>
-          <button className="primary-action" onClick={onSuggestWork}>{workSuggested ? "Work suggested" : "Suggest Work"}</button>
-          <button className="secondary-action" onClick={onStartProject}>{projectStarted ? "Project Started" : "Start Project"}</button>
+        <aside className="project-next-move">
+          <p className="small-label">Next project move</p>
+          <h2>Bring in one useful piece of work.</h2>
+          <p>Convert it into a proofable mission only after the owner, evidence shape, and reward path are clear.</p>
+          <button className="primary-action full" onClick={onSuggestWork}>{workSuggested ? "Work Lead created" : "Suggest Work"}</button>
+          <div className="project-secondary-actions">
+            <button className="secondary-action" onClick={onInvite}>{inviteSent ? "Invite pending" : "Invite"}</button>
+            <button className="secondary-action" onClick={onAttachAgent}>{agentAttached ? "Agent attached" : "Attach Agent"}</button>
+            <button className="secondary-action" onClick={onStartProject}>{projectStarted ? "Project started" : "Start project"}</button>
+          </div>
+        </aside>
+        <div className="project-room-stats">
+          <ProjectStat label="Pool" value={demoProject.pool} detail={`${demoProject.availablePool} available`} />
+          <ProjectStat label="Proofs" value={demoProject.acceptedProof} detail="accepted packets" />
+          <ProjectStat label="People" value={demoProject.people} detail="contributors" />
+          <ProjectStat label="Agents" value={projectAgentCount(agentAttached)} detail="active helpers" />
         </div>
       </header>
+
       {projectStarted && (
         <div className="project-action-banner wide" role="status">
           <div>
@@ -580,21 +589,25 @@ function ProjectsScreen({
           <span className="status-pill safe">Launch draft</span>
         </div>
       )}
-      <div className="project-capacity-strip wide">
-        {capacityRows.map((item) => (
-          <div className="project-capacity-card" key={item.label}>
-            <strong>{item.value}</strong>
-            <span>{item.label}</span>
-            <small>{item.detail}</small>
+
+      <div className="project-room-main wide">
+        <section className="project-focus-card">
+          <p className="small-label">Best opportunity</p>
+          <h2>{primaryOpportunity.title}</h2>
+          <p>{primaryOpportunity.detail}</p>
+          <div className="project-focus-meta">
+            <StatusBlock label="Reward" value={primaryOpportunity.reward} />
+            <StatusBlock label="Safety" value={primaryOpportunity.safety} />
+            <StatusBlock label="Proofability" value={primaryOpportunity.proofability} />
           </div>
-        ))}
-      </div>
-      <div className="project-command-main wide">
-        <div className="panel project-opportunities-panel">
+          <button className="primary-action full" onClick={onQueue}>Run this proof</button>
+        </section>
+
+        <section className="panel project-opportunities-panel">
           <div className="section-heading">
             <div>
               <p className="small-label">Open opportunities</p>
-              <h2>Useful work ready to prove.</h2>
+              <h2>Choose work with a clear proof path.</h2>
             </div>
             <button className="secondary-action" onClick={onQueue}>View all</button>
           </div>
@@ -621,48 +634,86 @@ function ProjectsScreen({
               </div>
             ))}
           </div>
-        </div>
-        <div className="panel project-active-work-panel">
+        </section>
+
+        <section className="panel project-active-work-panel">
           <p className="small-label">Active work</p>
-          <h2>From opportunity to accepted proof.</h2>
-          <div className="project-work-board">
-            {demoProject.activeWork.map((lane) => (
-              <div className="project-work-lane" key={lane.lane}>
-                <div className="project-work-lane-header">
-                  <strong>{lane.lane}</strong>
-                  <span>{lane.count}</span>
+          <h2>Proof moving through the project.</h2>
+          <div className="project-flow-columns">
+            <div>
+              <h3>Running</h3>
+              {activeRuns.map((card) => (
+                <div className="project-flow-card" key={card.title}>
+                  <strong>{card.title}</strong>
+                  <small>{card.meta}</small>
                 </div>
-                {lane.cards.map((card) => (
-                  <div className="project-work-card" key={card.title}>
-                    <strong>{card.title}</strong>
-                    <small>{card.meta}</small>
-                  </div>
-                ))}
-              </div>
-            ))}
-          </div>
-        </div>
-        <aside className="project-side-rail">
-          <div className="panel project-people-agents-panel">
-            <p className="small-label">People and agents</p>
-            {inviteSent && (
-              <CompactPerson name="sam@builder.dev" role="Contributor invite" status="Pending" tone="warning" />
-            )}
-            {demoProject.peopleRoster.slice(0, 3).map((person) => (
-              <CompactPerson key={person.name} name={person.name} role={person.role} status={person.status} tone={person.status === "Pending" ? "warning" : "safe"} />
-            ))}
-            <div className="project-agent-list">
-              {agentAttached && (
-                <CompactAgent name="browser-qa-02" detail="Browser checks" status="Pending review" tone="warning" />
-              )}
-              {demoProject.agentDelegations.map((agent) => (
-                <CompactAgent key={agent.name} name={agent.name} detail={agent.allowed} status={agent.status} tone={agent.status === "Review" ? "warning" : "safe"} />
+              ))}
+            </div>
+            <div>
+              <h3>Needs review</h3>
+              {reviewLane.map((card) => (
+                <div className="project-flow-card review" key={card.title}>
+                  <strong>{card.title}</strong>
+                  <small>{card.meta}</small>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3>Accepted</h3>
+              {acceptedLane.map((card) => (
+                <div className="project-flow-card accepted" key={card.title}>
+                  <strong>{card.title}</strong>
+                  <small>{card.meta}</small>
+                </div>
               ))}
             </div>
           </div>
-          <div className="panel project-benefits-panel">
-            <p className="small-label">Benefits and unlocks</p>
-            {demoProject.benefits.map((benefit) => (
+        </section>
+
+        <aside className="project-people-card">
+          <p className="small-label">People and agents</p>
+          <h2>Capability, not control.</h2>
+          <div className="project-people-list">
+            {inviteSent && (
+              <CompactPerson name="sam@builder.dev" role="Contributor invite" status="Pending" tone="warning" />
+            )}
+            {demoProject.peopleRoster.slice(0, 2).map((person) => (
+              <CompactPerson key={person.name} name={person.name} role={person.role} status={person.status} tone={person.status === "Pending" ? "warning" : "safe"} />
+            ))}
+          </div>
+          <div className="project-agent-list">
+            {agentAttached && (
+              <CompactAgent name="browser-qa-02" detail="Browser checks" status="Pending review" tone="warning" />
+            )}
+            {demoProject.agentDelegations.slice(0, 2).map((agent) => (
+              <CompactAgent key={agent.name} name={agent.name} detail={agent.allowed} status={agent.status} tone={agent.status === "Review" ? "warning" : "safe"} />
+            ))}
+          </div>
+        </aside>
+      </div>
+
+      <section className="project-credit-panel wide">
+        <div className="project-ledger-summary">
+          <div>
+            <p className="small-label">Proof, credit, and benefits</p>
+            <h2>Accepted proof becomes project credit.</h2>
+            <p>Every accepted packet records who helped, what was proven, what was earned, and which benefit unlocked next.</p>
+          </div>
+        </div>
+        <div className="project-credit-body">
+          <div className="project-proof-history">
+            {demoProject.proofLedger.history.slice(0, 2).map((item) => (
+              <div className="project-proof-row" key={item.label}>
+                <span>
+                  <strong>{item.label}</strong>
+                  <small>{item.detail}</small>
+                </span>
+                <b>{item.value}</b>
+              </div>
+            ))}
+          </div>
+          <div className="project-benefit-stack">
+            {demoProject.benefits.slice(0, 3).map((benefit) => (
               <div className="benefit-row" key={benefit.label}>
                 <div>
                   <strong>{benefit.threshold}</strong>
@@ -675,38 +726,27 @@ function ProjectsScreen({
               </div>
             ))}
           </div>
-        </aside>
-      </div>
-      <div className="project-ledger-panel wide">
-        <div className="project-ledger-summary">
-          <div>
-            <p className="small-label">Proof and credit ledger</p>
-            <h2>Accepted packets are the project asset.</h2>
-          </div>
-          <div className="ledger-mini-grid">
-            <StatusBlock label="Accepted" value={demoProject.proofLedger.acceptedPackets} />
-            <StatusBlock label="Pending" value={demoProject.proofLedger.pendingPackets} />
-            <StatusBlock label="Earned" value={demoProject.proofLedger.earnedPayouts} />
-            <StatusBlock label="Latest" value={demoProject.proofLedger.latestProof} />
-          </div>
         </div>
-        <div className="project-proof-history">
-          {demoProject.proofLedger.history.map((item) => (
-            <div className="project-proof-row" key={item.label}>
-              <span>
-                <strong>{item.label}</strong>
-                <small>{item.detail}</small>
-              </span>
-              <b>{item.value}</b>
-            </div>
-          ))}
-        </div>
-        <div className="project-ledger-footer">
+        <footer className="project-ledger-footer">
           <span>Top contributors: {demoProject.proofLedger.topContributors.join(", ")}</span>
+          <span>
+            <strong>Latest proof</strong>
+            <small>{demoProject.proofLedger.latestProof}</small>
+          </span>
           <button className="secondary-action" onClick={onQueue}>View opportunities</button>
-        </div>
-      </div>
+        </footer>
+      </section>
     </section>
+  );
+}
+
+function ProjectStat({ label, value, detail }: { label: string; value: string; detail: string }) {
+  return (
+    <div className="project-stat">
+      <strong>{value}</strong>
+      <span>{label}</span>
+      <small>{detail}</small>
+    </div>
   );
 }
 
@@ -1285,12 +1325,9 @@ function MaintainerScreen({
     ? ["Ask for Safari confirmation logs", "Request exact browser build numbers", "Require screenshot annotation"]
     : ["Ask for full command transcript", "Request environment details", "Clarify missing docs-ready.flag step"];
   return (
-    <section className="page-grid maintainer-grid">
+    <section className="page-grid maintainer-focus-grid">
       <header className="page-header">
         <span>Maintainer Workspace</span>
-        <button className="primary-action" onClick={onAccept} disabled={accepted}>
-          {accepted ? "Accepted" : "Accept & Mark Earned"}
-        </button>
       </header>
       <div className="maintainer-hero">
         <div>
@@ -1303,31 +1340,6 @@ function MaintainerScreen({
           <StatusRow label="Decision needed" value={accepted ? "No" : "Yes"} tone={accepted ? "good" : "bad"} />
           <StatusRow label="Economic action" value="Earned only on accept" tone="good" />
         </div>
-      </div>
-      <div className="metric-strip compact">
-        <Metric label="Submitted" value={accepted ? "0" : hasReviewPacket ? "1" : "0"} />
-        <Metric label="Unresolved" value={accepted ? "0" : "1"} />
-        <Metric label="Accepted" value={accepted ? "1" : "0"} />
-        <Metric label="Revision" value="0" />
-      </div>
-      <div className="panel maintainer-side-panel">
-        <h2>Recent packets</h2>
-        {demoMaintainerPackets.map((packet) => (
-          <div className="compact-row" key={packet.title}>
-            <span>
-              <strong>{packet.title}</strong>
-              <small>{packet.detail}</small>
-            </span>
-            <span className={packet.status === "Revision" ? "status-pill warning" : "status-pill safe"}>{packet.status}</span>
-          </div>
-        ))}
-      </div>
-      <div className="panel maintainer-side-panel">
-        <h2>Review standard</h2>
-        {evidenceChecks.map((check) => (
-          <StatusRow key={check.label} label={check.label} value={check.value} tone={check.tone} />
-        ))}
-        <p className="quiet-copy">Maintainers decide from evidence, not raw agent logs.</p>
       </div>
       <div className="maintainer-decision-card wide">
         <div className="maintainer-card-header">
@@ -1358,32 +1370,6 @@ function MaintainerScreen({
             <StatusRow label="Recommended action" value="Accept" tone="good" />
           </div>
         </div>
-        <div className="maintainer-evidence-grid">
-          <div>
-            <h3>Evidence bundle</h3>
-            {packet.artifacts.slice(0, 5).map((artifact) => (
-              <div className="compact-row" key={artifact}>
-                <span>
-                  <strong>{artifact}</strong>
-                  <small>{artifact.includes("payout") ? "Private accounting" : "Maintainer evidence"}</small>
-                </span>
-                <span className="status-pill safe">Ready</span>
-              </div>
-            ))}
-          </div>
-          <div>
-            <h3>Decision consequences</h3>
-            <StatusRow label="Accept" value={`${mission.reward} earned + reputation`} tone="good" />
-            <StatusRow label="Revision" value="No payout yet" tone="bad" />
-            <StatusRow label="Reject" value="No payout or public proof" tone="bad" />
-            <div className="revision-reasons">
-              <strong>Structured revision options</strong>
-              {revisionReasons.map((reason) => (
-                <span key={reason}>{reason}</span>
-              ))}
-            </div>
-          </div>
-        </div>
         <div className="decision-row">
           <button className="secondary-action">Review Packet</button>
           <button className="primary-action" onClick={onAccept} disabled={accepted}>
@@ -1392,6 +1378,39 @@ function MaintainerScreen({
           <button className="warning-action" onClick={onRevision}>Request Revision</button>
           <button className="danger-action" onClick={onReject}>Reject Packet</button>
         </div>
+        <details className="maintainer-supporting-details">
+          <summary>Open evidence, standards, and revision options</summary>
+          <div className="maintainer-evidence-grid">
+            <div>
+              <h3>Evidence bundle</h3>
+              {packet.artifacts.slice(0, 5).map((artifact) => (
+                <div className="compact-row" key={artifact}>
+                  <span>
+                    <strong>{artifact}</strong>
+                    <small>{artifact.includes("payout") ? "Private accounting" : "Maintainer evidence"}</small>
+                  </span>
+                  <span className="status-pill safe">Ready</span>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3>Review standard</h3>
+              {evidenceChecks.map((check) => (
+                <StatusRow key={check.label} label={check.label} value={check.value} tone={check.tone} />
+              ))}
+              <h3>Decision consequences</h3>
+              <StatusRow label="Accept" value={`${mission.reward} earned + reputation`} tone="good" />
+              <StatusRow label="Revision" value="No payout yet" tone="bad" />
+              <StatusRow label="Reject" value="No payout or public proof" tone="bad" />
+              <div className="revision-reasons">
+                <strong>Structured revision options</strong>
+                {revisionReasons.map((reason) => (
+                  <span key={reason}>{reason}</span>
+                ))}
+              </div>
+            </div>
+          </div>
+        </details>
       </div>
     </section>
   );
