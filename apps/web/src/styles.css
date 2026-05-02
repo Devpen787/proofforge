@@ -133,6 +133,8 @@ button {
 .opportunity-source-strip,
 .packet-overview-card,
 .packet-submit-panel,
+.packet-document,
+.packet-artifacts-panel,
 .packet-advanced,
 .opportunity-fit-card,
 .metric,
@@ -544,6 +546,7 @@ button {
 .recommendation-box,
 .agent-card,
 .source-card,
+.triage-hero,
 .import-command,
 .import-result-card,
 .project-action-banner,
@@ -568,6 +571,41 @@ button {
 .project-action-banner strong,
 .project-action-banner span {
   display: block;
+}
+
+.triage-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.34fr);
+  gap: 20px;
+  align-items: stretch;
+  background: white;
+  border-radius: 24px;
+  padding: 28px;
+}
+
+.triage-hero h1 {
+  max-width: 720px;
+  margin: 0 0 10px;
+  font-size: 46px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.triage-hero p:not(.small-label) {
+  max-width: 700px;
+  color: #475569;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.triage-hero-state {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 14px;
 }
 
 .project-action-banner > div > span {
@@ -1045,6 +1083,12 @@ button {
 .project-work-lead-card p:not(.small-label) {
   margin-top: 8px;
   color: #475569;
+}
+
+.mission-created-grid {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
 }
 
 .opportunity-starter-strip {
@@ -2367,21 +2411,33 @@ pre {
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
-.packet-overview-card {
+.packet-workspace {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.62fr);
-  gap: 22px;
-  align-items: end;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.42fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.packet-document {
   padding: 28px;
 }
 
-.packet-overview-card h1 {
-  margin: 12px 0 8px;
-  font-size: clamp(34px, 4vw, 58px);
+.packet-document-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.34fr);
+  gap: 22px;
+  align-items: start;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 22px;
+}
+
+.packet-document-hero h1 {
+  margin: 8px 0 10px;
+  font-size: clamp(34px, 4vw, 54px);
   line-height: 0.98;
 }
 
-.packet-overview-card p {
+.packet-document-hero p:not(.small-label) {
   max-width: 760px;
   margin: 0;
   color: #475569;
@@ -2389,56 +2445,81 @@ pre {
   line-height: 1.5;
 }
 
-.packet-overview-stats {
+.packet-document-status {
+  display: grid;
+  gap: 10px;
+  align-content: start;
+}
+
+.packet-brief-grid {
+  display: grid;
+  gap: 12px;
+  margin-top: 22px;
+}
+
+.packet-brief-grid section {
+  display: grid;
+  gap: 6px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 0 0 18px;
+}
+
+.packet-brief-grid section:last-child {
+  border-bottom: 0;
+  padding-bottom: 0;
+}
+
+.packet-brief-grid span,
+.packet-readiness-strip span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.packet-brief-grid strong {
+  max-width: 860px;
+  font-size: 22px;
+  line-height: 1.25;
+}
+
+.packet-readiness-strip {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
   gap: 10px;
+  margin-top: 24px;
 }
 
-.packet-review-layout {
+.packet-readiness-strip div {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
+  gap: 6px;
+  border: 1px solid #a7f3d0;
+  border-radius: 18px;
+  background: #ecfdf5;
+  padding: 14px;
+}
+
+.packet-readiness-strip strong {
+  color: #047857;
+  font-size: 14px;
+  line-height: 1.25;
+}
+
+.packet-side-gate {
+  display: grid;
   gap: 18px;
-  align-items: start;
-}
-
-.packet-main-column {
-  display: grid;
-  gap: 18px;
-  min-width: 0;
-}
-
-.packet-summary-head {
-  display: flex;
-  justify-content: space-between;
-  gap: 14px;
-  align-items: start;
-}
-
-.packet-summary-head h2 {
-  margin: 0;
-  font-size: 30px;
-  line-height: 1.06;
-}
-
-.packet-summary-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 14px;
-  margin-top: 18px;
-}
-
-.compact-artifact-manifest {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
-.packet-submit-panel {
   position: sticky;
   top: 28px;
-  padding: 24px;
 }
 
-.packet-submit-panel h2 {
+.packet-submit-panel,
+.packet-artifacts-panel {
+  padding: 22px;
+}
+
+.packet-submit-panel h2,
+.packet-artifacts-panel h2 {
   margin: 0;
   font-size: 26px;
   line-height: 1.08;
@@ -2484,14 +2565,28 @@ pre {
   font-weight: 800;
 }
 
-.packet-checks-grid {
+.packet-full-review {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.packet-full-review .case-dossier {
+  grid-column: 1 / -1;
+}
+
+.packet-check-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 16px;
 }
 
 .packet-check-card h2 {
   margin: 0 0 14px;
+  font-size: 20px;
+  line-height: 1.1;
 }
 
 .packet-advanced {
@@ -2928,10 +3023,13 @@ code {
   .terminal-card,
   .decision-panel,
   .home-hero,
+  .triage-hero,
   .opportunity-command-panel,
   .work-lead-diagnosis-panel,
   .opportunity-source-strip,
   .packet-overview-card,
+  .packet-document,
+  .packet-artifacts-panel,
   .packet-submit-panel,
   .packet-advanced,
   .opportunity-fit-card,
@@ -2956,6 +3054,7 @@ code {
 
   .maintainer-decision-grid,
   .home-hero,
+  .triage-hero,
   .maintainer-hero,
   .maintainer-evidence-grid,
   .project-commons-hero,
@@ -2985,6 +3084,10 @@ code {
   .triage-decision-panel,
   .opportunity-source-strip,
   .packet-overview-card,
+  .packet-workspace,
+  .packet-document-hero,
+  .packet-readiness-strip,
+  .packet-full-review,
   .packet-review-layout,
   .packet-summary-grid,
   .packet-checks-grid,
@@ -3021,6 +3124,7 @@ code {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .packet-side-gate,
   .packet-submit-panel {
     position: static;
   }
@@ -3110,6 +3214,7 @@ code {
   .home-hero,
   .home-ledger-panel,
   .home-proof-panel,
+  .triage-hero,
   .project-commons-hero {
     grid-column: 1;
   }
@@ -3118,6 +3223,7 @@ code {
   .home-hero,
   .home-ledger-panel,
   .home-proof-panel,
+  .triage-hero,
   .opportunity-starter-strip,
   .opportunity-command-panel,
   .work-lead-diagnosis-panel,
