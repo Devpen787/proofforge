@@ -19,8 +19,7 @@ import {
   demoSourceTypes,
   demoUnlockProgress,
   demoWork,
-  demoWorkLead,
-  demoWorkLeadDiagnosis
+  demoWorkLead
 } from "./demoData";
 import { generatedProofSummary } from "./generatedProof";
 import { primaryNavScreens, routeLabels, screens, type Screen } from "./routes";
@@ -746,21 +745,117 @@ function WorkQueueScreen({
   onConvertLead: () => void;
   onRun: (mission: ActiveMission) => void;
 }) {
+  const selectedOpportunity = demoProject.opportunities[0];
+  const proofability = workLeadClarified ? "88%" : demoWorkLead.proofability;
+  const leadStatus = workLeadConverted ? "Converted to Mission." : workLeadClarified ? "Mission-ready after clarification." : "Needs one answer";
   return (
     <section className="page-grid work-queue-grid">
       <header className="page-header">
         <span>Opportunities</span>
         <button className="primary-action" onClick={() => onRun("docs")}>Run safest mission</button>
       </header>
-      <div className="panel wide opportunity-import-panel">
-        <div className="section-heading">
-          <div>
-            <p className="small-label">Turn messy work into missions</p>
-            <h2>Import, score, then run only what is ready.</h2>
+
+      <div className="opportunity-command-panel wide">
+        <div className="opportunity-list-panel">
+          <div className="section-heading">
+            <div>
+              <p className="small-label">Open opportunities</p>
+              <h2>Useful work with proof, owner, and upside.</h2>
+            </div>
+            <button className="secondary-action" aria-label="Import external task" onClick={onImport}>{importedLead ? "Imported" : "Import"}</button>
           </div>
-          <button className="secondary-action" onClick={onImport}>{importedLead ? "Imported" : "Import external task"}</button>
+          <div className="opportunity-filter-row" aria-label="Opportunity filters">
+            {["Best fit", "Safe", "Docs", "Bounties"].map((filter, index) => (
+              <span className={index === 0 ? "active" : ""} key={filter}>{filter}</span>
+            ))}
+          </div>
+          <div className="opportunity-card-list">
+            {demoProject.opportunities.map((opportunity, index) => (
+              <article className={index === 0 ? "opportunity-card selected" : "opportunity-card"} key={opportunity.title}>
+                <div className="opportunity-card-main">
+                  <span className="opportunity-icon">{index + 1}</span>
+                  <div>
+                    <strong>{opportunity.title}</strong>
+                    <small>{opportunity.detail}</small>
+                    <div className="opportunity-card-meta">
+                      <span>{opportunity.reward}</span>
+                      <span>{opportunity.safety}</span>
+                      <span>{opportunity.proofability} proofable</span>
+                    </div>
+                  </div>
+                </div>
+                <button className={opportunity.action === "Run" ? "primary-action" : "secondary-action"} onClick={() => opportunity.action === "Run" && onRun("docs")}>
+                  {opportunity.action}
+                </button>
+              </article>
+            ))}
+          </div>
         </div>
-        <div className="pipeline-strip" aria-label="Work intake pipeline">
+
+        <aside className="opportunity-detail-panel">
+          <p className="small-label">Best fit today</p>
+          <h2>{selectedOpportunity.title}</h2>
+          <p>{selectedOpportunity.detail}</p>
+          <div className="opportunity-detail-stats">
+            <StatusBlock label="Reward" value={selectedOpportunity.reward} />
+            <StatusBlock label="Safety" value={selectedOpportunity.safety} />
+            <StatusBlock label="Proofability" value={selectedOpportunity.proofability} />
+            <StatusBlock label="Accepted by" value="Commons reviewer" />
+          </div>
+          <div className="opportunity-proof-box">
+            <strong>Proof required</strong>
+            <span>Run install docs in a clean fixture, capture logs, package maintainer-ready evidence.</span>
+          </div>
+          <div className="decision-row">
+            <button className="primary-action" onClick={() => onRun("docs")}>Run this mission</button>
+            <button className="secondary-action" onClick={onImport}>Import work</button>
+          </div>
+        </aside>
+      </div>
+
+      <div className="work-lead-diagnosis-panel wide">
+        <div className="work-lead-summary">
+          <p className="small-label">Imported Work Lead</p>
+          <h2>{demoWorkLead.title}</h2>
+          <p>{demoWorkLead.rawRequest}</p>
+          <div className="tag-row">
+            {demoWorkLead.categories.map((category) => (
+              <span className="status-pill safe" key={category}>{category}</span>
+            ))}
+          </div>
+        </div>
+        <div className="proof-score compact-proof-score">
+          <span>Proofability</span>
+          <strong>{proofability}</strong>
+          <small>{leadStatus}</small>
+        </div>
+        <div className="triage-grid">
+          <StatusBlock label="Risk" value={demoWorkLead.risk} />
+          <StatusBlock label="Reward" value={demoWorkLead.reward} />
+          <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
+          <StatusBlock label="Missing" value={workLeadClarified ? "None" : demoWorkLead.missing} />
+        </div>
+        <div className="triage-decision-panel">
+          <div>
+            <strong>{workLeadConverted ? "Converted to a scoped mission." : workLeadClarified ? "Ready to become a mission." : "One detail blocks conversion."}</strong>
+            <p>{workLeadConverted ? "Checkout QA verification now has owner, artifacts, risk, and approval rules." : workLeadClarified ? "Browser targets are confirmed. The lead can safely become a Mission." : demoWorkLead.nextQuestion}</p>
+          </div>
+          <div className="decision-row">
+            <button className="primary-action" onClick={onClarifyLead} disabled={workLeadClarified}>{workLeadClarified ? "Clarified" : "Ask clarification"}</button>
+            <button className="secondary-action" aria-label="Convert to Mission" disabled={!workLeadClarified || workLeadConverted} onClick={onConvertLead}>
+              {workLeadConverted ? "Converted" : "Convert"}
+            </button>
+            <button className="danger-action">Reject</button>
+          </div>
+        </div>
+      </div>
+
+      <div className="opportunity-source-strip wide">
+        <div>
+          <p className="small-label">Source pipeline</p>
+          <h2>Bring work in. Gate it before agents run.</h2>
+        </div>
+        <div className="pipeline-mini-grid" aria-label="Work intake pipeline">
           {demoSourcePipeline.map((item) => (
             <div className="pipeline-step" key={item.label}>
               <strong>{importedLead && item.label === "Imported" ? "9" : item.value}</strong>
@@ -768,7 +863,7 @@ function WorkQueueScreen({
             </div>
           ))}
         </div>
-        <div className="source-grid" aria-label="Work source categories">
+        <div className="source-grid compact-source-grid" aria-label="Work source categories">
           {demoSourceTypes.map((source) => (
             <div className="source-card" key={source.name}>
               <div className="section-heading">
@@ -816,65 +911,6 @@ function WorkQueueScreen({
           </div>
         )}
       </div>
-      <div className="panel wide work-lead-card">
-        <div>
-          <p className="small-label">Work Lead</p>
-          <h2>{demoWorkLead.title}</h2>
-          <p>{demoWorkLead.rawRequest}</p>
-          <div className="tag-row">
-            {demoWorkLead.categories.map((category) => (
-              <span className="status-pill safe" key={category}>
-                {category}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="proof-score">
-          <span>Proofability</span>
-          <strong>{workLeadClarified ? "88%" : demoWorkLead.proofability}</strong>
-          <small>{workLeadConverted ? "Converted to Mission." : workLeadClarified ? "Mission-ready after clarification." : "Good, but not mission-ready."}</small>
-        </div>
-        <div className="triage-grid">
-          <StatusBlock label="Risk" value={demoWorkLead.risk} />
-          <StatusBlock label="Reward" value={demoWorkLead.reward} />
-          <StatusBlock label="Accepts proof" value={demoWorkLead.acceptsProof} />
-          <StatusBlock label="Missing" value={workLeadClarified ? "None" : demoWorkLead.missing} />
-          <StatusBlock label="Can convert?" value={workLeadClarified ? "Yes" : demoWorkLead.canConvert} />
-          <StatusBlock label="Reason" value={workLeadClarified ? "Browser targets confirmed by owner." : demoWorkLead.conversionReason} />
-        </div>
-        <div className="recommendation-box">
-          <strong>Recommendation</strong>
-          <p>{workLeadConverted ? "Mission created. The work is now scoped and safe to run." : workLeadClarified ? "Convert this clarified Work Lead into a scoped Mission." : demoWorkLead.recommendation}</p>
-          {workLeadClarified && (
-            <div className="mission-ready-card" role="status">
-              <span className="status-pill safe">{workLeadConverted ? "Mission created" : "Mission-ready"}</span>
-              <strong>Checkout QA verification has defined browser targets and an acceptance owner.</strong>
-              <small>Required evidence: Chrome and Safari screenshots, console logs, environment summary, and maintainer-safe packet.</small>
-            </div>
-          )}
-          <div className="diagnosis-grid">
-            {demoWorkLeadDiagnosis.map((item) => (
-              <StatusRow
-                key={item.label}
-                label={item.label}
-                value={workLeadClarified && item.label === "Missing detail" ? "Browser versions confirmed" : workLeadClarified && item.label === "Conversion gate" ? "Mission-ready" : item.value}
-                tone={workLeadClarified && (item.label === "Missing detail" || item.label === "Conversion gate") ? "good" : item.tone}
-              />
-            ))}
-          </div>
-          {!workLeadClarified && <div className="clarification-box">
-            <span>Next clarification question</span>
-            <strong>{demoWorkLead.nextQuestion}</strong>
-          </div>}
-          <div className="decision-row">
-            <button className="primary-action" onClick={onClarifyLead} disabled={workLeadClarified}>{workLeadClarified ? "Clarification received" : "Ask clarification"}</button>
-            <button className="secondary-action" disabled={!workLeadClarified || workLeadConverted} title={workLeadClarified ? "Work Lead is ready to convert" : "Missing browser versions must be clarified first"} onClick={onConvertLead}>
-              {workLeadConverted ? "Converted to Mission" : workLeadClarified ? "Convert to Mission" : "Convert when ready"}
-            </button>
-            <button className="danger-action">Reject</button>
-          </div>
-        </div>
-      </div>
       {workLeadConverted && (
         <div className="panel mission-created-panel">
           <h2>Converted mission</h2>
@@ -885,14 +921,6 @@ function WorkQueueScreen({
           <button className="primary-action full" onClick={() => onRun("checkout")}>Run converted mission</button>
         </div>
       )}
-      <div className="opportunity-starter-strip wide">
-        <div>
-          <p className="small-label">Safe starter mission</p>
-          <h2>Validate installation docs</h2>
-          <p>Evidence-only, local run, accepted by a commons reviewer.</p>
-        </div>
-        <button className="primary-action" onClick={() => onRun("docs")}>Run safest mission</button>
-      </div>
     </section>
   );
 }
@@ -1046,148 +1074,159 @@ function CaseFileScreen({
   const mission = activeMission === "checkout" ? demoConvertedMission : demoMission;
   const caseTitle = activeMission === "checkout" ? "Verified checkout QA with clarified browser targets." : "Validated install docs in a clean fixture.";
   const artifactPurpose = activeMission === "checkout" ? "Browser QA proof artifact for maintainer review." : "Generated proof artifact for maintainer review.";
+  const packetStatus = rejected ? "Rejected" : revisionRequested ? "Revision requested" : submitted ? "Submitted" : "Maintainer-ready";
   return (
-    <section className="page-grid case-grid case-dossier-grid">
+    <section className="page-grid packet-grid">
       <header className="page-header">
-        <span>Case File / {packet.id}</span>
+        <span>Packet / {packet.id}</span>
         <button className="primary-action" onClick={onSubmit} disabled={submitted}>{submitted ? "Submitted" : "Submit Packet"}</button>
       </header>
-      <div className="case-dossier">
-        <div className="case-dossier-hero">
-          <div>
-            <p className="small-label">Evidence packet preview</p>
-            <h2>{caseTitle}</h2>
-            <p>{packet.summary}</p>
-          </div>
-          <div className="case-dossier-meta" aria-label="Packet status">
-            <span className="status-pill safe">Verifier passed</span>
-            <span className="status-pill safe">Evidence-only</span>
-            <span className="status-pill safe">No public action</span>
-          </div>
+
+      <div className="packet-overview-card wide">
+        <div>
+          <span className={rejected || revisionRequested ? "status-pill warning" : "status-pill safe"}>{packetStatus}</span>
+          <h1>{caseTitle}</h1>
+          <p>{packet.summary}</p>
         </div>
-        {revisionRequested && (
-          <div className="revision-banner" role="status">
-            <strong>Revision requested</strong>
-            <span>Maintainer asked for clearer environment notes and the full command transcript before acceptance.</span>
-          </div>
-        )}
-        {rejected && (
-          <div className="rejection-banner" role="status">
-            <strong>Packet rejected</strong>
-            <span>The evidence was closed without payout. Start a new mission or rebuild the packet with stronger proof.</span>
-          </div>
-        )}
-
-        <div className="case-dossier-body">
-          <aside className="case-file-rail" aria-label="Case file sections">
-            {["Summary", "Artifacts", "Verifier", "Privacy", "Submit"].map((item, index) => (
-              <span className={index === 0 ? "active" : ""} key={item}>{item}</span>
-            ))}
-          </aside>
-
-          <div className="case-file-document">
-            <section className="case-document-section">
-              <p className="small-label">Maintainer summary</p>
-              <div className="case-summary-grid compact-case-grid">
-                <div className="case-summary-block">
-                  <span>What was tested</span>
-                  <strong>{packet.objective}</strong>
-                </div>
-                <div className="case-summary-block result-block">
-                  <span>Observed result</span>
-                  <strong>{packet.result}</strong>
-                </div>
-                <div className="case-summary-block">
-                  <span>Recommended next action</span>
-                  <strong>{packet.recommendedAction}</strong>
-                </div>
-              </div>
-            </section>
-
-            <section className="case-document-section">
-              <div className="section-heading">
-                <div>
-                  <p className="small-label">Proof artifacts</p>
-                  <h2>Maintainer-ready evidence bundle</h2>
-                </div>
-                <span className="status-pill safe">{packet.artifacts.length} files</span>
-              </div>
-              <div className="artifact-manifest">
-                {packet.artifacts.map((artifact) => (
-                  <div className="artifact-manifest-row" key={artifact}>
-                    <span>
-                      <strong>{artifact}</strong>
-                      <small>{artifactPurpose}</small>
-                    </span>
-                    <small>{artifact.includes("payout") ? "Private" : "Maintainer"}</small>
-                  </div>
-                ))}
-              </div>
-            </section>
-
-            <section className="case-document-section verification-section">
-              <div>
-                <p className="small-label">Verifier result</p>
-                <h2>Builder does not grade its own work.</h2>
-                <div className="packet-facts">
-                  <StatusRow label="Packet status" value="Draft, approved locally" tone="good" />
-                  <StatusRow label="Verifier" value="Passed" tone="good" />
-                  <StatusRow label="Policy" value="Evidence-only" tone="good" />
-                  <StatusRow label="Public action" value="None taken" tone="good" />
-                </div>
-              </div>
-              <div>
-                <p className="small-label">Safety reviews</p>
-                <div className="review-grid">
-                  <div>
-                    <h2>Privacy</h2>
-                    <ul className="check-list">
-                      {packet.privacyReview.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                  <div>
-                    <h2>Security</h2>
-                    <ul className="check-list">
-                      {packet.securityReview.map((item) => (
-                        <li key={item}>{item}</li>
-                      ))}
-                    </ul>
-                  </div>
-                </div>
-              </div>
-            </section>
-          </div>
+        <div className="packet-overview-stats">
+          <StatusBlock label="Confidence" value="86%" />
+          <StatusBlock label="Artifacts" value={`${packet.artifacts.length} files`} />
+          <StatusBlock label="Public action" value="None" />
         </div>
       </div>
-      <div className="decision-panel">
-        <p className="small-label">Submit decision</p>
-        <h2>Evidence first. Code later.</h2>
-        <p>If accepted: {mission.reward} earned, +12 reputation, +2 credits.</p>
-        <code>Download JSON via npm run demo:packet</code>
-        <div className="share-split">
-          <div>
-            <strong>Shared with maintainer</strong>
-            <ul className="check-list">
+
+      {revisionRequested && (
+        <div className="revision-banner wide" role="status">
+          <strong>Revision requested</strong>
+          <span>Maintainer asked for clearer environment notes and the full command transcript before acceptance.</span>
+        </div>
+      )}
+      {rejected && (
+        <div className="rejection-banner wide" role="status">
+          <strong>Packet rejected</strong>
+          <span>The evidence was closed without payout. Start a new mission or rebuild the packet with stronger proof.</span>
+        </div>
+      )}
+
+      <div className="packet-review-layout wide">
+        <div className="packet-main-column">
+          <section className="panel packet-summary-card">
+            <p className="small-label">Maintainer summary</p>
+            <div className="packet-summary-head">
+              <h2>What the reviewer needs to know.</h2>
+              <span className="status-pill safe">Readable in under 60 seconds</span>
+            </div>
+            <div className="packet-summary-grid">
+              <div className="case-summary-block">
+                <span>What was tested</span>
+                <strong>{packet.objective}</strong>
+              </div>
+              <div className="case-summary-block result-block">
+                <span>Observed result</span>
+                <strong>{packet.result}</strong>
+              </div>
+              <div className="case-summary-block">
+                <span>Recommended next action</span>
+                <strong>{packet.recommendedAction}</strong>
+              </div>
+            </div>
+          </section>
+
+          <section className="panel packet-artifact-card">
+            <div className="section-heading">
+              <div>
+                <p className="small-label">Evidence bundle</p>
+                <h2>Files that leave the workspace if you submit.</h2>
+              </div>
+              <span className="status-pill safe">{packet.artifacts.length} files</span>
+            </div>
+            <div className="artifact-manifest compact-artifact-manifest">
+              {packet.artifacts.map((artifact) => (
+                <div className="artifact-manifest-row" key={artifact}>
+                  <span>
+                    <strong>{artifact}</strong>
+                    <small>{artifactPurpose}</small>
+                  </span>
+                  <small>{artifact.includes("payout") ? "Private" : "Maintainer"}</small>
+                </div>
+              ))}
+            </div>
+          </section>
+        </div>
+
+        <aside className="packet-submit-panel">
+          <p className="small-label">Submit decision</p>
+          <h2>Evidence first. Code later.</h2>
+          <p>If accepted: {mission.reward} earned, +12 reputation, +2 credits.</p>
+          <button className="primary-action full" onClick={onSubmit} disabled={submitted}>
+            {submitted ? "Submitted to Maintainer Inbox" : "Submit to Maintainer Inbox"}
+          </button>
+          <div className="packet-sharing-grid">
+            <div>
+              <strong>Shared</strong>
               {packet.sharedWithMaintainer.map((item) => (
-                <li key={item}>{item}</li>
+                <span key={item}>{item}</span>
               ))}
-            </ul>
+            </div>
+            <div>
+              <strong>Private</strong>
+              {packet.keptPrivate.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </div>
+          <code>npm run demo:packet</code>
+        </aside>
+      </div>
+
+      <div className="packet-checks-grid wide">
+        <section className="panel packet-check-card">
+          <p className="small-label">Verifier</p>
+          <h2>Builder does not grade its own work.</h2>
+          <StatusRow label="Packet status" value="Draft, approved locally" tone="good" />
+          <StatusRow label="Verifier" value="Passed" tone="good" />
+          <StatusRow label="Policy" value="Evidence-only" tone="good" />
+        </section>
+        <section className="panel packet-check-card">
+          <p className="small-label">Privacy</p>
+          <h2>Safe to share.</h2>
+          <ul className="check-list">
+            {packet.privacyReview.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+        <section className="panel packet-check-card">
+          <p className="small-label">Security</p>
+          <h2>Still boxed in.</h2>
+          <ul className="check-list">
+            {packet.securityReview.map((item) => (
+              <li key={item}>{item}</li>
+            ))}
+          </ul>
+        </section>
+      </div>
+
+      <details className="packet-advanced wide">
+        <summary>Open full case file view</summary>
+        <div className="case-dossier">
+          <div className="case-dossier-hero">
+            <div>
+              <p className="small-label">Evidence packet preview</p>
+              <h2>{caseTitle}</h2>
+              <p>{packet.summary}</p>
+            </div>
+            <div className="case-dossier-meta" aria-label="Packet status">
+              <span className="status-pill safe">Verifier passed</span>
+              <span className="status-pill safe">Evidence-only</span>
+              <span className="status-pill safe">No public action</span>
+            </div>
           </div>
           <div>
-            <strong>Kept private</strong>
-            <ul className="check-list">
-              {packet.keptPrivate.map((item) => (
-                <li key={item}>{item}</li>
-              ))}
-            </ul>
+            <p className="quiet-copy">Full artifact manifest, verifier checks, and privacy/security review are available in the compact packet sections above.</p>
           </div>
         </div>
-        <button className="primary-action full" onClick={onSubmit} disabled={submitted}>
-          {submitted ? "Submitted to Maintainer Inbox" : "Submit to Maintainer Inbox"}
-        </button>
-      </div>
+      </details>
     </section>
   );
 }

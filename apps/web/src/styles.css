@@ -187,6 +187,7 @@ button {
 
 .runner-grid,
 .case-grid,
+.packet-grid,
 .maintainer-grid,
 .scoreboard-grid,
 .work-queue-grid,
@@ -206,6 +207,12 @@ button {
 .panel,
 .terminal-card,
 .decision-panel,
+.opportunity-command-panel,
+.work-lead-diagnosis-panel,
+.opportunity-source-strip,
+.packet-overview-card,
+.packet-submit-panel,
+.packet-advanced,
 .opportunity-fit-card,
 .metric,
 .work-row {
@@ -770,6 +777,223 @@ button {
   color: #64748b;
   font-weight: 700;
   line-height: 1.45;
+}
+
+.opportunity-command-panel {
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(340px, 0.68fr);
+  gap: 18px;
+  padding: 24px;
+}
+
+.opportunity-list-panel,
+.opportunity-detail-panel {
+  min-width: 0;
+}
+
+.opportunity-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.opportunity-filter-row span {
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #475569;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.opportunity-filter-row span.active {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.opportunity-card-list {
+  display: grid;
+  gap: 10px;
+}
+
+.opportunity-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.opportunity-card.selected {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.opportunity-card-main {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.opportunity-card strong,
+.opportunity-card small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.opportunity-card small {
+  margin-top: 3px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.opportunity-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.opportunity-card-meta span {
+  border-radius: 999px;
+  background: white;
+  color: #047857;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.opportunity-detail-panel {
+  align-self: stretch;
+  border: 1px solid #a7f3d0;
+  border-radius: 22px;
+  background: #ecfdf5;
+  padding: 22px;
+}
+
+.opportunity-detail-panel h2 {
+  margin: 8px 0 8px;
+  font-size: 32px;
+  line-height: 1.04;
+}
+
+.opportunity-detail-panel p:not(.small-label) {
+  margin: 0;
+  color: #047857;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.opportunity-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.opportunity-proof-box,
+.triage-decision-panel {
+  border: 1px solid #a7f3d0;
+  border-radius: 18px;
+  background: white;
+  padding: 14px;
+}
+
+.opportunity-proof-box {
+  margin-top: 14px;
+}
+
+.opportunity-proof-box strong,
+.opportunity-proof-box span,
+.triage-decision-panel strong,
+.triage-decision-panel p {
+  display: block;
+}
+
+.opportunity-proof-box span,
+.triage-decision-panel p {
+  margin-top: 5px;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.work-lead-diagnosis-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(180px, 0.24fr);
+  gap: 18px;
+  padding: 24px;
+}
+
+.work-lead-summary p:not(.small-label) {
+  margin: 0;
+  color: #475569;
+  font-weight: 750;
+}
+
+.work-lead-summary h2 {
+  margin-bottom: 8px;
+}
+
+.compact-proof-score {
+  align-self: start;
+  margin: 0;
+}
+
+.work-lead-diagnosis-panel .triage-grid,
+.work-lead-diagnosis-panel .triage-decision-panel {
+  grid-column: 1 / -1;
+}
+
+.triage-decision-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+  gap: 16px;
+  align-items: center;
+  border-color: #e2e8f0;
+}
+
+.opportunity-source-strip {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.42fr) minmax(0, 1fr);
+  gap: 16px;
+  padding: 20px 24px;
+}
+
+.opportunity-source-strip h2 {
+  margin: 0;
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.pipeline-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.compact-source-grid {
+  grid-column: 1 / -1;
+}
+
+.opportunity-source-strip .import-command,
+.opportunity-source-strip .import-result-card,
+.opportunity-source-strip .project-work-lead-card {
+  grid-column: 1 / -1;
+}
+
+.opportunity-source-strip .import-command {
+  grid-template-columns: minmax(220px, 0.36fr) minmax(0, 1fr);
 }
 
 .import-command {
@@ -2156,6 +2380,151 @@ pre {
   box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
 }
 
+.packet-overview-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.62fr);
+  gap: 22px;
+  align-items: end;
+  padding: 28px;
+}
+
+.packet-overview-card h1 {
+  margin: 12px 0 8px;
+  font-size: clamp(34px, 4vw, 58px);
+  line-height: 0.98;
+}
+
+.packet-overview-card p {
+  max-width: 760px;
+  margin: 0;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.packet-overview-stats {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.packet-review-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.packet-main-column {
+  display: grid;
+  gap: 18px;
+  min-width: 0;
+}
+
+.packet-summary-head {
+  display: flex;
+  justify-content: space-between;
+  gap: 14px;
+  align-items: start;
+}
+
+.packet-summary-head h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.06;
+}
+
+.packet-summary-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 18px;
+}
+
+.compact-artifact-manifest {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.packet-submit-panel {
+  position: sticky;
+  top: 28px;
+  padding: 24px;
+}
+
+.packet-submit-panel h2 {
+  margin: 0;
+  font-size: 26px;
+  line-height: 1.08;
+}
+
+.packet-submit-panel p {
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.packet-submit-panel code {
+  display: block;
+  overflow-wrap: anywhere;
+  border-radius: 14px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.packet-sharing-grid {
+  display: grid;
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.packet-sharing-grid > div {
+  display: grid;
+  gap: 6px;
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+  padding: 12px;
+}
+
+.packet-sharing-grid strong,
+.packet-sharing-grid span {
+  display: block;
+}
+
+.packet-sharing-grid span {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.packet-checks-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.packet-check-card h2 {
+  margin: 0 0 14px;
+}
+
+.packet-advanced {
+  padding: 18px;
+}
+
+.packet-advanced summary {
+  cursor: pointer;
+  color: #047857;
+  font-weight: 900;
+}
+
+.packet-advanced .case-dossier {
+  margin-top: 14px;
+}
+
+.packet-advanced .quiet-copy {
+  padding: 18px;
+}
+
 .case-dossier-hero {
   display: grid;
   grid-template-columns: minmax(0, 1fr) 190px;
@@ -2650,6 +3019,12 @@ code {
   .panel,
   .terminal-card,
   .decision-panel,
+  .opportunity-command-panel,
+  .work-lead-diagnosis-panel,
+  .opportunity-source-strip,
+  .packet-overview-card,
+  .packet-submit-panel,
+  .packet-advanced,
   .opportunity-fit-card,
   .metric,
   .work-row {
@@ -2659,6 +3034,7 @@ code {
   .page-grid-hero,
   .runner-grid,
   .case-grid,
+  .packet-grid,
   .maintainer-grid,
   .scoreboard-grid,
   .work-queue-grid,
@@ -2705,6 +3081,15 @@ code {
   .import-command,
   .import-result-card,
   .project-work-lead-card,
+  .opportunity-command-panel,
+  .work-lead-diagnosis-panel,
+  .triage-decision-panel,
+  .opportunity-source-strip,
+  .packet-overview-card,
+  .packet-review-layout,
+  .packet-summary-grid,
+  .packet-checks-grid,
+  .compact-artifact-manifest,
   .command-state-grid,
   .agent-card-grid,
   .case-dossier-hero,
@@ -2729,8 +3114,19 @@ code {
   .project-capacity-strip,
   .source-grid,
   .pipeline-strip,
-  .ledger-mini-grid {
+  .ledger-mini-grid,
+  .pipeline-mini-grid,
+  .opportunity-detail-stats,
+  .packet-overview-stats {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .packet-submit-panel {
+    position: static;
+  }
+
+  .opportunity-source-strip .import-command {
+    grid-template-columns: 1fr;
   }
 
   .project-side-rail {
@@ -2744,7 +3140,9 @@ code {
   .compact-row,
   .decision-row,
   .project-action-banner,
-  .opportunity-starter-strip {
+  .opportunity-starter-strip,
+  .opportunity-card,
+  .packet-summary-head {
     flex-wrap: wrap;
   }
 
@@ -2817,6 +3215,13 @@ code {
 
   .project-action-banner,
   .opportunity-starter-strip,
+  .opportunity-command-panel,
+  .work-lead-diagnosis-panel,
+  .opportunity-source-strip,
+  .packet-overview-card,
+  .packet-review-layout,
+  .packet-checks-grid,
+  .packet-advanced,
   .project-commons-hero,
   .project-command-header,
   .project-command-main,
