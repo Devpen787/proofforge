@@ -97,9 +97,6 @@ function App() {
       </aside>
 
       <main className="main">
-        {!["opportunity", "first-run", "mission-detail"].includes(screen) && (
-          <ProofProgressBand screen={screen} packetReady={packetReady} submitted={submitted} accepted={accepted} released={released} />
-        )}
         {screen === "opportunity" && (
           <OpportunityScreen
             onStart={() => {
@@ -752,14 +749,14 @@ function WorkQueueScreen({
   return (
     <section className="page-grid work-queue-grid">
       <header className="page-header">
-        <span>Work Queue</span>
-        <code>npm run import:github -- --url https://github.com/owner/repo/issues/123</code>
+        <span>Opportunities</span>
+        <button className="primary-action" onClick={() => onRun("docs")}>Run safest mission</button>
       </header>
-      <div className="panel wide">
+      <div className="panel wide opportunity-import-panel">
         <div className="section-heading">
           <div>
-            <p className="small-label">Ready missions, not raw work</p>
-            <h2>Import existing work, then triage it before agents run.</h2>
+            <p className="small-label">Turn messy work into missions</p>
+            <h2>Import, score, then run only what is ready.</h2>
           </div>
           <button className="secondary-action" onClick={onImport}>{importedLead ? "Imported" : "Import external task"}</button>
         </div>
@@ -888,35 +885,13 @@ function WorkQueueScreen({
           <button className="primary-action full" onClick={() => onRun("checkout")}>Run converted mission</button>
         </div>
       )}
-      <div className="panel">
-        <h2>Scoped starter mission</h2>
-        <p>Validate installation docs in a clean fixture. This is safe, local, and evidence-only.</p>
-        <button className="primary-action full" onClick={() => onRun("docs")}>
-          Run safest mission
-        </button>
-      </div>
-      <div className="panel">
-        <h2>Source categories</h2>
-        <ul className="check-list">
-          <li>GitHub issues and PRs</li>
-          <li>Foundation backlogs</li>
-          <li>Marketplace QA tasks</li>
-          <li>Community project requests</li>
-        </ul>
-      </div>
-      <div className="panel">
-        <h2>Mission readiness</h2>
-        <StatusRow label="Objective" value="Clear" tone="good" />
-        <StatusRow label="Reward path" value="External" tone="good" />
-        <StatusRow label="Acceptance owner" value="Known" tone="good" />
-        <StatusRow label="Missing data" value={workLeadClarified ? "None" : "Browser versions"} tone={workLeadClarified ? "good" : "bad"} />
-        <p className="quiet-copy">
-          {workLeadConverted
-            ? "This Work Lead has been converted into a scoped Mission and can now be run with human approval gates."
-            : workLeadClarified
-              ? "The missing target was clarified. This Work Lead can become a Mission."
-              : "ProofForge can import the work now, but will not run the mission until the missing test target is clarified."}
-        </p>
+      <div className="opportunity-starter-strip wide">
+        <div>
+          <p className="small-label">Safe starter mission</p>
+          <h2>Validate installation docs</h2>
+          <p>Evidence-only, local run, accepted by a commons reviewer.</p>
+        </div>
+        <button className="primary-action" onClick={() => onRun("docs")}>Run safest mission</button>
       </div>
     </section>
   );

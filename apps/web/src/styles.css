@@ -836,6 +836,33 @@ button {
   color: #475569;
 }
 
+.opportunity-starter-strip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 20px;
+  border: 1px solid #a7f3d0;
+  border-radius: 24px;
+  background: #ecfdf5;
+  padding: 22px 24px;
+}
+
+.opportunity-starter-strip h2,
+.opportunity-starter-strip p {
+  margin: 0;
+}
+
+.opportunity-starter-strip h2 {
+  font-size: 26px;
+  line-height: 1.08;
+}
+
+.opportunity-starter-strip p:not(.small-label) {
+  margin-top: 6px;
+  color: #047857;
+  font-weight: 800;
+}
+
 .pipeline-step strong,
 .proof-score strong {
   display: block;
@@ -967,6 +994,9 @@ button {
 }
 
 .project-ledger-panel {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.65fr) minmax(0, 1fr);
+  gap: 20px;
   border: 1px solid #e2e8f0;
   border-radius: 24px;
   background: white;
@@ -976,8 +1006,7 @@ button {
 
 .project-ledger-summary {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) 430px;
-  gap: 20px;
+  gap: 18px;
   align-items: start;
 }
 
@@ -996,7 +1025,7 @@ button {
 .project-proof-history {
   display: grid;
   gap: 10px;
-  margin: 18px 0;
+  margin: 0;
 }
 
 .project-proof-row {
@@ -1063,7 +1092,7 @@ button {
 
 .project-command-main {
   display: grid;
-  grid-template-columns: minmax(300px, 0.82fr) minmax(520px, 1.35fr) minmax(280px, 0.72fr);
+  grid-template-columns: minmax(320px, 0.82fr) minmax(0, 1.45fr);
   gap: 16px;
   align-items: start;
 }
@@ -1203,6 +1232,8 @@ button {
 
 .project-side-rail {
   display: grid;
+  grid-column: 1 / -1;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
 }
 
@@ -1313,6 +1344,7 @@ button {
 }
 
 .project-ledger-footer {
+  grid-column: 1 / -1;
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -1322,6 +1354,8 @@ button {
 .project-ledger-footer span {
   color: #64748b;
   font-weight: 800;
+  min-width: 0;
+  overflow-wrap: anywhere;
 }
 
 .public-proof-grid {
@@ -1901,6 +1935,7 @@ button {
 .status-block strong {
   display: block;
   margin-top: 6px;
+  overflow-wrap: anywhere;
 }
 
 .terminal-card {
@@ -2575,6 +2610,25 @@ code {
     padding: 9px 11px;
   }
 
+  .project-header-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .project-capacity-strip,
+  .source-grid,
+  .pipeline-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-capacity-card,
+  .pipeline-step,
+  .source-card {
+    min-width: 0;
+  }
+
   .node-status {
     display: none;
   }
@@ -2672,13 +2726,25 @@ code {
     grid-template-columns: 1fr;
   }
 
+  .project-capacity-strip,
+  .source-grid,
+  .pipeline-strip,
+  .ledger-mini-grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-side-rail {
+    grid-template-columns: 1fr;
+  }
+
   .pipeline-strip,
   .work-row,
   .artifact-row,
   .activity-row,
   .compact-row,
   .decision-row,
-  .project-action-banner {
+  .project-action-banner,
+  .opportunity-starter-strip {
     flex-wrap: wrap;
   }
 
@@ -2690,6 +2756,15 @@ code {
 
   .status-block {
     min-width: min(100%, 180px);
+  }
+
+  .project-ledger-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .project-ledger-footer .secondary-action {
+    width: 100%;
   }
 
   .page-header,
@@ -2741,6 +2816,7 @@ code {
   }
 
   .project-action-banner,
+  .opportunity-starter-strip,
   .project-commons-hero,
   .project-command-header,
   .project-command-main,
