@@ -9,7 +9,6 @@ import {
   demoMission,
   demoPacket,
   demoProject,
-  demoPublicArtifacts,
   demoMaintainerPackets,
   demoProjectWorkLead,
   demoSafetyDefaults,
@@ -1127,6 +1126,7 @@ function CaseFileScreen({
   const caseTitle = activeMission === "checkout" ? "Verified checkout QA with clarified browser targets." : "Validated install docs in a clean fixture.";
   const artifactPurpose = activeMission === "checkout" ? "Browser QA proof artifact for maintainer review." : "Generated proof artifact for maintainer review.";
   const packetStatus = rejected ? "Rejected" : revisionRequested ? "Revision requested" : submitted ? "Submitted" : "Maintainer-ready";
+  const sharedLabels = ["Reviewer summary", "Evidence packet", "Policy result", "Environment summary"];
   return (
     <section className="page-grid packet-grid">
       <header className="page-header">
@@ -1151,7 +1151,7 @@ function CaseFileScreen({
           <div className="packet-document-hero">
             <div>
               <p className="small-label">Evidence case file</p>
-              <h1>What the reviewer needs to know.</h1>
+              <h1>{caseTitle}</h1>
               <p>{packet.summary}</p>
             </div>
             <div className="packet-document-status">
@@ -1203,7 +1203,7 @@ function CaseFileScreen({
             <div className="packet-sharing-grid">
               <div>
                 <strong>Shared</strong>
-                {packet.sharedWithMaintainer.map((item) => (
+                {sharedLabels.map((item) => (
                   <span key={item}>{item}</span>
                 ))}
               </div>
@@ -1433,10 +1433,22 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
     { label: "Reward outcome", value: `${mission.reward} earned`, tone: "good" as const }
   ];
   const publicBoundary = [
-    { label: "Shared", value: "Summary, public packet, safe artifact refs", tone: "good" as const },
-    { label: "Hidden", value: "Raw logs, local paths, payout internals", tone: "bad" as const },
-    { label: "Agent notes", value: "Not public", tone: "bad" as const },
+    { label: "Shared", value: "Accepted summary and safe proof refs", tone: "good" as const },
+    { label: "Hidden", value: "Raw logs, local paths, private payout data", tone: "bad" as const },
+    { label: "Agent notes", value: "Kept private", tone: "bad" as const },
     { label: "Private data", value: "Not exposed", tone: "good" as const }
+  ];
+  const publicEvidence = [
+    {
+      label: "Accepted proof summary",
+      purpose: "What was proven, who accepted it, and why it matters.",
+      status: "Public"
+    },
+    {
+      label: "Safe artifact references",
+      purpose: "Pointers to shareable evidence without raw local details.",
+      status: "Public"
+    }
   ];
   return (
     <section className="page-grid public-proof-grid">
@@ -1451,8 +1463,8 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
           <p className="small-label">Accepted Proof Packet</p>
           <h1>{mission.title}</h1>
           <p>
-            {packet.summary} This public page shows the proof someone can inspect without exposing raw logs,
-            local paths, private payout records, or internal agent notes.
+            A maintainer accepted this proof. The public page shows what was proven, who accepted it,
+            and what credit was earned without exposing raw logs or private workspace data.
           </p>
           <div className="public-badge-row">
             <span className="status-pill safe">Accepted</span>
@@ -1483,22 +1495,15 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
       <div className="panel public-safe-panel">
         <p className="small-label">Public-safe evidence</p>
         <h2>Only the shareable subset leaves the workspace.</h2>
-        {demoPublicArtifacts.map((artifact) => (
-          <div className="artifact-row rich-artifact-row" key={artifact.name}>
+        {publicEvidence.map((artifact) => (
+          <div className="artifact-row rich-artifact-row" key={artifact.label}>
             <span>
-              <strong>{artifact.name}</strong>
+              <strong>{artifact.label}</strong>
               <small>{artifact.purpose}</small>
             </span>
-            <small>Safe to share</small>
+            <small>{artifact.status}</small>
           </div>
         ))}
-        <div className="artifact-row rich-artifact-row">
-          <span>
-            <strong>summary.md</strong>
-            <small>Maintainer-ready summary derived from the accepted case file.</small>
-          </span>
-          <small>Safe to share</small>
-        </div>
       </div>
       <div className="panel public-boundary-panel">
         <p className="small-label">Privacy boundary</p>

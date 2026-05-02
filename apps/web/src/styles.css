@@ -1907,8 +1907,8 @@ button {
 .public-share-hero h1 {
   max-width: 820px;
   margin: 0;
-  font-size: clamp(40px, 5vw, 68px);
-  line-height: 0.98;
+  font-size: clamp(38px, 4.5vw, 58px);
+  line-height: 1;
 }
 
 .public-share-hero p:not(.small-label) {
@@ -1961,8 +1961,8 @@ button {
 
 .public-proof-summary h2 {
   margin: 0;
-  font-size: 34px;
-  line-height: 1.05;
+  font-size: clamp(28px, 3vw, 36px);
+  line-height: 1.08;
 }
 
 .public-proof-summary p:not(.small-label) {
@@ -2698,8 +2698,8 @@ pre {
 
 .packet-document-hero {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(220px, 0.34fr);
-  gap: 22px;
+  grid-template-columns: 1fr;
+  gap: 16px;
   align-items: start;
   border-bottom: 1px solid #e2e8f0;
   padding-bottom: 22px;
@@ -2707,8 +2707,9 @@ pre {
 
 .packet-document-hero h1 {
   margin: 8px 0 10px;
-  font-size: clamp(34px, 4vw, 54px);
-  line-height: 0.98;
+  max-width: 740px;
+  font-size: clamp(30px, 3.2vw, 44px);
+  line-height: 1.04;
 }
 
 .packet-document-hero p:not(.small-label) {
@@ -2721,8 +2722,9 @@ pre {
 
 .packet-document-status {
   display: grid;
+  grid-template-columns: minmax(180px, 0.7fr) repeat(2, minmax(160px, 1fr));
   gap: 10px;
-  align-content: start;
+  align-items: center;
 }
 
 .packet-brief-grid {
@@ -2754,7 +2756,7 @@ pre {
 
 .packet-brief-grid strong {
   max-width: 860px;
-  font-size: 22px;
+  font-size: 20px;
   line-height: 1.25;
 }
 
@@ -3411,6 +3413,15 @@ code {
   .packet-side-gate,
   .packet-submit-panel {
     position: static;
+  }
+
+  .packet-document {
+    padding: 20px;
+    min-width: 0;
+  }
+
+  .packet-document-status {
+    grid-template-columns: 1fr;
   }
 
   .opportunity-source-strip .import-command {
