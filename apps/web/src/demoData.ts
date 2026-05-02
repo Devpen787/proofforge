@@ -17,7 +17,7 @@ export const demoConvertedMission = {
 export const demoFirstRunSteps = [
   { label: "Choose mission", detail: "Use a safe starter task." },
   { label: "Confirm safety", detail: "No public action or payment." },
-  { label: "Run agent", detail: "Execute locally and capture logs." },
+  { label: "Run proof", detail: "Execute locally and capture logs." },
   { label: "Review packet", detail: "Check evidence before sharing." },
   { label: "Submit or save", detail: "Human approval decides." },
   { label: "See outcome", detail: "Accepted proof creates earned value." }
@@ -64,7 +64,7 @@ export const demoWork = [
 
 export const demoProofLoop = [
   { label: "Work", detail: "Existing issue or task" },
-  { label: "Agent", detail: "Sandboxed work" },
+  { label: "Run", detail: "Sandboxed work" },
   { label: "Verify", detail: "Independent checks" },
   { label: "Accept", detail: "Human review" },
   { label: "Earn", detail: "Payout, credit, access" }

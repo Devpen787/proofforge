@@ -84,7 +84,7 @@ function App() {
           <span className="avatar">A</span>
           <div>
             <strong>Alex</strong>
-            <span>Node active</span>
+            <span>Contributor ready</span>
           </div>
         </div>
       </aside>
@@ -269,7 +269,7 @@ function OpportunityScreen({
     rejected ? "No payout was earned. The feedback still helps you generate a stronger packet." :
     accepted && !released ? "Release the earned payout. Earned payout exists, release stays a separate manual accounting step." :
     released ? "Proof, public credit, and payout records are ready. Start the next useful mission." :
-    "Start with safe work your agent can run locally. Proof creates credit only after human acceptance.";
+    "Start with safe work the local runner can execute. Proof creates credit only after human acceptance.";
   const primaryAction = revisionRequested ? "Open Case File" : accepted && !released ? "Release payout" : "Start safest proof";
   const handlePrimary = revisionRequested ? onResolveRevision : accepted && !released ? onRelease : onStart;
   const ledgerSteps = [
@@ -306,7 +306,7 @@ function OpportunityScreen({
         <div className="home-command-copy">
           <p className="small-label">Today</p>
           <h2>One safe mission starts the project loop.</h2>
-          <p>Pick useful work, let the agent produce evidence, then let acceptance create credit and payout state.</p>
+          <p>Pick useful work, produce evidence safely, then let acceptance create credit and payout state.</p>
           <button className="primary-action" onClick={onStart}>Run docs validation</button>
         </div>
 
@@ -359,7 +359,7 @@ function OpportunityFitCard({ onStart }: { onStart: () => void }) {
     <section className="opportunity-fit-card" aria-label="Best starting opportunity">
       <p className="small-label">Your fit today</p>
       <h2>$63 in proofable work</h2>
-      <p className="quiet-copy">Start with one safe mission. Your agent prepares the evidence; a human accepts the packet.</p>
+      <p className="quiet-copy">Start with one safe mission. The local runner prepares evidence; a human accepts the packet.</p>
       <div className="fit-mission">
         <span className="opportunity-icon">▶</span>
         <div>
@@ -400,7 +400,7 @@ function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => 
       <div className="panel first-run-mission">
         <p className="small-label">Starter mission</p>
         <h2>{demoMission.title}</h2>
-        <p className="quiet-copy">Start with a safe docs validation mission. Your agent runs locally, captures evidence, and stops for approval before anything is submitted or earned.</p>
+        <p className="quiet-copy">Start with a safe docs validation mission. The local runner captures evidence and stops for approval before anything is submitted or earned.</p>
         <div className="triage-grid">
           <StatusBlock label="Repo" value={demoMission.repo} />
           <StatusBlock label="Risk" value={demoMission.risk} />
@@ -408,7 +408,7 @@ function FirstRunScreen({ onRun, onQueue }: { onRun: () => void; onQueue: () => 
           <StatusBlock label="Reward" value={`${demoMission.reward} + rep + credits`} />
         </div>
         <div className="first-run-agent">
-          <h3>What the agent will do</h3>
+          <h3>What the runner will do</h3>
           <ul className="check-list">
             <li>Clone or load the fixture repo</li>
             <li>Run the documented install check</li>
@@ -605,7 +605,7 @@ function ProjectsScreen({
           <ProjectStat label="Pool" value={demoProject.pool} detail={`${demoProject.availablePool} available`} />
           <ProjectStat label="Proofs" value={demoProject.acceptedProof} detail="accepted packets" />
           <ProjectStat label="People" value={demoProject.people} detail="contributors" />
-          <ProjectStat label="Agents" value={projectAgentCount(agentAttached)} detail="active helpers" />
+          <ProjectStat label="Helpers" value={projectAgentCount(agentAttached)} detail="agents and nodes" />
         </div>
       </header>
 
@@ -613,7 +613,7 @@ function ProjectsScreen({
         <div className="project-action-banner wide" role="status">
           <div>
             <strong>New project shell created</strong>
-            <span>Purpose, lanes, first steward, and reward pool are visible. Next: invite one contributor or attach one constrained agent.</span>
+            <span>Purpose, lanes, first steward, and reward pool are visible. Next: invite one contributor or attach one bounded helper.</span>
           </div>
           <span className="status-pill safe">Launch draft</span>
         </div>
@@ -700,7 +700,7 @@ function ProjectsScreen({
         </section>
 
         <aside className="project-people-card">
-          <p className="small-label">People and agents</p>
+          <p className="small-label">People and helpers</p>
           <h2>Capability, not control.</h2>
           <div className="project-people-list">
             {inviteSent && (
@@ -877,7 +877,7 @@ function WorkQueueScreen({
           <section className="triage-next-card">
             <div>
               <p className="small-label">Next decision</p>
-              <h2>{workLeadConverted ? "Mission is scoped and ready." : workLeadClarified ? "Convert this lead into a Mission." : "Ask one question before agents run."}</h2>
+              <h2>{workLeadConverted ? "Mission is scoped and ready." : workLeadClarified ? "Convert this lead into a Mission." : "Ask one question before any run starts."}</h2>
               <p>{workLeadConverted ? "Checkout QA verification is now a scoped Mission with owner, artifacts, risk, and approval rules." : workLeadClarified ? "Browser targets are confirmed. The lead can safely become a Mission." : demoWorkLead.nextQuestion}</p>
             </div>
             <div className="decision-row">
@@ -939,7 +939,7 @@ function WorkQueueScreen({
             <button className="secondary-action" onClick={onImport}>Import work</button>
           </div>
           <div className="opportunity-filter-row" aria-label="Opportunity filters">
-            {["Best fit", "Safe", "Docs", "Bounties"].map((filter) => (
+            {["Best fit", "Safe", "Docs", "Rewards"].map((filter) => (
               <button className={activeFilter === filter ? "active" : ""} key={filter} onClick={() => setActiveFilter(filter)}>
                 {filter}
               </button>
@@ -1069,8 +1069,8 @@ environment.json`;
       </header>
       <div className="runner-hero">
         <div>
-          <p className="small-label">Agent run, still local</p>
-          <h2>Agents did the work. You decide what leaves.</h2>
+          <p className="small-label">Local run, still private</p>
+          <h2>The run produced evidence. You decide what leaves.</h2>
           <p>No public action has been taken. This run created evidence only inside the workspace.</p>
         </div>
         <div className="runner-hero-stats">
@@ -1094,8 +1094,8 @@ environment.json`;
         <pre>{output}</pre>
       </div>
       <div className="panel">
-        <p className="small-label">Agent work stack</p>
-        <h2>Specialized agents, bounded jobs.</h2>
+        <p className="small-label">Proof roles</p>
+        <h2>Bounded checks, clear responsibility.</h2>
         <div className="agent-run-list">
           {agentRows.map((agent) => (
             <div className="agent-run-row" key={agent.name}>
@@ -1472,7 +1472,7 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
   const publicBoundary = [
     { label: "Shared", value: "Accepted summary and safe proof refs", tone: "good" as const },
     { label: "Hidden", value: "Raw logs, local paths, private payout data", tone: "bad" as const },
-    { label: "Agent notes", value: "Kept private", tone: "bad" as const },
+    { label: "Runner notes", value: "Kept private", tone: "bad" as const },
     { label: "Private data", value: "Not exposed", tone: "good" as const }
   ];
   const publicEvidence = [
@@ -1544,7 +1544,7 @@ function PublicProofScreen({ activeMission, onBack }: { activeMission: ActiveMis
       </div>
       <div className="panel public-boundary-panel">
         <p className="small-label">Privacy boundary</p>
-        <h2>Public proof is not raw agent output.</h2>
+        <h2>Public proof is not raw runner output.</h2>
         {publicBoundary.map((item) => (
           <StatusRow key={item.label} label={item.label} value={item.value} tone={item.tone} />
         ))}
@@ -1588,7 +1588,7 @@ function ProofDemoScreen({ onStart, onEvidence }: { onStart: () => void; onEvide
       </header>
       <div className="proof-demo-hero wide">
         <div>
-          <p className="small-label">Judge-run proof path</p>
+          <p className="small-label">Working proof path</p>
           <h1>Working proof, not just a product sketch.</h1>
           <p>ProofForge has a local, reproducible loop: import work, scope it, run the fixture mission, verify artifacts, package evidence, accept it, create earned value, release the payout record, and expose a public-safe proof.</p>
           <div className="public-badge-row">
@@ -1662,7 +1662,7 @@ function ProofDemoScreen({ onStart, onEvidence }: { onStart: () => void; onEvide
         ))}
       </div>
       <div className="panel proof-artifact-panel wide">
-        <p className="small-label">Generated proof objects</p>
+        <p className="small-label">Proof objects</p>
         <h2>Artifacts judges and maintainers can inspect.</h2>
         <div className="proof-artifact-grid">
           {demoArtifacts.map((artifact) => (

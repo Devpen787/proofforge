@@ -28,9 +28,9 @@ export const routeLabels: Record<Screen, string> = {
   "work-queue": "Opportunities",
   "mission-detail": "Mission Detail",
   run: "Runner",
-  "case-file": "Packets",
+  "case-file": "Proof Packets",
   maintainer: "Maintainer",
   scoreboard: "Home",
   "public-proof": "Public Proof",
-  "proof-demo": "Proof Demo"
+  "proof-demo": "Working Proof"
 };

@@ -122,13 +122,13 @@ async function runSmoke() {
     await requireText(page, "Ready to run");
     await requireText(page, "What the maintainer gets.");
     await page.getByRole("button", { name: "Accept and run" }).click();
-    await requireText(page, "Agents did the work. You decide what leaves.");
+    await requireText(page, "The run produced evidence. You decide what leaves.");
     await requireText(page, "Evidence packet draft ready");
     await requireText(page, "Human approval checkpoint");
     await page.getByRole("button", { name: "Cancel Run" }).click();
     await requireText(page, "Ready to run");
     await page.getByRole("button", { name: "Accept and run" }).click();
-    await requireText(page, "Agents did the work. You decide what leaves.");
+    await requireText(page, "The run produced evidence. You decide what leaves.");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Evidence first. Code later.");
     await page.getByRole("button", { name: "Submit Packet" }).click();
@@ -147,7 +147,7 @@ async function runSmoke() {
     await requireText(page, "$8 released");
     await page.getByRole("button", { name: "View public proof" }).click();
     await requireText(page, "Accepted Proof Packet");
-    await requireText(page, "Public proof is not raw agent output.");
+    await requireText(page, "Public proof is not raw runner output.");
     await requireText(page, "Credit is portable because the packet was accepted.");
     await requireText(page, "proof://proofforge/packet_docs_install_demo");
     await page.getByRole("button", { name: "Copy public link" }).click();
@@ -158,7 +158,7 @@ async function runSmoke() {
     await requireText(page, "npm run sync:web-proof");
     await requireText(page, "Synced from generated artifacts");
     await requireText(page, "packet_docs_install_demo");
-    await requireText(page, "Generated proof objects");
+    await requireText(page, "Proof objects");
     await page.getByRole("button", { name: "Open Case File" }).click();
     await requireText(page, "Evidence packet preview");
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
