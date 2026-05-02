@@ -227,63 +227,6 @@ function App() {
   );
 }
 
-function ProofProgressBand({
-  screen,
-  packetReady,
-  submitted,
-  accepted,
-  released
-}: {
-  screen: Screen;
-  packetReady: boolean;
-  submitted: boolean;
-  accepted: boolean;
-  released: boolean;
-}) {
-  const routeStage: Record<Screen, number> = {
-    opportunity: 0,
-    "first-run": 1,
-    projects: 1,
-    "work-queue": 1,
-    "mission-detail": 1,
-    run: 2,
-    "case-file": 3,
-    maintainer: 4,
-    scoreboard: accepted || released ? 5 : 4,
-    "public-proof": released ? 6 : 5,
-    "proof-demo": 6
-  };
-  const stages = [
-    { label: "Work Lead", detail: "Existing work", done: true },
-    { label: "Mission", detail: "Scoped and safe", done: false },
-    { label: "Safe Run", detail: "Local evidence", done: packetReady || submitted || accepted || released },
-    { label: "Packet", detail: "Case file ready", done: packetReady || submitted || accepted || released },
-    { label: "Review", detail: "Maintainer decision", done: submitted || accepted || released },
-    { label: "Earned", detail: "Accepted proof", done: accepted || released },
-    { label: "Released", detail: "Manual payout", done: released }
-  ];
-  const stateStage = released ? 6 : accepted ? 5 : submitted ? 4 : packetReady ? 3 : 0;
-  const activeIndex = Math.max(routeStage[screen], stateStage);
-
-  return (
-    <section className="proof-progress-band" aria-label="Proof progress">
-      <div>
-        <p className="small-label">Current proof loop</p>
-        <strong>{stages[activeIndex].label}</strong>
-        <span>{stages[activeIndex].detail}</span>
-      </div>
-      <ol>
-        {stages.map((stage, index) => (
-          <li className={index < activeIndex || stage.done ? "done" : index === activeIndex ? "active" : ""} key={stage.label}>
-            <span>{index + 1}</span>
-            <b>{stage.label}</b>
-          </li>
-        ))}
-      </ol>
-    </section>
-  );
-}
-
 function OpportunityScreen({
   accepted,
   released,

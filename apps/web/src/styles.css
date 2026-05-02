@@ -88,89 +88,6 @@ button {
   overflow: hidden;
 }
 
-.proof-progress-band {
-  display: grid;
-  grid-template-columns: 220px 1fr;
-  gap: 18px;
-  align-items: center;
-  border: 1px solid #e2e8f0;
-  border-radius: 24px;
-  background: white;
-  padding: 16px;
-  margin-bottom: 20px;
-  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
-}
-
-.proof-progress-band .small-label {
-  margin-bottom: 6px;
-}
-
-.proof-progress-band strong,
-.proof-progress-band span {
-  display: block;
-}
-
-.proof-progress-band > div > span {
-  color: #64748b;
-  font-size: 13px;
-  font-weight: 700;
-}
-
-.proof-progress-band ol {
-  display: grid;
-  grid-template-columns: repeat(7, minmax(0, 1fr));
-  gap: 8px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.proof-progress-band li {
-  display: grid;
-  gap: 6px;
-  justify-items: center;
-  border: 1px solid #e2e8f0;
-  border-radius: 16px;
-  background: #f8fafc;
-  padding: 10px 6px;
-  color: #64748b;
-  font-size: 11px;
-  font-weight: 900;
-  text-align: center;
-}
-
-.proof-progress-band li span {
-  width: 24px;
-  height: 24px;
-  display: grid;
-  place-items: center;
-  border-radius: 999px;
-  background: white;
-  color: #64748b;
-}
-
-.proof-progress-band li.done {
-  border-color: #a7f3d0;
-  background: #ecfdf5;
-  color: #047857;
-}
-
-.proof-progress-band li.done span {
-  background: #047857;
-  color: white;
-}
-
-.proof-progress-band li.active {
-  border-color: #fde68a;
-  background: #fffbeb;
-  color: #b45309;
-}
-
-.proof-progress-band li.active span {
-  background: #b45309;
-  color: white;
-}
-
 .page-grid {
   display: grid;
   gap: 20px;
@@ -3035,14 +2952,6 @@ code {
   .first-run-grid,
   .metric-strip {
     grid-template-columns: 1fr;
-  }
-
-  .proof-progress-band {
-    grid-template-columns: 1fr;
-  }
-
-  .proof-progress-band ol {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
   .maintainer-decision-grid,
