@@ -6,7 +6,14 @@ import {
   demoSourceConnections
 } from "../demo";
 import type { ProjectRequest } from "../app/types";
-import { StatusRow } from "../components/ui";
+import {
+  DetailPane,
+  MetricStrip,
+  PageHeader,
+  PageSurface,
+  RowList,
+  StatusRow
+} from "../components/ui";
 
 function CompactPerson({
   name,
@@ -53,7 +60,7 @@ function OpportunityRow({
   onQueue: () => void;
 }) {
   return (
-    <div className="project-opportunity-row">
+    <div className="pf-project-work-row">
       <span className="opportunity-icon">{action === "Run" ? "▶" : "◇"}</span>
       <div>
         <strong>{title}</strong>
@@ -77,7 +84,6 @@ export function ProjectsScreen({
   inviteSent,
   agentAttached,
   workSuggested,
-  onStartProject,
   onSaveProject,
   onInvite,
   onAttachAgent,
@@ -120,72 +126,75 @@ export function ProjectsScreen({
   const [inviteEmail, setInviteEmail] = React.useState(
     projectRequest.inviteEmail
   );
+  const primaryAction = !projectStarted
+    ? () => onSaveProject({ projectName, projectPurpose })
+    : !workSuggested
+      ? () =>
+          onSuggestWork({
+            title: requestTitle,
+            detail: requestDetail,
+            reward: requestReward,
+            acceptanceOwner,
+            inviteEmail
+          })
+      : inviteSent
+        ? onQueue
+        : () => onInvite(inviteEmail);
+  const primaryLabel = !projectStarted
+    ? "Save project"
+    : !workSuggested
+      ? "Create work request"
+      : inviteSent
+        ? "Review sent request"
+        : "Send contributor request";
+  const metrics = [
+    {
+      label: "Pool",
+      value: demoProject.pool,
+      detail: `${demoProject.proofLedger.availablePool} available`
+    },
+    { label: "Accepted proof", value: "12", detail: "project ledger" },
+    { label: "People", value: "8", detail: "contributors" },
+    { label: "Helpers", value: "2", detail: "agents and nodes" }
+  ];
+  const activeWork = [
+    ["Running", "Validate install docs", "docs-runner-01 · 60%"],
+    ["Review", "Starter guide clarity", "packet-4821 · waiting"],
+    ["Accepted", "Ubuntu install flow", "+12 rep"]
+  ];
 
   return (
     <section className="page-grid project-room-grid">
-      <header className="project-room-hero wide">
-        <div className="project-hero-copy">
-          <span className="project-kicker">Projects / {demoProject.name}</span>
-          <h1>{projectRequest.projectName}</h1>
-          <p>{projectRequest.projectPurpose}</p>
-          <div className="tag-row">
-            <span className="status-pill safe">Active</span>
-            {demoProject.lanes.map((lane) => (
-              <span className="status-pill" key={lane}>
-                {lane}
-              </span>
-            ))}
-          </div>
-        </div>
-        <div className="project-hero-actions">
-          <button
-            className="primary-action"
-            onClick={
-              !workSuggested
-                ? () =>
-                    onSuggestWork({
-                      title: requestTitle,
-                      detail: requestDetail,
-                      reward: requestReward,
-                      acceptanceOwner,
-                      inviteEmail
-                    })
-                : inviteSent
-                  ? onQueue
-                  : () => onInvite(inviteEmail)
-            }
-          >
-            {!workSuggested
-              ? "Create work request"
-              : inviteSent
-                ? "Review sent request"
-                : "Send contributor request"}
-          </button>
-          <button className="secondary-action" onClick={onQueue}>
-            Find sourced work
-          </button>
-        </div>
-      </header>
+      <PageSurface className="wide pf-project-command">
+        <PageHeader
+          eyebrow={`Projects / ${demoProject.name}`}
+          title={projectRequest.projectName}
+          subtitle={projectRequest.projectPurpose}
+          actions={
+            <>
+              <button className="primary-action" onClick={primaryAction}>
+                {primaryLabel}
+              </button>
+              <button className="secondary-action" onClick={onQueue}>
+                Find sourced work
+              </button>
+            </>
+          }
+        />
 
-      {projectStarted && (
-        <div className="project-action-banner wide" role="status">
-          <div>
-            <strong>Project started</strong>
-            <span>
-              Create a work request, send it, then review submitted proof.
+        <div className="tag-row">
+          <span className="status-pill safe">Active</span>
+          {demoProject.lanes.map((lane) => (
+            <span className="status-pill" key={lane}>
+              {lane}
             </span>
-          </div>
-          <span className="status-pill safe">Launch draft</span>
+          ))}
         </div>
-      )}
 
-      {!projectStarted && (
-        <section className="project-request-strip wide">
-          <div>
-            <p className="small-label">Create project</p>
-            <h2>Define the workspace people and agents can help.</h2>
-          </div>
-          <div className="project-form-grid">
+        <MetricStrip metrics={metrics} />
+
+        {!projectStarted && (
+          <div className="pf-project-inline-form">
             <input
               aria-label="Project name"
               value={projectName}
@@ -196,23 +205,11 @@ export function ProjectsScreen({
               value={projectPurpose}
               onChange={(event) => setProjectPurpose(event.target.value)}
             />
-            <button
-              className="primary-action"
-              onClick={() => onSaveProject({ projectName, projectPurpose })}
-            >
-              Save project
-            </button>
           </div>
-        </section>
-      )}
+        )}
 
-      {projectStarted && !workSuggested && (
-        <section className="project-request-strip wide">
-          <div>
-            <p className="small-label">Create work request</p>
-            <h2>Ask a contributor or agent owner to prove useful work.</h2>
-          </div>
-          <div className="project-form-grid request-form-grid">
+        {projectStarted && !workSuggested && (
+          <div className="pf-project-inline-form multi">
             <input
               aria-label="Work request title"
               value={requestTitle}
@@ -238,74 +235,20 @@ export function ProjectsScreen({
               value={inviteEmail}
               onChange={(event) => setInviteEmail(event.target.value)}
             />
-            <button
-              className="primary-action"
-              onClick={() =>
-                onSuggestWork({
-                  title: requestTitle,
-                  detail: requestDetail,
-                  reward: requestReward,
-                  acceptanceOwner,
-                  inviteEmail
-                })
-              }
-            >
-              Create request
-            </button>
           </div>
-        </section>
-      )}
+        )}
 
-      {workSuggested && (
-        <div className="project-request-strip wide" role="status">
-          <div>
-            <p className="small-label">Contributor request</p>
-            <h2>{projectRequest.title} is ready.</h2>
-            <span>
-              Source, acceptance owner, proof target, and value path are set.
-            </span>
-          </div>
-          <div className="project-request-actions">
-            <span
-              className={
-                inviteSent ? "status-pill safe" : "status-pill warning"
-              }
-            >
-              {inviteSent
-                ? `Sent to ${projectRequest.inviteEmail}`
-                : "Ready to send"}
-            </span>
-            <button
-              className="primary-action"
-              onClick={inviteSent ? onQueue : () => onInvite(inviteEmail)}
-            >
-              {inviteSent ? "Open as contributor" : "Send request"}
-            </button>
-          </div>
-        </div>
-      )}
-
-      <div className="project-room-main wide">
-        <section className="panel project-opportunities-panel">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Project work</p>
-              <h2>Work in this project.</h2>
-            </div>
-            <span className="status-pill safe">
-              Best: {primaryOpportunity.title}
-            </span>
-          </div>
-          <div className="project-opportunity-list">
+        <div className="pf-project-layout">
+          <main className="pf-project-main">
             {workSuggested && (
-              <div className="project-opportunity-row project-opportunity-new">
+              <div className="pf-project-request-row" role="status">
                 <span className="opportunity-icon">+</span>
                 <div>
                   <strong>{projectRequest.title}</strong>
                   <small>
                     {inviteSent
-                      ? "Sent to contributor for acceptance"
-                      : "Ready to send to a contributor"}
+                      ? `Sent to ${projectRequest.inviteEmail}`
+                      : "Ready to send to contributor"}
                   </small>
                 </div>
                 <button className="secondary-action" onClick={onQueue}>
@@ -313,84 +256,71 @@ export function ProjectsScreen({
                 </button>
               </div>
             )}
-            {demoProject.opportunities.slice(0, 3).map((item) => (
-              <OpportunityRow
-                key={item.title}
-                title={item.title}
-                detail={item.detail}
-                reward={item.reward}
-                safety={item.safety}
-                proofability={item.proofability}
-                action={item.action}
-                onQueue={onQueue}
-              />
-            ))}
-          </div>
-          <button className="secondary-action full" onClick={onQueue}>
-            Open sourced inventory
-          </button>
-        </section>
 
-        <aside className="panel project-ops-panel">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Steward actions</p>
-              <h2>Agent, people, value.</h2>
-            </div>
-          </div>
-          <div className="project-ops-list">
-            <div>
-              <span>
-                <small>Proof node</small>
-                <strong>{demoAgentIdentity.id}</strong>
-                <b>
-                  {agentAttached ? "Attached to project" : "Ready to attach"}
-                </b>
+            <div className="pf-project-section-head">
+              <div>
+                <p className="small-label">Open work</p>
+                <h2>Choose proofable project work.</h2>
+              </div>
+              <span className="status-pill safe">
+                Best: {primaryOpportunity.title}
               </span>
-              <button
-                className="secondary-action"
-                onClick={onAttachAgent}
-                disabled={agentAttached}
-              >
-                {agentAttached ? "Attached" : "Attach agent"}
-              </button>
             </div>
-            <div>
-              <span>
-                <small>Contributor</small>
-                <strong>
-                  {inviteSent ? projectRequest.inviteEmail : "Open seat"}
-                </strong>
-                <b>{inviteSent ? "Invite pending" : "Invite not sent"}</b>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={() => onInvite(inviteEmail)}
-                disabled={inviteSent}
-              >
-                {inviteSent ? "Pending" : "Invite"}
-              </button>
+
+            <RowList className="pf-project-work-list">
+              {demoProject.opportunities.slice(0, 4).map((item) => (
+                <OpportunityRow
+                  key={item.title}
+                  title={item.title}
+                  detail={item.detail}
+                  reward={item.reward}
+                  safety={item.safety}
+                  proofability={item.proofability}
+                  action={item.action}
+                  onQueue={onQueue}
+                />
+              ))}
+            </RowList>
+
+            <div className="pf-project-active-work">
+              <div className="pf-project-section-head">
+                <div>
+                  <p className="small-label">Active work</p>
+                  <h2>What is moving now.</h2>
+                </div>
+              </div>
+              <div className="pf-project-board">
+                {activeWork.map(([state, title, detail]) => (
+                  <div key={title}>
+                    <span>{state}</span>
+                    <strong>{title}</strong>
+                    <small>{detail}</small>
+                  </div>
+                ))}
+              </div>
             </div>
-            <div>
-              <span>
-                <small>Project state</small>
-                <strong>
-                  {projectStarted ? "Active sprint" : "Draft sprint"}
-                </strong>
-                <b>
-                  {projectStarted ? "Accepting proof" : "Needs steward start"}
-                </b>
-              </span>
-              <button
-                className="secondary-action"
-                onClick={onStartProject}
-                disabled={projectStarted}
-              >
-                {projectStarted ? "Started" : "Start project"}
-              </button>
-            </div>
-          </div>
-          <div className="project-value-ledger">
+          </main>
+
+          <DetailPane eyebrow="Project rail" title="People, agent, value.">
+            <StatusRow
+              label="Proof node"
+              value={
+                agentAttached
+                  ? `${demoAgentIdentity.id} attached`
+                  : "Ready to attach"
+              }
+              tone="good"
+            />
+            <StatusRow
+              label="Contributor"
+              value={inviteSent ? projectRequest.inviteEmail : "Open seat"}
+              tone={inviteSent ? "good" : "bad"}
+            />
+            <StatusRow
+              label="Request"
+              value={workSuggested ? "Created" : "Not created"}
+              tone={workSuggested ? "good" : "bad"}
+            />
             <StatusRow
               label="Committed"
               value={demoProject.proofLedger.committedPool}
@@ -406,16 +336,17 @@ export function ProjectsScreen({
               value={demoProject.proofLedger.releasedPayouts}
               tone="good"
             />
-            <StatusRow
-              label="Method"
-              value={demoProject.proofLedger.payoutMethod}
-              tone="good"
-            />
-          </div>
-        </aside>
-      </div>
+            <button
+              className="secondary-action full"
+              onClick={onAttachAgent}
+              disabled={agentAttached}
+            >
+              {agentAttached ? "Agent attached" : "Attach agent"}
+            </button>
+          </DetailPane>
+        </div>
 
-      <details className="project-detail-drawer wide">
+        <details className="project-detail-drawer">
         <summary>Sources and proof ledger</summary>
         <div className="project-detail-drawer-body">
           <div>
@@ -462,6 +393,7 @@ export function ProjectsScreen({
           </div>
         </div>
       </details>
+      </PageSurface>
     </section>
   );
 }

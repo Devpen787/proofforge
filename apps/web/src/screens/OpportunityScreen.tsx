@@ -1,17 +1,9 @@
 import React from "react";
 import {
-  demoAgentIdentity,
   demoProject,
   demoWork,
   generatedProofSummary
 } from "../demo";
-import {
-  DetailPane,
-  MetricStrip,
-  PageHeader,
-  PageSurface,
-  RowList
-} from "../components/ui";
 import type { ActiveMission } from "../app/types";
 
 export function OpportunityScreen({
@@ -57,7 +49,7 @@ export function OpportunityScreen({
         ? "Packet rejected."
         : accepted || released
           ? "Proof accepted."
-          : "Find work. Prove it. Get credited.";
+          : "Find useful work. Prove it. Earn accepted credit.";
   const heroBody = !agentRegistered
     ? "Connect the local worker before running sourced tasks."
     : revisionRequested
@@ -87,142 +79,128 @@ export function OpportunityScreen({
         : accepted && !released
           ? onRelease
           : onStart;
-  const metrics = [
-    {
-      label: "Earned",
-      value: accepted || released ? "$8" : "$0",
-      detail: accepted || released ? "Accepted proof" : "No packet yet"
-    },
-    {
-      label: "Pending release",
-      value: accepted && !released ? "$8" : "$0",
-      detail: released ? "Released" : "Manual release"
-    },
-    {
-      label: "Project proofs",
-      value: demoProject.acceptedProof,
-      detail: demoProject.name
-    },
-    {
-      label: "Open missions",
-      value: String(demoProject.opportunities.length),
-      detail: "Source-backed"
-    }
-  ];
+  const selectedWork = demoWork[1] || demoWork[0];
 
   return (
-    <section className="page-grid home-grid">
-      <PageSurface className="pf-home-surface">
-        <PageHeader
-          eyebrow={packetState}
-          title={heroTitle}
-          subtitle={heroBody}
-          actions={
+    <section className="page-grid pf-home-reference">
+      <div className="pf-home-hero">
+        <div className="pf-home-copy">
+          <span className="pf-state-chip">{packetState}</span>
+          <h1>{heroTitle}</h1>
+          <p>{heroBody}</p>
+          <div className="pf-home-actions">
             <button className="primary-action" onClick={handlePrimary}>
               {primaryAction}
             </button>
-          }
-        />
-
-        <MetricStrip metrics={metrics} />
-
-        <div className="pf-home-layout">
-          <div>
-            <div className="section-heading pf-compact-heading">
-              <div>
-                <p className="small-label">
-                  {accepted || released ? "Accepted proof" : "Ready work"}
-                </p>
-                <h2>
-                  {accepted || released
-                    ? "Credit recorded. Keep moving."
-                    : "Pick one sourced mission."}
-                </h2>
-              </div>
-              <button className="link-button" onClick={onViewOpportunities}>
-                View all
-              </button>
-            </div>
-
-            {accepted || released ? (
-              <div className="pf-proof-row">
-                <span>
-                  <small>Proof</small>
-                  <strong>{generatedProofSummary.mission}</strong>
-                </span>
-                <span>
-                  <small>Accepted by</small>
-                  <strong>{generatedProofSummary.acceptedBy}</strong>
-                </span>
-                <span>
-                  <small>Earned</small>
-                  <strong>{generatedProofSummary.payout.amount}</strong>
-                </span>
-                <span>
-                  <small>Release</small>
-                  <strong>{released ? "Released" : "Pending"}</strong>
-                </span>
-              </div>
-            ) : null}
-
-            <RowList>
-              {demoWork.slice(0, 3).map((work) => (
-                <button
-                  className="work-row pf-work-row"
-                  key={work.title}
-                  onClick={onStart}
-                >
-                  <span className="work-main">
-                    <strong>{work.title}</strong>
-                    <small>{work.repo}</small>
-                  </span>
-                  <span className="work-owner">
-                    <small>Accepts proof</small>
-                    <b>{work.owner}</b>
-                  </span>
-                  <b>{work.reward}</b>
-                  <small>{work.runtime}</small>
-                  <span className={`status-pill ${work.tone}`}>
-                    {work.risk}
-                  </span>
-                  <span className="start-pill">Start</span>
-                </button>
-              ))}
-            </RowList>
+            <button className="secondary-action" onClick={onViewOpportunities}>
+              View source-backed work
+            </button>
           </div>
-
-          <DetailPane
-            eyebrow="Proof node"
-            title={agentRegistered ? demoAgentIdentity.id : "Not registered"}
-            action={
-              <button className="secondary-action full" onClick={onAgentSetup}>
-                {agentRegistered ? "Review node" : "Set up node"}
-              </button>
-            }
-          >
-            <div className="status-row">
-              <span>Owner</span>
-              <b className="good">Alex</b>
-            </div>
-            <div className="status-row">
-              <span>Project</span>
-              <b className="good">{demoProject.name}</b>
-            </div>
-            <div className="status-row">
-              <span>Current state</span>
-              <b className={agentRegistered ? "good" : "warn"}>
-                {agentRegistered ? "Ready" : "Setup needed"}
-              </b>
-            </div>
-            <div className="status-row">
-              <span>Public proof</span>
-              <b className={accepted || released ? "good" : "warn"}>
-                {accepted || released ? "Available" : "After acceptance"}
-              </b>
-            </div>
-          </DetailPane>
         </div>
-      </PageSurface>
+
+        <aside className="pf-selected-mission" aria-label="Selected mission">
+          <div className="pf-selected-topline">
+            <span>Selected mission</span>
+            <b>{agentRegistered ? "Ready" : "Node needed"}</b>
+          </div>
+          <h2>{selectedWork.title}</h2>
+          <div className="pf-selected-card">
+            <span className="pf-play-dot" aria-hidden="true">
+              ▶
+            </span>
+            <div>
+              <strong>{selectedWork.risk} · {selectedWork.runtime}</strong>
+              <small>Accepted by {selectedWork.owner}</small>
+            </div>
+          </div>
+          <dl>
+            <div>
+              <dt>Reward</dt>
+              <dd>{selectedWork.reward} + rep + credits</dd>
+            </div>
+            <div>
+              <dt>Approval</dt>
+              <dd>Before submit</dd>
+            </div>
+            <div>
+              <dt>Project</dt>
+              <dd>{demoProject.name}</dd>
+            </div>
+          </dl>
+        </aside>
+      </div>
+
+      {accepted || released ? (
+        <section className="pf-accepted-summary" aria-label="Accepted proof">
+          <span>
+            <small>Proof</small>
+            <strong>{generatedProofSummary.mission}</strong>
+          </span>
+          <span>
+            <small>Accepted by</small>
+            <strong>{generatedProofSummary.acceptedBy}</strong>
+          </span>
+          <span>
+            <small>Earned</small>
+            <strong>{generatedProofSummary.payout.amount}</strong>
+          </span>
+          <span>
+            <small>Release</small>
+            <strong>{released ? "Released" : "Pending"}</strong>
+          </span>
+        </section>
+      ) : null}
+
+      <section className="pf-work-table-card">
+        <div className="pf-table-heading">
+          <div>
+            <p className="small-label">Ready work for you</p>
+            <h2>Choose useful work with a clear proof path.</h2>
+          </div>
+          <button className="secondary-action" onClick={onViewOpportunities}>
+            View all opportunities
+          </button>
+        </div>
+
+        <div className="pf-work-table" role="table" aria-label="Ready work">
+          <div className="pf-work-head" role="row">
+            <span>Mission</span>
+            <span>Accepts proof</span>
+            <span>Reward</span>
+            <span>Runtime</span>
+            <span>Risk</span>
+            <span />
+          </div>
+          {demoWork.map((work) => (
+            <button
+              className="pf-work-table-row"
+              key={work.title}
+              onClick={onStart}
+              role="row"
+            >
+              <span className="pf-work-title" role="cell">
+                <i aria-hidden="true">▶</i>
+                <span>
+                  <strong>{work.title}</strong>
+                  <small>{work.repo}</small>
+                </span>
+              </span>
+              <span role="cell">
+                <small>Accepts proof</small>
+                <b>{work.owner}</b>
+              </span>
+              <b role="cell">{work.reward}</b>
+              <span role="cell">{work.runtime}</span>
+              <span className={`status-pill ${work.tone}`} role="cell">
+                {work.risk}
+              </span>
+              <span className="start-pill" role="cell">
+                Start
+              </span>
+            </button>
+          ))}
+        </div>
+      </section>
     </section>
   );
 }

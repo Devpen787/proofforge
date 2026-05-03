@@ -16,6 +16,8 @@ import { AgentSetupScreen } from "../screens/AgentSetupScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { HelpScreen } from "../screens/HelpScreen";
 import { BuilderPassportScreen } from "../screens/BuilderPassportScreen";
+import { EarningsScreen } from "../screens/EarningsScreen";
+import { TrustCenterScreen } from "../screens/TrustCenterScreen";
 import { extractShareState } from "./shareRecords";
 
 function renderScreen(
@@ -30,7 +32,7 @@ function renderScreen(
           registered={state.agentRegistered}
           onRegister={actions.registerAgent}
           onStart={actions.openOpportunities}
-          onSettings={() => actions.setScreen("settings")}
+          onSettings={actions.openTrustCenter}
         />
       );
     case "opportunity":
@@ -109,6 +111,7 @@ function renderScreen(
           onClarify={actions.openOpportunities}
           onCaseFile={actions.openCaseFile}
           onAgentSetup={() => actions.setScreen("agent-setup")}
+          onEarnings={actions.openEarnings}
           onRelease={actions.releasePayout}
           onRecordPayout={actions.recordPayoutReceipt}
           onPublicProof={actions.openPublicProof}
@@ -119,6 +122,29 @@ function renderScreen(
         <BuilderPassportScreen
           onWork={() => actions.setScreen("my-work")}
           onProjects={() => actions.setScreen("projects")}
+        />
+      );
+    case "earnings":
+      return (
+        <EarningsScreen
+          accepted={state.accepted}
+          released={state.released}
+          activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
+          payoutReceipt={state.payoutReceipt}
+          onWork={() => actions.setScreen("my-work")}
+          onSettings={() => actions.setScreen("settings")}
+          onRelease={actions.releasePayout}
+        />
+      );
+    case "trust-center":
+      return (
+        <TrustCenterScreen
+          agentRegistered={state.agentRegistered}
+          proofEvents={state.proofEvents}
+          onAgentSetup={() => actions.setScreen("agent-setup")}
+          onSettings={() => actions.setScreen("settings")}
         />
       );
     case "mission-detail":
@@ -195,6 +221,7 @@ function renderScreen(
         <SettingsScreen
           agentRegistered={state.agentRegistered}
           onAgentSetup={() => actions.setScreen("agent-setup")}
+          onTrustCenter={actions.openTrustCenter}
           onHelp={() => actions.setScreen("help")}
           onExport={actions.exportWorkspace}
           onImport={actions.importWorkspace}
@@ -221,6 +248,10 @@ function renderScreen(
 
 export function App() {
   const { state, actions } = useProofForgeApp();
+
+  React.useEffect(() => {
+    window.scrollTo({ top: 0, left: 0 });
+  }, [state.screen]);
 
   return (
     <AppShell state={state} onNavigate={actions.setScreen}>

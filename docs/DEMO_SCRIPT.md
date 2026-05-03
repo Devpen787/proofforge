@@ -1,5 +1,7 @@
 # ProofForge 2-Minute Demo Script
 
+**Verbatim submission script + UI mapping:** [`DEMO_SCRIPT_TIGHT_2MIN.md`](./DEMO_SCRIPT_TIGHT_2MIN.md) — use that file for exact on-camera wording; keep this document for the longer narration variant and tooling notes.
+
 Use this script for the hackathon video. It is written as a recording plan:
 what to show, what to click, and what to say.
 

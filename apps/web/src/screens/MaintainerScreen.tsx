@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  demoAgentIdentity,
-  generatedProofSummary,
-  getDemoPacket
-} from "../demo";
+import { demoAgentIdentity, getDemoPacket } from "../demo";
 import { getMissionDisplay } from "../app/missionDisplay";
 import type {
   ActiveMission,
@@ -12,7 +8,7 @@ import type {
   ProjectRequest,
   WalletIdentity
 } from "../app/types";
-import { StatusBlock } from "../components/ui";
+import { DetailPane, PageHeader, PageSurface, RowList, StatusRow } from "../components/ui";
 
 export function MaintainerScreen({
   submitted,
@@ -47,7 +43,7 @@ export function MaintainerScreen({
     projectRequest,
     importedMission
   });
-  const hasReviewPacket = submitted || !accepted;
+  const hasReviewPacket = submitted || accepted;
   const decisionState = accepted
     ? "Accepted"
     : hasReviewPacket
@@ -56,75 +52,77 @@ export function MaintainerScreen({
   const latestEvent = proofEvents.at(-1);
   const acceptanceSigned =
     latestEvent?.type === "packet_accepted" && Boolean(latestEvent.signature);
-  const proofFacts = [
-    { label: "Verifier", value: generatedProofSummary.verifierStatus },
-    { label: "Risk", value: mission.risk },
-    { label: "Source", value: mission.repo },
-    { label: "Proof node", value: demoAgentIdentity.id },
-    { label: "Credit to", value: demoAgentIdentity.owner },
+  const queueRows = [
     {
-      label: "Storage",
-      value: generatedProofSummary.protocolRefs.storageProvider
+      title: mission.title,
+      source: mission.repo,
+      status: decisionState,
+      confidence: "86%",
+      value: mission.reward
     },
     {
-      label: "Submit via",
-      value: generatedProofSummary.maintainerSubmission.provider
+      title: "Reproduce Windows build error",
+      source: "polkadot-js/api",
+      status: "Queued",
+      confidence: "84%",
+      value: "$12"
     },
-    { label: "Value", value: mission.reward },
     {
-      label: "Reviewer signature",
-      value: acceptanceSigned
-        ? "Wallet signed"
-        : walletIdentity?.address
-          ? "Ready"
-          : "Wallet optional"
+      title: "Improve quick start guide",
+      source: "Docs Onboarding Sprint",
+      status: "Needs packet",
+      confidence: "88%",
+      value: "$10"
     }
   ];
   return (
-    <section className="page-grid maintainer-focus-grid">
-      <header className="page-header">
-        <span>Maintainer Review</span>
-      </header>
-      <section className="maintainer-review-console wide">
-        <div className="maintainer-review-header">
-          <div>
-            <p className="small-label">Submitted evidence packet</p>
-            <h1>Accept the proof and create the earned record.</h1>
-            <p>{mission.title}</p>
-            <span>{mission.repo}</span>
-          </div>
-          <span
-            className={accepted ? "status-pill safe" : "status-pill warning"}
-          >
+    <PageSurface className="wide pf-maintainer-surface">
+      <PageHeader
+        eyebrow="Maintainer Review"
+        title="Decide submitted proof."
+        subtitle="One accepted packet creates an earned record. Release stays separate."
+        actions={
+          <span className={accepted ? "status-pill safe" : "status-pill warning"}>
             {decisionState}
           </span>
-        </div>
+        }
+      />
 
-        <div className="maintainer-review-body">
-          <div className="maintainer-proof-panel">
-            <p className="small-label">Verdict</p>
-            <h2>{packet.result}</h2>
-            <div className="maintainer-fact-strip">
-              {proofFacts.map((fact) => (
-                <StatusBlock
-                  key={fact.label}
-                  label={fact.label}
-                  value={fact.value}
-                />
-              ))}
-            </div>
+      <div className="pf-maintainer-layout">
+        <RowList className="pf-maintainer-queue">
+          <div className="pf-maintainer-row head">
+            <span>Packet</span>
+            <span>Source</span>
+            <span>Status</span>
+            <span>Confidence</span>
+            <span>Value</span>
           </div>
+          {queueRows.map((row) => (
+            <button
+              className={`pf-maintainer-row ${row.title === mission.title ? "selected" : ""}`}
+              key={row.title}
+              onClick={row.title === mission.title ? onReview : undefined}
+            >
+              <strong>{row.title}</strong>
+              <span>{row.source}</span>
+              <span>{row.status}</span>
+              <span>{row.confidence}</span>
+              <span>{row.value}</span>
+            </button>
+          ))}
+        </RowList>
 
-          <aside className="maintainer-decision-rail">
-            <p className="small-label">Decision</p>
-            <strong>
-              {accepted ? "Proof accepted" : "Accept recommended"}
-            </strong>
-            <span>{packet.recommendedAction}</span>
-            <span>
-              Accepted proof credits {demoAgentIdentity.owner}; GitHub posting
-              and payout release require explicit approval.
-            </span>
+        <DetailPane eyebrow="Selected packet" title={mission.title}>
+          <StatusRow label="What was proven" value={packet.result} tone="good" />
+          <StatusRow label="Risk" value={mission.risk} tone="good" />
+          <StatusRow label="Proof node" value={demoAgentIdentity.id} tone="good" />
+          <StatusRow label="Credit to" value={demoAgentIdentity.owner} tone="good" />
+          <StatusRow label="Earned if accepted" value={mission.reward} tone="good" />
+          <p className="pf-muted-copy">{packet.recommendedAction}</p>
+          <div className="pf-maintainer-actions">
+            <button className="secondary-action full" onClick={onReview}>
+              Review
+            </button>
             <button
               className="primary-action full"
               onClick={onAccept}
@@ -132,7 +130,7 @@ export function MaintainerScreen({
             >
               {accepted ? "Accepted" : "Accept & Mark Earned"}
             </button>
-            {accepted && (
+            {accepted ? (
               <button
                 className="secondary-action full"
                 onClick={onSignLatestProofEvent}
@@ -140,28 +138,19 @@ export function MaintainerScreen({
               >
                 {acceptanceSigned ? "Acceptance signed" : "Sign acceptance"}
               </button>
-            )}
-            {!accepted && (
+            ) : (
               <>
                 <button className="warning-action full" onClick={onRevision}>
                   Request Revision
                 </button>
                 <button className="danger-action full" onClick={onReject}>
-                  Reject Packet
+                  Reject
                 </button>
               </>
             )}
-            <button className="secondary-action full" onClick={onReview}>
-              Review Packet
-            </button>
-          </aside>
-        </div>
-
-        <details className="project-detail-drawer">
-          <summary>Decision details</summary>
-          <p>{generatedProofSummary.whatWasProven}</p>
-        </details>
-      </section>
-    </section>
+          </div>
+        </DetailPane>
+      </div>
+    </PageSurface>
   );
 }

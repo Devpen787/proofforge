@@ -80,15 +80,20 @@ export function MissionDetailScreen({
 
   return (
     <section className="page-grid mission-detail-grid">
-      <PageSurface>
+      <PageSurface className="wide">
         <PageHeader
           eyebrow="Mission preflight"
           title={mission.title}
           subtitle={mission.objective}
           actions={
-            <button className="secondary-action" onClick={onBack}>
-              Back to opportunities
-            </button>
+            <>
+              <button className="secondary-action" onClick={onBack}>
+                Back to opportunities
+              </button>
+              <button className="primary-action" onClick={onAccept}>
+                Authorize bounded run
+              </button>
+            </>
           }
         />
 
@@ -176,9 +181,6 @@ export function MissionDetailScreen({
               <span>Allowed: clone repo, run commands, capture logs.</span>
               <span>Blocked: PRs, comments, secrets, funds.</span>
             </div>
-            <button className="primary-action full" onClick={onAccept}>
-              Authorize bounded run
-            </button>
           </DetailPane>
         </div>
 

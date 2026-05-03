@@ -177,6 +177,15 @@
   align-items: center;
 }
 
+.pf-home-surface .start-pill {
+  justify-self: end;
+  border-color: transparent;
+  background: var(--pf-green);
+  color: white;
+  padding: 8px 12px;
+  white-space: nowrap;
+}
+
 .pf-agent-identity {
   display: grid;
   gap: 6px;

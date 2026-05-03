@@ -7,6 +7,7 @@ import type {
   PayoutReceipt,
   ProjectRequest
 } from "../app/types";
+import { PageHeader, PageSurface, RowList, StatusRow } from "../components/ui";
 
 export function MyWorkScreen({
   agentRegistered,
@@ -23,6 +24,7 @@ export function MyWorkScreen({
   onClarify,
   onCaseFile,
   onAgentSetup,
+  onEarnings,
   onRelease,
   onRecordPayout,
   onPublicProof
@@ -41,6 +43,7 @@ export function MyWorkScreen({
   onClarify: () => void;
   onCaseFile: () => void;
   onAgentSetup: () => void;
+  onEarnings: () => void;
   onRelease: () => void;
   onRecordPayout: (receipt: PayoutReceipt) => void;
   onPublicProof: () => void;
@@ -142,126 +145,104 @@ export function MyWorkScreen({
       onClick: accepted ? onPublicProof : onCaseFile
     }
   ];
-  const currentRows = accepted
-    ? workRows.filter((item) => item.status !== "Accepted")
-    : workRows;
+  const currentRows = workRows;
+  const creditState = released
+    ? "Released"
+    : accepted
+      ? "Earned"
+      : submitted
+        ? "In review"
+        : "Not submitted";
 
   return (
-    <section className="page-grid my-work-grid">
-      <div className="my-work-hero wide">
-        <div className="my-work-hero-copy">
-          <p className="small-label">My Work</p>
-          <h1>Work, proof, credit.</h1>
-          <p>{nextAction.title}</p>
+    <PageSurface className="wide pf-my-work-surface">
+      <PageHeader
+        eyebrow="My Work"
+        title="Track proof and earned value."
+        subtitle={nextAction.title}
+        actions={
           <button className="primary-action" onClick={nextAction.action}>
             {nextAction.label}
           </button>
-        </div>
+        }
+      />
+
+      <div className="pf-work-state-strip">
+        <StatusRow label="Active" value={submitted ? "Submitted" : "Ready"} tone="good" />
+        <StatusRow label="Accepted" value={accepted ? "Yes" : "Waiting"} tone={accepted ? "good" : "bad"} />
+        <StatusRow label="Earned" value={accepted ? mission.reward : "$0"} tone={accepted ? "good" : "bad"} />
+        <StatusRow label="Released" value={released ? "Recorded" : "Pending"} tone={released ? "good" : "bad"} />
+        <StatusRow label="Public" value={accepted ? "Ready" : "Hidden"} tone={accepted ? "good" : "bad"} />
       </div>
 
-      {(accepted || released) && (
-        <section className="my-work-ledger wide">
-          <p className="small-label">Accepted</p>
-          <div className="my-work-ledger-table">
-            <span>
-              <small>Proof</small>
-              <strong>{mission.title}</strong>
-            </span>
-            <span>
-              <small>Accepted by</small>
-              <strong>{mission.owner}</strong>
-            </span>
-            <span>
-              <small>Credit</small>
-              <strong>+{generatedProofSummary.projectCredit.points}</strong>
-            </span>
-            <span>
-              <small>Earned</small>
-              <strong>{mission.reward}</strong>
-            </span>
-            <span>
-              <small>Release</small>
-              <strong>
-                {released ? payoutReceipt?.txHash || "Released" : "Pending"}
-              </strong>
-            </span>
-            <span>
-              <small>Storage</small>
-              <strong>
-                {generatedProofSummary.protocolRefs.storageProvider}
-              </strong>
-            </span>
+      <div className="pf-my-work-layout">
+        <RowList className="pf-work-table">
+          <div className="pf-work-row head">
+            <span>Work</span>
+            <span>Source</span>
+            <span>Status</span>
+            <span>Value</span>
+            <span>Action</span>
           </div>
-        </section>
-      )}
+          {currentRows.map((item) => (
+            <button className="pf-work-row" key={item.title} onClick={item.onClick}>
+              <strong>{item.title}</strong>
+              <span>{item.source}</span>
+              <span>{item.status}</span>
+              <span>
+                {accepted && item.title === demoMyWork[0].title
+                  ? generatedProofSummary.payout.amount
+                  : item.value}
+              </span>
+              <b>{item.action}</b>
+            </button>
+          ))}
+        </RowList>
 
-      {accepted && !released && (
-        <section className="my-work-receipt wide">
-          <div>
-            <p className="small-label">Wallet receipt</p>
-            <h2>Track external payout release.</h2>
-          </div>
-          <input
-            aria-label="Payout transaction hash"
-            placeholder="Paste wallet tx hash or receipt reference"
-            value={receiptDraft.txHash}
-            onChange={(event) =>
-              setReceiptDraft((current) => ({
-                ...current,
-                txHash: event.target.value
-              }))
-            }
-          />
-          <button
-            className="primary-action"
-            onClick={() => onRecordPayout(receiptDraft)}
-          >
-            Record release
-          </button>
-        </section>
-      )}
-
-      <div className="my-work-command wide">
-        <section className="panel my-work-list">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Active work</p>
-              <h2>Current work.</h2>
-            </div>
-          </div>
-          <div className="my-work-table" role="list">
-            {currentRows.map((item) => (
+        <aside className="pf-work-detail">
+          <p className="small-label">Selected proof</p>
+          <h2>{mission.title}</h2>
+          <StatusRow label="State" value={creditState} tone={accepted ? "good" : "bad"} />
+          <StatusRow label="Accepted by" value={accepted ? mission.owner : "Waiting"} tone={accepted ? "good" : "bad"} />
+          <StatusRow label="Credit" value={`+${generatedProofSummary.projectCredit.points}`} tone={accepted ? "good" : "bad"} />
+          <StatusRow label="Receipt" value={released ? payoutReceipt?.txHash || "Recorded" : "Not released"} tone={released ? "good" : "bad"} />
+          {accepted && !released ? (
+            <div className="pf-work-receipt">
+              <input
+                aria-label="Payout transaction hash"
+                placeholder="Wallet tx hash or receipt"
+                value={receiptDraft.txHash}
+                onChange={(event) =>
+                  setReceiptDraft((current) => ({
+                    ...current,
+                    txHash: event.target.value
+                  }))
+                }
+              />
               <button
-                className="my-work-row"
-                key={item.title}
-                onClick={item.onClick}
+                className="primary-action full"
+                onClick={() => onRecordPayout(receiptDraft)}
               >
-                <span className="my-work-title">
-                  <strong>{item.title}</strong>
-                  <small>{item.project}</small>
-                </span>
-                <span>
-                  <small>Source</small>
-                  <b>{item.source}</b>
-                </span>
-                <span>
-                  <small>Status</small>
-                  <b>{item.status}</b>
-                </span>
-                <span>
-                  <small>Value</small>
-                  <b>
-                    {accepted && item.title === demoMyWork[0].title
-                      ? generatedProofSummary.payout.amount
-                      : item.value}
-                  </b>
-                </span>
-                <span className="start-pill">{item.action}</span>
+                Record release
               </button>
-            ))}
+            </div>
+          ) : null}
+          <div className="pf-work-links">
+            <button className="secondary-action full" onClick={onCaseFile}>
+              Case file
+            </button>
+            <button className="secondary-action full" onClick={onEarnings}>
+              Earnings
+            </button>
+            <button className="secondary-action full" onClick={onPublicProof}>
+              Public proof
+            </button>
+            <button className="secondary-action full" onClick={onClarify}>
+              Project work
+            </button>
           </div>
-        </section>
+        </aside>
       </div>
-    </section>
+    </PageSurface>
   );
 }

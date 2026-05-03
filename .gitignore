@@ -16,3 +16,8 @@ temp/
 __pycache__/
 *.pyc
 .vercel
+
+# Local design/reference artifacts for private iteration.
+demo-screenshots/
+docs/reference/current-ui-screenshots/
+docs/reference/redesign-2.0/

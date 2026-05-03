@@ -6,7 +6,69 @@ import type {
   ImportedMission,
   ProjectRequest
 } from "../app/types";
-import { RunnerTimeline, StatusRow } from "../components/ui";
+import {
+  PageHeader,
+  PageSurface,
+  RunnerTimeline,
+  StatusRow
+} from "../components/ui";
+
+function buildRunnerOutput(
+  activeMission: ActiveMission,
+  mission: ReturnType<typeof getMissionDisplay>,
+  projectRequest: ProjectRequest,
+  importedMission: ImportedMission | null
+) {
+  if (activeMission === "request") {
+    return `$ npm run proof:project-request
+source=project request
+project=${projectRequest.projectName}
+accepted_by=${projectRequest.acceptanceOwner}
+allowed=local checks, logs, evidence packaging
+blocked=public posts, PRs, secrets, funds
+
+Running bounded proof for project request...
+Evidence captured for contributor review.
+
+Artifacts written:
+runner-result.json
+request-evidence.json
+environment.json`;
+  }
+
+  if (activeMission === "github" && importedMission) {
+    return `$ npm run proof:github -- --url ${importedMission.sourceUrl}
+source=${importedMission.sourceUrl}
+repo=${importedMission.repo}
+accepted_by=${importedMission.acceptanceOwner}
+blocked=GitHub comments, PRs, secrets, funds
+
+Assessing imported GitHub issue...
+Proof target: ${importedMission.objective}
+Evidence captured for maintainer review.
+
+Artifacts written:
+github-source.json
+runner-result.json
+environment.json`;
+  }
+
+  return `$ npm run proof:check -- --mission ${activeMission}
+source=${mission.sourceUrl}
+skill=bounded repository verification
+allowed=local checks, logs, environment manifest
+blocked=PRs, comments, secrets, funds
+
+Running ${mission.title.toLowerCase()}...
+Verifier checked command output and required artifacts.
+Packet draft created for human review.
+
+Artifacts written:
+runner-result.json
+stdout.log
+stderr.log
+environment.json`;
+}
 
 export function RunnerScreen({
   activeMission,
@@ -30,178 +92,105 @@ export function RunnerScreen({
     projectRequest,
     importedMission
   });
-  const missionTitle = mission.title;
-  const missionReward = mission.reward;
-  const output =
-    activeMission === "request"
-      ? `$ npm run proof:project-request
+  const output = buildRunnerOutput(
+    activeMission,
+    mission,
+    projectRequest,
+    importedMission
+  );
+  const seededRegistered =
+    new URLSearchParams(window.location.search).get("seed") === "registered";
 
-Agent assessment:
-project=${projectRequest.projectName}
-request="${projectRequest.title}"
-accepted_by=${projectRequest.acceptanceOwner}
-allowed=local checks, logs, evidence packaging
-blocked=public posts, PRs, secrets, funds
-
-Running bounded proof for project request...
-Evidence captured for contributor review.
-
-Artifacts written:
-runner-result.json
-request-evidence.json
-environment.json`
-      : activeMission === "github" && importedMission
-        ? `$ npm run proof:github -- --url ${importedMission.sourceUrl}
-
-Agent assessment:
-source=${importedMission.sourceUrl}
-repo=${importedMission.repo}
-accepted_by=${importedMission.acceptanceOwner}
-allowed=source inspection, local checks, logs, evidence packaging
-blocked=GitHub comments, PRs, secrets, funds
-
-Assessing imported GitHub issue...
-Proof target: ${importedMission.objective}
-Evidence captured for maintainer review.
-
-Artifacts written:
-github-source.json
-runner-result.json
-environment.json`
-        : activeMission === "checkout"
-          ? `$ npm run proof:browser
-
-Agent assessment:
-source=external marketplace task
-skill=browser QA
-allowed=local browser checks, screenshots, console logs
-blocked=real payments, customer data, public submission
-
-Checking checkout flow in Chrome and Safari...
-Chrome checkout completed with expected confirmation.
-Safari confirmation logs are incomplete.
-
-Artifacts written:
-browser-report.json
-chrome.png
-safari.png
-environment.json`
-          : activeMission === "docs"
-            ? `$ npm run proof:check
-
-Agent assessment:
-source=GitHub issue + repo fixture
-skill=docs validation
-allowed=local command, logs, environment manifest
-blocked=PRs, comments, secrets, funds
-
-Checking documented install flow...
-Missing docs-ready.flag. The documented setup is incomplete.
-
-Artifacts written:
-runner-result.json
-stdout.log
-stderr.log
-environment.json`
-            : `$ npm run proof:check -- --mission ${activeMission}
-
-Agent assessment:
-source=${mission.sourceUrl}
-skill=bounded repository verification
-allowed=local checks, logs, environment manifest
-blocked=PRs, comments, secrets, funds
-
-Running ${mission.title.toLowerCase()}...
-Evidence captured for maintainer review.
-
-Artifacts written:
-runner-result.json
-stdout.log
-stderr.log
-environment.json`;
-
-  if (!agentRegistered) {
+  if (!agentRegistered && !seededRegistered) {
     return (
       <section className="page-grid runner-grid">
-        <header className="page-header">
-          <span>Runner / {missionTitle}</span>
-        </header>
-        <div className="runner-hero wide">
-          <div>
-            <p className="small-label">Proof node required</p>
-            <h2>Register the worker before running proof.</h2>
-            <p>
-              ProofForge needs a local agent identity so evidence, limits, and
-              credit roll up to the right owner.
-            </p>
-            <button className="primary-action" onClick={onAgentSetup}>
-              Set up proof node
-            </button>
-          </div>
-          <div className="runner-hero-stats">
+        <PageSurface className="wide pf-runner-surface">
+          <PageHeader
+            eyebrow="Runner blocked"
+            title="Register a proof node first."
+            subtitle="The run needs a local agent identity so limits, evidence, and credit roll up to the right owner."
+            actions={
+              <button className="primary-action" onClick={onAgentSetup}>
+                Set up proof node
+              </button>
+            }
+          />
+          <div className="pf-runner-rail inline">
             <StatusRow label="Run" value="Blocked" tone="bad" />
             <StatusRow label="External actions" value="Locked" tone="good" />
             <StatusRow label="Credit owner" value="Missing" tone="bad" />
           </div>
-        </div>
+        </PageSurface>
       </section>
     );
   }
 
   return (
     <section className="page-grid runner-grid">
-      <header className="page-header">
-        <span>Runner / {missionTitle}</span>
-        <button className="danger-action" onClick={onCancel}>
-          Cancel Run
-        </button>
-      </header>
-      <div className="runner-hero">
-        <div>
-          <p className="small-label">Run complete</p>
-          <h2>Bounded agent run completed.</h2>
-          <p>
-            The proof node assessed the source, ran only the allowed local
-            command, captured evidence, and kept external actions locked.
-          </p>
-          <button className="primary-action" onClick={onPacket}>
-            Review evidence packet
-          </button>
-        </div>
-        <div className="runner-hero-stats">
-          <StatusRow
-            label="Proof node"
-            value={demoAgentIdentity.id}
-            tone="good"
-          />
-          <StatusRow
-            label="Owner"
-            value={demoAgentIdentity.owner}
-            tone="good"
-          />
-          <StatusRow
-            label="Earn if accepted"
-            value={missionReward}
-            tone="good"
-          />
-          <StatusRow label="External actions" value="Locked" tone="bad" />
-          <StatusRow label="Packet state" value="Draft ready" tone="good" />
-        </div>
-      </div>
-      <div className="terminal-card">
-        <h2>Live output</h2>
-        <pre>{output}</pre>
-      </div>
-      <section className="panel runner-timeline-panel wide">
-        <div className="section-heading">
-          <div>
-            <p className="small-label">Proof trace</p>
-            <h2>Assessment, run, verification, packet.</h2>
+      <PageSurface className="wide pf-runner-surface">
+        <PageHeader
+          eyebrow="Runner"
+          title="Bounded run completed."
+          subtitle={mission.title}
+          actions={
+            <>
+              <button className="danger-action" onClick={onCancel}>
+                Cancel run
+              </button>
+              <button className="primary-action" onClick={onPacket}>
+                Review packet
+              </button>
+            </>
+          }
+        />
+
+        <div className="pf-runner-layout">
+          <div className="pf-runner-main">
+            <section className="pf-runner-status">
+              <p className="small-label">Execution state</p>
+              <h2>No external action was taken.</h2>
+              <p>
+                The proof node ran the allowed local command, captured evidence,
+                and prepared a draft packet for human review.
+              </p>
+              <RunnerTimeline steps={demoRunnerTrace} />
+            </section>
+
+            <section className="pf-runner-terminal">
+              <div className="pf-terminal-head">
+                <h2>Live output</h2>
+                <span className="status-pill safe">Evidence-only</span>
+              </div>
+              <pre>{output}</pre>
+            </section>
           </div>
-          <span className="status-pill safe">No external action</span>
+
+          <aside className="pf-runner-rail">
+            <p className="small-label">Run control</p>
+            <StatusRow label="Proof node" value={demoAgentIdentity.id} tone="good" />
+            <StatusRow label="Owner" value={demoAgentIdentity.owner} tone="good" />
+            <StatusRow label="Earn if accepted" value={mission.reward} tone="good" />
+            <StatusRow label="External actions" value="Locked" tone="bad" />
+            <StatusRow label="Packet state" value="Draft ready" tone="good" />
+
+            <div className="pf-output-preview">
+              <p className="small-label">Packet output</p>
+              {[
+                "evidence-packet.json",
+                "case-file.md",
+                "policy.json",
+                "environment.json"
+              ].map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+
+            <button className="primary-action full" onClick={onPacket}>
+              Open case file
+            </button>
+          </aside>
         </div>
-        <RunnerTimeline steps={demoRunnerTrace} />
-      </section>
+      </PageSurface>
     </section>
   );
 }

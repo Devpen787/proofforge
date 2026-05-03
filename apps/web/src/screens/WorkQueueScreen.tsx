@@ -1,14 +1,192 @@
 import React from "react";
 import type { WorkSourceImport } from "@proofforge/sources";
 import { importGitHubIssueLead } from "@proofforge/sources";
-import { demoProject, demoProjectWorkLead, demoWorkLead } from "../demo";
+import {
+  demoProject,
+  demoProjectWorkLead,
+  demoWorkLead,
+  demoWorkLeadDiagnosis
+} from "../demo";
 import { formatReward } from "../app/missionDisplay";
 import type {
   ActiveMission,
   ImportedMission,
   ProjectRequest
 } from "../app/types";
-import { StatusRow } from "../components/ui";
+import {
+  ActionBar,
+  DetailPane,
+  MetricStrip,
+  PageHeader,
+  PageSurface,
+  RowList,
+  StatusRow
+} from "../components/ui";
+
+type DemoOpportunity = (typeof demoProject.opportunities)[number];
+function score(value: string) {
+  return Number(value.replace(/[^0-9]/g, "")) || 0;
+}
+
+function WorkRow({
+  item,
+  selected,
+  onRun,
+  onImport
+}: {
+  item: DemoOpportunity;
+  selected: boolean;
+  onRun: (mission: ActiveMission) => void;
+  onImport: () => void;
+}) {
+  const ready = item.action === "Run";
+  return (
+    <article className={selected ? "pf-source-row selected" : "pf-source-row"}>
+      <div>
+        <strong>{item.title}</strong>
+        <small>{item.detail}</small>
+      </div>
+      <span>{item.source}</span>
+      <span>{item.acceptedBy}</span>
+      <b>{item.reward}</b>
+      <span>{item.safety}</span>
+      <button
+        className={ready ? "primary-action" : "secondary-action"}
+        onClick={() =>
+          ready ? onRun(item.mission as ActiveMission) : onImport()
+        }
+      >
+        {ready ? "Assess" : item.action}
+      </button>
+    </article>
+  );
+}
+
+function ImportedIssueRow({
+  githubUrl,
+  liveImport,
+  importedMission,
+  importStatus,
+  onUrlChange,
+  onImportIssue,
+  onRun
+}: {
+  githubUrl: string;
+  liveImport: WorkSourceImport | null;
+  importedMission: ImportedMission | null;
+  importStatus: "idle" | "loading" | "failed";
+  onUrlChange: (value: string) => void;
+  onImportIssue: () => void;
+  onRun: (mission: ActiveMission) => void;
+}) {
+  const status =
+    liveImport || importedMission
+      ? "Ready to assess"
+      : importStatus === "failed"
+        ? "Import failed"
+        : "Paste a public issue URL";
+  return (
+    <article className="pf-source-import-row">
+      <div>
+        <strong>Import GitHub issue</strong>
+        <input
+          aria-label="GitHub issue URL"
+          value={githubUrl}
+          onChange={(event) => onUrlChange(event.target.value)}
+        />
+        <small>{status}</small>
+      </div>
+      <button
+        className="secondary-action"
+        onClick={onImportIssue}
+        disabled={importStatus === "loading"}
+      >
+        {importStatus === "loading" ? "Importing" : "Import"}
+      </button>
+      {importedMission ? (
+        <button className="primary-action" onClick={() => onRun("github")}>
+          Assess
+        </button>
+      ) : null}
+    </article>
+  );
+}
+
+function TriagePane({
+  clarified,
+  converted,
+  onClarify,
+  onConvert,
+  onReject,
+  onRun
+}: {
+  clarified: boolean;
+  converted: boolean;
+  onClarify: () => void;
+  onConvert: () => void;
+  onReject: () => void;
+  onRun: (mission: ActiveMission) => void;
+}) {
+  return (
+    <DetailPane eyebrow="Work lead" title={demoWorkLead.title}>
+      <p className="pf-muted-copy">{demoWorkLead.rawRequest}</p>
+      <StatusRow label="Risk" value={demoWorkLead.risk} tone="bad" />
+      <StatusRow label="Reward" value={demoWorkLead.reward} tone="good" />
+      <StatusRow
+        label="Accepts proof"
+        value={demoWorkLead.acceptsProof}
+        tone="good"
+      />
+      <StatusRow
+        label="Missing"
+        value={clarified ? "None" : demoWorkLead.missing}
+        tone={clarified ? "good" : "bad"}
+      />
+      <div className="pf-diagnosis">
+        {demoWorkLeadDiagnosis.map((row) => (
+          <StatusRow
+            key={row.label}
+            label={row.label}
+            value={
+              row.label === "Missing detail" && clarified ? "Confirmed" : row.value
+            }
+            tone={
+              row.label === "Missing detail" && clarified
+                ? "good"
+                : row.tone
+            }
+          />
+        ))}
+      </div>
+      {!clarified ? (
+        <strong className="pf-next-question">
+          {demoWorkLead.nextQuestion}
+        </strong>
+      ) : null}
+      <ActionBar>
+        <button
+          className="primary-action"
+          onClick={
+            converted
+              ? () => onRun("checkout")
+              : clarified
+                ? onConvert
+                : onClarify
+          }
+        >
+          {converted
+            ? "Run converted mission"
+            : clarified
+              ? "Convert to mission"
+              : "Ask clarification"}
+        </button>
+        <button className="danger-action" onClick={onReject}>
+          Reject
+        </button>
+      </ActionBar>
+    </DetailPane>
+  );
+}
 
 export function WorkQueueScreen({
   importedLead,
@@ -39,18 +217,23 @@ export function WorkQueueScreen({
   importedMission: ImportedMission | null;
   projectRequest: ProjectRequest;
 }) {
-  const [activeFilter, setActiveFilter] = React.useState("Best fit");
   const [githubUrl, setGithubUrl] = React.useState(
     "https://github.com/microsoft/vscode/issues/1"
   );
-  const [liveImport, setLiveImport] = React.useState<WorkSourceImport | null>(
-    null
-  );
+  const [liveImport, setLiveImport] =
+    React.useState<WorkSourceImport | null>(null);
   const [importStatus, setImportStatus] = React.useState<
     "idle" | "loading" | "failed"
   >("idle");
-  const proofability = workLeadClarified ? "88%" : demoWorkLead.proofability;
   const triageMode = importedLead || workLeadClarified || workLeadConverted;
+  const ready = demoProject.opportunities.filter(
+    (item) => item.state === "Ready to run"
+  );
+  const selected = ready[0];
+  const average = Math.round(
+    ready.reduce((total, item) => total + score(item.proofability), 0) / ready.length
+  );
+
   const importGitHubIssue = async () => {
     setImportStatus("loading");
     try {
@@ -87,279 +270,126 @@ export function WorkQueueScreen({
       setImportStatus("failed");
     }
   };
-  const readyOpportunities = demoProject.opportunities.filter(
-    (opportunity) => opportunity.state === "Ready to run"
-  );
-  const triageOpportunities = demoProject.opportunities.filter(
-    (opportunity) => opportunity.state === "Needs triage"
-  );
-  const renderOpportunityRow = (
-    opportunity: (typeof demoProject.opportunities)[number],
-    index: number
-  ) => (
-    <article
-      className={
-        index === 0 && opportunity.action === "Run"
-          ? "opportunity-card selected"
-          : "opportunity-card"
-      }
-      key={opportunity.title}
-    >
-      <div className="opportunity-card-main">
-        <span className="opportunity-icon">{index + 1}</span>
-        <div>
-          <strong>{opportunity.title}</strong>
-          <small>{opportunity.detail}</small>
-          <div className="opportunity-card-meta">
-            <span>{opportunity.source}</span>
-            <span>{opportunity.acceptedBy}</span>
-            <span>{opportunity.reward}</span>
-            <span>{opportunity.proofability} proofable</span>
-          </div>
-        </div>
-      </div>
-      <button
-        className={
-          opportunity.action === "Run" ? "primary-action" : "secondary-action"
-        }
-        onClick={() =>
-          opportunity.action === "Run"
-            ? onRun(opportunity.mission as ActiveMission)
-            : onImport()
-        }
-      >
-        {opportunity.action === "Run" ? "Assess" : opportunity.action}
-      </button>
-    </article>
-  );
-
-  if (triageMode) {
-    return (
-      <section className="page-grid work-queue-flow">
-        <header className="page-header">
-          <span>Opportunities / Imported work</span>
-          <button className="secondary-action" onClick={onViewInventory}>
-            View inventory
-          </button>
-        </header>
-
-        <div className="triage-workbench wide compact-triage">
-          <div>
-            <p className="small-label">Imported opportunity</p>
-            <h1>{demoWorkLead.title}</h1>
-            <div className="tag-row">
-              {demoWorkLead.categories.map((category) => (
-                <span className="status-pill safe" key={category}>
-                  {category}
-                </span>
-              ))}
-            </div>
-          </div>
-
-          <section className="triage-fit-table">
-            <StatusRow label="Risk" value={demoWorkLead.risk} tone="bad" />
-            <StatusRow label="Reward" value={demoWorkLead.reward} tone="good" />
-            <StatusRow
-              label="Accepts proof"
-              value={demoWorkLead.acceptsProof}
-              tone="good"
-            />
-            <StatusRow
-              label="Missing"
-              value={workLeadClarified ? "None" : demoWorkLead.missing}
-              tone={workLeadClarified ? "good" : "bad"}
-            />
-            <StatusRow label="Proofability" value={proofability} tone="good" />
-          </section>
-
-          <section className="triage-next-card compact-triage-action">
-            <div>
-              <h2>
-                {workLeadConverted
-                  ? "Ready to run."
-                  : workLeadClarified
-                    ? "Convert this lead."
-                    : "Ask one question before any run starts."}
-              </h2>
-              <p>
-                {workLeadConverted
-                  ? "Checkout QA verification is ready to run."
-                  : workLeadClarified
-                    ? "Browser targets are confirmed."
-                    : demoWorkLead.nextQuestion}
-              </p>
-            </div>
-            <div className="decision-row">
-              <button
-                className="primary-action"
-                onClick={
-                  workLeadConverted
-                    ? () => onRun("checkout")
-                    : workLeadClarified
-                      ? onConvertLead
-                      : onClarifyLead
-                }
-              >
-                {workLeadConverted
-                  ? "Run mission"
-                  : workLeadClarified
-                    ? "Convert"
-                    : "Ask clarification"}
-              </button>
-              <button className="danger-action" onClick={onRejectLead}>
-                Reject
-              </button>
-            </div>
-          </section>
-        </div>
-
-        {projectWorkSuggested && (
-          <details className="project-detail-drawer wide">
-            <summary>{demoProjectWorkLead.title}</summary>
-            <StatusRow
-              label="Missing"
-              value={demoProjectWorkLead.missing}
-              tone="bad"
-            />
-          </details>
-        )}
-
-        {workLeadConverted && (
-          <button
-            className="primary-action wide"
-            onClick={() => onRun("checkout")}
-          >
-            Run converted mission
-          </button>
-        )}
-      </section>
-    );
-  }
-
   return (
     <section className="page-grid work-queue-grid">
-      <header className="page-header">
-        <span>Opportunities</span>
-        <button
-          className="secondary-action"
-          aria-label="Import work"
-          onClick={onImport}
-        >
-          Import work
-        </button>
-      </header>
+      <PageSurface className="wide">
+        <PageHeader
+          eyebrow="Opportunities"
+          title="Choose source-backed work."
+          subtitle="Only scoped work becomes a mission. Raw requests stay in triage until owner, proof, and value path are clear."
+          actions={
+            <button className="secondary-action" onClick={onImport}>
+              Import work
+            </button>
+          }
+        />
 
-      <div className="opportunity-command-panel wide">
-        <div className="opportunity-list-panel">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Sourced work inventory</p>
-              <h2>Choose sourced work.</h2>
+        <MetricStrip
+          metrics={[
+            { label: "Ready missions", value: String(ready.length) },
+            { label: "Needs triage", value: "3" },
+            { label: "Avg proofability", value: `${average}%` },
+            { label: "Sources", value: "3", detail: "GitHub, project, market" }
+          ]}
+        />
+
+        <div className="pf-opportunity-layout">
+          <div>
+            <div className="pf-source-head">
+              <span>Work</span>
+              <span>Source</span>
+              <span>Accepts</span>
+              <span>Value</span>
+              <span>Safety</span>
+              <span />
             </div>
-          </div>
-          <div
-            className="opportunity-filter-row"
-            aria-label="Opportunity filters"
-          >
-            {["Best fit", "Safe", "Docs", "Rewards"].map((filter) => (
-              <button
-                className={activeFilter === filter ? "active" : ""}
-                key={filter}
-                disabled={activeFilter === filter}
-                onClick={() => setActiveFilter(filter)}
-              >
-                {filter}
-              </button>
-            ))}
-          </div>
-          <div className="opportunity-lane-list">
-            {projectWorkSuggested && (
-              <article className="project-request-opportunity">
-                <div>
-                  <p className="small-label">Project request</p>
-                  <strong>{projectRequest.title}</strong>
-                  <small>{projectRequest.detail}</small>
-                  <div className="opportunity-card-meta">
-                    <span>{projectRequest.projectName}</span>
-                    <span>{projectRequest.acceptanceOwner} accepts</span>
-                    <span>Contributor request</span>
-                    <span>88% proofable</span>
-                  </div>
-                </div>
-                <button
-                  className="primary-action"
-                  onClick={() => onRun("request")}
-                >
-                  Accept request
-                </button>
-              </article>
-            )}
 
-            <article className="github-import-row">
-              <div>
-                <strong>Import GitHub issue</strong>
-                <input
-                  aria-label="GitHub issue URL"
-                  value={githubUrl}
-                  onChange={(event) => setGithubUrl(event.target.value)}
-                />
-                {liveImport && (
-                  <small>
-                    Imported {liveImport.lead.repo} issue #
-                    {liveImport.ref.issueNumber}: {liveImport.lead.status}
-                  </small>
-                )}
-                {importedMission && !liveImport && (
-                  <small>
-                    Imported {importedMission.repo}: ready to assess.
-                  </small>
-                )}
-                {importStatus === "failed" && (
-                  <small>Import failed. Check the issue URL.</small>
-                )}
-              </div>
-              <div className="github-import-actions">
-                <button
-                  className="secondary-action"
-                  onClick={importGitHubIssue}
-                  disabled={importStatus === "loading"}
-                >
-                  {importStatus === "loading" ? "Importing" : "Import"}
-                </button>
-                {importedMission && (
+            <RowList>
+              {projectWorkSuggested ? (
+                <article className="pf-source-row selected">
+                  <div>
+                    <strong>{projectRequest.title}</strong>
+                    <small>{projectRequest.detail}</small>
+                  </div>
+                  <span>Project request</span>
+                  <span>{projectRequest.acceptanceOwner}</span>
+                  <b>{projectRequest.reward}</b>
+                  <span>Safe</span>
                   <button
                     className="primary-action"
-                    onClick={() => onRun("github")}
+                    onClick={() => onRun("request")}
                   >
-                    Assess imported issue
+                    Assess
                   </button>
-                )}
-              </div>
-            </article>
+                </article>
+              ) : null}
 
-            <section className="opportunity-lane">
-              <div className="opportunity-lane-heading">
-                <span>Ready missions</span>
-                <b>{readyOpportunities.length}</b>
-              </div>
-              {readyOpportunities.map(renderOpportunityRow)}
-            </section>
+              <ImportedIssueRow
+                githubUrl={githubUrl}
+                liveImport={liveImport}
+                importedMission={importedMission}
+                importStatus={importStatus}
+                onUrlChange={setGithubUrl}
+                onImportIssue={importGitHubIssue}
+                onRun={onRun}
+              />
 
-            <section className="opportunity-lane">
-              <div className="opportunity-lane-heading">
-                <span>Needs details</span>
-                <b>{triageOpportunities.length}</b>
-              </div>
-              {triageOpportunities.map((opportunity, index) =>
-                renderOpportunityRow(
-                  opportunity,
-                  readyOpportunities.length + index
-                )
-              )}
-            </section>
+              {ready.map((item, index) => (
+                <WorkRow
+                  item={item}
+                  selected={!projectWorkSuggested && index === 0}
+                  onRun={onRun}
+                  onImport={onImport}
+                  key={item.title}
+                />
+              ))}
+            </RowList>
           </div>
+
+          {triageMode ? (
+            <TriagePane
+              clarified={workLeadClarified}
+              converted={workLeadConverted}
+              onClarify={onClarifyLead}
+              onConvert={onConvertLead}
+              onReject={onRejectLead}
+              onRun={onRun}
+            />
+          ) : (
+            <DetailPane eyebrow="Best first mission" title={selected.title}>
+              <p className="pf-muted-copy">{selected.detail}</p>
+              <StatusRow label="Source" value={selected.source} tone="good" />
+              <StatusRow
+                label="Accepts proof"
+                value={selected.acceptedBy}
+                tone="good"
+              />
+              <StatusRow label="Value" value={selected.reward} tone="good" />
+              <StatusRow label="Safety" value={selected.safety} tone="good" />
+              <StatusRow
+                label="Proofability"
+                value={selected.proofability}
+                tone="good"
+              />
+              <button
+                className="primary-action full"
+                onClick={() => onRun(selected.mission as ActiveMission)}
+              >
+                Assess mission
+              </button>
+            </DetailPane>
+          )}
         </div>
-      </div>
+
+        {projectWorkSuggested && !triageMode ? (
+          <ActionBar>
+            <button className="secondary-action" onClick={onViewInventory}>
+              View all inventory
+            </button>
+            <span className="pf-muted-copy">{demoProjectWorkLead.missing}</span>
+          </ActionBar>
+        ) : null}
+      </PageSurface>
     </section>
   );
 }
