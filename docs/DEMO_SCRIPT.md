@@ -5,8 +5,8 @@ what to show, what to click, and what to say.
 
 ## Five-Second Pitch
 
-ProofForge turns real GitHub and open-source work into bounded agent missions,
-verified evidence packets, maintainer acceptance, and tracked credit or payout.
+ProofForge helps developers and their agents turn useful work into accepted
+proof, so contributions can be tracked, reviewed, credited, and paid for.
 
 ## Pre-Recording Setup
 
@@ -55,9 +55,10 @@ Show `/#opportunity`.
 
 Say:
 
-> ProofForge turns sourced software work into safe agent missions, evidence
-> packets, maintainer acceptance, and tracked credit. The goal is simple: prove
-> what an agent did, who owns it, and why it should count.
+> ProofForge is the layer between messy work and recognized value. It helps
+> developers and their agents take useful work from GitHub, bounties,
+> marketplaces, or project backlogs, turn it into accepted proof, and track the
+> credit or payout that follows.
 
 Click `Set up proof node`.
 
@@ -67,9 +68,10 @@ Show proof node identity, owner, skills, ENS, and blocked actions.
 
 Say:
 
-> First we register the proof node. This is the agent that can inspect public
-> repos, run local checks, and package evidence. It cannot spend funds, open PRs,
-> or post comments on its own. The work stays bounded.
+> First we register the proof node. This is the agent that can help with the
+> work, but only inside clear boundaries. It can inspect public repos, run local
+> checks, and package evidence. It cannot spend funds, open PRs, or post
+> comments on its own.
 
 Click `Register proof node`, then `Find source-backed work`.
 
@@ -80,8 +82,8 @@ Show `/#work-queue`, the GitHub issue import, and the mission list.
 Say:
 
 > Work starts from a real source: a GitHub issue, project backlog, marketplace
-> task, or maintainer request. ProofForge turns that into missions the agent can
-> assess instead of letting it freestyle.
+> task, bounty, or maintainer request. ProofForge turns that messy source into a
+> mission a person and bounded agent can actually assess and complete.
 
 Click `Assess` on `Validate installation docs`.
 
@@ -91,9 +93,9 @@ Show source, reward, runtime, risk, acceptance owner, and agent assessment.
 
 Say:
 
-> Before anything runs, I can see what will be proven, what the agent is allowed
-> to do, who accepts the proof, and what value is attached. This is the contract
-> for the run.
+> Before anything runs, I can see what is worth proving, what the agent is
+> allowed to do, who accepts the proof, and what value is attached. This keeps
+> the work useful to the project instead of becoming random agent output.
 
 Click `Authorize agent run`.
 
@@ -103,9 +105,9 @@ Show the run summary and live output.
 
 Say:
 
-> The proof node runs the local check, captures logs and environment details,
-> blocks external actions, and writes artifacts. No secrets, no funds, no public
-> posting.
+> The proof node helps execute the mission. It runs the local check, captures
+> logs and environment details, blocks external actions, and writes artifacts.
+> The agent helps, but the proof is what makes the contribution reviewable.
 
 Click `Review evidence packet`.
 
@@ -116,8 +118,8 @@ Show result, artifacts, privacy, security, and 0G storage reference.
 Say:
 
 > The output becomes a maintainer-ready case file: what was tested, what passed,
-> what failed, what was hidden, and where the public-safe packet is stored. Here
-> the proof is anchored with a 0G Storage reference.
+> what failed, what was hidden, and where the public-safe packet is stored. This
+> is how useful work becomes evidence a project steward can trust.
 
 Click `Submit to maintainer`.
 
@@ -128,8 +130,8 @@ Show the decision screen.
 Say:
 
 > The maintainer sees the proof, not agent noise. They can accept, request a
-> revision, or reject it. Acceptance creates the earned record, project credit,
-> and payout state.
+> revision, or reject it. Acceptance is the moment the contribution becomes
+> recognized value.
 
 Click `Accept & Mark Earned`.
 
@@ -139,9 +141,9 @@ Show accepted Home state.
 
 Say:
 
-> Now the work is accepted. V1 tracks payout manually, so we are not pretending
-> settlement is automatic. But the user has accepted proof, credit, reputation,
-> and a clear payout state they can use today.
+> Now the work is accepted. The developer gets credit, reputation, and a payout
+> state the project can track today. Over time, this turns projects into living
+> contribution economies.
 
 Click `Release payout`, then `View public proof`.
 
@@ -154,12 +156,12 @@ Say:
 
 > This is the shareable proof: the agent identity resolves through ENS, the
 > packet has a 0G storage reference, and the accepted work rolls up to the
-> builder. ProofForge is the coordination layer between sourced work, bounded
-> agents, maintainer trust, and portable proof of value.
+> builder and project. ProofForge helps people and agents coordinate around
+> useful work, prove what holds, and compound value together.
 
 ## Fast Version If You Need 90 Seconds
 
-1. Home: say the five-second pitch.
+1. Home: say the five-second pitch and collective contribution economy framing.
 2. Agent Setup: register proof node and name the permissions.
 3. Opportunities: show sourced inventory and choose one mission.
 4. Runner: show bounded execution and artifacts.
@@ -215,8 +217,8 @@ Real in V1:
 - Verifier checks run against the generated artifacts.
 - Evidence packet, case file, public packet, project credit, and payout records
   are generated.
-- The web app demonstrates the full role flow from contributor to maintainer to
-  public proof.
+- The web app demonstrates the full role flow from source-backed work to agent
+  assistance, maintainer acceptance, public proof, and project credit.
 - 0G integration is usable when credentials are configured and the command
   returns a real storage reference or transaction hash.
 
