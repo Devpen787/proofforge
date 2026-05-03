@@ -8,6 +8,16 @@ import {
 import type { ActiveMission } from "../app/types";
 import { StatusBlock, StatusRow } from "../components/ui";
 
+type GeneratedWorkSource = {
+  source: string;
+  title: string;
+  repo: string;
+  acceptanceOwner: string;
+  status: string;
+  valuePath: string;
+  mode: string;
+};
+
 export function WorkQueueScreen({
   importedLead,
   projectWorkSuggested,
@@ -33,6 +43,8 @@ export function WorkQueueScreen({
 }) {
   const [activeFilter, setActiveFilter] = React.useState("Best fit");
   const selectedOpportunity = demoProject.opportunities[0];
+  const generatedWorkSources =
+    generatedProofSummary.generatedWorkSources as readonly GeneratedWorkSource[];
   const proofability = workLeadClarified ? "88%" : demoWorkLead.proofability;
   const triageMode = importedLead || workLeadClarified || workLeadConverted;
   const sourceUseLabel = (mode: string) =>
@@ -181,7 +193,7 @@ export function WorkQueueScreen({
             ))}
           </div>
           <div className="source-inventory-table" aria-label="Imported sources">
-            {generatedProofSummary.generatedWorkSources.map((source) => (
+            {generatedWorkSources.map((source) => (
               <div className="source-inventory-row" key={source.title}>
                 <span>
                   <strong>{source.title}</strong>

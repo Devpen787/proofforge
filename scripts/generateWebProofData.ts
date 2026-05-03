@@ -172,8 +172,13 @@ async function main(): Promise<void> {
   const zeroGClaim = submissionEvidence?.claims.find(
     (claim) => claim.partner === "0G Storage"
   );
-  const storageUri = evidencePacket.protocolRefs?.storageUri;
-  const storageTxHash = zeroGClaim?.output;
+  const rawStorageUri = evidencePacket.protocolRefs?.storageUri;
+  const hasLiveZeroGReceipt =
+    rawStorageUri?.startsWith("0g://") &&
+    typeof zeroGClaim?.output === "string" &&
+    zeroGClaim.output.startsWith("0x");
+  const storageUri = hasLiveZeroGReceipt ? rawStorageUri : null;
+  const storageTxHash = hasLiveZeroGReceipt ? zeroGClaim?.output : null;
 
   const generatedProofSummary = {
     generatedFrom: "demo-output/docs-install/packet",
@@ -202,11 +207,13 @@ async function main(): Promise<void> {
       storageProvider: zeroGClaim ? "0G Storage" : "local",
       storageStatus: zeroGClaim?.status ?? "local evidence",
       storageUri,
-      storageRootShort: storageUri?.replace("0g://", "").slice(0, 14),
+      storageRootShort: storageUri
+        ? storageUri.replace("0g://", "").slice(0, 14)
+        : null,
       storageTxHash,
       storageTxShort: storageTxHash
         ? `${storageTxHash.slice(0, 10)}...${storageTxHash.slice(-6)}`
-        : undefined,
+        : null,
       identityRef: evidencePacket.protocolRefs?.identityRef,
       messageTraceId: evidencePacket.protocolRefs?.messageTraceId
     },

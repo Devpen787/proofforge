@@ -127,7 +127,6 @@ button {
   grid-template-columns: minmax(0, 1fr);
 }
 
-.runner-grid,
 .case-grid,
 .packet-grid,
 .maintainer-grid,
@@ -136,6 +135,11 @@ button {
 .mission-detail-grid,
 .first-run-grid {
   grid-template-columns: 1fr 1fr 320px;
+}
+
+.runner-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.72fr);
+  align-items: start;
 }
 
 .page-header,

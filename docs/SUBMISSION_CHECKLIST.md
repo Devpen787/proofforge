@@ -1,126 +1,152 @@
 # ProofForge Submission Checklist
 
-Use this before final hackathon submission.
+Use this before final ETHGlobal submission.
 
 ## Required Links
 
 - Public GitHub repository: `https://github.com/Devpen787/proofforge`
-- Local demo URL: `http://localhost:5173/#opportunity`
-- Deployed demo URL: add after deployment
+- Deployed demo: `https://proofforgehub.vercel.app`
+- Local demo: `http://localhost:5175/#opportunity`
 - Demo video URL: add after recording
+- Contract deployment address: add if you deploy `ProofRegistry` during the
+  final recording
+- 0G receipt/root: add if you run a live 0G upload during the final recording
 
-## Demo Video Requirements
+## Final Verification Gate
 
-- Length: 2-4 minutes
-- Resolution: at least 720p
-- Audio: clear spoken narration, not music-only
-- Show the repository and the working product
-- Show at least one terminal proof command
-- Show the browser proof loop from work to payout state
-
-## Recommended Video Flow
-
-1. State the problem: agents create more output, but maintainers need trusted proof.
-2. Show the agent/node identity and allowed/blocked actions.
-3. Run `npm run demo:packet`.
-4. Run `npm run sync:web-proof` to sync sanitized generated proof data into the browser demo.
-5. Show generated artifacts under `demo-output/docs-install/packet/`.
-6. Run `npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json`.
-7. Open the web app at `http://localhost:5173/#opportunity`.
-8. Click through:
-   - Home (`#opportunity`)
-   - Guided proof flow (`#first-run`)
-   - Opportunities (`#work-queue`)
-   - Runner (`#run`)
-   - Case File (`#case-file`)
-   - Maintainer Review (`#maintainer`)
-   - Proof ledger / outcome state (`#scoreboard`)
-   - Public Proof (`#public-proof`)
-   - Reproducible terminal proof commands from this checklist
-9. Close with: ProofForge turns existing work into safe missions, evidence packets, accepted proof, and credit.
-
-The exact terminal files and routes to show are listed in [DEMO_SCRIPT.md](DEMO_SCRIPT.md#recording-checklist).
-
-## Judge Run Commands
+Run from the repository root:
 
 ```bash
 npm install
+npm run format:check
+npm run lint
+npm run typecheck
 npm test
 npm run build
-npm run 0g:check
-npm run demo:packet
-npm run sync:web-proof
-npm run dev
+npm run smoke:web
+npm run smoke:web:prod
+npm audit --audit-level=moderate
 ```
 
-Optional payout release command:
+Proof artifact commands:
 
 ```bash
-npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
+npm run demo:packet
+npm run sync:web-proof
 ```
 
-Optional payout rail handoff command:
+Optional, if 0G credentials are configured:
+
+```bash
+npm run 0g:check
+npm run 0g:upload-record -- --in <proof-network-record.json>
+```
+
+Optional payout handoff:
 
 ```bash
 npm run payout:handoff -- --payout demo-output/docs-install/packet/payout.json --record <proof-network-record.json> --recipient <wallet>
 ```
 
-This prepares Safe, Splits, and Drips metadata only. ProofForge does not custody
-or move funds.
+## Demo Video Requirements
 
-Optional public work import command:
+- Length: 2-4 minutes
+- Target: around 2 minutes so the final edit stays under 4 minutes
+- Resolution: at least 720p
+- Audio: spoken human narration
+- Show the hosted app, not only localhost
+- Show at least one terminal proof command
+- Show the browser proof loop from sourced work to public proof
 
-```bash
-npm run import:github -- --url https://github.com/microsoft/vscode/issues/1
-```
+Use [DEMO_SCRIPT.md](DEMO_SCRIPT.md) as the recording script.
+
+## Exact Video Flow
+
+1. Open with the problem: agents create output, but projects need accepted proof.
+2. Show Home and Agent Setup.
+3. Show Opportunities and run the sourced docs mission.
+4. Approve the packet and submit it.
+5. On Maintainer Review, record the GitHub post URL.
+6. Sign acceptance with wallet or demo signer.
+7. Optionally deploy/anchor with `ProofRegistry` if MetaMask is ready.
+8. Accept as maintainer.
+9. Show Public Proof.
+10. Show Settings handoffs:
+    - Prepare 0G upload
+    - Record 0G receipt/root
+    - Prepare payout handoff
+    - Publish shared project
+    - Pull shared project
+11. Close with ProofForge as the contribution proof and coordination layer.
 
 ## Browser Routes
 
 ```text
-Home: http://localhost:5173/#opportunity
-Guided proof flow: http://localhost:5173/#first-run
-Projects: http://localhost:5173/#projects
-Opportunities: http://localhost:5173/#work-queue
-Mission detail: http://localhost:5173/#mission-detail
-Runner: http://localhost:5173/#run
-Case File: http://localhost:5173/#case-file
-Maintainer Review: http://localhost:5173/#maintainer
-Proof ledger / outcome state: http://localhost:5173/#scoreboard
-Public Proof: http://localhost:5173/#public-proof
+Home: https://proofforgehub.vercel.app/#opportunity
+Agent Setup: https://proofforgehub.vercel.app/#agent-setup
+Projects: https://proofforgehub.vercel.app/#projects
+Opportunities: https://proofforgehub.vercel.app/#work-queue
+Mission Detail: https://proofforgehub.vercel.app/#mission-detail
+Runner: https://proofforgehub.vercel.app/#run
+Case File: https://proofforgehub.vercel.app/#case-file
+Maintainer Review: https://proofforgehub.vercel.app/#maintainer
+My Work: https://proofforgehub.vercel.app/#my-work
+Builder Passport: https://proofforgehub.vercel.app/#builder-passport
+Public Proof: https://proofforgehub.vercel.app/#public-proof
+Settings: https://proofforgehub.vercel.app/#settings
 ```
 
 ## What Works Now
 
-- GitHub issue import creates a local Work Lead from public issue data.
-- Mission conversion blocks vague or incomplete work.
+- Public GitHub issue import creates local Work Leads.
+- Mission conversion blocks vague work.
 - Local runner creates deterministic proof artifacts.
 - Independent verifier checks runner artifacts.
-- Evidence Packet, Case File, Public Packet, Policy, Payout, and Project artifacts are generated.
-- Submission evidence artifact lists GitHub, ETHGlobal, 0G, agent identity/skills, and payout/receipt claims with proof commands.
-- Earned payout and released payout are separate accounting states.
-- Web prototype demonstrates the user journey and review surfaces.
-- Route registration has automated test coverage.
+- Case File creates a maintainer-ready packet.
+- GitHub handoff copies a maintainer comment and opens the source issue.
+- Maintainer Review records the posted GitHub comment URL.
+- Wallet acceptance uses MetaMask when available.
+- `ProofRegistry` can be deployed and used to anchor accepted proof.
+- Settings prepares 0G upload commands and records returned receipts.
+- Settings prepares Safe/Splits/Drips payout handoff commands.
+- Settings publishes and pulls shared project state through GUN.
+- Public Proof shows source, maintainer post, artifacts, onchain anchor,
+  0G receipt, payout receipt, and credit state.
+- Production and local smoke tests cover the full proof journey.
 
-## Known Limits
+## Partner Prize Claims To Keep
 
-- The current runner is deterministic and local; Docker-backed sandboxing is a later step.
-- The web app is a product prototype using seeded data, not a hosted backend.
-- Payments are manual accounting artifacts only; no automatic transfer or escrow happens.
-- 0G storage is adapter-gated and uses local storage unless credentials are configured.
-- ENS and AXL are not live unless completed and verified before submission.
-- Agent identity and coordination trace are modeled locally. Do not claim ENS or AXL unless those integrations are completed and verified.
-- ProofForge does not post GitHub comments, open pull requests, or contact maintainers automatically.
-- Current dependency audit status is documented in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md).
+Only name prizes that match real product behavior.
 
-## Final Pre-Submit Gate
+- **0G**: ProofForge uses 0G as durable evidence-record storage through
+  credential-gated runner upload and browser receipt recording.
+- **ENS**: only claim if final build uses a verified ENS identity/subname in the
+  submitted product. Otherwise describe it as roadmap/identity direction.
+- **Agent framework/tooling**: ProofForge provides bounded proof-node workflow,
+  skills/permissions, verifier checks, evidence packets, and accepted proof
+  records.
 
-Run:
+Do not claim Uniswap, KeeperHub, or Gensyn AXL unless separately implemented and
+verified before submission.
 
-```bash
-npm test
-npm run build
-npm run demo:packet
-npm run sync:web-proof
-```
+## Known Boundaries
 
-Then verify the browser routes above and confirm the submission form has the repository, deployed demo URL, and demo video URL.
+- ProofForge does not custody funds.
+- ProofForge does not automatically settle payouts.
+- ProofForge does not store GitHub OAuth tokens.
+- ProofForge does not put private 0G keys in the browser.
+- GitHub posting is user-owned handoff, not automatic bot posting.
+- Shared GUN sync is a V1 adapter, not a hardened enterprise permission system.
+- Payout receipts are value references only when linked to accepted proof.
+
+## Final Pre-Submit Evidence
+
+Attach or reference:
+
+- latest commit hash
+- Vercel deployment URL
+- demo video URL
+- optional deployed `ProofRegistry` address
+- optional onchain proof anchor transaction
+- optional 0G receipt/root
+- proof command outputs from the final verification gate

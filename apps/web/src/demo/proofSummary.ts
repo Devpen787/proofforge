@@ -37,13 +37,11 @@ export const generatedProofSummary = {
   blockedActionCount: 6,
   protocolRefs: {
     storageProvider: "0G Storage",
-    storageStatus: "live in demo",
-    storageUri:
-      "0g://0x4ce83089482f910e5bf463dd52b17b59f9ebd5918d76e677402703cde0d3e799",
-    storageRootShort: "0x4ce83089482f",
-    storageTxHash:
-      "0xbbe62e7760e58c7997d9325e17ce57b30630d74a27895ef67068b823c0947162",
-    storageTxShort: "0xbbe62e77...947162",
+    storageStatus: "implemented, credential-gated",
+    storageUri: null,
+    storageRootShort: null,
+    storageTxHash: null,
+    storageTxShort: null,
     identityRef: "local:docs-runner-01;erc-8004-ready",
     messageTraceId: "trace:docs-runner-01:verifier-01:packager-01"
   },
@@ -76,42 +74,8 @@ export const generatedProofSummary = {
     {
       label: "environment.json",
       mediaType: "application/json",
-      sha256Short: "4ddf9e01e32c"
+      sha256Short: "4d631f376755"
     }
   ],
-  generatedWorkSources: [
-    {
-      source: "ethglobal",
-      title: "Uniswap Foundation: Best Uniswap API integration",
-      sourceUrl: "https://ethglobal.com/events/open-agents",
-      repo: "uniswap-foundation/ethglobal-open-agents",
-      acceptanceOwner: "Uniswap Foundation",
-      status: "proofable",
-      proofability: "84%",
-      valuePath: "external",
-      mode: "submission context, not user inventory"
-    },
-    {
-      source: "ethglobal",
-      title: "0G: Best Agent Framework, Tooling & Core Extensions",
-      sourceUrl: "https://ethglobal.com/events/open-agents",
-      repo: "0g/ethglobal-open-agents",
-      acceptanceOwner: "0G",
-      status: "proofable",
-      proofability: "84%",
-      valuePath: "external",
-      mode: "submission context, not user inventory"
-    },
-    {
-      source: "github",
-      title: "Open Source VS Code",
-      sourceUrl: "https://github.com/microsoft/vscode/issues/1",
-      repo: "microsoft/vscode",
-      acceptanceOwner: "@chrisdias",
-      status: "needs_triage",
-      proofability: "31%",
-      valuePath: "reputation",
-      mode: "live local import"
-    }
-  ]
+  generatedWorkSources: []
 } as const;

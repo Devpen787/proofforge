@@ -1,179 +1,261 @@
 # ProofForge Demo Script
 
-## One-Line Pitch
+## 5-Second Opening
 
-ProofForge turns existing software work into safe missions, verified evidence packets, contributor credit, and earned payout records.
+ProofForge turns useful software work into accepted proof, so people and their
+agents can be reviewed, credited, paid, and trusted without becoming a spammy
+marketplace or custodial payout app.
 
-## Demo Goal
+## Core Story
 
-Show that the system does not invent a new work economy. It imports existing work, scopes it, runs a safe proof workflow, and produces reviewable artifacts.
+Developers already work across GitHub issues, open-source projects, bounties,
+backlogs, wallets, and agents. The problem is that useful work gets scattered:
+agents generate output, maintainers receive noise, contributors lose credit, and
+projects stall.
 
-Before recording, confirm the current product language in
-[`OPERATING_GUIDE.md`](./OPERATING_GUIDE.md). Use route hashes as demo URLs, but speak in product labels: Home, Opportunities, Runner, Case File, Maintainer Review, Proof Ledger, Public Proof.
+ProofForge is the missing coordination layer:
 
-## 2-4 Minute Flow
-
-### 1. Open With The Problem
-
-Developers now have agents, spare machines, and AI tools, but the output is noisy. Maintainers do not need more raw AI work. They need proof they can trust.
-
-### 2. Import Existing Work
-
-Run:
-
-```bash
-npm run import:github -- --url https://github.com/microsoft/vscode/issues/1
+```text
+source work
+-> bounded mission
+-> agent-assisted proof
+-> evidence packet
+-> maintainer acceptance
+-> GitHub/wallet/onchain/0G references
+-> credit and payout state
+-> public proof
 ```
 
-Point out:
+## 2-Minute Video Flow
 
-- ProofForge reads public issue data.
-- It creates a Work Lead.
-- It does not post comments, open PRs, or trigger payment.
-- Vague work stays in triage instead of becoming agent spam.
+### 0:00-0:15 — Problem And Product
 
-### 3. Generate The Proof Packet
+Say:
 
-If the imported Work Lead is mission-ready, convert it:
+> AI agents make it easy to generate work. ProofForge makes it possible to
+> prove which work actually helped. It connects existing work sources, lets a
+> bounded proof node produce evidence, and turns accepted proof into credit,
+> payout state, and public history.
 
-```bash
-npm run convert:lead -- --in demo-output/imports/example.work-lead.json
+Show the hosted app:
+
+```text
+https://proofforgehub.vercel.app/#opportunity
 ```
 
-For the deterministic demo mission, run:
+### 0:15-0:35 — Source Work And Agent Setup
+
+Show:
+
+```text
+Home -> Agent Setup -> Opportunities
+```
+
+Click:
+
+```text
+Set up proof node
+-> Register proof node
+-> Find source-backed work
+```
+
+Say:
+
+> ProofForge does not invent fake work. It starts from source-backed work:
+> GitHub issues, project backlogs, bounties, or marketplace tasks. The agent is
+> bounded before it runs: local checks are allowed, PRs, comments, secrets, and
+> funds are blocked.
+
+### 0:35-1:00 — Run A Mission And Generate Evidence
+
+Click:
+
+```text
+Start sourced proof
+-> Run safest earning mission
+-> Accept and run
+-> Approve Packet
+```
+
+Say:
+
+> The proof node runs a narrow mission. It captures logs, environment, verifier
+> status, privacy review, and artifacts. The output is not raw agent chatter. It
+> becomes a maintainer-ready case file.
+
+Terminal proof to show briefly:
 
 ```bash
 npm run demo:packet
+npm run sync:web-proof
 ```
 
-Point out the generated artifacts:
+### 1:00-1:25 — Maintainer Review And GitHub Authority
+
+Click:
 
 ```text
-demo-output/docs-install/packet/evidence-packet.json
-demo-output/docs-install/packet/case-file.md
-demo-output/docs-install/packet/policy.json
-demo-output/docs-install/packet/public-packet.json
-demo-output/docs-install/packet/payout.json
-demo-output/docs-install/packet/project.json
+Submit Packet
+-> Connect MetaMask
+-> Record GitHub post
+-> Sign acceptance
+-> Accept & Mark Earned
 ```
 
-Then show payout release as a separate action:
-
-```bash
-npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
-```
-
-### 4. Explain The Artifact Chain
-
-The demo proves this loop:
+Use this sample GitHub post URL if recording locally:
 
 ```text
-Project
--> Work Lead
--> Mission
--> Agent / Node Identity
--> Local Runner
--> Independent Verifier
--> Coordination Trace
--> Evidence Packet
--> Public-Safe Packet
--> Earned Payout
--> Released Payout
--> Project Credit
+https://github.com/Devpen787/proofforge/issues/1#issuecomment-proof
 ```
 
-Important details:
+Say:
 
-- The runner captures logs and environment.
-- The policy gate keeps the mission local and evidence-only before execution.
-- The verifier checks the runner artifacts independently.
-- Agent identity shows who owns the run and what actions are allowed or blocked.
-- Coordination trace shows Runner -> Verifier -> Packager -> Human approval.
-- The public packet strips local paths and private storage refs.
-- The payout is earned first, then released by a separate manual action.
-- Project credit records who contributed useful accepted proof.
+> GitHub remains the source authority. ProofForge prepares the maintainer
+> comment and opens the source issue, but the maintainer posts from their own
+> GitHub account. Acceptance can also be signed by wallet, so the review record
+> is portable.
 
-### 5. Show The Web Prototype
-
-Run:
-
-```bash
-npm run dev
-```
-
-Open:
+If MetaMask is ready, optionally show:
 
 ```text
-http://localhost:5173/
+Deploy proof registry
+-> Anchor onchain
 ```
 
-Screens to show:
+Say:
 
-- Home: useful work, current work state, and the next safe action are clear.
-- Guided proof flow: the user gets a safe mission instead of configuring a platform.
-- Projects: accepted proof grows a shared project through a proof ledger and agent delegations.
-- Opportunities: raw work is imported from existing sources, diagnosed, and held back until mission-ready.
-- Runner: no external action happens without approval, and packet outputs are previewed.
-- Case File: evidence is reviewed before submission with private/public artifact boundaries.
-- Maintainer Review: clean proof, not agent noise; decision support shows confidence, risk, artifacts, privacy, and payout.
-- Proof Ledger / outcome state: next action, earned/released payout state, reputation unlock, and activity.
-- Public Proof: accepted proof is shareable without exposing raw logs, local paths, or payout internals.
+> Accepted proof can be anchored through the ProofRegistry contract. The
+> contract stores the proof hash and references; private packet contents stay in
+> the evidence record.
 
-Direct routes:
+### 1:25-1:45 — 0G, Payout Rails, And Public Proof
+
+Go to:
 
 ```text
-/#opportunity
-/#first-run
-/#projects
-/#work-queue
-/#run
-/#case-file
-/#maintainer
-/#scoreboard
-/#public-proof
+Settings
 ```
 
-Suggested click path in the browser:
+Click:
+
+```text
+Prepare 0G upload
+Record 0G receipt
+Prepare payout handoff
+Publish shared project
+Pull shared project
+```
+
+Say:
+
+> 0G is used as the durable evidence-record path without putting private keys in
+> the browser. ProofForge exports the record and copies the runner command. For
+> payouts, ProofForge prepares Safe, Splits, and Drips handoff metadata, but it
+> does not custody or move funds.
+
+If a live 0G upload is not recorded, show the prepared command and describe 0G
+as credential-gated rather than claiming a live receipt.
+
+### 1:45-2:05 — Close On Public Proof
+
+Go to:
+
+```text
+Public Proof
+```
+
+Show:
+
+- source issue
+- maintainer GitHub post
+- wallet/onchain state
+- 0G receipt
+- artifacts
+- payout/credit state
+
+Say:
+
+> This is the final object: public-safe proof that useful work was sourced,
+> bounded, verified, accepted, and linked to credit or payout state. ProofForge
+> is not another marketplace. It is the proof and coordination layer for people,
+> agents, and projects that need work to hold.
+
+## Exact Browser Click Path
+
+Use production for the video unless recording local-only flows:
+
+```text
+https://proofforgehub.vercel.app/#opportunity
+```
+
+Click path:
 
 ```text
 Home
--> Guided proof flow
--> Opportunities
--> Runner
--> Case File
--> Maintainer Review
--> Proof Ledger / outcome state
+-> Set up proof node
+-> Register proof node
+-> Find source-backed work
+-> Start sourced proof
+-> Run safest earning mission
+-> Accept and run
+-> Approve Packet
+-> Copy reviewer link
+-> Copy GitHub comment
+-> Open GitHub issue
+-> Submit Packet
+-> Connect MetaMask
+-> Record GitHub post
+-> Sign acceptance
+-> optionally Deploy proof registry / Anchor onchain
+-> Accept & Mark Earned
+-> Home
+-> Release payout
+-> View public proof
+-> Settings
+-> Prepare 0G upload
+-> Record 0G receipt
+-> Prepare payout handoff
+-> Publish shared project
+-> Pull shared project
 -> Public Proof
 ```
 
-Narration:
+## Terminal Proof Commands
 
-- The economy already exists; ProofForge imports work from it.
-- Raw work becomes a Work Lead first, not a mission.
-- Work Leads must be proofable before agents run.
-- Agents produce evidence locally.
-- Human approval gates public action.
-- Maintainers receive a decision-ready packet.
-- Accepted packets create earned payout and project credit.
-- Public Proof makes contribution history portable.
-
-## Closing Line
-
-ProofForge is a coordination layer for builders who already have agents and tools. The point is not more generated code. The point is useful work that holds.
-
-## Recording Checklist
-
-Show these terminal commands:
+Run these before recording:
 
 ```bash
+npm install
+npm run format:check
+npm run lint
+npm run typecheck
 npm test
 npm run build
+npm run smoke:web
 npm run demo:packet
 npm run sync:web-proof
-npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
 ```
 
-Show these generated files:
+Optional, if 0G credentials are configured:
+
+```bash
+npm run 0g:check
+npm run 0g:upload-record -- --in <proof-network-record.json>
+```
+
+Optional payout handoff:
+
+```bash
+npm run payout:handoff -- --payout demo-output/docs-install/packet/payout.json --record <proof-network-record.json> --recipient <wallet>
+```
+
+Optional production smoke:
+
+```bash
+npm run smoke:web:prod
+```
+
+## Show These Generated Files
 
 ```text
 demo-output/docs-install/packet/evidence-packet.json
@@ -181,32 +263,29 @@ demo-output/docs-install/packet/case-file.md
 demo-output/docs-install/packet/policy.json
 demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
-demo-output/docs-install/packet/released-payout.json
 demo-output/docs-install/packet/project.json
 demo-output/docs-install/packet/submission-evidence.json
 demo-output/docs-install/packet/submission-evidence.md
 ```
 
-Show these browser routes:
+## Prize-Relevant Proof Points
 
-```text
-/#opportunity
-/#first-run
-/#work-queue
-/#run
-/#case-file
-/#maintainer
-/#scoreboard
-/#public-proof
-Use the terminal proof commands below instead of a separate product screen.
-```
+- 0G: evidence records can be uploaded through credential-gated runner tooling,
+  and the app records the returned receipt.
+- ENS: wallet/identity direction is visible through signer identity; only claim
+  live ENS if the submitted build uses a verified ENS record.
+- Agent tooling: ProofForge defines bounded proof nodes, allowed/blocked
+  actions, skills, verifier checks, and evidence packets.
+- GitHub/open-source work: source issue, maintainer post, and public proof are
+  linked without holding GitHub credentials.
+- Payout rails: Safe, Splits, and Drips handoff metadata exists without custody.
 
-Do not claim:
+## Do Not Claim
 
-- automatic payments
-- automatic pull requests
-- automatic maintainer outreach
-- live production sandboxing
-- live 0G upload unless credentials are configured and the command returns a `0g://` URI
-- live ENS identity unless a resolver or verified identity ref is implemented
-- live AXL communication unless the packet contains a real AXL trace
+- automatic payment settlement
+- automatic PR creation
+- automatic GitHub posting
+- hosted multi-user backend
+- private 0G key in the browser
+- live ENS, AXL, KeeperHub, or Uniswap integrations unless separately verified
+- payment receipt as proof unless linked to accepted proof
