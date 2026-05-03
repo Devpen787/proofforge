@@ -1,6 +1,6 @@
 # ProofForge
 
-> Open Agents Hackathon project: a protocol-agnostic proof guild for agent-assisted software work.
+> A protocol-agnostic proof layer for agent-assisted software work.
 
 **ProofForge connects existing work sources like GitHub, project backlogs, bounty networks, and agent runs, then turns useful work into accepted proof, contribution credit, payout state, and public-safe project history.**
 
@@ -31,13 +31,13 @@ The longer-term flywheel is:
 
 > Connect sources -> track projects -> prove useful work -> get accepted -> record credit/value -> find better work.
 
-## Hackathon Scope
+## Product Scope
 
-For this hackathon, we are starting with one narrow workflow inside that larger flywheel:
+ProofForge starts with one narrow workflow inside that larger flywheel:
 
 > **GitHub source/import -> qualified mission -> local agent run -> independent verification -> maintainer-safe Proof Pack -> accepted proof -> credit and earned payout state.**
 
-The first demo should prove that ProofForge can:
+The current product slice supports:
 
 1. Import a GitHub issue.
 2. Convert it into a source-backed Work Lead and small verifiable Mission.
@@ -47,12 +47,12 @@ The first demo should prove that ProofForge can:
 6. Ask a verifier role to independently check the work.
 7. Record the runner -> verifier -> packager -> human approval trace.
 8. Produce a Proof Pack a maintainer can review quickly.
-9. Simulate maintainer acceptance.
+9. Let a maintainer accept, request revision, or reject the packet in the product flow.
 10. Create credit and earned payout state without implying automatic settlement.
 
-### Ethereum / Web3 / Bounty Hook
+### Ethereum / Web3 / Bounty Work
 
-The MVP should make the Web3 path visible without overclaiming it:
+ProofForge can track Web3 work without overclaiming custody or settlement:
 
 ```text
 GitHub issue / bounty URL / DAO proposal
@@ -102,13 +102,11 @@ ProofForge makes that pattern protocol-agnostic:
 
 The goal is to help people build shared software without drowning maintainers in low-quality AI output.
 
-## How Sponsors Fit
+## Protocol Integrations
 
-Current claim levels are defined in
-[docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md). In short: 0G has an
-implemented credential-gated adapter; ENS and AXL are product-critical identity
-and communication directions but are not live unless completed and verified;
-KeeperHub and Uniswap are later-stage settlement paths.
+0G storage and ENS identity are implemented in the current proof path when
+configured. Additional communication and settlement integrations are roadmap
+items unless the repository includes working code and proof output for them.
 
 ### 0G
 
@@ -142,7 +140,7 @@ ENS can provide readable identities for:
 
 ### KeeperHub / Uniswap
 
-These are later-stage integrations for accepted-work payout or settlement. The MVP does not lead with payments.
+These are later-stage integrations for accepted-work payout or settlement. ProofForge does not lead with payments before accepted proof exists.
 
 ## The Proof Code
 
@@ -158,20 +156,6 @@ These are later-stage integrations for accepted-work payout or settlement. The M
 When a contribution is verified, we say:
 
 > The work holds.
-
-## Repository Hygiene
-
-This repo is built in small, reviewable steps.
-
-Every meaningful contribution should include:
-
-- a small scope
-- a clear definition of done
-- evidence that it works
-- tests or logs when applicable
-- no unrelated changes
-
-We are building ProofForge the same way ProofForge expects work to be done.
 
 ## Current Status
 
@@ -190,7 +174,7 @@ This repository now has the first working proof slice:
 - project credit ledger for accepted proof
 - proof-to-earn product UI for the core journey
 
-The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
+The current demo uses a deterministic fixture mission so the proof path can be reproduced locally.
 
 ## Run Locally
 
@@ -310,13 +294,15 @@ The web app shows the core product loop:
 
 ```text
 Home
+-> Agent Setup
 -> Guided proof flow
 -> Projects
 -> Opportunities
 -> Runner
 -> Case File
 -> Maintainer Review
--> Proof Ledger / outcome state
+-> My Work
+-> Builder Passport
 -> Public Proof
 ```
 
@@ -324,16 +310,17 @@ Useful local routes:
 
 ```text
 Home: http://localhost:5173/#opportunity
+Agent Setup: http://localhost:5173/#agent-setup
 Guided proof flow: http://localhost:5173/#first-run
 Projects: http://localhost:5173/#projects
 Opportunities: http://localhost:5173/#work-queue
+My Work: http://localhost:5173/#my-work
+Builder Passport: http://localhost:5173/#builder-passport
 Mission detail: http://localhost:5173/#mission-detail
 Runner: http://localhost:5173/#run
 Case File: http://localhost:5173/#case-file
 Maintainer Review: http://localhost:5173/#maintainer
-Proof ledger / outcome state: http://localhost:5173/#scoreboard
 Public Proof: http://localhost:5173/#public-proof
-Working Proof: http://localhost:5173/#proof-demo
 ```
 
 The current web prototype shows:
@@ -345,26 +332,21 @@ The current web prototype shows:
 - Runner: local execution, packet output preview, security state, and human approval checkpoint.
 - Case File: maintainer/private/public artifact split.
 - Maintainer Review: decision support with confidence, risk, privacy, artifacts, and payout if accepted.
-- Proof ledger / outcome state: next action, payout state, reputation unlock, and recent activity.
+- My Work: accepted work, pending proof, payout state, reputation, and next action.
+- Builder Passport: observed history, accepted proof, agent runs, and proof-gated value signals.
 - Public Proof: shareable accepted proof view with private details removed.
 
 For the current documentation map, see [docs/README.md](docs/README.md).
 
-For the operating rules Codex should follow, see [docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md).
+For the demo recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
-For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+## Roadmap
 
-For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md).
-
-For dependency audit status and current mitigations, see [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md).
-
-## Next Steps
-
-1. Add a deployed demo URL.
-2. Record the 2-4 minute hackathon demo video.
-3. Add final demo screenshots or a short visual walkthrough.
-4. Add Docker-backed sandbox execution.
-5. Add live 0G upload instructions when credentials are available.
+1. Add hosted source connections for GitHub and project backlogs.
+2. Add stronger sandbox execution for proof runs.
+3. Add live maintainer submission integrations.
+4. Add peer agent communication for runner, verifier, and packager roles.
+5. Add optional onchain settlement rails after proof acceptance.
 
 ## License
 
