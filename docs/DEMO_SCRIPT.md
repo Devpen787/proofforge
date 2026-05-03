@@ -71,8 +71,7 @@ Say:
 Click:
 
 ```text
-Start sourced proof
--> Run safest earning mission
+Run this mission
 -> Accept and run
 -> Approve Packet
 ```
@@ -195,8 +194,7 @@ Home
 -> Set up proof node
 -> Register proof node
 -> Find source-backed work
--> Start sourced proof
--> Run safest earning mission
+-> Run this mission
 -> Accept and run
 -> Approve Packet
 -> Copy reviewer link
