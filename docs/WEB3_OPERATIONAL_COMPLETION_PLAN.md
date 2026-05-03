@@ -67,6 +67,8 @@ Use immutable record sync now and mutable decentralized state later.
 V1/V1.5:
 
 - Export ProofForge network records.
+- Export ProofForge project records with source, mission, proof, payout, and
+  ledger references.
 - Upload records to 0G.
 - Publish sync manifests.
 - Pull records by 0G root and verify content hash/signature.

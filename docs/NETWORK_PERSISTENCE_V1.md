@@ -25,13 +25,20 @@ people.
   record from 0G by root hash, verify the content hash, and verify the
   acceptance signature before browser import. For offline checks, add
   `--record <local-record.json>` to validate an already downloaded copy.
+- Settings can export a ProofForge project record. It carries project metadata,
+  source URLs, mission state, accepted proof refs, payout refs, and local
+  workspace state.
+- `npm run sync:publish-project -- --record <project-record.json> --receipt <0g-receipt.json>`
+  writes a project sync manifest with the 0G root and content hash.
+- `npm run sync:pull-project -- --manifest <project-sync.json>` can pull and
+  verify that project snapshot before browser import.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 
 This means a judge, maintainer, or contributor can open a hosted ProofForge URL
 and see the relevant proof state without needing a ProofForge account. They can
-also move the same state across machines as a 0G-backed record plus sync
-manifest.
+also move the same state across machines as a 0G-backed proof record or project
+record plus sync manifest.
 
 ## Authority Model
 
@@ -57,10 +64,10 @@ source work -> mission -> bounded agent proof -> evidence packet
 ## Shared Sync Boundary
 
 The V1 sync model is immutable-record sync, not realtime collaborative editing.
-ProofForge publishes accepted proof records, then other users pull and verify
-those records. This solves cross-machine proof sharing without turning
-ProofForge into a custodial marketplace, repo permission system, or payment
-processor.
+ProofForge publishes accepted proof records and project snapshots, then other
+users pull and verify those records. This solves cross-machine proof and project
+state sharing without turning ProofForge into a custodial marketplace, repo
+permission system, or payment processor.
 
 ## What Remains For Full Network Production
 

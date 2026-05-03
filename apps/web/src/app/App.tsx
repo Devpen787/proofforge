@@ -177,6 +177,7 @@ function renderScreen(
           onExportWorkspace={actions.exportWorkspace}
           onImportWorkspaceFile={actions.importWorkspaceFile}
           onExportNetworkRecord={actions.exportNetworkRecord}
+          onExportProjectRecord={actions.exportProjectRecord}
           onConnectWallet={actions.connectWallet}
           onRecordPayoutReceipt={actions.recordPayoutReceipt}
           onAgentSetup={() => actions.setScreen("agent-setup")}

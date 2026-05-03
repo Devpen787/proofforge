@@ -213,6 +213,7 @@ async function runSmoke() {
     await requireText(page, "Portable persistence");
     await requireText(page, "Import workspace file");
     await requireText(page, "Export network record");
+    await requireText(page, "Export project record");
     await page
       .getByPlaceholder("0x... or external receipt URL")
       .fill("https://etherscan.io/tx/0xproof");

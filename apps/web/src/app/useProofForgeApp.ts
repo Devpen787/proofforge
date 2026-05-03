@@ -12,6 +12,7 @@ import {
   createAcceptanceTypedData
 } from "./acceptanceTypedData";
 import { createNetworkRecord, downloadJson } from "./networkRecords";
+import { createProjectRecord } from "./projectRecords";
 import { readSharedStateFromHash } from "./shareRecords";
 
 type SavedAppState = Omit<AppState, "screen">;
@@ -299,6 +300,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
         | Partial<SavedAppState>
         | {
             appState?: Partial<SavedAppState>;
+            state?: Partial<SavedAppState>;
             receipts?: { zeroGReceipt?: string };
           };
       const nextState: Partial<SavedAppState> =
@@ -308,12 +310,18 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
               zeroGReceiptUri:
                 parsed.receipts?.zeroGReceipt ?? parsed.appState.zeroGReceiptUri
             }
-          : (parsed as Partial<SavedAppState>);
+          : "state" in parsed && parsed.state
+            ? parsed.state
+            : (parsed as Partial<SavedAppState>);
       applySavedState(nextState);
     },
     exportNetworkRecord: async () => {
       const record = await createNetworkRecord("workspace_snapshot", state);
       downloadJson(`${record.id}.proof-network-record.json`, record);
+    },
+    exportProjectRecord: async () => {
+      const record = await createProjectRecord(state);
+      downloadJson(`${record.id}.proof-project-record.json`, record);
     },
     connectWallet: async () => {
       const ethereum = getEthereumProvider();

@@ -13,6 +13,7 @@ export function SettingsScreen({
   onExportWorkspace,
   onImportWorkspaceFile,
   onExportNetworkRecord,
+  onExportProjectRecord,
   onConnectWallet,
   onRecordPayoutReceipt,
   onAgentSetup,
@@ -27,6 +28,7 @@ export function SettingsScreen({
   onExportWorkspace: () => void;
   onImportWorkspaceFile: (file: File) => Promise<void>;
   onExportNetworkRecord: () => Promise<void>;
+  onExportProjectRecord: () => Promise<void>;
   onConnectWallet: () => void;
   onRecordPayoutReceipt: (receipt: string) => void;
   onAgentSetup: () => void;
@@ -113,6 +115,7 @@ export function SettingsScreen({
         <h2>Portable persistence</h2>
         <StatusRow label="Reviewer links" value="Share state" tone="good" />
         <StatusRow label="Public proof" value="Share state" tone="good" />
+        <StatusRow label="Project sync" value="Export-ready JSON" tone="good" />
         <StatusRow label="0G" value="Export-ready JSON" tone="good" />
         <StatusRow
           label="Payout receipt"
@@ -146,6 +149,12 @@ export function SettingsScreen({
             onClick={() => void onExportNetworkRecord()}
           >
             Export network record
+          </button>
+          <button
+            className="secondary-action full"
+            onClick={() => void onExportProjectRecord()}
+          >
+            Export project record
           </button>
         </div>
         <form

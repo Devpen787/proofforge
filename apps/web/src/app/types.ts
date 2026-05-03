@@ -58,6 +58,7 @@ export interface AppActions {
   exportWorkspace: () => void;
   importWorkspaceFile: (file: File) => Promise<void>;
   exportNetworkRecord: () => Promise<void>;
+  exportProjectRecord: () => Promise<void>;
   connectWallet: () => Promise<void>;
   signAcceptance: () => Promise<void>;
   recordPayoutReceipt: (receipt: string) => void;
