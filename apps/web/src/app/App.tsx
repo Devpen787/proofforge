@@ -153,11 +153,13 @@ function renderScreen(
           proofRegistryDeployTxHash={state.proofRegistryDeployTxHash}
           proofRegistryTxHash={state.proofRegistryTxHash}
           proofRegistryStatus={state.proofRegistryStatus}
+          githubAcceptanceUrl={state.githubAcceptanceUrl}
           onAccept={actions.acceptPacket}
           onConnectWallet={actions.connectWallet}
           onSignAcceptance={actions.signAcceptance}
           onDeployRegistry={actions.deployProofRegistry}
           onAnchorProof={actions.anchorAcceptedProof}
+          onRecordGitHubAcceptance={actions.recordGitHubAcceptanceUrl}
           onReview={actions.openCaseFile}
           onRevision={actions.requestRevision}
           onReject={actions.rejectPacket}
@@ -171,6 +173,7 @@ function renderScreen(
           proofRegistryAddress={state.proofRegistryAddress}
           proofRegistryTxHash={state.proofRegistryTxHash}
           proofRegistryPacketHash={state.proofRegistryPacketHash}
+          githubAcceptanceUrl={state.githubAcceptanceUrl}
           onBack={() => actions.setScreen("opportunity")}
         />
       );

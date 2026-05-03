@@ -8,6 +8,7 @@ import {
 } from "../demo";
 import type { ActiveMission } from "../app/types";
 import type { WalletProviderMode } from "../app/types";
+import { proofSourceIssueUrl } from "../app/githubWriteback";
 import { StatusBlock } from "../components/ui";
 
 export function MaintainerScreen({
@@ -22,11 +23,13 @@ export function MaintainerScreen({
   proofRegistryDeployTxHash,
   proofRegistryTxHash,
   proofRegistryStatus,
+  githubAcceptanceUrl,
   onAccept,
   onConnectWallet,
   onSignAcceptance,
   onDeployRegistry,
   onAnchorProof,
+  onRecordGitHubAcceptance,
   onReview,
   onRevision,
   onReject
@@ -42,16 +45,20 @@ export function MaintainerScreen({
   proofRegistryDeployTxHash: string;
   proofRegistryTxHash: string;
   proofRegistryStatus: string;
+  githubAcceptanceUrl: string;
   onAccept: () => void;
   onConnectWallet: () => void;
   onSignAcceptance: () => Promise<void>;
   onDeployRegistry: () => Promise<void>;
   onAnchorProof: () => Promise<void>;
+  onRecordGitHubAcceptance: (url: string) => void;
   onReview: () => void;
   onRevision: () => void;
   onReject: () => void;
 }) {
   const [onchainError, setOnchainError] = React.useState("");
+  const [githubUrlInput, setGithubUrlInput] =
+    React.useState(githubAcceptanceUrl);
   const packet =
     activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission =
@@ -102,6 +109,10 @@ export function MaintainerScreen({
           : proofRegistryDeployTxHash
             ? "Deploy pending"
             : "Ready to deploy"
+    },
+    {
+      label: "GitHub post",
+      value: githubAcceptanceUrl ? "Recorded" : "Needed"
     }
   ];
   return (
@@ -205,6 +216,38 @@ export function MaintainerScreen({
               <small className={onchainError ? "error-note" : ""}>
                 {onchainError || proofRegistryStatus}
               </small>
+            )}
+            {accepted && (
+              <form
+                className="github-writeback-form"
+                onSubmit={(event) => {
+                  event.preventDefault();
+                  onRecordGitHubAcceptance(githubUrlInput);
+                }}
+              >
+                <label>
+                  <small>GitHub acceptance URL</small>
+                  <input
+                    value={githubUrlInput}
+                    onChange={(event) =>
+                      setGithubUrlInput(event.currentTarget.value)
+                    }
+                    placeholder={`${proofSourceIssueUrl}#issuecomment-...`}
+                  />
+                </label>
+                <button className="secondary-action full" type="submit">
+                  {githubAcceptanceUrl
+                    ? "GitHub post recorded"
+                    : "Record GitHub post"}
+                </button>
+                <button
+                  className="secondary-action full"
+                  type="button"
+                  onClick={() => window.open(proofSourceIssueUrl, "_blank")}
+                >
+                  Open source issue
+                </button>
+              </form>
             )}
             {!accepted && (
               <>

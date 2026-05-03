@@ -38,6 +38,7 @@ export interface ProofForgeNetworkRecord {
     proofRegistryAddress?: string;
     proofRegistryTxHash?: string;
     proofRegistryPacketHash?: string;
+    githubAcceptanceUrl?: string;
   };
   boundaries: string[];
 }
@@ -105,7 +106,8 @@ export async function createNetworkRecord(
       zeroGReceipt: state.zeroGReceiptUri || undefined,
       proofRegistryAddress: state.proofRegistryAddress || undefined,
       proofRegistryTxHash: state.proofRegistryTxHash || undefined,
-      proofRegistryPacketHash: state.proofRegistryPacketHash || undefined
+      proofRegistryPacketHash: state.proofRegistryPacketHash || undefined,
+      githubAcceptanceUrl: state.githubAcceptanceUrl || undefined
     },
     boundaries: [
       "ProofForge does not hold GitHub credentials by default.",

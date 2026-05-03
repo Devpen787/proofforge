@@ -72,6 +72,11 @@ project id, contributor wallet, reviewer wallet, and payout reference. The
 packet contents still live in the evidence/0G record path; the contract records
 the acceptance anchor.
 
+For GitHub authority, V1 stays credential-light. ProofForge generates the
+maintainer-ready GitHub comment and opens the source issue, but the maintainer
+posts from their own GitHub account. The posted comment URL can then be recorded
+back into ProofForge and appears in the public proof and exported records.
+
 For the exact V1/V2/V3 Web3 boundaries, see
 [docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md](docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md).
 

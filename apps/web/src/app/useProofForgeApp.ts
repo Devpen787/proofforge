@@ -59,7 +59,8 @@ const defaultSavedState: SavedAppState = {
   proofRegistryDeployTxHash: "",
   proofRegistryTxHash: "",
   proofRegistryPacketHash: "",
-  proofRegistryStatus: ""
+  proofRegistryStatus: "",
+  githubAcceptanceUrl: ""
 };
 
 function normalizeSavedState(input: Partial<SavedAppState>): SavedAppState {
@@ -205,6 +206,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [proofRegistryStatus, setProofRegistryStatus] = React.useState(
     savedState.proofRegistryStatus
   );
+  const [githubAcceptanceUrl, setGithubAcceptanceUrl] = React.useState(
+    savedState.githubAcceptanceUrl
+  );
 
   const resetProof = React.useCallback(() => {
     setPacketReady(false);
@@ -219,6 +223,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     setProofRegistryTxHash("");
     setProofRegistryPacketHash("");
     setProofRegistryStatus("");
+    setGithubAcceptanceUrl("");
   }, []);
 
   const applySavedState = React.useCallback(
@@ -253,6 +258,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setProofRegistryTxHash(normalized.proofRegistryTxHash);
       setProofRegistryPacketHash(normalized.proofRegistryPacketHash);
       setProofRegistryStatus(normalized.proofRegistryStatus);
+      setGithubAcceptanceUrl(normalized.githubAcceptanceUrl);
       saveAppState(normalized);
     },
     []
@@ -497,6 +503,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setProofRegistryPacketHash(result.packetHash);
       setProofRegistryStatus("Accepted proof anchored");
     },
+    recordGitHubAcceptanceUrl: (url) => {
+      setGithubAcceptanceUrl(url.trim());
+    },
     recordPayoutReceipt: (receipt) => {
       setPayoutReceiptRef(receipt.trim());
       if (receipt.trim()) setReleased(true);
@@ -531,7 +540,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     proofRegistryDeployTxHash,
     proofRegistryTxHash,
     proofRegistryPacketHash,
-    proofRegistryStatus
+    proofRegistryStatus,
+    githubAcceptanceUrl
   };
 
   React.useEffect(() => {
@@ -562,7 +572,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       proofRegistryDeployTxHash,
       proofRegistryTxHash,
       proofRegistryPacketHash,
-      proofRegistryStatus
+      proofRegistryStatus,
+      githubAcceptanceUrl
     });
   }, [
     packetReady,
@@ -591,7 +602,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     proofRegistryDeployTxHash,
     proofRegistryTxHash,
     proofRegistryPacketHash,
-    proofRegistryStatus
+    proofRegistryStatus,
+    githubAcceptanceUrl
   ]);
 
   return { state, actions };

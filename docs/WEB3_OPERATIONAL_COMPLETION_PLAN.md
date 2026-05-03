@@ -58,6 +58,8 @@ Implemented direction:
 
 - Generate a maintainer-ready `proof-comment.md`.
 - Generate a `github-handoff.json` with the exact `gh` command.
+- Browser Case File can copy the comment and open the source GitHub issue.
+- Maintainer Review can record the posted GitHub comment URL.
 - Keep automatic posting optional and user-controlled.
 
 ### Realtime Multi-User Workspace

@@ -8,6 +8,10 @@ import {
 } from "../demo";
 import type { ActiveMission } from "../app/types";
 import { buildShareUrl, type SharedAppState } from "../app/shareRecords";
+import {
+  buildMaintainerGitHubComment,
+  proofSourceIssueUrl
+} from "../app/githubWriteback";
 import { StatusRow } from "../components/ui";
 
 export function CaseFileScreen({
@@ -53,27 +57,19 @@ export function CaseFileScreen({
   };
   const copyGitHubComment = async () => {
     setCopiedGitHubComment(true);
-    const comment = [
-      "ProofForge packet ready for maintainer review.",
-      "",
-      `- Packet: ${packet.id}`,
-      `- Mission: ${mission.title}`,
-      `- Result: ${packet.result}`,
-      `- Verifier: ${generatedProofSummary.verifierStatus}`,
-      `- Storage: ${
-        generatedProofSummary.protocolRefs.storageUri ??
-        generatedProofSummary.protocolRefs.storageProvider
-      }`,
-      "",
-      "The proof node ran in evidence-only mode. It did not open a PR, post before approval, access secrets, or spend funds."
-    ].join("\n");
+    const comment = buildMaintainerGitHubComment({
+      packetId: packet.id,
+      mission: mission.title,
+      result: packet.result
+    });
     await navigator.clipboard?.writeText(comment).catch(() => undefined);
   };
   const copyGitHubCommand = async () => {
     setCopiedGitHubCommand(true);
-    const issueUrl = "https://github.com/Devpen787/proofforge/issues/1";
     await navigator.clipboard
-      ?.writeText(`gh issue comment ${issueUrl} --body-file proof-comment.md`)
+      ?.writeText(
+        `gh issue comment ${proofSourceIssueUrl} --body-file proof-comment.md`
+      )
       .catch(() => undefined);
   };
 
@@ -230,6 +226,12 @@ export function CaseFileScreen({
               {copiedGitHubComment
                 ? "GitHub comment copied"
                 : "Copy GitHub comment"}
+            </button>
+            <button
+              className="secondary-action full"
+              onClick={() => window.open(proofSourceIssueUrl, "_blank")}
+            >
+              Open GitHub issue
             </button>
             <button
               className="secondary-action full"

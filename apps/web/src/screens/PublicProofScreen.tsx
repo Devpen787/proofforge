@@ -1,6 +1,7 @@
 import React from "react";
 import { generatedProofSummary } from "../demo";
 import type { ActiveMission } from "../app/types";
+import { proofSourceIssueUrl } from "../app/githubWriteback";
 import { buildShareUrl, type SharedAppState } from "../app/shareRecords";
 import { StatusBlock } from "../components/ui";
 
@@ -10,6 +11,7 @@ export function PublicProofScreen({
   proofRegistryAddress,
   proofRegistryTxHash,
   proofRegistryPacketHash,
+  githubAcceptanceUrl,
   onBack
 }: {
   activeMission: ActiveMission;
@@ -17,6 +19,7 @@ export function PublicProofScreen({
   proofRegistryAddress: string;
   proofRegistryTxHash: string;
   proofRegistryPacketHash: string;
+  githubAcceptanceUrl: string;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -111,12 +114,26 @@ export function PublicProofScreen({
         </div>
       </div>
       <div className="panel public-onchain-panel">
-        <p className="small-label">Onchain acceptance</p>
+        <p className="small-label">Source and acceptance</p>
         <h2>
           {proofRegistryTxHash
             ? "Accepted proof is anchored."
             : "Accepted proof is ready to anchor."}
         </h2>
+        <div className="artifact-row rich-artifact-row">
+          <span>
+            <strong>Source issue</strong>
+            <small>{proofSourceIssueUrl}</small>
+          </span>
+          <small>GitHub authority</small>
+        </div>
+        <div className="artifact-row rich-artifact-row">
+          <span>
+            <strong>Maintainer post</strong>
+            <small>{githubAcceptanceUrl || "Record after posting"}</small>
+          </span>
+          <small>{githubAcceptanceUrl ? "Recorded" : "Pending"}</small>
+        </div>
         <div className="artifact-row rich-artifact-row">
           <span>
             <strong>Registry</strong>

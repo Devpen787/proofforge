@@ -36,6 +36,9 @@ people.
   peer URL and project sync key. Without a peer URL, it remains local-first in
   the browser. This is the first realtime/open-source sync adapter; 0G project
   records remain the verifiable snapshot fallback.
+- Case File can generate a maintainer-ready GitHub comment and open the source
+  issue. The maintainer posts with their own GitHub account, then records the
+  posted comment URL in ProofForge as the source-platform acceptance reference.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 

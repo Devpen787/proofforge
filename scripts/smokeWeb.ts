@@ -196,6 +196,13 @@ async function runSmoke() {
     await page.goto(`${baseUrl}/#maintainer`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Connect MetaMask" }).click();
     await requireText(page, "Ready");
+    await page
+      .getByPlaceholder(/issuecomment/)
+      .fill(
+        "https://github.com/Devpen787/proofforge/issues/1#issuecomment-proof"
+      );
+    await page.getByRole("button", { name: "Record GitHub post" }).click();
+    await requireText(page, "GitHub post recorded");
     await page.getByRole("button", { name: "Sign acceptance" }).click();
     await requireText(page, "Acceptance signed");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
@@ -204,7 +211,8 @@ async function runSmoke() {
     await requireText(page, "Public proof and credit are ready.");
     await page.getByRole("button", { name: "View public proof" }).click();
     await requireText(page, "Public proof");
-    await requireText(page, "Onchain acceptance");
+    await requireText(page, "Source and acceptance");
+    await requireText(page, "Maintainer post");
     await requireText(page, "Shared artifacts.");
     await requireText(page, "Credit");
     await page.getByRole("button", { name: "Copy public link" }).click();

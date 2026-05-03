@@ -32,6 +32,7 @@ export interface AppState {
   proofRegistryTxHash: string;
   proofRegistryPacketHash: string;
   proofRegistryStatus: string;
+  githubAcceptanceUrl: string;
 }
 
 export interface AppActions {
@@ -76,6 +77,7 @@ export interface AppActions {
   signAcceptance: () => Promise<void>;
   deployProofRegistry: () => Promise<void>;
   anchorAcceptedProof: () => Promise<void>;
+  recordGitHubAcceptanceUrl: (url: string) => void;
   recordPayoutReceipt: (receipt: string) => void;
 }
 

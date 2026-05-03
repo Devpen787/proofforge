@@ -158,6 +158,30 @@
   color: #b91c1c;
 }
 
+.github-writeback-form {
+  display: grid;
+  gap: 10px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 10px;
+}
+
+.github-writeback-form label,
+.github-writeback-form input {
+  display: grid;
+  width: 100%;
+}
+
+.github-writeback-form input {
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  padding: 10px 12px;
+  color: #020617;
+  font: inherit;
+  font-size: 13px;
+  font-weight: 750;
+}
+
 .maintainer-review-grid {
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
 }

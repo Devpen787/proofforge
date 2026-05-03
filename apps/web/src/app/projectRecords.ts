@@ -37,7 +37,8 @@ export interface ProofForgeProjectRecord {
       | "accepted_proof"
       | "payout_receipt"
       | "network_record"
-      | "onchain_anchor";
+      | "onchain_anchor"
+      | "github_acceptance";
     label: string;
     ref: string;
   }>;
@@ -151,6 +152,15 @@ export async function createProjectRecord(
               type: "onchain_anchor" as const,
               label: "Proof registry transaction",
               ref: state.proofRegistryTxHash
+            }
+          ]
+        : []),
+      ...(state.githubAcceptanceUrl
+        ? [
+            {
+              type: "github_acceptance" as const,
+              label: "Maintainer GitHub acceptance",
+              ref: state.githubAcceptanceUrl
             }
           ]
         : [])
