@@ -104,6 +104,9 @@ For the authority boundary between ProofForge, GitHub, maintainers, wallets,
 bounty platforms, and storage networks, see
 [docs/AUTHORITY_MODEL.md](docs/AUTHORITY_MODEL.md).
 
+For the credential-light V1 operating model, see
+[docs/CREDENTIAL_LIGHT_OPERATIONAL_V1.md](docs/CREDENTIAL_LIGHT_OPERATIONAL_V1.md).
+
 ## Evidence Packet
 
 An evidence packet is the unit of value in ProofForge.

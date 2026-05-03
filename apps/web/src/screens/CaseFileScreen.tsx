@@ -1,6 +1,7 @@
 import React from "react";
 import { generatedProofSummary, getDemoPacket } from "../demo";
 import { getMissionDisplay } from "../app/missionDisplay";
+import { buildShareUrl, type ShareState } from "../app/shareRecords";
 import type {
   ActiveMission,
   ImportedMission,
@@ -17,6 +18,7 @@ export function CaseFileScreen({
   projectRequest,
   importedMission,
   payoutReceipt,
+  shareState,
   onSubmit,
   onExportPacket
 }: {
@@ -27,10 +29,12 @@ export function CaseFileScreen({
   projectRequest: ProjectRequest;
   importedMission: ImportedMission | null;
   payoutReceipt: PayoutReceipt | null;
+  shareState: ShareState;
   onSubmit: () => void;
   onExportPacket: () => void;
 }) {
   const [copiedReviewLink, setCopiedReviewLink] = React.useState(false);
+  const [copiedGitHubComment, setCopiedGitHubComment] = React.useState(false);
   const packet = getDemoPacket(activeMission);
   const mission = getMissionDisplay({
     activeMission,
@@ -49,11 +53,35 @@ export function CaseFileScreen({
         ? "Submitted"
         : "Maintainer-ready";
   const copyReviewerLink = async () => {
-    const url = new URL(window.location.href);
-    url.hash = `maintainer?packet=${encodeURIComponent(mission.packetId)}`;
+    const url = buildShareUrl("maintainer", {
+      ...shareState,
+      submitted: true
+    });
     await navigator.clipboard?.writeText(url.toString()).catch(() => undefined);
     setCopiedReviewLink(true);
   };
+  const copyGitHubComment = async () => {
+    const comment = [
+      "ProofForge packet ready for maintainer review.",
+      "",
+      `- Packet: ${mission.packetId}`,
+      `- Mission: ${mission.title}`,
+      `- Source: ${mission.sourceUrl}`,
+      `- Result: ${mission.result}`,
+      `- Verifier: ${generatedProofSummary.verifierStatus}`,
+      `- Storage: ${generatedProofSummary.protocolRefs.storageUri ?? generatedProofSummary.protocolRefs.storageProvider}`,
+      "",
+      "The proof node ran in evidence-only mode. It did not open a PR, post before approval, access secrets, or spend funds."
+    ].join("\n");
+    await navigator.clipboard?.writeText(comment).catch(() => undefined);
+    setCopiedGitHubComment(true);
+  };
+  const openSource = () => {
+    if (mission.sourceUrl.startsWith("http")) {
+      window.open(mission.sourceUrl, "_blank", "noopener,noreferrer");
+    }
+  };
+  const canOpenSource = mission.sourceUrl.startsWith("http");
 
   return (
     <section className="page-grid packet-grid">
@@ -203,6 +231,19 @@ export function CaseFileScreen({
             >
               {copiedReviewLink ? "Reviewer link copied" : "Copy reviewer link"}
             </button>
+            <button
+              className="secondary-action full"
+              onClick={copyGitHubComment}
+            >
+              {copiedGitHubComment
+                ? "GitHub comment copied"
+                : "Copy GitHub comment"}
+            </button>
+            {canOpenSource && (
+              <button className="secondary-action full" onClick={openSource}>
+                Open source issue
+              </button>
+            )}
             <button className="secondary-action full" onClick={onExportPacket}>
               Export proof packet
             </button>

@@ -25,10 +25,17 @@ import {
   type SavedAppState
 } from "./workspaceState";
 import { useHashScreen } from "./useHashScreen";
+import { readSharedStateFromHash } from "./shareRecords";
 
 export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const { screen, setScreen } = useHashScreen();
-  const savedState = React.useMemo(() => readSavedAppState(), []);
+  const savedState = React.useMemo(
+    () => ({
+      ...readSavedAppState(),
+      ...(readSharedStateFromHash() ?? {})
+    }),
+    []
+  );
   const [packetReady, setPacketReady] = React.useState(savedState.packetReady);
   const [submitted, setSubmitted] = React.useState(savedState.submitted);
   const [accepted, setAccepted] = React.useState(savedState.accepted);

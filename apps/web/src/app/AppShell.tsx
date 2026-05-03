@@ -47,6 +47,12 @@ export function AppShell({
             ))}
           </nav>
           <button
+            type="button"
+            aria-label={
+              state.agentRegistered
+                ? "Open proof node setup"
+                : "Set up proof node"
+            }
             className="node-status node-status-button"
             onClick={() => onNavigate("agent-setup")}
           >

@@ -8,7 +8,9 @@ import { getMissionDisplay } from "../app/missionDisplay";
 import type {
   ActiveMission,
   ImportedMission,
-  ProjectRequest
+  ProofEvent,
+  ProjectRequest,
+  WalletIdentity
 } from "../app/types";
 import { StatusBlock } from "../components/ui";
 
@@ -18,7 +20,10 @@ export function MaintainerScreen({
   activeMission,
   projectRequest,
   importedMission,
+  walletIdentity,
+  proofEvents,
   onAccept,
+  onSignLatestProofEvent,
   onReview,
   onRevision,
   onReject
@@ -28,7 +33,10 @@ export function MaintainerScreen({
   activeMission: ActiveMission;
   projectRequest: ProjectRequest;
   importedMission: ImportedMission | null;
+  walletIdentity: WalletIdentity | null;
+  proofEvents: ProofEvent[];
   onAccept: () => void;
+  onSignLatestProofEvent: () => Promise<void>;
   onReview: () => void;
   onRevision: () => void;
   onReject: () => void;
@@ -45,6 +53,9 @@ export function MaintainerScreen({
     : hasReviewPacket
       ? "Decision due"
       : "No packet";
+  const latestEvent = proofEvents.at(-1);
+  const acceptanceSigned =
+    latestEvent?.type === "packet_accepted" && Boolean(latestEvent.signature);
   const proofFacts = [
     { label: "Verifier", value: generatedProofSummary.verifierStatus },
     { label: "Risk", value: mission.risk },
@@ -59,7 +70,15 @@ export function MaintainerScreen({
       label: "Submit via",
       value: generatedProofSummary.maintainerSubmission.provider
     },
-    { label: "Value", value: mission.reward }
+    { label: "Value", value: mission.reward },
+    {
+      label: "Reviewer signature",
+      value: acceptanceSigned
+        ? "Wallet signed"
+        : walletIdentity?.address
+          ? "Ready"
+          : "Wallet optional"
+    }
   ];
   return (
     <section className="page-grid maintainer-focus-grid">
@@ -113,6 +132,15 @@ export function MaintainerScreen({
             >
               {accepted ? "Accepted" : "Accept & Mark Earned"}
             </button>
+            {accepted && (
+              <button
+                className="secondary-action full"
+                onClick={onSignLatestProofEvent}
+                disabled={!walletIdentity?.address || acceptanceSigned}
+              >
+                {acceptanceSigned ? "Acceptance signed" : "Sign acceptance"}
+              </button>
+            )}
             {!accepted && (
               <>
                 <button className="warning-action full" onClick={onRevision}>

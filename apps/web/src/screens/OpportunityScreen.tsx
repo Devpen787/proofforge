@@ -5,6 +5,13 @@ import {
   demoWork,
   generatedProofSummary
 } from "../demo";
+import {
+  DetailPane,
+  MetricStrip,
+  PageHeader,
+  PageSurface,
+  RowList
+} from "../components/ui";
 import type { ActiveMission } from "../app/types";
 
 export function OpportunityScreen({
@@ -66,247 +73,156 @@ export function OpportunityScreen({
     ? "Set up proof node"
     : revisionRequested
       ? "Open Case File"
-      : accepted && !released
-        ? "Release payout"
-        : "Start sourced proof";
+      : released
+        ? "View public proof"
+        : accepted && !released
+          ? "Release payout"
+          : "Start sourced proof";
   const handlePrimary = !agentRegistered
     ? onAgentSetup
     : revisionRequested
       ? onResolveRevision
-      : accepted && !released
-        ? onRelease
-        : onStart;
+      : released
+        ? onPublicProof
+        : accepted && !released
+          ? onRelease
+          : onStart;
+  const metrics = [
+    {
+      label: "Earned",
+      value: accepted || released ? "$8" : "$0",
+      detail: accepted || released ? "Accepted proof" : "No packet yet"
+    },
+    {
+      label: "Pending release",
+      value: accepted && !released ? "$8" : "$0",
+      detail: released ? "Released" : "Manual release"
+    },
+    {
+      label: "Project proofs",
+      value: demoProject.acceptedProof,
+      detail: demoProject.name
+    },
+    {
+      label: "Open missions",
+      value: String(demoProject.opportunities.length),
+      detail: "Source-backed"
+    }
+  ];
 
   return (
     <section className="page-grid home-grid">
-      <div className="home-start-card wide">
-        <div className="home-start-copy">
-          <span className="status-pill safe">{packetState}</span>
-          <h1>{heroTitle}</h1>
-          <p>{heroBody}</p>
-          <div className="home-actions">
+      <PageSurface className="pf-home-surface">
+        <PageHeader
+          eyebrow={packetState}
+          title={heroTitle}
+          subtitle={heroBody}
+          actions={
             <button className="primary-action" onClick={handlePrimary}>
               {primaryAction}
             </button>
-            {!agentRegistered && (
-              <button
-                className="secondary-action"
-                onClick={onViewOpportunities}
-              >
-                See source-backed work
-              </button>
-            )}
-            {revisionRequested && (
-              <button className="secondary-action" onClick={onStart}>
-                Start sourced proof
-              </button>
-            )}
-            {(accepted || released) && (
-              <button className="secondary-action" onClick={onPublicProof}>
-                View public proof
-              </button>
-            )}
-          </div>
-        </div>
-        <aside className="home-profile-panel">
-          <div className="home-profile-head">
-            <span className="mini-avatar">A</span>
-            <span>
-              <strong>Alex</strong>
-              <small>
-                {agentRegistered ? demoAgentIdentity.id : "No node yet"}
-              </small>
-            </span>
-          </div>
-          <div className="home-profile-grid">
-            <span>
-              <small>Wallet</small>
-              <strong>{released ? "Released" : "Manual payout"}</strong>
-            </span>
-            <span>
-              <small>Project</small>
-              <strong>{demoProject.name}</strong>
-            </span>
-            <span>
-              <small>Reputation</small>
-              <strong>164</strong>
-            </span>
-            <span>
-              <small>Level</small>
-              <strong>4</strong>
-            </span>
-          </div>
-        </aside>
-      </div>
+          }
+        />
 
-      <section className="home-tracker-strip wide">
-        <span>
-          <strong>{accepted || released ? "$8" : "$0"}</strong>
-          <small>Earned</small>
-        </span>
-        <span>
-          <strong>{accepted && !released ? "$8" : "$0"}</strong>
-          <small>Pending release</small>
-        </span>
-        <span>
-          <strong>{demoProject.acceptedProof}</strong>
-          <small>Project proofs</small>
-        </span>
-        <span>
-          <strong>{demoProject.opportunities.length}</strong>
-          <small>Open missions</small>
-        </span>
-      </section>
+        <MetricStrip metrics={metrics} />
 
-      {agentRegistered && !accepted && !released && (
-        <section className="panel wide home-work-compact">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Ready work</p>
-              <h2>Pick one sourced mission.</h2>
-            </div>
-            <button className="link-button" onClick={onViewOpportunities}>
-              View all
-            </button>
-          </div>
-          {demoWork.slice(0, 2).map((work) => (
-            <button className="work-row" key={work.title} onClick={onStart}>
-              <span className="work-main">
-                <strong>{work.title}</strong>
-                <small>{work.repo}</small>
-              </span>
-              <span className="work-owner">
-                <small>Accepts proof</small>
-                <b>{work.owner}</b>
-              </span>
-              <b>{work.reward}</b>
-              <small>{work.runtime}</small>
-              <span className={`status-pill ${work.tone}`}>{work.risk}</span>
-              <span className="start-pill">Start</span>
-            </button>
-          ))}
-        </section>
-      )}
-
-      {(revisionRequested || rejected) && (
-        <section className="panel wide home-work-compact">
-          <div className="section-heading">
-            <h2>Ready work for you</h2>
-            <button className="link-button" onClick={onViewOpportunities}>
-              View all opportunities
-            </button>
-          </div>
-          {demoWork.slice(0, 2).map((work) => (
-            <button className="work-row" key={work.title} onClick={onStart}>
-              <span className="work-main">
-                <strong>{work.title}</strong>
-                <small>{work.repo}</small>
-              </span>
-              <span className="work-owner">
-                <small>Accepts proof</small>
-                <b>{work.owner}</b>
-              </span>
-              <b>{work.reward}</b>
-              <small>{work.runtime}</small>
-              <span className={`status-pill ${work.tone}`}>{work.risk}</span>
-              <span className="start-pill">Start</span>
-            </button>
-          ))}
-        </section>
-      )}
-
-      {(accepted || released) && (
-        <section className="panel wide home-work-compact">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Accepted proof</p>
-              <h2>Credit and next work.</h2>
-            </div>
-            <button className="link-button" onClick={onViewOpportunities}>
-              View opportunities
-            </button>
-          </div>
-          <div className="home-proof-summary">
-            <span>
-              <small>Proof</small>
-              <strong>{generatedProofSummary.mission}</strong>
-            </span>
-            <span>
-              <small>Accepted by</small>
-              <strong>{generatedProofSummary.acceptedBy}</strong>
-            </span>
-            <span>
-              <small>Earned</small>
-              <strong>{generatedProofSummary.payout.amount}</strong>
-            </span>
-            <span>
-              <small>Release</small>
-              <strong>{released ? "Released" : "Pending"}</strong>
-            </span>
-            <span>
-              <small>Stored on</small>
-              <strong>
-                {generatedProofSummary.protocolRefs.storageProvider}
-              </strong>
-            </span>
-          </div>
-          <div className="home-next-work">
-            {demoWork.slice(0, 2).map((work) => (
-              <button className="work-row" key={work.title} onClick={onStart}>
-                <span className="work-main">
-                  <strong>{work.title}</strong>
-                  <small>{work.repo}</small>
-                </span>
-                <span className="work-owner">
-                  <small>Accepts proof</small>
-                  <b>{work.owner}</b>
-                </span>
-                <b>{work.reward}</b>
-                <small>{work.runtime}</small>
-                <span className={`status-pill ${work.tone}`}>{work.risk}</span>
-                <span className="start-pill">Start</span>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section className="panel wide home-activity-panel">
-        <div className="section-heading">
+        <div className="pf-home-layout">
           <div>
-            <p className="small-label">Activity</p>
-            <h2>What changed.</h2>
+            <div className="section-heading pf-compact-heading">
+              <div>
+                <p className="small-label">
+                  {accepted || released ? "Accepted proof" : "Ready work"}
+                </p>
+                <h2>
+                  {accepted || released
+                    ? "Credit recorded. Keep moving."
+                    : "Pick one sourced mission."}
+                </h2>
+              </div>
+              <button className="link-button" onClick={onViewOpportunities}>
+                View all
+              </button>
+            </div>
+
+            {accepted || released ? (
+              <div className="pf-proof-row">
+                <span>
+                  <small>Proof</small>
+                  <strong>{generatedProofSummary.mission}</strong>
+                </span>
+                <span>
+                  <small>Accepted by</small>
+                  <strong>{generatedProofSummary.acceptedBy}</strong>
+                </span>
+                <span>
+                  <small>Earned</small>
+                  <strong>{generatedProofSummary.payout.amount}</strong>
+                </span>
+                <span>
+                  <small>Release</small>
+                  <strong>{released ? "Released" : "Pending"}</strong>
+                </span>
+              </div>
+            ) : null}
+
+            <RowList>
+              {demoWork.slice(0, 3).map((work) => (
+                <button
+                  className="work-row pf-work-row"
+                  key={work.title}
+                  onClick={onStart}
+                >
+                  <span className="work-main">
+                    <strong>{work.title}</strong>
+                    <small>{work.repo}</small>
+                  </span>
+                  <span className="work-owner">
+                    <small>Accepts proof</small>
+                    <b>{work.owner}</b>
+                  </span>
+                  <b>{work.reward}</b>
+                  <small>{work.runtime}</small>
+                  <span className={`status-pill ${work.tone}`}>
+                    {work.risk}
+                  </span>
+                  <span className="start-pill">Start</span>
+                </button>
+              ))}
+            </RowList>
           </div>
-          <button className="link-button" onClick={onViewOpportunities}>
-            Find work
-          </button>
+
+          <DetailPane
+            eyebrow="Proof node"
+            title={agentRegistered ? demoAgentIdentity.id : "Not registered"}
+            action={
+              <button className="secondary-action full" onClick={onAgentSetup}>
+                {agentRegistered ? "Review node" : "Set up node"}
+              </button>
+            }
+          >
+            <div className="status-row">
+              <span>Owner</span>
+              <b className="good">Alex</b>
+            </div>
+            <div className="status-row">
+              <span>Project</span>
+              <b className="good">{demoProject.name}</b>
+            </div>
+            <div className="status-row">
+              <span>Current state</span>
+              <b className={agentRegistered ? "good" : "warn"}>
+                {agentRegistered ? "Ready" : "Setup needed"}
+              </b>
+            </div>
+            <div className="status-row">
+              <span>Public proof</span>
+              <b className={accepted || released ? "good" : "warn"}>
+                {accepted || released ? "Available" : "After acceptance"}
+              </b>
+            </div>
+          </DetailPane>
         </div>
-        <div className="home-activity-list">
-          <span>
-            <b>Proof node</b>
-            <strong>
-              {agentRegistered ? "Ready for local runs" : "Setup needed"}
-            </strong>
-            <small>Current</small>
-          </span>
-          <span>
-            <b>Project</b>
-            <strong>{demoProject.name}</strong>
-            <small>{demoProject.opportunities.length} sourced missions</small>
-          </span>
-          <span>
-            <b>Latest proof</b>
-            <strong>
-              {accepted || released
-                ? "Accepted by maintainer"
-                : "No packet submitted"}
-            </strong>
-            <small>
-              {accepted || released ? "+12 reputation" : "Start a mission"}
-            </small>
-          </span>
-        </div>
-      </section>
+      </PageSurface>
     </section>
   );
 }

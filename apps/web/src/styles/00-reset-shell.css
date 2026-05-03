@@ -23,7 +23,7 @@ button {
 .app-shell {
   min-height: 100vh;
   display: grid;
-  grid-template-columns: 204px minmax(0, 1fr);
+  grid-template-columns: 232px minmax(0, 1fr);
 }
 
 .sidebar {
@@ -32,11 +32,12 @@ button {
   height: 100vh;
   background: #07141d;
   color: white;
-  padding: 22px 16px;
+  padding: 24px 18px;
   display: flex;
   flex-direction: column;
-  gap: 26px;
+  gap: 30px;
   overflow: hidden;
+  border-right: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .brand,
@@ -48,8 +49,8 @@ button {
 
 .brand-logo,
 .avatar {
-  width: 34px;
-  height: 34px;
+  width: 36px;
+  height: 36px;
   border-radius: 12px;
   display: grid;
   place-items: center;
@@ -64,7 +65,7 @@ button {
 
 .nav-list {
   display: grid;
-  gap: 7px;
+  gap: 6px;
 }
 
 .sidebar-lower {
@@ -82,13 +83,14 @@ button {
 .nav-button {
   width: 100%;
   border: 0;
-  border-radius: 14px;
+  border-radius: 12px;
   background: transparent;
   color: #cbd5e1;
   text-align: left;
-  padding: 11px 12px;
+  padding: 10px 12px;
   cursor: pointer;
   font-weight: 700;
+  line-height: 1.2;
 }
 
 .nav-button.active,
@@ -109,7 +111,7 @@ button {
 }
 
 .main {
-  padding: 24px;
+  padding: 32px;
   min-width: 0;
   overflow: hidden;
 }
@@ -127,6 +129,7 @@ button {
   display: grid;
   gap: 20px;
   min-width: 0;
+  width: 100%;
 }
 
 .page-grid > * {

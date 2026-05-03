@@ -16,6 +16,7 @@ import { AgentSetupScreen } from "../screens/AgentSetupScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { HelpScreen } from "../screens/HelpScreen";
 import { BuilderPassportScreen } from "../screens/BuilderPassportScreen";
+import { extractShareState } from "./shareRecords";
 
 function renderScreen(
   screen: Screen,
@@ -29,6 +30,7 @@ function renderScreen(
           registered={state.agentRegistered}
           onRegister={actions.registerAgent}
           onStart={actions.openOpportunities}
+          onSettings={() => actions.setScreen("settings")}
         />
       );
     case "opportunity":
@@ -155,6 +157,7 @@ function renderScreen(
           projectRequest={state.projectRequest}
           importedMission={state.importedMission}
           payoutReceipt={state.payoutReceipt}
+          shareState={extractShareState(state)}
           onSubmit={actions.submitPacket}
           onExportPacket={actions.exportPacket}
         />
@@ -167,7 +170,10 @@ function renderScreen(
           activeMission={state.activeMission}
           projectRequest={state.projectRequest}
           importedMission={state.importedMission}
+          walletIdentity={state.walletIdentity}
+          proofEvents={state.proofEvents}
           onAccept={actions.acceptPacket}
+          onSignLatestProofEvent={actions.signLatestProofEvent}
           onReview={actions.openCaseFile}
           onRevision={actions.requestRevision}
           onReject={actions.rejectPacket}
@@ -180,6 +186,7 @@ function renderScreen(
           projectRequest={state.projectRequest}
           importedMission={state.importedMission}
           payoutReceipt={state.payoutReceipt}
+          shareState={extractShareState(state)}
           onBack={() => actions.setScreen("projects")}
         />
       );

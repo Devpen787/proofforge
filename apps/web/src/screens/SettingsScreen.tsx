@@ -151,6 +151,7 @@ export function SettingsScreen({
           value={proofEvents.at(-1)?.signature ? "Wallet signed" : "Unsigned"}
           tone={proofEvents.at(-1)?.signature ? "good" : "bad"}
         />
+        <StatusRow label="0G" value="Export-ready JSON" tone="good" />
         <div className="settings-action-row">
           <button
             className="secondary-action"
@@ -160,7 +161,7 @@ export function SettingsScreen({
             Sign latest
           </button>
           <button className="secondary-action" onClick={onExportProofRecord}>
-            Export record
+            Export 0G-ready record
           </button>
         </div>
       </section>

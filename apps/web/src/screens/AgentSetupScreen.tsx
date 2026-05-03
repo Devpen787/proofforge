@@ -1,6 +1,12 @@
 import React from "react";
 import { demoAgentIdentity } from "../demo";
-import { StatusRow } from "../components/ui";
+import {
+  ActionBar,
+  DetailPane,
+  PageHeader,
+  PageSurface,
+  StatusRow
+} from "../components/ui";
 
 const permissionRows = [
   {
@@ -28,78 +34,94 @@ const permissionRows = [
 export function AgentSetupScreen({
   registered,
   onRegister,
-  onStart
+  onStart,
+  onSettings
 }: {
   registered: boolean;
   onRegister: () => void;
   onStart: () => void;
+  onSettings: () => void;
 }) {
   return (
     <section className="page-grid agent-setup-grid">
-      <div className="agent-setup-hero wide">
-        <div>
-          <p className="small-label">Agent / Node Setup</p>
-          <h1>Register the agent that will do the work.</h1>
-          <p>Connect the worker you want credited for completed proof work.</p>
-          <div className="home-actions">
+      <PageSurface className="pf-agent-surface">
+        <PageHeader
+          eyebrow="Agent setup"
+          title="Register the proof node."
+          subtitle="This node can run, verify, and package evidence. Credit rolls up to Alex after accepted proof."
+          actions={
             <button
               className="primary-action"
               onClick={registered ? onStart : onRegister}
             >
               {registered ? "Find source-backed work" : "Register proof node"}
             </button>
-            {!registered && (
-              <button className="secondary-action" onClick={onStart}>
-                Browse work first
-              </button>
-            )}
-          </div>
-        </div>
-        <aside className="agent-id-card">
-          <span className="status-pill safe">
-            {registered ? "Registered" : "Local profile"}
-          </span>
-          <strong>{demoAgentIdentity.id}</strong>
-          <small>{demoAgentIdentity.owner} owns this proof node</small>
-          <StatusRow label="Status" value="Ready for work" tone="good" />
-          <StatusRow label="ENS" value={demoAgentIdentity.ensRef} tone="good" />
-        </aside>
-      </div>
+          }
+        />
 
-      <section className="agent-command-panel wide">
-        <div className="agent-command-header">
+        <div className="pf-agent-layout">
           <div>
-            <p className="small-label">Agent profile</p>
-            <h2>Skills and limits.</h2>
-          </div>
-          <StatusRow
-            label="Project"
-            value={demoAgentIdentity.project}
-            tone="good"
-          />
-          <StatusRow
-            label="Credit"
-            value={`${demoAgentIdentity.acceptedProofs} proofs / ${demoAgentIdentity.earnedCredit}`}
-            tone="good"
-          />
-        </div>
-
-        <div className="agent-skill-row">
-          {demoAgentIdentity.skills.map((skill) => (
-            <span key={skill}>{skill}</span>
-          ))}
-        </div>
-
-        <div className="agent-permission-table">
-          {permissionRows.map((row) => (
-            <div key={row.label}>
-              <strong>{row.label}</strong>
-              <span>{row.allowed}</span>
-              <b>{row.blocked}</b>
+            <div className="pf-agent-identity">
+              <span className="status-pill safe">
+                {registered ? "Registered" : "Local profile"}
+              </span>
+              <strong>{demoAgentIdentity.id}</strong>
+              <small>{demoAgentIdentity.owner} owns this proof node</small>
             </div>
-          ))}
+
+            <div className="pf-agent-skills">
+              {demoAgentIdentity.skills.map((skill) => (
+                <span key={skill}>{skill}</span>
+              ))}
+            </div>
+
+            <div className="pf-permission-table">
+              <div className="pf-permission-head">
+                <span>Area</span>
+                <span>Allowed</span>
+                <span>Blocked</span>
+              </div>
+              {permissionRows.map((row) => (
+                <div key={row.label}>
+                  <strong>{row.label}</strong>
+                  <span>{row.allowed}</span>
+                  <b>{row.blocked}</b>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <DetailPane eyebrow="Credit owner" title="Rolls up to Alex">
+            <StatusRow label="Status" value="Ready for work" tone="good" />
+            <StatusRow
+              label="ENS"
+              value={demoAgentIdentity.ensRef}
+              tone="good"
+            />
+            <StatusRow
+              label="Project"
+              value={demoAgentIdentity.project}
+              tone="good"
+            />
+            <StatusRow
+              label="Credit"
+              value={`${demoAgentIdentity.acceptedProofs} proofs / ${demoAgentIdentity.earnedCredit}`}
+              tone="good"
+            />
+          </DetailPane>
         </div>
-      </section>
+
+        <ActionBar>
+          {!registered ? (
+            <button className="secondary-action" onClick={onStart}>
+              Browse work first
+            </button>
+          ) : null}
+          <button className="secondary-action" onClick={onSettings}>
+            Policy settings
+          </button>
+        </ActionBar>
+      </PageSurface>
     </section>
   );
 }
