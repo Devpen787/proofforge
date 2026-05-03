@@ -6,7 +6,11 @@ const mission = {
   id: "mission_docs",
   riskLevel: "low",
   humanApprovalRequired: true,
-  allowedActions: ["copy fixture into temporary workspace", "run allowlisted command", "capture logs"],
+  allowedActions: [
+    "copy fixture into temporary workspace",
+    "run allowlisted command",
+    "capture logs"
+  ],
   blockedActions: ["open pull request", "post public comment"]
 } as MissionContract;
 
@@ -26,7 +30,9 @@ describe("evaluateMissionPolicy", () => {
     } as MissionContract);
 
     expect(decision.status).toBe("approval_required");
-    expect(decision.reasons).toContain("Mission allowed actions include external side effects.");
+    expect(decision.reasons).toContain(
+      "Mission allowed actions include external side effects."
+    );
   });
 
   it("blocks missions if secrets are mounted", () => {
@@ -36,7 +42,9 @@ describe("evaluateMissionPolicy", () => {
     });
 
     expect(decision.status).toBe("blocked");
-    expect(decision.reasons).toContain("Secrets must not be mounted into runner missions.");
+    expect(decision.reasons).toContain(
+      "Secrets must not be mounted into runner missions."
+    );
   });
 
   it("blocks missions if network is open by default", () => {

@@ -9,7 +9,8 @@ const acceptedPacket = {
   mission: {
     title: "Validate installation docs"
   },
-  maintainerSummary: "Docs install failed at the documented command. Verifier checks passed.",
+  maintainerSummary:
+    "Docs install failed at the documented command. Verifier checks passed.",
   artifacts: [
     {
       label: "runner.log",

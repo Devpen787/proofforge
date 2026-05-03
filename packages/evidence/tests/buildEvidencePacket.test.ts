@@ -3,7 +3,10 @@ import { tmpdir } from "node:os";
 import { join, resolve } from "node:path";
 import { describe, expect, it } from "vitest";
 import { runLocalMission } from "../../../apps/runner/src/index";
-import { convertWorkLeadToMission, workLeadSchema } from "../../../packages/mission/src/index";
+import {
+  convertWorkLeadToMission,
+  workLeadSchema
+} from "../../../packages/mission/src/index";
 import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
 import {
   buildEvidencePacket,
@@ -16,10 +19,16 @@ const workLead = workLeadSchema.parse({
   sourceType: "fixture",
   sourceUrl: "https://github.com/proofforge/fixture/issues/1",
   title: "Validate installation docs",
-  rawRequest: "Run the documented install check and prove whether it works in a clean environment.",
+  rawRequest:
+    "Run the documented install check and prove whether it works in a clean environment.",
   repo: "proofforge/fixture",
   acceptanceOwner: "fixture-maintainer",
-  desiredEvidence: ["runner-result.json", "stdout.log", "stderr.log", "environment.json"],
+  desiredEvidence: [
+    "runner-result.json",
+    "stdout.log",
+    "stderr.log",
+    "environment.json"
+  ],
   riskLevel: "low",
   proofability: 92,
   status: "mission_ready",
@@ -29,7 +38,11 @@ const workLead = workLeadSchema.parse({
     type: "external"
   },
   missing: [],
-  blockedActions: ["open pull request", "post public comment", "access private repositories"]
+  blockedActions: [
+    "open pull request",
+    "post public comment",
+    "access private repositories"
+  ]
 });
 
 describe("buildEvidencePacket", () => {
@@ -44,7 +57,9 @@ describe("buildEvidencePacket", () => {
     });
     const verifierResult = await verifyRunnerArtifacts({
       runnerResult,
-      expectedCommand: mission.allowedActions.includes("run allowlisted command")
+      expectedCommand: mission.allowedActions.includes(
+        "run allowlisted command"
+      )
         ? "npm run proof:check"
         : "npm test"
     });
@@ -63,10 +78,15 @@ describe("buildEvidencePacket", () => {
     expect(packet.humanApproval.status).toBe("approved");
     expect(packet.maintainerSummary).toContain("No external action was taken");
 
-    const files = await writeEvidencePacketFiles(packet, join(outputDir, "packet"));
+    const files = await writeEvidencePacketFiles(
+      packet,
+      join(outputDir, "packet")
+    );
 
     await expect(stat(files.jsonPath)).resolves.toBeTruthy();
     await expect(stat(files.markdownPath)).resolves.toBeTruthy();
-    await expect(readFile(files.markdownPath, "utf8")).resolves.toContain("Evidence Case File");
+    await expect(readFile(files.markdownPath, "utf8")).resolves.toContain(
+      "Evidence Case File"
+    );
   });
 });

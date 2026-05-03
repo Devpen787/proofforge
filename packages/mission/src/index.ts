@@ -23,6 +23,8 @@ export const missionStatuses = [
 export const sourceTypes = [
   "github_issue",
   "github_pr",
+  "ethglobal_prize",
+  "bounty_source",
   "docs_url",
   "fixture",
   "marketplace_task",
@@ -41,6 +43,12 @@ export const missionTypes = [
   "milestone_proof"
 ] as const;
 
+export const sourceRequirementSchema = z.object({
+  label: z.string().min(1),
+  detail: z.string().min(1),
+  required: z.boolean().default(true)
+});
+
 export const workLeadSchema = z.object({
   id: z.string().min(1),
   sourceType: z.enum(sourceTypes),
@@ -49,7 +57,10 @@ export const workLeadSchema = z.object({
   rawRequest: z.string().min(1),
   repo: z.string().min(1),
   acceptanceOwner: z.string().min(1),
+  sponsor: z.string().min(1).optional(),
+  bountyUrl: z.string().url().optional(),
   desiredEvidence: z.array(z.string().min(1)).min(1),
+  submissionRequirements: z.array(sourceRequirementSchema).default([]),
   riskLevel: z.enum(["low", "medium", "high"]),
   proofability: z.number().min(0).max(100),
   status: z.enum(workLeadStatuses),
@@ -74,10 +85,13 @@ export const missionContractSchema = z.object({
   sourceUrl: z.string().url(),
   objective: z.string().min(1),
   acceptanceOwner: z.string().min(1),
+  sponsor: z.string().min(1).optional(),
+  bountyUrl: z.string().url().optional(),
   expectedOutcome: z.enum(["success", "failure", "evidence_only"]),
   allowedActions: z.array(z.string().min(1)).min(1),
   blockedActions: z.array(z.string().min(1)),
   requiredEvidence: z.array(z.string().min(1)).min(1),
+  submissionRequirements: z.array(sourceRequirementSchema).default([]),
   riskLevel: z.enum(["low", "medium", "high"]),
   humanApprovalRequired: z.boolean(),
   reward: z
@@ -101,7 +115,11 @@ export function parseMissionContract(input: unknown): MissionContract {
 }
 
 export function canConvertWorkLead(lead: WorkLead): boolean {
-  return lead.proofability >= 80 && lead.missing.length === 0 && lead.status !== "rejected";
+  return (
+    lead.proofability >= 80 &&
+    lead.missing.length === 0 &&
+    lead.status !== "rejected"
+  );
 }
 
 export function convertWorkLeadToMission(lead: WorkLead): MissionContract {
@@ -113,14 +131,18 @@ export function convertWorkLeadToMission(lead: WorkLead): MissionContract {
     id: `mission_${lead.id}`,
     sourceLeadId: lead.id,
     status: "ready",
-    type: lead.sourceType === "docs_url" || lead.title.toLowerCase().includes("docs")
-      ? "docs_validation"
-      : "bug_reproduction",
+    type:
+      lead.sourceType === "docs_url" ||
+      lead.title.toLowerCase().includes("docs")
+        ? "docs_validation"
+        : "bug_reproduction",
     title: lead.title,
     repo: lead.repo,
     sourceUrl: lead.sourceUrl,
     objective: lead.rawRequest,
     acceptanceOwner: lead.acceptanceOwner,
+    sponsor: lead.sponsor,
+    bountyUrl: lead.bountyUrl,
     expectedOutcome: "evidence_only",
     allowedActions: [
       "copy fixture into temporary workspace",
@@ -131,6 +153,7 @@ export function convertWorkLeadToMission(lead: WorkLead): MissionContract {
     ],
     blockedActions: lead.blockedActions,
     requiredEvidence: lead.desiredEvidence,
+    submissionRequirements: lead.submissionRequirements,
     riskLevel: lead.riskLevel,
     humanApprovalRequired: true,
     reward: lead.reward

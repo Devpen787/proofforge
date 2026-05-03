@@ -24,7 +24,12 @@ export const defaultTrustPolicy = trustPolicySchema.parse({
 });
 
 export const policyDecisionSchema = z.object({
-  status: z.enum(["safe_to_run", "evidence_only", "approval_required", "blocked"]),
+  status: z.enum([
+    "safe_to_run",
+    "evidence_only",
+    "approval_required",
+    "blocked"
+  ]),
   humanApprovalRequired: z.boolean(),
   reasons: z.array(z.string().min(1)),
   blockedActions: z.array(z.string().min(1)),
@@ -56,23 +61,41 @@ export function evaluateMissionPolicy(
     reasons.push("Network must be restricted for MVP proof runs.");
   }
 
-  requireApprovalForAction(policy.publicCommentsRequireApproval, blockedActions, "post public comments");
-  requireApprovalForAction(policy.pullRequestsRequireApproval, blockedActions, "open pull requests");
-  requireApprovalForAction(policy.paidToolsRequireApproval, blockedActions, "spend funds");
+  requireApprovalForAction(
+    policy.publicCommentsRequireApproval,
+    blockedActions,
+    "post public comments"
+  );
+  requireApprovalForAction(
+    policy.pullRequestsRequireApproval,
+    blockedActions,
+    "open pull requests"
+  );
+  requireApprovalForAction(
+    policy.paidToolsRequireApproval,
+    blockedActions,
+    "spend funds"
+  );
 
   const asksForPublicAction = [...allowedActions].some((action) =>
-    ["post public comments", "open pull requests", "spend funds"].includes(action)
+    ["post public comments", "open pull requests", "spend funds"].includes(
+      action
+    )
   );
   if (asksForPublicAction) {
     reasons.push("Mission allowed actions include external side effects.");
   }
 
   if (mission.riskLevel === "high") {
-    reasons.push("High-risk missions require manual review before any runner action.");
+    reasons.push(
+      "High-risk missions require manual review before any runner action."
+    );
   }
 
   const status = decideStatus({
-    structuralPolicySafe: reasons.length === 0 || reasons.every((reason) => reason.includes("require manual review")),
+    structuralPolicySafe:
+      reasons.length === 0 ||
+      reasons.every((reason) => reason.includes("require manual review")),
     asksForPublicAction,
     riskLevel: mission.riskLevel,
     humanApprovalRequired: mission.humanApprovalRequired,
@@ -81,15 +104,23 @@ export function evaluateMissionPolicy(
 
   return policyDecisionSchema.parse({
     status,
-    humanApprovalRequired: mission.humanApprovalRequired || status !== "safe_to_run",
-    reasons: reasons.length > 0 ? reasons : ["Mission can run locally in evidence-only mode."],
+    humanApprovalRequired:
+      mission.humanApprovalRequired || status !== "safe_to_run",
+    reasons:
+      reasons.length > 0
+        ? reasons
+        : ["Mission can run locally in evidence-only mode."],
     blockedActions: [...blockedActions],
     allowedActions: [...allowedActions],
     policy
   });
 }
 
-function requireApprovalForAction(requireApproval: boolean, blockedActions: Set<string>, action: string): void {
+function requireApprovalForAction(
+  requireApproval: boolean,
+  blockedActions: Set<string>,
+  action: string
+): void {
   if (requireApproval) {
     blockedActions.add(action);
   }

@@ -1,9 +1,15 @@
 import { describe, expect, it } from "vitest";
-import { importGitHubIssueLead, parseGitHubIssueUrl } from "../src/index";
+import {
+  importEthGlobalPrizeLeads,
+  importGitHubIssueLead,
+  parseGitHubIssueUrl
+} from "../src/index";
 
 describe("parseGitHubIssueUrl", () => {
   it("parses a public issue URL into API coordinates", () => {
-    expect(parseGitHubIssueUrl("https://github.com/polkadot-js/api/issues/4821")).toEqual({
+    expect(
+      parseGitHubIssueUrl("https://github.com/polkadot-js/api/issues/4821")
+    ).toEqual({
       owner: "polkadot-js",
       repo: "api",
       issueNumber: 4821,
@@ -13,9 +19,9 @@ describe("parseGitHubIssueUrl", () => {
   });
 
   it("rejects non-issue GitHub URLs", () => {
-    expect(() => parseGitHubIssueUrl("https://github.com/polkadot-js/api/pulls/4821")).toThrow(
-      "Expected a GitHub issue URL"
-    );
+    expect(() =>
+      parseGitHubIssueUrl("https://github.com/polkadot-js/api/pulls/4821")
+    ).toThrow("Expected a GitHub issue URL");
   });
 });
 
@@ -41,7 +47,11 @@ describe("importGitHubIssueLead", () => {
             "OS: Ubuntu 24.04, Node 22."
           ].join("\n"),
           state: "open",
-          labels: [{ name: "bug" }, { name: "needs reproduction" }, { name: "docs" }],
+          labels: [
+            { name: "bug" },
+            { name: "needs reproduction" },
+            { name: "docs" }
+          ],
           user: { login: "maintainer" }
         })
       })
@@ -52,6 +62,9 @@ describe("importGitHubIssueLead", () => {
     expect(result.lead.proofability).toBeGreaterThanOrEqual(80);
     expect(result.lead.missing).toEqual([]);
     expect(result.lead.desiredEvidence).toContain("broken documentation step");
+    expect(result.lead.submissionRequirements[0].label).toBe(
+      "Canonical public issue"
+    );
     expect(result.diagnosis.recommendation).toContain("Convert to a mission");
   });
 
@@ -76,5 +89,47 @@ describe("importGitHubIssueLead", () => {
     expect(result.lead.status).toBe("needs_triage");
     expect(result.lead.missing).toContain("reproduction steps");
     expect(result.diagnosis.recommendation).toContain("Ask for");
+  });
+});
+
+describe("importEthGlobalPrizeLeads", () => {
+  it("turns sponsor prize requirements into source-backed work leads", async () => {
+    const result = await importEthGlobalPrizeLeads({
+      event: "Open Agents",
+      now: new Date("2026-05-01T12:00:00.000Z"),
+      fetch: async () => ({
+        ok: true,
+        status: 200,
+        json: async () => ({
+          results: [
+            {
+              name: "Uniswap Foundation",
+              prizes: [
+                {
+                  title: "Best Uniswap API integration",
+                  description:
+                    "Build an agent that uses the Uniswap API with transparent execution.",
+                  qualifications:
+                    "Every submission must include a FEEDBACK.md file in the repo root."
+                }
+              ]
+            }
+          ]
+        })
+      })
+    });
+
+    expect(result.source).toBe("ethglobal");
+    expect(result.prizeCount).toBe(1);
+    expect(result.leads[0].sourceType).toBe("ethglobal_prize");
+    expect(result.leads[0].sponsor).toBe("Uniswap Foundation");
+    expect(result.leads[0].submissionRequirements).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ label: "Sponsor qualification" })
+      ])
+    );
+    expect(result.leads[0].blockedActions).toContain(
+      "sign transactions or spend funds"
+    );
   });
 });

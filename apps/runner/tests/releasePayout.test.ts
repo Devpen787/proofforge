@@ -25,12 +25,18 @@ describe("releasePayoutFile", () => {
     });
 
     await writeFile(inputPath, JSON.stringify(payout, null, 2), "utf8");
-    const writtenPath = await releasePayoutFile(inputPath, outputPath, new Date("2026-05-01T13:00:00.000Z"));
+    const writtenPath = await releasePayoutFile(
+      inputPath,
+      outputPath,
+      new Date("2026-05-01T13:00:00.000Z")
+    );
     const released = JSON.parse(await readFile(writtenPath, "utf8"));
 
     expect(writtenPath).toBe(outputPath);
     expect(released.status).toBe("released");
     expect(released.releasedAt).toBe("2026-05-01T13:00:00.000Z");
-    expect(released.notes).toContain("Release is a separate manual accounting step in the MVP.");
+    expect(released.notes).toContain(
+      "Release is a separate manual accounting step in the MVP."
+    );
   });
 });

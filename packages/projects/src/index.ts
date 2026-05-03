@@ -3,7 +3,14 @@ import type { EvidencePacket } from "@proofforge/evidence";
 import type { MissionContract, WorkLead } from "@proofforge/mission";
 import type { Payout } from "@proofforge/payments";
 
-export const projectRoles = ["founder_steward", "contributor", "reviewer", "maintainer", "sponsor", "node_operator"] as const;
+export const projectRoles = [
+  "founder_steward",
+  "contributor",
+  "reviewer",
+  "maintainer",
+  "sponsor",
+  "node_operator"
+] as const;
 export const projectPermissions = [
   "run_missions",
   "review_packets",
@@ -25,7 +32,14 @@ export const projectMemberSchema = z.object({
 export const agentDelegationSchema = z.object({
   id: z.string().min(1),
   name: z.string().min(1),
-  type: z.enum(["runner", "verifier", "skeptic", "packager", "docs_agent", "browser_qa"]),
+  type: z.enum([
+    "runner",
+    "verifier",
+    "skeptic",
+    "packager",
+    "docs_agent",
+    "browser_qa"
+  ]),
   status: z.enum(["active", "paused", "removed"]),
   allowedActions: z.array(z.string().min(1)).min(1),
   blockedActions: z.array(z.string().min(1)).min(1),
@@ -123,7 +137,11 @@ export function inviteProjectMember(
     now?: Date;
   }
 ): Project {
-  if (project.members.some((member) => member.handle === input.handle && member.status !== "removed")) {
+  if (
+    project.members.some(
+      (member) => member.handle === input.handle && member.status !== "removed"
+    )
+  ) {
     throw new Error("Project member already exists.");
   }
 
@@ -153,7 +171,9 @@ export function attachAgentDelegation(
     now?: Date;
   }
 ): Project {
-  if (input.allowedActions.some((action) => input.blockedActions.includes(action))) {
+  if (
+    input.allowedActions.some((action) => input.blockedActions.includes(action))
+  ) {
     throw new Error("Agent action cannot be both allowed and blocked.");
   }
 
@@ -173,7 +193,11 @@ export function attachAgentDelegation(
   });
 }
 
-export function addWorkLeadToProject(project: Project, lead: WorkLead, input: { now?: Date } = {}): Project {
+export function addWorkLeadToProject(
+  project: Project,
+  lead: WorkLead,
+  input: { now?: Date } = {}
+): Project {
   if (project.workLeadIds.includes(lead.id)) {
     throw new Error("Work Lead is already attached to project.");
   }
@@ -183,7 +207,11 @@ export function addWorkLeadToProject(project: Project, lead: WorkLead, input: { 
   });
 }
 
-export function addMissionToProject(project: Project, mission: MissionContract, input: { now?: Date } = {}): Project {
+export function addMissionToProject(
+  project: Project,
+  mission: MissionContract,
+  input: { now?: Date } = {}
+): Project {
   if (project.missionIds.includes(mission.id)) {
     throw new Error("Mission is already attached to project.");
   }
@@ -229,12 +257,20 @@ export function recordAcceptedProof(
 }
 
 export function canUseProjectOutput(project: Project, handle: string): boolean {
-  const member = project.members.find((item) => item.handle === handle && item.status === "active");
-  const credited = project.creditLedger.some((entry) => entry.contributor === handle);
+  const member = project.members.find(
+    (item) => item.handle === handle && item.status === "active"
+  );
+  const credited = project.creditLedger.some(
+    (entry) => entry.contributor === handle
+  );
   return Boolean(member || credited);
 }
 
-function touch(project: Project, now: Date | undefined, patch: Partial<Project>): Project {
+function touch(
+  project: Project,
+  now: Date | undefined,
+  patch: Partial<Project>
+): Project {
   return parseProject({
     ...project,
     ...patch,

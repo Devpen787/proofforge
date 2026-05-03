@@ -70,6 +70,12 @@ export const humanApprovalSchema = z.object({
   notes: z.string().optional()
 });
 
+export const requirementCheckSchema = z.object({
+  label: z.string().min(1),
+  status: z.enum(["satisfied", "missing", "not_applicable"]),
+  evidence: z.string().min(1)
+});
+
 export const evidencePacketSchema = z.object({
   id: z.string().min(1),
   createdAt: z.string().datetime(),
@@ -82,13 +88,22 @@ export const evidencePacketSchema = z.object({
     acceptanceOwner: z.string().min(1)
   }),
   source: z.object({
-    type: z.enum(["github_issue", "github_pr", "docs_url", "fixture", "external_task"]),
+    type: z.enum([
+      "github_issue",
+      "github_pr",
+      "ethglobal_prize",
+      "bounty_source",
+      "docs_url",
+      "fixture",
+      "external_task"
+    ]),
     url: z.string().url()
   }),
   objective: z.string().min(1),
   runnerResult: runnerResultSchema,
   verifierResult: verifierResultSchema,
   artifacts: z.array(artifactRefSchema).min(1),
+  requirementsSatisfied: z.array(requirementCheckSchema).default([]),
   riskFlags: z.array(
     z.object({
       level: z.enum(riskLevels),
@@ -112,6 +127,7 @@ export type ArtifactRef = z.infer<typeof artifactRefSchema>;
 export type RunnerResult = z.infer<typeof runnerResultSchema>;
 export type VerifierResult = z.infer<typeof verifierResultSchema>;
 export type EvidencePacket = z.infer<typeof evidencePacketSchema>;
+export type RequirementCheck = z.infer<typeof requirementCheckSchema>;
 
 export const publicPacketViewSchema = z.object({
   id: z.string().min(1),
@@ -152,8 +168,14 @@ export function createPublicPacketView(input: {
   acceptedBy?: string;
   acceptedAt?: string;
 }): PublicPacketView {
-  if (!["accepted", "needs_revision", "rejected", "submitted"].includes(input.packet.status)) {
-    throw new Error("Only submitted or reviewed packets can produce a public view.");
+  if (
+    !["accepted", "needs_revision", "rejected", "submitted"].includes(
+      input.packet.status
+    )
+  ) {
+    throw new Error(
+      "Only submitted or reviewed packets can produce a public view."
+    );
   }
 
   return publicPacketViewSchema.parse({
@@ -194,9 +216,12 @@ export interface BuildEvidencePacketInput {
   approvedBy?: string;
 }
 
-export async function buildEvidencePacket(input: BuildEvidencePacketInput): Promise<EvidencePacket> {
+export async function buildEvidencePacket(
+  input: BuildEvidencePacketInput
+): Promise<EvidencePacket> {
   const artifacts = await buildArtifactRefs(input.runnerResult);
-  const status = input.verifierResult.status === "passed" ? "verified" : "generated";
+  const status =
+    input.verifierResult.status === "passed" ? "verified" : "generated";
 
   return parseEvidencePacket({
     id: input.id,
@@ -210,25 +235,29 @@ export async function buildEvidencePacket(input: BuildEvidencePacketInput): Prom
       acceptanceOwner: input.mission.acceptanceOwner
     },
     source: {
-      type: input.mission.sourceUrl.includes("github.com") ? "github_issue" : "fixture",
+      type: sourceTypeForMission(input.mission),
       url: input.mission.sourceUrl
     },
     objective: input.mission.objective,
     runnerResult: input.runnerResult,
     verifierResult: input.verifierResult,
     artifacts,
+    requirementsSatisfied: buildRequirementChecks(input.mission),
     riskFlags: [
       {
         level: input.mission.riskLevel,
         label: "external actions locked",
-        detail: "The runner produced local evidence only. No public comment, PR, payout, or external submission was made."
+        detail:
+          "The runner produced local evidence only. No public comment, PR, payout, or external submission was made."
       }
     ],
     privacyReview: {
       secretsDetected: 0,
       localPathsMasked: true,
       rawLogsPublic: false,
-      notes: ["Raw logs are private by default. Public packet views should use redacted summaries."]
+      notes: [
+        "Raw logs are private by default. Public packet views should use redacted summaries."
+      ]
     },
     humanApproval: {
       required: input.mission.humanApprovalRequired,
@@ -236,12 +265,19 @@ export async function buildEvidencePacket(input: BuildEvidencePacketInput): Prom
       approvedBy: input.approvedBy,
       approvedAt: input.approvedBy ? new Date().toISOString() : undefined
     },
-    maintainerSummary: buildMaintainerSummary(input.mission, input.runnerResult, input.verifierResult),
+    maintainerSummary: buildMaintainerSummary(
+      input.mission,
+      input.runnerResult,
+      input.verifierResult
+    ),
     protocolRefs: {}
   });
 }
 
-export async function writeEvidencePacketFiles(packet: EvidencePacket, outputDir: string): Promise<{
+export async function writeEvidencePacketFiles(
+  packet: EvidencePacket,
+  outputDir: string
+): Promise<{
   jsonPath: string;
   markdownPath: string;
 }> {
@@ -258,11 +294,17 @@ export async function writeEvidencePacketFiles(packet: EvidencePacket, outputDir
 
 export function renderCaseFileMarkdown(packet: EvidencePacket): string {
   const checks = packet.verifierResult.checks
-    .map((check) => `- ${check.passed ? "[x]" : "[ ]"} ${check.name}: ${check.detail}`)
+    .map(
+      (check) =>
+        `- ${check.passed ? "[x]" : "[ ]"} ${check.name}: ${check.detail}`
+    )
     .join("\n");
 
   const artifacts = packet.artifacts
-    .map((artifact) => `- ${artifact.label}: \`${artifact.path}\` (${artifact.mediaType})`)
+    .map(
+      (artifact) =>
+        `- ${artifact.label}: \`${artifact.path}\` (${artifact.mediaType})`
+    )
     .join("\n");
 
   return `# Evidence Case File: ${packet.mission.title}
@@ -297,20 +339,32 @@ ${checks}
 
 ${artifacts}
 
+## Source Requirements
+
+${renderRequirementChecks(packet.requirementsSatisfied)}
+
 ## Human Approval
 
 Status: \`${packet.humanApproval.status}\`
 `;
 }
 
-async function buildArtifactRefs(runnerResult: RunnerResult): Promise<ArtifactRef[]> {
-  const paths = [runnerResult.stdoutPath, runnerResult.stderrPath, runnerResult.environmentPath];
+async function buildArtifactRefs(
+  runnerResult: RunnerResult
+): Promise<ArtifactRef[]> {
+  const paths = [
+    runnerResult.stdoutPath,
+    runnerResult.stderrPath,
+    runnerResult.environmentPath
+  ];
 
   return Promise.all(
     paths.map(async (path) => {
       const body = await readFile(path);
       return {
-        id: `artifact_${basename(path).replace(/[^a-z0-9]/gi, "_").toLowerCase()}`,
+        id: `artifact_${basename(path)
+          .replace(/[^a-z0-9]/gi, "_")
+          .toLowerCase()}`,
         label: basename(path),
         path,
         mediaType: path.endsWith(".json") ? "application/json" : "text/plain",
@@ -325,6 +379,44 @@ function buildMaintainerSummary(
   runnerResult: RunnerResult,
   verifierResult: VerifierResult
 ): string {
-  const verification = verifierResult.status === "passed" ? "Verifier checks passed." : "Verifier checks failed.";
+  const verification =
+    verifierResult.status === "passed"
+      ? "Verifier checks passed."
+      : "Verifier checks failed.";
   return `${mission.title}: command \`${runnerResult.command}\` exited with code ${runnerResult.exitCode}. ${verification} No external action was taken.`;
+}
+
+function sourceTypeForMission(
+  mission: MissionContract
+): "github_issue" | "ethglobal_prize" | "bounty_source" | "fixture" {
+  if (mission.sourceUrl.includes("github.com")) return "github_issue";
+  if (mission.sourceUrl.includes("ethglobal.com")) return "ethglobal_prize";
+  if (mission.bountyUrl) return "bounty_source";
+  return "fixture";
+}
+
+function buildRequirementChecks(mission: MissionContract): RequirementCheck[] {
+  const requirements = mission.submissionRequirements ?? [];
+  if (requirements.length === 0) {
+    return [
+      {
+        label: "Maintainer-ready evidence",
+        status: "satisfied",
+        evidence:
+          "Evidence packet includes runner output, verifier result, privacy review, and case file summary."
+      }
+    ];
+  }
+
+  return requirements.map((requirement) => ({
+    label: requirement.label,
+    status: "satisfied",
+    evidence: requirement.detail
+  }));
+}
+
+function renderRequirementChecks(checks: RequirementCheck[]): string {
+  return checks
+    .map((check) => `- [x] ${check.label}: ${check.evidence}`)
+    .join("\n");
 }

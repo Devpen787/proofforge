@@ -5,7 +5,9 @@ import { convertWorkLeadFile, parseConvertArgs } from "../src/convertWorkLead";
 
 describe("parseConvertArgs", () => {
   it("accepts an input path and optional output directory", () => {
-    expect(parseConvertArgs(["--in", "lead.json", "--out", "tmp/missions"])).toEqual({
+    expect(
+      parseConvertArgs(["--in", "lead.json", "--out", "tmp/missions"])
+    ).toEqual({
       inputPath: "lead.json",
       outputDir: "tmp/missions"
     });
@@ -79,8 +81,8 @@ describe("convertWorkLeadFile", () => {
       "utf8"
     );
 
-    await expect(convertWorkLeadFile({ inputPath, outputDir: resolve(dir, "missions") })).rejects.toThrow(
-      "not mission-ready"
-    );
+    await expect(
+      convertWorkLeadFile({ inputPath, outputDir: resolve(dir, "missions") })
+    ).rejects.toThrow("not mission-ready");
   });
 });

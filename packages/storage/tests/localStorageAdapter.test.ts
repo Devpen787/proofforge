@@ -6,7 +6,9 @@ import { createLocalStorageAdapter } from "../src/index";
 
 describe("createLocalStorageAdapter", () => {
   it("stores a file locally and returns a stable local receipt", async () => {
-    const sourceDir = await mkdtemp(join(tmpdir(), "proofforge-storage-source-"));
+    const sourceDir = await mkdtemp(
+      join(tmpdir(), "proofforge-storage-source-")
+    );
     const destDir = await mkdtemp(join(tmpdir(), "proofforge-storage-dest-"));
     const source = join(sourceDir, "evidence-packet.json");
 
@@ -21,6 +23,8 @@ describe("createLocalStorageAdapter", () => {
     expect(receipt.provider).toBe("local");
     expect(receipt.uri).toContain("file://");
     await expect(stat(join(destDir, basename(source)))).resolves.toBeTruthy();
-    await expect(readFile(join(destDir, basename(source)), "utf8")).resolves.toContain("packet_001");
+    await expect(
+      readFile(join(destDir, basename(source)), "utf8")
+    ).resolves.toContain("packet_001");
   });
 });

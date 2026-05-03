@@ -1,7 +1,11 @@
 import { mkdir, readFile, writeFile } from "node:fs/promises";
 import { basename, join, resolve } from "node:path";
 import { pathToFileURL } from "node:url";
-import { convertWorkLeadToMission, parseWorkLead, type WorkLead } from "@proofforge/mission";
+import {
+  convertWorkLeadToMission,
+  parseWorkLead,
+  type WorkLead
+} from "@proofforge/mission";
 
 interface ConvertArgs {
   inputPath: string;
@@ -11,7 +15,9 @@ interface ConvertArgs {
 export function parseConvertArgs(argv: string[]): ConvertArgs {
   const inputPath = readFlag(argv, "--in") ?? argv[0];
   if (!inputPath) {
-    throw new Error("Usage: npm run convert:lead -- --in demo-output/imports/example.work-lead.json");
+    throw new Error(
+      "Usage: npm run convert:lead -- --in demo-output/imports/example.work-lead.json"
+    );
   }
 
   return {
@@ -26,7 +32,9 @@ export async function convertWorkLeadFile(args: ConvertArgs): Promise<string> {
   const outputDir = resolve(process.cwd(), args.outputDir);
   await mkdir(outputDir, { recursive: true });
 
-  const cleanName = basename(args.inputPath).replace(/\.work-lead\.json$/, "").replace(/\.json$/, "");
+  const cleanName = basename(args.inputPath)
+    .replace(/\.work-lead\.json$/, "")
+    .replace(/\.json$/, "");
   const outputPath = join(outputDir, `${cleanName}.mission.json`);
   await writeFile(outputPath, JSON.stringify(mission, null, 2), "utf8");
 
@@ -34,7 +42,9 @@ export async function convertWorkLeadFile(args: ConvertArgs): Promise<string> {
 }
 
 async function readWorkLead(inputPath: string): Promise<WorkLead> {
-  const body = JSON.parse(await readFile(resolve(process.cwd(), inputPath), "utf8"));
+  const body = JSON.parse(
+    await readFile(resolve(process.cwd(), inputPath), "utf8")
+  );
   return parseWorkLead(body.lead ?? body);
 }
 
@@ -44,7 +54,10 @@ function readFlag(argv: string[], flag: string): string | undefined {
   return argv[index + 1];
 }
 
-if (process.argv[1] && import.meta.url === pathToFileURL(process.argv[1]).href) {
+if (
+  process.argv[1] &&
+  import.meta.url === pathToFileURL(process.argv[1]).href
+) {
   convertWorkLeadFile(parseConvertArgs(process.argv.slice(2)))
     .then((outputPath) => {
       console.log("ProofForge mission contract created.");

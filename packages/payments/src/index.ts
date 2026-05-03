@@ -2,7 +2,13 @@ import { z } from "zod";
 import type { EvidencePacket } from "@proofforge/evidence";
 import type { MissionContract } from "@proofforge/mission";
 
-export const payoutStatuses = ["escrowed", "earned", "released", "disputed", "cancelled"] as const;
+export const payoutStatuses = [
+  "escrowed",
+  "earned",
+  "released",
+  "disputed",
+  "cancelled"
+] as const;
 
 export const payoutSchema = z.object({
   id: z.string().min(1),
@@ -39,7 +45,11 @@ export function createEarnedPayout(input: {
     throw new Error("Only accepted packets can create earned payouts.");
   }
 
-  const reward = input.mission.reward ?? { amount: 0, currency: "USD", type: "none" as const };
+  const reward = input.mission.reward ?? {
+    amount: 0,
+    currency: "USD",
+    type: "none" as const
+  };
   return parsePayout({
     id: `payout_${input.packet.id}`,
     packetId: input.packet.id,
@@ -60,7 +70,10 @@ export function createEarnedPayout(input: {
   });
 }
 
-export function releasePayout(payout: Payout, input: { now?: Date } = {}): Payout {
+export function releasePayout(
+  payout: Payout,
+  input: { now?: Date } = {}
+): Payout {
   if (payout.status === "released") {
     throw new Error("Payout is already released.");
   }
@@ -86,7 +99,10 @@ export function disputePayout(payout: Payout): Payout {
   });
 }
 
-export function assertNoDuplicatePayout(payouts: Payout[], packetId: string): void {
+export function assertNoDuplicatePayout(
+  payouts: Payout[],
+  packetId: string
+): void {
   if (payouts.some((payout) => payout.packetId === packetId)) {
     throw new Error("Packet already has a payout record.");
   }

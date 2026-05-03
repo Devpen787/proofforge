@@ -1,7 +1,12 @@
 import { describe, expect, it } from "vitest";
 import type { EvidencePacket } from "@proofforge/evidence";
 import type { MissionContract } from "@proofforge/mission";
-import { assertNoDuplicatePayout, createEarnedPayout, disputePayout, releasePayout } from "../src/index";
+import {
+  assertNoDuplicatePayout,
+  createEarnedPayout,
+  disputePayout,
+  releasePayout
+} from "../src/index";
 
 const mission = {
   id: "mission_docs",
@@ -56,7 +61,9 @@ describe("payout lifecycle", () => {
       now: new Date("2026-05-01T12:00:00.000Z")
     });
 
-    const released = releasePayout(payout, { now: new Date("2026-05-01T13:00:00.000Z") });
+    const released = releasePayout(payout, {
+      now: new Date("2026-05-01T13:00:00.000Z")
+    });
     expect(released.status).toBe("released");
     expect(released.releasedAt).toBe("2026-05-01T13:00:00.000Z");
   });
@@ -70,7 +77,9 @@ describe("payout lifecycle", () => {
       approvedBy: "maintainer"
     });
 
-    expect(() => assertNoDuplicatePayout([payout], acceptedPacket.id)).toThrow("already has a payout");
+    expect(() => assertNoDuplicatePayout([payout], acceptedPacket.id)).toThrow(
+      "already has a payout"
+    );
   });
 
   it("does not allow disputes after release", () => {
@@ -84,6 +93,8 @@ describe("payout lifecycle", () => {
       })
     );
 
-    expect(() => disputePayout(payout)).toThrow("Released payouts cannot be disputed");
+    expect(() => disputePayout(payout)).toThrow(
+      "Released payouts cannot be disputed"
+    );
   });
 });

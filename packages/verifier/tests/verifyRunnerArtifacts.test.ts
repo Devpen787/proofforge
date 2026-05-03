@@ -41,6 +41,10 @@ describe("verifyRunnerArtifacts", () => {
     });
 
     expect(verifierResult.status).toBe("failed");
-    expect(verifierResult.checks.find((check) => check.name === "command matches mission")?.passed).toBe(false);
+    expect(
+      verifierResult.checks.find(
+        (check) => check.name === "command matches mission"
+      )?.passed
+    ).toBe(false);
   });
 });

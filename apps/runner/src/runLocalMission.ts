@@ -26,7 +26,9 @@ interface CapturedProcess {
   stderr: string;
 }
 
-export async function runLocalMission(input: LocalMissionRunInput): Promise<RunnerResult> {
+export async function runLocalMission(
+  input: LocalMissionRunInput
+): Promise<RunnerResult> {
   const runId = input.runId ?? `run_${randomUUID()}`;
   const runDir = join(input.outputDir, runId);
   const workspaceDir = join(runDir, "workspace");
@@ -39,7 +41,11 @@ export async function runLocalMission(input: LocalMissionRunInput): Promise<Runn
   await cp(input.fixtureDir, workspaceDir, { recursive: true });
 
   const startedAt = new Date();
-  const captured = await runAllowedCommand(input.command, workspaceDir, input.timeoutMs ?? 10_000);
+  const captured = await runAllowedCommand(
+    input.command,
+    workspaceDir,
+    input.timeoutMs ?? 10_000
+  );
   const completedAt = new Date();
 
   const environment = {
@@ -54,7 +60,11 @@ export async function runLocalMission(input: LocalMissionRunInput): Promise<Runn
 
   await writeFile(stdoutPath, captured.stdout, "utf8");
   await writeFile(stderrPath, captured.stderr, "utf8");
-  await writeFile(environmentPath, JSON.stringify(environment, null, 2), "utf8");
+  await writeFile(
+    environmentPath,
+    JSON.stringify(environment, null, 2),
+    "utf8"
+  );
 
   const runnerResult: RunnerResult = {
     id: runId,
@@ -68,7 +78,11 @@ export async function runLocalMission(input: LocalMissionRunInput): Promise<Runn
     environmentPath
   };
 
-  await writeFile(runnerResultPath, JSON.stringify(runnerResult, null, 2), "utf8");
+  await writeFile(
+    runnerResultPath,
+    JSON.stringify(runnerResult, null, 2),
+    "utf8"
+  );
 
   return runnerResult;
 }

@@ -40,7 +40,9 @@ describe("project model", () => {
       now
     });
 
-    expect(project.members.find((member) => member.handle === "sam")?.status).toBe("pending");
+    expect(
+      project.members.find((member) => member.handle === "sam")?.status
+    ).toBe("pending");
   });
 
   it("attaches constrained agent delegations", () => {
@@ -48,8 +50,16 @@ describe("project model", () => {
       id: "agent_docs_runner",
       name: "docs-runner-01",
       type: "runner",
-      allowedActions: ["clone public repositories", "run tests", "capture logs"],
-      blockedActions: ["open pull requests", "post public comments", "spend funds"],
+      allowedActions: [
+        "clone public repositories",
+        "run tests",
+        "capture logs"
+      ],
+      blockedActions: [
+        "open pull requests",
+        "post public comments",
+        "spend funds"
+      ],
       now
     });
 
@@ -66,7 +76,11 @@ describe("project model", () => {
   });
 
   it("turns accepted proof into project credit and usage rights", () => {
-    const projectWithMission = addMissionToProject(baseProject(), { id: "mission_1" } as MissionContract, { now });
+    const projectWithMission = addMissionToProject(
+      baseProject(),
+      { id: "mission_1" } as MissionContract,
+      { now }
+    );
     const credited = recordAcceptedProof(projectWithMission, {
       packet: { id: "packet_1", status: "accepted" } as EvidencePacket,
       payout: { id: "payout_1" } as Payout,

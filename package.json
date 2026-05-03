@@ -11,8 +11,14 @@
   "scripts": {
     "build": "npm run build --workspaces --if-present",
     "convert:lead": "tsx apps/runner/src/convertWorkLead.ts",
+    "import:ethglobal": "tsx apps/runner/src/importEthGlobalPrizes.ts",
     "import:github": "tsx apps/runner/src/importGitHubIssue.ts",
+    "0g:check": "tsx apps/runner/src/checkZeroGConfig.ts",
+    "0g:set-key": "tsx apps/runner/src/setZeroGPrivateKey.ts",
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "lint": "eslint .",
     "sync:web-proof": "tsx scripts/generateWebProofData.ts",
     "dev": "npm run dev -w apps/web",
     "release:payout": "tsx apps/runner/src/releasePayout.ts",
@@ -21,10 +27,17 @@
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },
   "devDependencies": {
+    "@eslint/js": "^10.0.1",
     "@types/node": "^20.12.12",
+    "eslint": "^10.3.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "eslint-plugin-react-refresh": "^0.5.2",
+    "globals": "^17.6.0",
     "playwright": "^1.59.1",
+    "prettier": "^3.8.3",
     "tsx": "^4.19.4",
     "typescript": "^5.4.5",
+    "typescript-eslint": "^8.59.1",
     "vitest": "^1.6.0"
   },
   "dependencies": {

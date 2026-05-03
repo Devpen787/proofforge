@@ -11,10 +11,29 @@ const workLead = {
   sourceType: "fixture",
   sourceUrl: "https://github.com/proofforge/fixture/issues/1",
   title: "Validate installation docs",
-  rawRequest: "Run the documented install check and prove whether it works in a clean environment.",
+  rawRequest:
+    "Run the documented install check and prove whether it works in a clean environment.",
   repo: "proofforge/fixture",
   acceptanceOwner: "fixture-maintainer",
-  desiredEvidence: ["runner-result.json", "stdout.log", "stderr.log", "environment.json"],
+  desiredEvidence: [
+    "runner-result.json",
+    "stdout.log",
+    "stderr.log",
+    "environment.json"
+  ],
+  submissionRequirements: [
+    {
+      label: "Public GitHub issue",
+      detail: "Source issue URL is attached to the mission.",
+      required: true
+    },
+    {
+      label: "Maintainer-ready case file",
+      detail:
+        "Packet must include logs, environment, verifier result, and summary.",
+      required: true
+    }
+  ],
   riskLevel: "low",
   proofability: 92,
   status: "mission_ready",
@@ -24,7 +43,11 @@ const workLead = {
     type: "external"
   },
   missing: [],
-  blockedActions: ["open pull request", "post public comment", "access private repositories"]
+  blockedActions: [
+    "open pull request",
+    "post public comment",
+    "access private repositories"
+  ]
 };
 
 describe("workLeadSchema", () => {
@@ -33,7 +56,9 @@ describe("workLeadSchema", () => {
   });
 
   it("rejects work leads without an acceptance owner", () => {
-    expect(workLeadSchema.safeParse({ ...workLead, acceptanceOwner: "" }).success).toBe(false);
+    expect(
+      workLeadSchema.safeParse({ ...workLead, acceptanceOwner: "" }).success
+    ).toBe(false);
   });
 });
 
@@ -46,6 +71,7 @@ describe("convertWorkLeadToMission", () => {
     expect(mission.status).toBe("ready");
     expect(mission.humanApprovalRequired).toBe(true);
     expect(mission.blockedActions).toContain("post public comment");
+    expect(mission.submissionRequirements).toHaveLength(2);
   });
 
   it("does not convert work that is missing clarification", () => {
@@ -57,6 +83,8 @@ describe("convertWorkLeadToMission", () => {
     });
 
     expect(canConvertWorkLead(parsedLead)).toBe(false);
-    expect(() => convertWorkLeadToMission(parsedLead)).toThrow("not mission-ready");
+    expect(() => convertWorkLeadToMission(parsedLead)).toThrow(
+      "not mission-ready"
+    );
   });
 });

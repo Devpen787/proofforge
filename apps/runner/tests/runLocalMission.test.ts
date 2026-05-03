@@ -20,13 +20,21 @@ describe("runLocalMission", () => {
     expect(runnerResultSchema.safeParse(result).success).toBe(true);
     expect(result.exitCode).toBe(1);
 
-    await expect(stat(join(outputDir, "run_fixture_docs", "runner-result.json"))).resolves.toBeTruthy();
+    await expect(
+      stat(join(outputDir, "run_fixture_docs", "runner-result.json"))
+    ).resolves.toBeTruthy();
     await expect(stat(result.stdoutPath)).resolves.toBeTruthy();
     await expect(stat(result.stderrPath)).resolves.toBeTruthy();
     await expect(stat(result.environmentPath)).resolves.toBeTruthy();
 
-    await expect(readFile(result.stdoutPath, "utf8")).resolves.toContain("Checking documented install flow");
-    await expect(readFile(result.stderrPath, "utf8")).resolves.toContain("Missing docs-ready.flag");
-    await expect(readFile(result.environmentPath, "utf8")).resolves.toContain("externalActions");
+    await expect(readFile(result.stdoutPath, "utf8")).resolves.toContain(
+      "Checking documented install flow"
+    );
+    await expect(readFile(result.stderrPath, "utf8")).resolves.toContain(
+      "Missing docs-ready.flag"
+    );
+    await expect(readFile(result.environmentPath, "utf8")).resolves.toContain(
+      "externalActions"
+    );
   });
 });

@@ -1,5 +1,9 @@
 import { describe, expect, it } from "vitest";
-import { evidencePacketSchema, isEvidencePacket, parseEvidencePacket } from "../src/index";
+import {
+  evidencePacketSchema,
+  isEvidencePacket,
+  parseEvidencePacket
+} from "../src/index";
 
 const validPacket = {
   id: "packet_001",
@@ -9,14 +13,16 @@ const validPacket = {
     id: "mission_docs_install_001",
     title: "Validate installation docs",
     sourceUrl: "https://github.com/proofforge/fixture/issues/1",
-    objective: "Run the documented install command and capture whether it works.",
+    objective:
+      "Run the documented install command and capture whether it works.",
     acceptanceOwner: "fixture-maintainer"
   },
   source: {
     type: "fixture",
     url: "https://github.com/proofforge/fixture/issues/1"
   },
-  objective: "Prove whether the documented install command works in a clean environment.",
+  objective:
+    "Prove whether the documented install command works in a clean environment.",
   runnerResult: {
     id: "run_001",
     command: "npm run proof:check",
@@ -37,7 +43,8 @@ const validPacket = {
       {
         name: "runner artifacts exist",
         passed: true,
-        detail: "runner-result.json, stdout.log, stderr.log, and environment.json are referenced"
+        detail:
+          "runner-result.json, stdout.log, stderr.log, and environment.json are referenced"
       }
     ],
     summary: "Runner artifacts are internally consistent."
@@ -49,6 +56,13 @@ const validPacket = {
       path: "runs/run_001/stdout.log",
       mediaType: "text/plain",
       sha256: "a".repeat(64)
+    }
+  ],
+  requirementsSatisfied: [
+    {
+      label: "Maintainer-ready case file",
+      status: "satisfied",
+      evidence: "case-file.md was generated with verifier and privacy state."
     }
   ],
   riskFlags: [
@@ -68,7 +82,8 @@ const validPacket = {
     required: true,
     status: "pending"
   },
-  maintainerSummary: "The install check failed in a clean fixture environment. Logs are attached.",
+  maintainerSummary:
+    "The install check failed in a clean fixture environment. Logs are attached.",
   protocolRefs: {}
 };
 
@@ -76,6 +91,9 @@ describe("evidencePacketSchema", () => {
   it("accepts a complete evidence packet", () => {
     expect(isEvidencePacket(validPacket)).toBe(true);
     expect(parseEvidencePacket(validPacket).id).toBe("packet_001");
+    expect(
+      parseEvidencePacket(validPacket).requirementsSatisfied[0].status
+    ).toBe("satisfied");
   });
 
   it("rejects packets without verifier output", () => {

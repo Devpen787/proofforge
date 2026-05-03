@@ -7,7 +7,9 @@ export interface VerifyRunnerArtifactsInput {
   expectedCommand: string;
 }
 
-export async function verifyRunnerArtifacts(input: VerifyRunnerArtifactsInput): Promise<VerifierResult> {
+export async function verifyRunnerArtifacts(
+  input: VerifyRunnerArtifactsInput
+): Promise<VerifierResult> {
   const checks = [
     {
       name: "command matches mission",
