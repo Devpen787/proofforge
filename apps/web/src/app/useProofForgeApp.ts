@@ -91,6 +91,10 @@ function saveAppState(state: SavedAppState) {
   window.localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
 }
 
+async function copyText(value: string) {
+  await navigator.clipboard?.writeText(value).catch(() => undefined);
+}
+
 function getEthereumProvider(): EthereumProvider | null {
   if (typeof window === "undefined") return null;
   const candidate = (window as Window & { ethereum?: EthereumProvider })
@@ -367,6 +371,34 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     exportProjectRecord: async () => {
       const record = await createProjectRecord(state);
       downloadJson(`${record.id}.proof-project-record.json`, record);
+    },
+    prepareZeroGUpload: async () => {
+      const record = await createNetworkRecord("workspace_snapshot", state);
+      const filename = `${record.id}.proof-network-record.json`;
+      downloadJson(filename, record);
+      const command = `npm run 0g:upload-record -- --in ${filename}`;
+      await copyText(command);
+      return command;
+    },
+    recordZeroGReceipt: (receipt) => {
+      setZeroGReceiptUri(receipt.trim());
+    },
+    preparePayoutHandoff: async () => {
+      const record = await createNetworkRecord("workspace_snapshot", state);
+      const filename = `${record.id}.proof-network-record.json`;
+      downloadJson(filename, record);
+      const recipient =
+        walletAddress && walletProvider === "browser"
+          ? walletAddress
+          : "<recipient-wallet>";
+      const command = [
+        "npm run payout:handoff --",
+        "--payout demo-output/docs-install/packet/payout.json",
+        `--record ${filename}`,
+        `--recipient ${recipient}`
+      ].join(" ");
+      await copyText(command);
+      return command;
     },
     publishProjectSync: async (input) => {
       const record = await createProjectRecord(state);

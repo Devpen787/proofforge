@@ -39,6 +39,10 @@ people.
 - Case File can generate a maintainer-ready GitHub comment and open the source
   issue. The maintainer posts with their own GitHub account, then records the
   posted comment URL in ProofForge as the source-platform acceptance reference.
+- Settings can prepare a 0G upload by exporting the network record and copying
+  the runner command. The user records the returned 0G receipt after upload.
+- Settings can prepare a payout handoff command for Safe, Splits, and Drips
+  metadata. Settlement remains external and receipt-based.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 

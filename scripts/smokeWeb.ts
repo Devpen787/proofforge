@@ -223,6 +223,20 @@ async function runSmoke() {
     await requireText(page, "Import workspace file");
     await requireText(page, "Export network record");
     await requireText(page, "Export project record");
+    await requireText(page, "Prepare 0G upload");
+    await page.getByRole("button", { name: "Prepare 0G upload" }).click();
+    await page
+      .getByText("0G command copied", { exact: false })
+      .waitFor({ timeout: 5000 });
+    await page
+      .getByPlaceholder("0g://... or receipt root")
+      .fill("0g://proof-network-record-smoke");
+    await page.getByRole("button", { name: "Record 0G receipt" }).click();
+    await requireText(page, "0g://proof-network-record-smoke");
+    await page.getByRole("button", { name: "Prepare payout handoff" }).click();
+    await page
+      .getByText("Payout handoff command copied", { exact: false })
+      .waitFor({ timeout: 5000 });
     await requireText(page, "Publish shared project");
     await page
       .getByPlaceholder("docs-onboarding-sprint")

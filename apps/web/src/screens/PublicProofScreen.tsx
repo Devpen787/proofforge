@@ -12,6 +12,8 @@ export function PublicProofScreen({
   proofRegistryTxHash,
   proofRegistryPacketHash,
   githubAcceptanceUrl,
+  zeroGReceiptUri,
+  payoutReceiptRef,
   onBack
 }: {
   activeMission: ActiveMission;
@@ -20,6 +22,8 @@ export function PublicProofScreen({
   proofRegistryTxHash: string;
   proofRegistryPacketHash: string;
   githubAcceptanceUrl: string;
+  zeroGReceiptUri: string;
+  payoutReceiptRef: string;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -165,9 +169,16 @@ export function PublicProofScreen({
           <div className="artifact-row rich-artifact-row">
             <span>
               <strong>0G storage root</strong>
-              <small>{generatedProofSummary.protocolRefs.storageUri}</small>
+              <small>
+                {zeroGReceiptUri ||
+                  generatedProofSummary.protocolRefs.storageUri}
+              </small>
             </span>
-            <small>{generatedProofSummary.protocolRefs.storageStatus}</small>
+            <small>
+              {zeroGReceiptUri
+                ? "Recorded receipt"
+                : generatedProofSummary.protocolRefs.storageStatus}
+            </small>
           </div>
         )}
         {publicEvidence.map((artifact) => (
@@ -187,7 +198,7 @@ export function PublicProofScreen({
           <StatusBlock label="Project" value={generatedProofSummary.project} />
           <StatusBlock
             label="Earned"
-            value={generatedProofSummary.payout.amount}
+            value={payoutReceiptRef || generatedProofSummary.payout.amount}
           />
           <StatusBlock
             label="Reputation"

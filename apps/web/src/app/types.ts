@@ -65,6 +65,9 @@ export interface AppActions {
   importWorkspaceFile: (file: File) => Promise<void>;
   exportNetworkRecord: () => Promise<void>;
   exportProjectRecord: () => Promise<void>;
+  prepareZeroGUpload: () => Promise<string>;
+  recordZeroGReceipt: (receipt: string) => void;
+  preparePayoutHandoff: () => Promise<string>;
   publishProjectSync: (input: {
     peerUrl?: string;
     key: string;

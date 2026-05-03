@@ -89,6 +89,9 @@ It defines how ProofForge uses GitHub handoff, EIP-712 acceptance, optional EAS
 attestations, 0G record sync, and external payout rails without becoming a
 custodial marketplace or GitHub replacement.
 
+For the remaining controls before a broad public network, see
+[docs/PRODUCTION_HARDENING.md](docs/PRODUCTION_HARDENING.md).
+
 ## Evidence Packet
 
 An evidence packet is the unit of value in ProofForge.
@@ -329,6 +332,26 @@ npm run demo:packet
 ```
 
 The 0G adapter uses the official `@0gfoundation/0g-storage-ts-sdk` package and returns a `0g://` storage URI plus transaction hash when upload succeeds.
+
+The hosted app keeps private upload keys out of the browser. Settings can
+prepare the 0G upload by exporting the proof network record and copying the
+runner command:
+
+```bash
+npm run 0g:upload-record -- --in <proof-network-record.json>
+```
+
+After the runner returns a receipt, paste the `0g://...` URI or root back into
+Settings so it appears in Public Proof and exported records.
+
+Settings can also prepare non-custodial payout handoff metadata:
+
+```bash
+npm run payout:handoff -- --payout demo-output/docs-install/packet/payout.json --record <proof-network-record.json> --recipient <wallet>
+```
+
+This writes Safe, Splits, and Drips payloads only. ProofForge still does not
+move funds.
 
 `demo-output/` is ignored by git because it is generated proof output.
 

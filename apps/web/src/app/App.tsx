@@ -174,6 +174,8 @@ function renderScreen(
           proofRegistryTxHash={state.proofRegistryTxHash}
           proofRegistryPacketHash={state.proofRegistryPacketHash}
           githubAcceptanceUrl={state.githubAcceptanceUrl}
+          zeroGReceiptUri={state.zeroGReceiptUri}
+          payoutReceiptRef={state.payoutReceiptRef}
           onBack={() => actions.setScreen("opportunity")}
         />
       );
@@ -186,10 +188,14 @@ function renderScreen(
           walletProvider={state.walletProvider}
           acceptanceSignature={state.acceptanceSignature}
           payoutReceiptRef={state.payoutReceiptRef}
+          zeroGReceiptUri={state.zeroGReceiptUri}
           onExportWorkspace={actions.exportWorkspace}
           onImportWorkspaceFile={actions.importWorkspaceFile}
           onExportNetworkRecord={actions.exportNetworkRecord}
           onExportProjectRecord={actions.exportProjectRecord}
+          onPrepareZeroGUpload={actions.prepareZeroGUpload}
+          onRecordZeroGReceipt={actions.recordZeroGReceipt}
+          onPreparePayoutHandoff={actions.preparePayoutHandoff}
           onPublishProjectSync={actions.publishProjectSync}
           onPullProjectSync={actions.pullProjectSync}
           onConnectWallet={actions.connectWallet}

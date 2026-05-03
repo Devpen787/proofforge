@@ -132,7 +132,9 @@ Do not put private upload keys in the browser.
 V1:
 
 - Browser exports network record.
+- Browser copies the `npm run 0g:upload-record` handoff command.
 - Runner tooling uploads to 0G.
+- User records the returned 0G receipt URI/root in ProofForge.
 - Sync manifest makes the record pullable and verifiable.
 
 V2:

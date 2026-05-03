@@ -10,10 +10,14 @@ export function SettingsScreen({
   walletProvider,
   acceptanceSignature,
   payoutReceiptRef,
+  zeroGReceiptUri,
   onExportWorkspace,
   onImportWorkspaceFile,
   onExportNetworkRecord,
   onExportProjectRecord,
+  onPrepareZeroGUpload,
+  onRecordZeroGReceipt,
+  onPreparePayoutHandoff,
   onPublishProjectSync,
   onPullProjectSync,
   onConnectWallet,
@@ -27,10 +31,14 @@ export function SettingsScreen({
   walletProvider: WalletProviderMode;
   acceptanceSignature: string;
   payoutReceiptRef: string;
+  zeroGReceiptUri: string;
   onExportWorkspace: () => void;
   onImportWorkspaceFile: (file: File) => Promise<void>;
   onExportNetworkRecord: () => Promise<void>;
   onExportProjectRecord: () => Promise<void>;
+  onPrepareZeroGUpload: () => Promise<string>;
+  onRecordZeroGReceipt: (receipt: string) => void;
+  onPreparePayoutHandoff: () => Promise<string>;
   onPublishProjectSync: (input: {
     peerUrl?: string;
     key: string;
@@ -46,9 +54,11 @@ export function SettingsScreen({
 }) {
   const importInputRef = React.useRef<HTMLInputElement | null>(null);
   const [receiptInput, setReceiptInput] = React.useState(payoutReceiptRef);
+  const [zeroGInput, setZeroGInput] = React.useState(zeroGReceiptUri);
   const [syncPeerUrl, setSyncPeerUrl] = React.useState("");
   const [syncKey, setSyncKey] = React.useState("docs-onboarding-sprint");
   const [syncStatus, setSyncStatus] = React.useState("Ready");
+  const [handoffStatus, setHandoffStatus] = React.useState("Ready");
 
   const syncInput = { peerUrl: syncPeerUrl, key: syncKey };
 
@@ -132,7 +142,11 @@ export function SettingsScreen({
         <StatusRow label="Public proof" value="Share state" tone="good" />
         <StatusRow label="Project sync" value="Export-ready JSON" tone="good" />
         <StatusRow label="Mutable sync" value={syncStatus} tone="good" />
-        <StatusRow label="0G" value="Export-ready JSON" tone="good" />
+        <StatusRow
+          label="0G"
+          value={zeroGReceiptUri || "Upload handoff ready"}
+          tone={zeroGReceiptUri ? "good" : "bad"}
+        />
         <StatusRow
           label="Payout receipt"
           value={payoutReceiptRef || "Not recorded"}
@@ -171,6 +185,60 @@ export function SettingsScreen({
             onClick={() => void onExportProjectRecord()}
           >
             Export project record
+          </button>
+        </div>
+        <form
+          className="utility-action-stack"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onRecordZeroGReceipt(zeroGInput);
+          }}
+        >
+          <button
+            className="secondary-action full"
+            type="button"
+            onClick={() => {
+              setHandoffStatus("Preparing 0G upload...");
+              void onPrepareZeroGUpload()
+                .then(() => setHandoffStatus("0G command copied"))
+                .catch((error: unknown) =>
+                  setHandoffStatus(
+                    error instanceof Error ? error.message : "Failed"
+                  )
+                );
+            }}
+          >
+            Prepare 0G upload
+          </button>
+          <label>
+            <small>0G receipt URI or root</small>
+            <input
+              value={zeroGInput}
+              onChange={(event) => setZeroGInput(event.currentTarget.value)}
+              placeholder="0g://... or receipt root"
+            />
+          </label>
+          <button className="secondary-action full" type="submit">
+            Record 0G receipt
+          </button>
+          <small>{handoffStatus}</small>
+        </form>
+        <div className="utility-action-stack">
+          <button
+            className="secondary-action full"
+            type="button"
+            onClick={() => {
+              setHandoffStatus("Preparing payout handoff...");
+              void onPreparePayoutHandoff()
+                .then(() => setHandoffStatus("Payout handoff command copied"))
+                .catch((error: unknown) =>
+                  setHandoffStatus(
+                    error instanceof Error ? error.message : "Failed"
+                  )
+                );
+            }}
+          >
+            Prepare payout handoff
           </button>
         </div>
         <form
