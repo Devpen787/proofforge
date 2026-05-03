@@ -4,9 +4,17 @@
   }
 
   .sidebar {
+    position: static;
+    height: auto;
     min-height: auto;
     padding: 18px;
     gap: 14px;
+    overflow: visible;
+  }
+
+  .sidebar-lower {
+    margin-top: 0;
+    padding-bottom: 0;
   }
 
   .nav-list {

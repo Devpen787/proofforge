@@ -27,13 +27,16 @@ button {
 }
 
 .sidebar {
-  min-height: 100vh;
+  position: sticky;
+  top: 0;
+  height: 100vh;
   background: #07141d;
   color: white;
   padding: 22px 16px;
   display: flex;
   flex-direction: column;
   gap: 26px;
+  overflow: hidden;
 }
 
 .brand,
@@ -43,7 +46,7 @@ button {
   gap: 12px;
 }
 
-.brand-mark,
+.brand-logo,
 .avatar {
   width: 34px;
   height: 34px;
@@ -54,13 +57,24 @@ button {
   font-weight: 900;
 }
 
+.brand-logo {
+  display: block;
+  object-fit: cover;
+}
+
 .nav-list {
   display: grid;
   gap: 7px;
 }
 
-.secondary-nav-list {
+.sidebar-lower {
   margin-top: auto;
+  display: grid;
+  gap: 14px;
+  padding-bottom: clamp(12px, 4vh, 42px);
+}
+
+.secondary-nav-list {
   border-top: 1px solid rgba(255, 255, 255, 0.12);
   padding-top: 16px;
 }
