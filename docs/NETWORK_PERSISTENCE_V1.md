@@ -15,11 +15,23 @@ people.
 - Demo/local signing remains explicit when no browser wallet provider exists.
 - `npm run verify:acceptance -- <record.json>` can recover and check browser
   wallet signatures from exported records.
+- `npm run 0g:upload-record -- --in <record.json>` can publish the network
+  record to 0G Storage from runner tooling, keeping private keys out of the
+  browser.
+- `npm run sync:publish-record -- --record <record.json> --receipt <0g-receipt.json>`
+  writes a share manifest with the 0G root, transaction reference, content hash,
+  and acceptance-signature verification status.
+- `npm run sync:pull-record -- --manifest <sync.json>` can pull the immutable
+  record from 0G by root hash, verify the content hash, and verify the
+  acceptance signature before browser import. For offline checks, add
+  `--record <local-record.json>` to validate an already downloaded copy.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 
 This means a judge, maintainer, or contributor can open a hosted ProofForge URL
-and see the relevant proof state without needing a ProofForge account.
+and see the relevant proof state without needing a ProofForge account. They can
+also move the same state across machines as a 0G-backed record plus sync
+manifest.
 
 ## Authority Model
 
@@ -42,12 +54,19 @@ source work -> mission -> bounded agent proof -> evidence packet
 -> reviewer link -> acceptance -> public proof / credit record
 ```
 
+## Shared Sync Boundary
+
+The V1 sync model is immutable-record sync, not realtime collaborative editing.
+ProofForge publishes accepted proof records, then other users pull and verify
+those records. This solves cross-machine proof sharing without turning
+ProofForge into a custodial marketplace, repo permission system, or payment
+processor.
+
 ## What Remains For Full Network Production
 
-The current V1 does not yet provide automatic decentralized sync. A later
-network layer should persist the same network record shape to one or more of:
+A later network layer can add mutable project/review collaboration on top of
+the same record shape through one or more of:
 
-- 0G Storage for durable proof packets and record roots
 - Ceramic streams for mutable project/review state
 - GUN or OrbitDB for local-first peer sync
 - EVM events for accepted credit anchors and payout receipt references
