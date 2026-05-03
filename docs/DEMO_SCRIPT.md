@@ -8,6 +8,9 @@ ProofForge turns existing software work into safe missions, verified evidence pa
 
 Show that the system does not invent a new work economy. It imports existing work, scopes it, runs a safe proof workflow, and produces reviewable artifacts.
 
+Before recording, confirm the current product language in
+[`OPERATING_GUIDE.md`](./OPERATING_GUIDE.md). Use route hashes as demo URLs, but speak in product labels: Home, Opportunities, Runner, Case File, Maintainer Review, Proof Ledger, Public Proof.
+
 ## 2-4 Minute Flow
 
 ### 1. Open With The Problem
@@ -68,8 +71,10 @@ The demo proves this loop:
 Project
 -> Work Lead
 -> Mission
+-> Agent / Node Identity
 -> Local Runner
 -> Independent Verifier
+-> Coordination Trace
 -> Evidence Packet
 -> Public-Safe Packet
 -> Earned Payout
@@ -82,6 +87,8 @@ Important details:
 - The runner captures logs and environment.
 - The policy gate keeps the mission local and evidence-only before execution.
 - The verifier checks the runner artifacts independently.
+- Agent identity shows who owns the run and what actions are allowed or blocked.
+- Coordination trace shows Runner -> Verifier -> Packager -> Human approval.
 - The public packet strips local paths and private storage refs.
 - The payout is earned first, then released by a separate manual action.
 - Project credit records who contributed useful accepted proof.
@@ -102,14 +109,14 @@ http://localhost:5173/
 
 Screens to show:
 
-- Opportunity: useful work is visible and the proof loop is clear.
-- First Run: the user gets a guided safe mission instead of configuring a platform.
+- Home: useful work, current work state, and the next safe action are clear.
+- Guided proof flow: the user gets a safe mission instead of configuring a platform.
 - Projects: accepted proof grows a shared project through a proof ledger and agent delegations.
-- Work Queue: raw work is imported from existing sources, diagnosed, and held back until mission-ready.
+- Opportunities: raw work is imported from existing sources, diagnosed, and held back until mission-ready.
 - Runner: no external action happens without approval, and packet outputs are previewed.
-- Case Files: evidence is reviewed before submission with private/public artifact boundaries.
-- Maintainer: clean proof, not agent noise; decision support shows confidence, risk, artifacts, privacy, and payout.
-- Scoreboard: next action, earned/released payout state, reputation unlock, and activity.
+- Case File: evidence is reviewed before submission with private/public artifact boundaries.
+- Maintainer Review: clean proof, not agent noise; decision support shows confidence, risk, artifacts, privacy, and payout.
+- Proof Ledger / outcome state: next action, earned/released payout state, reputation unlock, and activity.
 - Public Proof: accepted proof is shareable without exposing raw logs, local paths, or payout internals.
 
 Direct routes:
@@ -129,13 +136,13 @@ Direct routes:
 Suggested click path in the browser:
 
 ```text
-Opportunity
--> First Run
--> Work Queue
+Home
+-> Guided proof flow
+-> Opportunities
 -> Runner
 -> Case File
--> Maintainer
--> Scoreboard
+-> Maintainer Review
+-> Proof Ledger / outcome state
 -> Public Proof
 ```
 
@@ -176,6 +183,8 @@ demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
 demo-output/docs-install/packet/released-payout.json
 demo-output/docs-install/packet/project.json
+demo-output/docs-install/packet/submission-evidence.json
+demo-output/docs-install/packet/submission-evidence.md
 ```
 
 Show these browser routes:
@@ -189,7 +198,7 @@ Show these browser routes:
 /#maintainer
 /#scoreboard
 /#public-proof
-/#proof-demo
+Use the terminal proof commands below instead of a separate product screen.
 ```
 
 Do not claim:
@@ -199,3 +208,5 @@ Do not claim:
 - automatic maintainer outreach
 - live production sandboxing
 - live 0G upload unless credentials are configured and the command returns a `0g://` URI
+- live ENS identity unless a resolver or verified identity ref is implemented
+- live AXL communication unless the packet contains a real AXL trace

@@ -2,13 +2,13 @@
 
 > Open Agents Hackathon project: a protocol-agnostic proof guild for agent-assisted software work.
 
-**ProofForge imports work from GitHub and bounty networks, then uses agents, runners, and human approval to turn it into verified evidence packets before anything reaches a maintainer.**
+**ProofForge connects existing work sources like GitHub, project backlogs, bounty networks, and agent runs, then turns useful work into accepted proof, contribution credit, payout state, and public-safe project history.**
 
 ## 5-Second Version
 
-AI agents make it cheap to generate code. ProofForge makes it possible to trust the work.
+AI agents make it cheap to generate code. ProofForge makes it possible to trust, track, and credit the work.
 
-We help builders, agents, and spare machines work together on useful software tasks, prove what works, and earn credit only when the contribution holds up.
+We help builders connect their work sources, see projects they contribute to, let agents or local nodes help safely, prove what works, and track credit or payout only when the contribution holds up.
 
 ## The Mission
 
@@ -27,21 +27,46 @@ The rule is simple:
 
 > No proof, no credit.
 
+The longer-term flywheel is:
+
+> Connect sources -> track projects -> prove useful work -> get accepted -> record credit/value -> find better work.
+
 ## Hackathon Scope
 
-For this hackathon, we are starting with one narrow workflow:
+For this hackathon, we are starting with one narrow workflow inside that larger flywheel:
 
-> **GitHub bug reproduction -> independent verification -> maintainer-safe evidence packet.**
+> **GitHub source/import -> qualified mission -> local agent run -> independent verification -> maintainer-safe Proof Pack -> accepted proof -> credit and earned payout state.**
 
 The first demo should prove that ProofForge can:
 
 1. Import a GitHub issue.
-2. Convert it into a small verifiable mission.
-3. Run the mission in a local sandbox.
-4. Capture commands, logs, environment, and result.
-5. Ask a verifier agent to independently check the work.
-6. Ask a human to approve before public submission.
-7. Produce an evidence packet a maintainer can review quickly.
+2. Convert it into a source-backed Work Lead and small verifiable Mission.
+3. Tie the run to an identifiable agent or proof node.
+4. Run the mission in a local sandbox.
+5. Capture commands, logs, environment, and result.
+6. Ask a verifier role to independently check the work.
+7. Record the runner -> verifier -> packager -> human approval trace.
+8. Produce a Proof Pack a maintainer can review quickly.
+9. Simulate maintainer acceptance.
+10. Create credit and earned payout state without implying automatic settlement.
+
+### Ethereum / Web3 / Bounty Hook
+
+The MVP should make the Web3 path visible without overclaiming it:
+
+```text
+GitHub issue / bounty URL / DAO proposal
+-> qualified mission terms
+-> accepted Proof Pack
+-> credit + earned payout state
+-> optional wallet, tx hash, receipt, grant, bounty, or treasury reference
+```
+
+V1 tracks wallet, bounty, and onchain receipt references. It does not custody
+funds, escrow funds, issue tokens, or settle payments automatically.
+
+For the exact V1/V2/V3 Web3 boundaries, see
+[docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md](docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md).
 
 ## Evidence Packet
 
@@ -66,17 +91,24 @@ Maintainers should not receive raw agent output. They should receive clean, veri
 
 ## Why This Matters
 
-Open-source and protocol communities already coordinate around useful work, public goods, bounties, grants, and reputation.
+Open-source and protocol communities already coordinate around useful work, public goods, bounties, grants, onchain treasuries, and reputation.
 
 ProofForge makes that pattern protocol-agnostic:
 
 - GitHub keeps the canonical issue or PR.
-- Existing bounty and grant networks keep their funding flows.
-- ProofForge adds the verification layer.
+- Existing bounty, grant, treasury, and marketplace networks keep their funding flows.
+- Wallets and onchain records can provide payment or credential signals when available.
+- ProofForge links source work, accepted proof, credit, payout state, and project history.
 
 The goal is to help people build shared software without drowning maintainers in low-quality AI output.
 
 ## How Sponsors Fit
+
+Current claim levels are defined in
+[docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md). In short: 0G has an
+implemented credential-gated adapter; ENS and AXL are product-critical identity
+and communication directions but are not live unless completed and verified;
+KeeperHub and Uniswap are later-stage settlement paths.
 
 ### 0G
 
@@ -277,46 +309,50 @@ npm run dev
 The web app shows the core product loop:
 
 ```text
-Opportunity
--> First Run
+Home
+-> Guided proof flow
 -> Projects
--> Work Queue
+-> Opportunities
 -> Runner
 -> Case File
 -> Maintainer Review
--> Scoreboard
+-> Proof Ledger / outcome state
 -> Public Proof
 ```
 
 Useful local routes:
 
 ```text
-http://localhost:5173/#opportunity
-http://localhost:5173/#first-run
-http://localhost:5173/#projects
-http://localhost:5173/#work-queue
-http://localhost:5173/#run
-http://localhost:5173/#case-file
-http://localhost:5173/#maintainer
-http://localhost:5173/#scoreboard
-http://localhost:5173/#public-proof
+Home: http://localhost:5173/#opportunity
+Guided proof flow: http://localhost:5173/#first-run
+Projects: http://localhost:5173/#projects
+Opportunities: http://localhost:5173/#work-queue
+Mission detail: http://localhost:5173/#mission-detail
+Runner: http://localhost:5173/#run
+Case File: http://localhost:5173/#case-file
+Maintainer Review: http://localhost:5173/#maintainer
+Proof ledger / outcome state: http://localhost:5173/#scoreboard
+Public Proof: http://localhost:5173/#public-proof
+Working Proof: http://localhost:5173/#proof-demo
 ```
 
 The current web prototype shows:
 
-- Opportunity: the proof loop and ready work with acceptance owners.
-- First Run: guided six-step activation from safe mission to runner.
+- Home: next safe action, ready work, and current earning/proof state.
+- Guided proof flow: activation from safe mission to runner.
 - Projects: proof ledger, project backlog, and constrained agent delegations.
-- Work Queue: source import categories, GitHub import command, Work Lead diagnosis, and clarification gate.
+- Opportunities: source import categories, GitHub import command, Work Lead diagnosis, and clarification gate.
 - Runner: local execution, packet output preview, security state, and human approval checkpoint.
 - Case File: maintainer/private/public artifact split.
-- Maintainer: decision support with confidence, risk, privacy, artifacts, and payout if accepted.
-- Scoreboard: next action, payout state, reputation unlock, and recent activity.
+- Maintainer Review: decision support with confidence, risk, privacy, artifacts, and payout if accepted.
+- Proof ledger / outcome state: next action, payout state, reputation unlock, and recent activity.
 - Public Proof: shareable accepted proof view with private details removed.
 
-For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+For the current documentation map, see [docs/README.md](docs/README.md).
 
-For a route-by-route product walkthrough, see [docs/VISUAL_WALKTHROUGH.md](docs/VISUAL_WALKTHROUGH.md).
+For the operating rules Codex should follow, see [docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md).
+
+For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
 
 For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md).
 

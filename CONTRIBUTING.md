@@ -55,4 +55,3 @@ For code changes, include one of:
 - manual verification notes
 
 No proof, no credit.
-

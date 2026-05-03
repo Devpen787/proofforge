@@ -27,4 +27,3 @@ We are here to build together, prove the work, share credit, and grow the common
 When the evidence is good and the contribution is useful:
 
 > The work holds.
-
