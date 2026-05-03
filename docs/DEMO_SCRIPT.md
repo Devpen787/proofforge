@@ -1,55 +1,52 @@
 # ProofForge Demo Script
 
-## 5-Second Opening
+## Before Recording
 
-ProofForge turns useful software work into accepted proof, so people and their
-agents can be reviewed, credited, paid, and trusted without becoming a spammy
-marketplace or custodial payout app.
-
-## Core Story
-
-Developers already work across GitHub issues, open-source projects, bounties,
-backlogs, wallets, and agents. The problem is that useful work gets scattered:
-agents generate output, maintainers receive noise, contributors lose credit, and
-projects stall.
-
-ProofForge is the missing coordination layer:
-
-```text
-source work
--> bounded mission
--> agent-assisted proof
--> evidence packet
--> maintainer acceptance
--> GitHub/wallet/onchain/0G references
--> credit and payout state
--> public proof
-```
-
-## 2-Minute Video Flow
-
-### 0:00-0:15 — Problem And Product
-
-Say:
-
-> AI agents make it easy to generate work. ProofForge makes it possible to
-> prove which work actually helped. It connects existing work sources, lets a
-> bounded proof node produce evidence, and turns accepted proof into credit,
-> payout state, and public history.
-
-Show the hosted app:
+Use production for the video:
 
 ```text
 https://proofforgehub.vercel.app/#opportunity
 ```
 
-### 0:15-0:35 — Source Work And Agent Setup
+Start clean:
+
+```text
+Settings -> Reset demo state -> #opportunity
+```
+
+## Final 2-3 Minute Script
+
+### 0:00-0:20 - Intro
+
+Say:
+
+> Hi, I'm Devinson, and this is ProofForge, built for the Open Agents
+> hackathon. We created ProofForge because agents are making it easier to
+> produce work, but useful contributions still get scattered across GitHub
+> issues, unfinished projects, bounties, and chats. Maintainers do not need more
+> noise. They need accepted proof of what actually helped.
 
 Show:
 
 ```text
-Home -> Agent Setup -> Opportunities
+https://proofforgehub.vercel.app/#opportunity
 ```
+
+### 0:20-0:35 - Product
+
+Say:
+
+> ProofForge turns useful software work into accepted proof. It is the layer
+> between messy work and recognized value: source-backed work, bounded agent
+> assistance, evidence packets, maintainer review, credit, and payout tracking.
+
+### 0:35-0:50 - Agent Setup
+
+Say:
+
+> First, I register a bounded proof node. It has an owner, skills, and limits.
+> It can run local checks and capture evidence, but it cannot post PRs,
+> comments, access secrets, or move funds without approval.
 
 Click:
 
@@ -59,139 +56,136 @@ Set up proof node
 -> Find source-backed work
 ```
 
+### 0:50-1:10 - Mission
+
 Say:
 
-> ProofForge does not invent fake work. It starts from source-backed work:
-> GitHub issues, project backlogs, bounties, or marketplace tasks. The agent is
-> bounded before it runs: local checks are allowed, PRs, comments, secrets, and
-> funds are blocked.
-
-### 0:35-1:00 — Run A Mission And Generate Evidence
+> Now I pick sourced work. This mission comes from an existing project issue:
+> validate the install docs. ProofForge turns that into a narrow mission with
+> success criteria, risk, value, and an acceptance owner.
 
 Click:
 
 ```text
 Run this mission
 -> Accept and run
--> Approve Packet
 ```
+
+### 1:10-1:30 - Evidence
 
 Say:
 
-> The proof node runs a narrow mission. It captures logs, environment, verifier
-> status, privacy review, and artifacts. The output is not raw agent chatter. It
-> becomes a maintainer-ready case file.
+> The proof node runs the check in evidence mode. It captures logs,
+> environment, verifier status, and artifacts. The result is not agent chatter.
+> It becomes a maintainer-ready packet.
 
-Terminal proof to show briefly:
+Click:
+
+```text
+Approve Packet
+```
+
+Optional terminal flash:
 
 ```bash
 npm run demo:packet
 npm run sync:web-proof
 ```
 
-### 1:00-1:25 — Maintainer Review And GitHub Authority
+### 1:30-1:55 - Review
+
+Say:
+
+> Now the maintainer reviews the packet. GitHub stays the source authority:
+> ProofForge prepares the comment and records the posted source URL. The
+> reviewer can also sign acceptance with a wallet. Only after that does accepted
+> proof create earned credit and payout state.
 
 Click:
 
 ```text
 Submit Packet
--> Connect MetaMask
+-> Connect MetaMask or demo signer
+-> paste GitHub URL
 -> Record GitHub post
 -> Sign acceptance
 -> Accept & Mark Earned
 ```
 
-Use this sample GitHub post URL if recording locally:
+Use:
 
 ```text
 https://github.com/Devpen787/proofforge/issues/1#issuecomment-proof
 ```
 
-Say:
-
-> GitHub remains the source authority. ProofForge prepares the maintainer
-> comment and opens the source issue, but the maintainer posts from their own
-> GitHub account. Acceptance can also be signed by wallet, so the review record
-> is portable.
-
-If MetaMask is ready and you want to show the onchain beat, do it after the
-proof is accepted. Navigate back to Maintainer Review and show:
-
-```text
-Deploy proof registry
--> Anchor onchain
-```
+### 1:55-2:15 - Public Proof
 
 Say:
 
-> Accepted proof can be anchored through the ProofRegistry contract. The
-> contract stores the proof hash and references; private packet contents stay in
-> the evidence record.
-
-### 1:25-1:45 — 0G, Payout Rails, And Public Proof
-
-Go to:
-
-```text
-Settings
-```
+> This is the public proof: source, bounded agent run, verifier result,
+> artifacts, maintainer acceptance, wallet/onchain-ready state, 0G-ready
+> evidence storage, and payout tracking.
 
 Click:
 
 ```text
-Prepare 0G upload
-Record 0G receipt
-Prepare payout handoff
-Publish shared project
-Pull shared project
+View public proof
 ```
+
+### 2:15-2:35 - 0G And Handoffs
 
 Say:
 
-> 0G is used as the durable evidence-record path without putting private keys in
-> the browser. ProofForge exports the record and copies the runner command. For
-> payouts, ProofForge prepares Safe, Splits, and Drips handoff metadata, but it
-> does not custody or move funds.
+> For 0G, ProofForge prepares the durable evidence upload from the runner
+> environment and lets the reviewer record the returned 0G receipt or root. That
+> keeps private keys out of the browser while still making proof packets
+> portable and storage-verifiable.
+
+Click if time:
+
+```text
+Settings
+-> Prepare 0G upload
+-> Prepare payout handoff
+-> Publish shared project
+```
 
 If a live 0G upload is not recorded, show the prepared command and describe 0G
 as credential-gated rather than claiming a live receipt.
 
-### 1:45-2:05 — Close On Public Proof
-
-Go to:
-
-```text
-Public Proof
-```
-
-Show:
-
-- source issue
-- maintainer GitHub post
-- wallet/onchain state
-- 0G receipt
-- artifacts
-- payout/credit state
+### 2:35-2:55 - Why I Would Use It Now
 
 Say:
 
-> This is the final object: public-safe proof that useful work was sourced,
-> bounded, verified, accepted, and linked to credit or payout state. ProofForge
-> is not another marketplace. It is the proof and coordination layer for people,
-> agents, and projects that need work to hold.
+> I would use ProofForge today for my own projects: to turn unfinished repo
+> tasks into clear missions, let agents safely help with checks or evidence,
+> and keep track of what was actually accepted. Other builders can use it the
+> same way for open-source projects, hackathon teams, grant work, bounties, or
+> community backlogs.
+
+### 2:55-3:15 - Future
+
+Say:
+
+> The bigger vision is a contribution layer for the agent economy. People bring
+> projects, work becomes missions, agents help safely, evidence proves the work,
+> humans accept it, and contributors earn credit, payout, reputation, access, or
+> ownership-like benefits.
+
+### 3:15-3:25 - Close
+
+Say:
+
+> ProofForge is not another marketplace. It is the proof and coordination layer
+> for people, agents, and projects to build useful things together and keep
+> value attached to the work.
 
 ## Exact Browser Click Path
 
-Use production for the video unless recording local-only flows:
-
 ```text
-https://proofforgehub.vercel.app/#opportunity
-```
-
-Click path:
-
-```text
-Home
+Settings
+-> Reset demo state
+-> Home / #opportunity
 -> Set up proof node
 -> Register proof node
 -> Find source-backed work
@@ -202,22 +196,29 @@ Home
 -> Copy GitHub comment
 -> Open GitHub issue
 -> Submit Packet
--> Connect MetaMask
+-> Connect MetaMask or demo signer
+-> paste GitHub acceptance URL
 -> Record GitHub post
 -> Sign acceptance
 -> Accept & Mark Earned
--> optionally return to Maintainer Review and Deploy proof registry / Anchor onchain
--> Home
--> Release payout
 -> View public proof
 -> Settings
 -> Prepare 0G upload
--> Record 0G receipt
 -> Prepare payout handoff
 -> Publish shared project
--> Pull shared project
--> Public Proof
+-> optionally Pull shared project
 ```
+
+If MetaMask is ready and you want to show the onchain beat, do it after the
+proof is accepted:
+
+```text
+Maintainer Review
+-> Deploy proof registry
+-> Anchor onchain
+```
+
+Skip this optional beat if MetaMask or the network causes friction.
 
 ## Terminal Proof Commands
 
