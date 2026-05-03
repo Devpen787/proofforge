@@ -114,7 +114,8 @@ Say:
 > GitHub account. Acceptance can also be signed by wallet, so the review record
 > is portable.
 
-If MetaMask is ready, optionally show:
+If MetaMask is ready and you want to show the onchain beat, do it after the
+proof is accepted. Navigate back to Maintainer Review and show:
 
 ```text
 Deploy proof registry
@@ -204,8 +205,8 @@ Home
 -> Connect MetaMask
 -> Record GitHub post
 -> Sign acceptance
--> optionally Deploy proof registry / Anchor onchain
 -> Accept & Mark Earned
+-> optionally return to Maintainer Review and Deploy proof registry / Anchor onchain
 -> Home
 -> Release payout
 -> View public proof
