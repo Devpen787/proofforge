@@ -1,6 +1,12 @@
 import type { Screen } from "../routes";
 
-export type ActiveMission = "docs" | "checkout";
+export type ActiveMission =
+  | "docs"
+  | "windows"
+  | "mac"
+  | "config"
+  | "links"
+  | "checkout";
 
 export interface AppState {
   screen: Screen;

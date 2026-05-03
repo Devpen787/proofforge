@@ -105,6 +105,9 @@ export function MyWorkScreen({
       onClick: accepted ? onPublicProof : onCaseFile
     }
   ];
+  const currentRows = accepted
+    ? workRows.filter((item) => item.status !== "Accepted")
+    : workRows;
 
   return (
     <section className="page-grid my-work-grid">
@@ -141,7 +144,12 @@ export function MyWorkScreen({
             </span>
             <span>
               <small>Release</small>
-              <strong>{released ? "Released" : "Pending"}</strong>
+              <strong>
+                {released
+                  ? (generatedProofSummary.payout.settlement.txShort ??
+                    "Released")
+                  : "Pending"}
+              </strong>
             </span>
             <span>
               <small>Storage</small>
@@ -158,11 +166,11 @@ export function MyWorkScreen({
           <div className="section-heading">
             <div>
               <p className="small-label">Active work</p>
-              <h2>Open items.</h2>
+              <h2>Current work.</h2>
             </div>
           </div>
           <div className="my-work-table" role="list">
-            {workRows.map((item) => (
+            {currentRows.map((item) => (
               <button
                 className="my-work-row"
                 key={item.title}

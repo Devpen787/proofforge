@@ -1,3 +1,6 @@
+import type { ActiveMission } from "../app/types";
+import { getDemoMission } from "./missions";
+
 export const demoPacket = {
   id: "packet_docs_install_demo",
   objective:
@@ -109,6 +112,38 @@ export const demoConvertedPacket = {
     "internal runner notes"
   ]
 };
+
+export function getDemoPacket(activeMission: ActiveMission) {
+  if (activeMission === "checkout") return demoConvertedPacket;
+  if (activeMission === "docs") return demoPacket;
+
+  const mission = getDemoMission(activeMission);
+  return {
+    ...demoPacket,
+    id: `packet_${activeMission}_demo`,
+    objective: `Run the bounded proof for ${mission.title.toLowerCase()} and package maintainer-ready evidence.`,
+    summary: `${mission.title} was assessed by the proof node. Runner artifacts and verifier checks are ready for maintainer review.`,
+    result: `${mission.title} produced a maintainer-ready evidence packet.`,
+    recommendedAction: `Accept the packet as valid proof for ${mission.title.toLowerCase()} and credit the contributor if the maintainer agrees.`,
+    valueRefs: {
+      ...demoPacket.valueRefs,
+      bountySource: mission.sourceUrl.includes("github.com")
+        ? "GitHub-backed commons reward"
+        : "Project backlog reward"
+    },
+    requirementsSatisfied: mission.submissionRequirements
+  };
+}
+
+export function getCaseFileTitle(activeMission: ActiveMission) {
+  if (activeMission === "checkout") {
+    return "Verified checkout QA with clarified browser targets.";
+  }
+  if (activeMission === "docs") {
+    return "Validated install docs in a clean fixture.";
+  }
+  return `${getDemoMission(activeMission).title} evidence is ready.`;
+}
 
 export const demoArtifacts = [
   {

@@ -10,36 +10,100 @@ export const demoProject = {
   availablePool: "$160",
   opportunities: [
     {
+      mission: "docs",
       title: "Validate installation docs",
       detail: "Ensure install works on a clean Ubuntu machine.",
+      source: "GitHub issue",
+      acceptedBy: "Commons reviewer",
       reward: "$8",
       safety: "Safe",
       proofability: "91%",
+      state: "Ready to run",
       action: "Run"
     },
     {
+      mission: "windows",
       title: "Reproduce Windows build error",
       detail: "Capture logs and environment details.",
+      source: "GitHub issue",
+      acceptedBy: "Repo maintainer",
       reward: "$12",
       safety: "Low risk",
       proofability: "84%",
+      state: "Ready to run",
       action: "Run"
     },
     {
+      mission: "mac",
+      title: "Check Mac install flow",
+      detail: "Run the same install proof on macOS.",
+      source: "Project backlog",
+      acceptedBy: "Docs steward",
+      reward: "$6",
+      safety: "Safe",
+      proofability: "89%",
+      state: "Ready to run",
+      action: "Run"
+    },
+    {
+      mission: "config",
+      title: "Validate config docs",
+      detail: "Verify config examples in a clean workspace.",
+      source: "GitHub issue",
+      acceptedBy: "Docs maintainer",
+      reward: "$8",
+      safety: "Safe",
+      proofability: "90%",
+      state: "Ready to run",
+      action: "Run"
+    },
+    {
+      mission: "links",
+      title: "Fix broken links",
+      detail: "Find dead docs links and package evidence.",
+      source: "Project backlog",
+      acceptedBy: "Docs steward",
+      reward: "$5",
+      safety: "Safe",
+      proofability: "87%",
+      state: "Ready to run",
+      action: "Run"
+    },
+    {
+      mission: "quickstart",
       title: "Improve quick start guide",
       detail: "Make first 5 minutes crystal clear.",
+      source: "Project backlog",
+      acceptedBy: "Docs steward",
       reward: "$10",
       safety: "Safe",
       proofability: "88%",
+      state: "Needs triage",
       action: "Plan"
     },
     {
+      mission: "pr-4821",
       title: "Verify PR fixes issue #4821",
       detail: "Confirm the fix works in all supported OS.",
+      source: "GitHub PR",
+      acceptedBy: "Repo maintainer",
       reward: "$18",
       safety: "Approval",
       proofability: "76%",
+      state: "Needs triage",
       action: "Review"
+    },
+    {
+      mission: "checkout",
+      title: "External checkout QA task",
+      detail: "Buyer task needs browser targets before it can run.",
+      source: "Marketplace",
+      acceptedBy: "External buyer",
+      reward: "$25",
+      safety: "Medium",
+      proofability: "64%",
+      state: "Needs triage",
+      action: "Plan"
     }
   ],
   activeWork: [
@@ -103,7 +167,12 @@ export const demoProject = {
   proofLedger: {
     acceptedPackets: "12",
     pendingPackets: "3",
+    committedPool: "$240",
     earnedPayouts: "$240",
+    releasedPayouts: "$80",
+    availablePool: "$160",
+    payoutMethod: "External/manual",
+    receiptRef: "0G proof receipt attached after acceptance",
     latestProof: "packet_docs_install_demo",
     topContributors: ["Alex", "docsnode.eth"],
     history: [
@@ -225,7 +294,8 @@ export const demoAgentIdentity = {
   id: "docs-runner-01",
   owner: "Alex",
   identityRef: "local:docs-runner-01",
-  registryRef: "ERC-8004 / 8004scan-ready",
+  ensRef: "ENS optional",
+  registryRef: "ENS / ERC-8004 ready",
   skillRef: "ERC-8239 skill manifest-ready",
   type: "Local proof node",
   status: "Ready",

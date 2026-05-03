@@ -1,4 +1,6 @@
 import React from "react";
+import type { WorkSourceImport } from "@proofforge/sources";
+import { importGitHubIssueLead } from "@proofforge/sources";
 import {
   demoProject,
   demoProjectWorkLead,
@@ -6,7 +8,7 @@ import {
   generatedProofSummary
 } from "../demo";
 import type { ActiveMission } from "../app/types";
-import { StatusBlock, StatusRow } from "../components/ui";
+import { StatusRow } from "../components/ui";
 
 export function WorkQueueScreen({
   importedLead,
@@ -32,7 +34,15 @@ export function WorkQueueScreen({
   onRun: (mission: ActiveMission) => void;
 }) {
   const [activeFilter, setActiveFilter] = React.useState("Best fit");
-  const selectedOpportunity = demoProject.opportunities[0];
+  const [githubUrl, setGithubUrl] = React.useState(
+    "https://github.com/Devpen787/proofforge/issues/1"
+  );
+  const [liveImport, setLiveImport] = React.useState<WorkSourceImport | null>(
+    null
+  );
+  const [importStatus, setImportStatus] = React.useState<
+    "idle" | "loading" | "failed"
+  >("idle");
   const proofability = workLeadClarified ? "88%" : demoWorkLead.proofability;
   const triageMode = importedLead || workLeadClarified || workLeadConverted;
   const sourceUseLabel = (mode: string) =>
@@ -41,6 +51,77 @@ export function WorkQueueScreen({
       : "Runnable work lead";
   const valuePathLabel = (valuePath: string) =>
     valuePath === "external" ? "External reward" : "Reputation";
+  const importGitHubIssue = async () => {
+    setImportStatus("loading");
+    try {
+      const imported = await importGitHubIssueLead({ url: githubUrl });
+      setLiveImport(imported);
+      setImportStatus("idle");
+    } catch {
+      setImportStatus("failed");
+    }
+  };
+  const importedSources = liveImport
+    ? [
+        {
+          source: liveImport.source,
+          title: liveImport.lead.title,
+          sourceUrl: liveImport.lead.sourceUrl,
+          repo: liveImport.lead.repo,
+          acceptanceOwner: liveImport.lead.acceptanceOwner,
+          status: liveImport.lead.status,
+          proofability: `${liveImport.lead.proofability}%`,
+          valuePath: liveImport.lead.reward?.type ?? "reputation",
+          mode: "live browser import"
+        },
+        ...generatedProofSummary.generatedWorkSources
+      ]
+    : generatedProofSummary.generatedWorkSources;
+  const readyOpportunities = demoProject.opportunities.filter(
+    (opportunity) => opportunity.state === "Ready to run"
+  );
+  const triageOpportunities = demoProject.opportunities.filter(
+    (opportunity) => opportunity.state === "Needs triage"
+  );
+  const renderOpportunityRow = (
+    opportunity: (typeof demoProject.opportunities)[number],
+    index: number
+  ) => (
+    <article
+      className={
+        index === 0 && opportunity.action === "Run"
+          ? "opportunity-card selected"
+          : "opportunity-card"
+      }
+      key={opportunity.title}
+    >
+      <div className="opportunity-card-main">
+        <span className="opportunity-icon">{index + 1}</span>
+        <div>
+          <strong>{opportunity.title}</strong>
+          <small>{opportunity.detail}</small>
+          <div className="opportunity-card-meta">
+            <span>{opportunity.source}</span>
+            <span>{opportunity.acceptedBy}</span>
+            <span>{opportunity.reward}</span>
+            <span>{opportunity.proofability} proofable</span>
+          </div>
+        </div>
+      </div>
+      <button
+        className={
+          opportunity.action === "Run" ? "primary-action" : "secondary-action"
+        }
+        onClick={() =>
+          opportunity.action === "Run"
+            ? onRun(opportunity.mission as ActiveMission)
+            : onImport()
+        }
+      >
+        {opportunity.action === "Run" ? "Assess" : opportunity.action}
+      </button>
+    </article>
+  );
 
   if (triageMode) {
     return (
@@ -151,10 +232,10 @@ export function WorkQueueScreen({
         <span>Opportunities</span>
         <button
           className="secondary-action"
-          aria-label="Import external task"
+          aria-label="Import work"
           onClick={onImport}
         >
-          Import external task
+          Import work
         </button>
       </header>
 
@@ -163,7 +244,7 @@ export function WorkQueueScreen({
           <div className="section-heading">
             <div>
               <p className="small-label">Sourced work inventory</p>
-              <h2>Pick or triage work.</h2>
+              <h2>Choose sourced work.</h2>
             </div>
           </div>
           <div
@@ -180,127 +261,120 @@ export function WorkQueueScreen({
               </button>
             ))}
           </div>
-          <div className="source-inventory-table" aria-label="Imported sources">
-            {generatedProofSummary.generatedWorkSources.map((source) => (
-              <div className="source-inventory-row" key={source.title}>
-                <span>
-                  <strong>{source.title}</strong>
-                  <small>{source.repo}</small>
-                </span>
-                <span>
-                  <small>Source</small>
-                  <b>{source.source}</b>
-                </span>
-                <span>
-                  <small>Owner</small>
-                  <b>{source.acceptanceOwner}</b>
-                </span>
-                <span>
-                  <small>Status</small>
-                  <b>{source.status.replace("_", " ")}</b>
-                </span>
-                <span>
-                  <small>Value</small>
-                  <b>{valuePathLabel(source.valuePath)}</b>
-                </span>
-                <span>
-                  <small>Action</small>
-                  <b>{sourceUseLabel(source.mode)}</b>
-                </span>
-              </div>
-            ))}
-          </div>
-          <div className="opportunity-card-list">
-            {demoProject.opportunities.map((opportunity, index) => (
-              <article
-                className={
-                  index === 0 ? "opportunity-card selected" : "opportunity-card"
-                }
-                key={opportunity.title}
-              >
-                <div className="opportunity-card-main">
-                  <span className="opportunity-icon">{index + 1}</span>
-                  <div>
-                    <strong>{opportunity.title}</strong>
-                    <small>{opportunity.detail}</small>
-                    <div className="opportunity-card-meta">
-                      <span>{opportunity.reward}</span>
-                      <span>{opportunity.safety}</span>
-                      <span>{opportunity.proofability} proofable</span>
-                    </div>
+          <div className="opportunity-lane-list">
+            {projectWorkSuggested && (
+              <article className="project-request-opportunity">
+                <div>
+                  <p className="small-label">Project request</p>
+                  <strong>{demoProjectWorkLead.title}</strong>
+                  <small>{demoProjectWorkLead.rawRequest}</small>
+                  <div className="opportunity-card-meta">
+                    <span>{demoProjectWorkLead.source}</span>
+                    <span>Docs steward accepts</span>
+                    <span>Contributor request</span>
+                    <span>{demoProjectWorkLead.proofability} proofable</span>
                   </div>
                 </div>
                 <button
-                  className={
-                    opportunity.action === "Run"
-                      ? "primary-action"
-                      : "secondary-action"
-                  }
-                  onClick={() =>
-                    opportunity.action === "Run" ? onRun("docs") : onImport()
-                  }
+                  className="primary-action"
+                  onClick={() => onRun("docs")}
                 >
-                  {opportunity.action}
+                  Accept request
                 </button>
               </article>
-            ))}
-          </div>
-        </div>
+            )}
 
-        <aside className="opportunity-detail-panel compact-opportunity-detail">
-          <p className="small-label">Selected</p>
-          <h2>{selectedOpportunity.title}</h2>
-          <div className="opportunity-detail-stats">
-            <StatusBlock label="Reward" value={selectedOpportunity.reward} />
-            <StatusBlock label="Safety" value={selectedOpportunity.safety} />
-            <StatusBlock
-              label="Proofability"
-              value={selectedOpportunity.proofability}
-            />
-            <StatusBlock label="Accepted by" value="Commons reviewer" />
+            <article className="github-import-row">
+              <div>
+                <strong>Import GitHub issue</strong>
+                <input
+                  aria-label="GitHub issue URL"
+                  value={githubUrl}
+                  onChange={(event) => setGithubUrl(event.target.value)}
+                />
+                {liveImport && (
+                  <small>
+                    Imported {liveImport.lead.repo} issue #
+                    {liveImport.ref.issueNumber}: {liveImport.lead.status}
+                  </small>
+                )}
+                {importStatus === "failed" && (
+                  <small>Import failed. Check the issue URL.</small>
+                )}
+              </div>
+              <button
+                className="secondary-action"
+                onClick={importGitHubIssue}
+                disabled={importStatus === "loading"}
+              >
+                {importStatus === "loading" ? "Importing" : "Import"}
+              </button>
+            </article>
+
+            <section className="opportunity-lane">
+              <div className="opportunity-lane-heading">
+                <span>Ready missions</span>
+                <b>{readyOpportunities.length}</b>
+              </div>
+              {readyOpportunities.map(renderOpportunityRow)}
+            </section>
+
+            <section className="opportunity-lane">
+              <div className="opportunity-lane-heading">
+                <span>Needs details</span>
+                <b>{triageOpportunities.length}</b>
+              </div>
+              {triageOpportunities.map((opportunity, index) =>
+                renderOpportunityRow(
+                  opportunity,
+                  readyOpportunities.length + index
+                )
+              )}
+            </section>
           </div>
-          <div className="decision-row">
-            <button className="primary-action" onClick={() => onRun("docs")}>
-              Run this mission
-            </button>
-            <button className="secondary-action" onClick={onImport}>
-              Import another
-            </button>
-          </div>
-        </aside>
+          <details className="source-inventory-drawer">
+            <summary>
+              Source context <b>{importedSources.length}</b>
+            </summary>
+            <div
+              className="source-inventory-table"
+              aria-label="Imported sources"
+            >
+              {importedSources.map((source, index) => (
+                <div
+                  className="source-inventory-row"
+                  key={`${source.source}-${source.repo}-${source.title}-${index}`}
+                >
+                  <span>
+                    <strong>{source.title}</strong>
+                    <small>{source.repo}</small>
+                  </span>
+                  <span>
+                    <small>Source</small>
+                    <b>{source.source}</b>
+                  </span>
+                  <span>
+                    <small>Owner</small>
+                    <b>{source.acceptanceOwner}</b>
+                  </span>
+                  <span>
+                    <small>Status</small>
+                    <b>{source.status.replace("_", " ")}</b>
+                  </span>
+                  <span>
+                    <small>Value</small>
+                    <b>{valuePathLabel(source.valuePath)}</b>
+                  </span>
+                  <span>
+                    <small>Action</small>
+                    <b>{sourceUseLabel(source.mode)}</b>
+                  </span>
+                </div>
+              ))}
+            </div>
+          </details>
+        </div>
       </div>
-
-      {projectWorkSuggested && (
-        <div className="project-work-lead-card wide" role="status">
-          <div>
-            <p className="small-label">Project Work Lead created</p>
-            <h2>{demoProjectWorkLead.title}</h2>
-            <p>{demoProjectWorkLead.rawRequest}</p>
-          </div>
-          <div className="diagnosis-grid">
-            <StatusRow
-              label="Source"
-              value={demoProjectWorkLead.source}
-              tone="good"
-            />
-            <StatusRow
-              label="Proofability"
-              value={demoProjectWorkLead.proofability}
-              tone="good"
-            />
-            <StatusRow
-              label="Missing"
-              value={demoProjectWorkLead.missing}
-              tone="bad"
-            />
-            <StatusRow
-              label="Recommendation"
-              value="Clarify before Mission"
-              tone="bad"
-            />
-          </div>
-        </div>
-      )}
     </section>
   );
 }

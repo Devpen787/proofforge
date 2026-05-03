@@ -34,6 +34,10 @@
     grid-template-columns: 1fr;
   }
 
+  .home-proof-summary {
+    grid-template-columns: 1fr;
+  }
+
   .first-run-contract {
     padding: 18px;
   }

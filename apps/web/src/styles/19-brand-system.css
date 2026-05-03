@@ -1,0 +1,346 @@
+:root {
+  --pf-bg: #f4f2eb;
+  --pf-surface: #fffefa;
+  --pf-surface-muted: #f8f7f1;
+  --pf-line: #d9ded6;
+  --pf-line-strong: #c6cec4;
+  --pf-ink: #070b16;
+  --pf-muted: #536174;
+  --pf-green: #087b55;
+  --pf-green-deep: #075f45;
+  --pf-green-soft: #eef8f2;
+  --pf-amber: #a46208;
+  --pf-amber-soft: #fff7e7;
+  --pf-danger: #b42318;
+  --pf-radius: 10px;
+  --pf-radius-sm: 6px;
+  --pf-shadow: 0 1px 1px rgba(15, 23, 42, 0.04);
+}
+
+body {
+  background: var(--pf-bg);
+  color: var(--pf-ink);
+}
+
+.main {
+  padding: 28px 32px;
+}
+
+.sidebar {
+  background: #07131a;
+  padding: 24px 18px;
+}
+
+.brand-mark,
+.avatar,
+.nav-button {
+  border-radius: var(--pf-radius);
+}
+
+.nav-button {
+  padding: 10px 12px;
+}
+
+.nav-button.active,
+.nav-button:hover {
+  background: rgba(255, 255, 255, 0.13);
+}
+
+.hero-card,
+.home-hero,
+.home-start-card,
+.home-stage-strip,
+.home-source-preview,
+.panel,
+.terminal-card,
+.decision-panel,
+.opportunity-command-panel,
+.work-lead-diagnosis-panel,
+.opportunity-source-strip,
+.packet-overview-card,
+.packet-submit-panel,
+.packet-document,
+.packet-artifacts-panel,
+.packet-advanced,
+.home-command-panel,
+.opportunity-fit-card,
+.home-ledger-panel,
+.metric,
+.work-row,
+.project-room-hero,
+.project-focus-card,
+.project-people-card,
+.project-credit-panel,
+.project-ops-panel,
+.project-detail-drawer,
+.runner-hero,
+.case-dossier,
+.my-work-value-card {
+  border-color: var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+  box-shadow: var(--pf-shadow);
+}
+
+.project-action-banner,
+.project-request-strip,
+.project-request-opportunity,
+.mission-ready-card,
+.home-next-card,
+.home-earning-card,
+.project-focus-card {
+  border-color: #b9dfcc;
+  border-radius: var(--pf-radius);
+  background: var(--pf-green-soft);
+}
+
+.status-pill,
+.start-pill,
+.opportunity-card-meta span,
+.tag-row .status-pill,
+.opportunity-lane-heading b,
+.packet-requirement-list span,
+.packet-checklist-grid span {
+  border: 1px solid transparent;
+  border-radius: var(--pf-radius-sm);
+  background: var(--pf-surface-muted);
+  color: var(--pf-muted);
+  padding: 4px 7px;
+  font-size: 11px;
+  line-height: 1.15;
+}
+
+.status-pill.safe {
+  border-color: #c9e8d7;
+  background: var(--pf-green-soft);
+  color: var(--pf-green);
+}
+
+.status-pill.warning {
+  border-color: #f4d99c;
+  background: var(--pf-amber-soft);
+  color: var(--pf-amber);
+}
+
+.primary-action,
+.secondary-action {
+  border-radius: var(--pf-radius);
+  min-height: 40px;
+  box-shadow: none;
+}
+
+.primary-action {
+  background: var(--pf-green);
+}
+
+.primary-action:hover {
+  background: var(--pf-green-deep);
+}
+
+.secondary-action {
+  border-color: var(--pf-line);
+  background: var(--pf-surface-muted);
+  color: #384457;
+}
+
+.project-room-hero,
+.home-start-card,
+.runner-hero {
+  grid-template-columns: minmax(0, 1fr);
+  align-items: start;
+  padding: 28px;
+}
+
+.project-room-hero h1,
+.home-start-copy h1,
+.runner-hero h2 {
+  font-size: clamp(34px, 3vw, 48px);
+  line-height: 1.02;
+}
+
+.project-room-hero p:not(.small-label),
+.home-start-copy p:not(.small-label),
+.runner-hero p:not(.small-label),
+.packet-document-hero p:not(.small-label) {
+  color: var(--pf-muted);
+  font-weight: 650;
+}
+
+.project-room-main {
+  grid-template-columns: minmax(0, 1fr) minmax(320px, 0.38fr);
+}
+
+.project-opportunity-list,
+.project-ops-list,
+.my-work-list,
+.opportunity-card-list,
+.opportunity-lane-list {
+  gap: 0;
+}
+
+.project-opportunity-row,
+.project-ops-list > div,
+.opportunity-card,
+.my-work-row,
+.activity-row,
+.artifact-row,
+.status-row {
+  border-bottom: 1px solid var(--pf-line);
+  border-radius: 0;
+}
+
+.project-opportunity-row,
+.project-opportunity-new,
+.opportunity-card.selected,
+.my-work-row {
+  background: transparent;
+}
+
+.project-opportunity-new,
+.opportunity-card.selected {
+  border-left: 3px solid var(--pf-green);
+  padding-left: 12px;
+}
+
+.project-opportunity-meta,
+.project-ops-list small,
+.project-kicker,
+.small-label {
+  color: var(--pf-muted);
+}
+
+.project-value-ledger,
+.runner-hero-stats,
+.triage-hero-state {
+  border-color: var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface-muted);
+}
+
+.terminal-card {
+  border-color: #122232;
+  background: #06111a;
+  color: #e8fff0;
+}
+
+.terminal-card h2 {
+  color: white;
+}
+
+.terminal-card pre {
+  color: #bbf7d0;
+}
+
+.packet-workspace {
+  grid-template-columns: minmax(560px, 1fr) minmax(320px, 0.36fr);
+}
+
+.packet-document-status {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  max-width: 760px;
+}
+
+.packet-summary-panel div {
+  border-color: var(--pf-line);
+}
+
+.packet-submit-panel {
+  position: sticky;
+  top: 24px;
+}
+
+.runner-timeline li {
+  border-color: var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface-muted);
+}
+
+.runner-timeline li.approval {
+  border-color: #e5c36d;
+  background: var(--pf-amber-soft);
+}
+
+.runner-timeline li > span,
+.home-stage-strip span,
+.timeline li::before {
+  border-radius: var(--pf-radius-sm);
+  background: var(--pf-green);
+}
+
+.runner-hero .status-row,
+.packet-document-status .status-row {
+  display: grid;
+  grid-template-columns: minmax(120px, 0.45fr) minmax(0, 1fr);
+  gap: 10px;
+}
+
+.runner-hero .status-row b,
+.packet-document-status .status-row b {
+  text-align: right;
+  overflow-wrap: anywhere;
+}
+
+.opportunity-filter-row button {
+  border-radius: var(--pf-radius-sm);
+  background: var(--pf-surface-muted);
+}
+
+.opportunity-filter-row button.active {
+  border-color: #b9dfcc;
+  background: var(--pf-green-soft);
+  color: var(--pf-green);
+}
+
+.github-import-row {
+  border-color: var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface-muted);
+}
+
+.github-import-row input {
+  border-color: var(--pf-line-strong);
+  border-radius: var(--pf-radius-sm);
+}
+
+.project-detail-drawer {
+  padding: 18px;
+}
+
+.project-detail-drawer summary {
+  color: var(--pf-ink);
+}
+
+.project-flow-card,
+.agent-run-row,
+.packet-check-card,
+.packet-sharing-grid > div {
+  border-color: var(--pf-line);
+  border-radius: var(--pf-radius-sm);
+  background: var(--pf-surface-muted);
+}
+
+@media (min-width: 981px) {
+  .page-grid {
+    max-width: 1280px;
+  }
+
+  .home-grid,
+  .project-room-grid,
+  .work-queue-grid,
+  .packet-grid,
+  .runner-grid,
+  .mission-detail-grid,
+  .maintainer-grid {
+    margin-inline: auto;
+  }
+}
+
+@media (max-width: 1180px) {
+  .packet-workspace {
+    grid-template-columns: 1fr;
+  }
+
+  .packet-submit-panel {
+    position: static;
+  }
+}

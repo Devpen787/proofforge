@@ -15,6 +15,7 @@ describe("web routes", () => {
       "projects",
       "work-queue",
       "my-work",
+      "builder-passport",
       "mission-detail",
       "run",
       "case-file",
@@ -33,6 +34,7 @@ describe("web routes", () => {
     expect(routeLabels["first-run"]).toBe("First Run");
     expect(routeLabels["work-queue"]).toBe("Opportunities");
     expect(routeLabels["my-work"]).toBe("My Work");
+    expect(routeLabels["builder-passport"]).toBe("Passport");
     expect(routeLabels["mission-detail"]).toBe("Mission Detail");
     expect(routeLabels["case-file"]).toBe("Case File");
     expect(routeLabels.scoreboard).toBe("Home");
@@ -46,7 +48,8 @@ describe("web routes", () => {
       "opportunity",
       "projects",
       "work-queue",
-      "my-work"
+      "my-work",
+      "builder-passport"
     ]);
     expect(secondaryNavScreens).toEqual(["settings", "help"]);
   });

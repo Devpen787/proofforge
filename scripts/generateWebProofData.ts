@@ -15,6 +15,7 @@ interface PublicPacket {
   project: string;
   mission: string;
   acceptedBy: string;
+  acceptedAt: string;
   whatWasProven: string;
   evidenceSummary: string;
   publicArtifacts: PublicArtifact[];
@@ -27,6 +28,21 @@ interface Payout {
   status: string;
   method: string;
   notes: string[];
+}
+
+interface SettlementReceipt {
+  provider: string;
+  status: string;
+  txHash: string;
+  amount: string;
+  currency: string;
+  to: string;
+}
+
+interface GitHubMaintainerComment {
+  status: "draft" | "posted";
+  issueUrl: string;
+  commentUrl?: string;
 }
 
 interface Policy {
@@ -161,11 +177,21 @@ async function readGeneratedSourceLeads(): Promise<GeneratedSourceLead[]> {
 async function main(): Promise<void> {
   const publicPacket = await readJson<PublicPacket>("public-packet.json");
   const payout = await readJson<Payout>("payout.json");
+  const releasedPayout =
+    (await readOptionalJson<Payout>(
+      resolve(sourceDir, "released-payout.json")
+    )) ?? payout;
   const policy = await readJson<Policy>("policy.json");
   const evidencePacket = await readJson<EvidencePacket>("evidence-packet.json");
   const project = await readJson<ProjectState>("project.json");
   const submissionEvidence = await readOptionalJson<SubmissionEvidence>(
     resolve(sourceDir, "submission-evidence.json")
+  );
+  const settlementReceipt = await readOptionalJson<SettlementReceipt>(
+    resolve(sourceDir, "settlement-receipt.json")
+  );
+  const githubComment = await readOptionalJson<GitHubMaintainerComment>(
+    resolve(sourceDir, "github-maintainer-comment.json")
   );
   const credit = project.creditLedger[0];
   const generatedWorkSources = await readGeneratedSourceLeads();
@@ -174,6 +200,7 @@ async function main(): Promise<void> {
   );
   const storageUri = evidencePacket.protocolRefs?.storageUri;
   const storageTxHash = zeroGClaim?.output;
+  const identityRef = evidencePacket.protocolRefs?.identityRef;
 
   const generatedProofSummary = {
     generatedFrom: "demo-output/docs-install/packet",
@@ -183,6 +210,12 @@ async function main(): Promise<void> {
     project: publicPacket.project,
     mission: publicPacket.mission,
     acceptedBy: publicPacket.acceptedBy,
+    acceptedAt: publicPacket.acceptedAt,
+    acceptedDate: new Intl.DateTimeFormat("en", {
+      month: "short",
+      day: "numeric",
+      year: "numeric"
+    }).format(new Date(publicPacket.acceptedAt)),
     whatWasProven: publicPacket.whatWasProven,
     evidenceSummary: publicPacket.evidenceSummary,
     verifierStatus: evidencePacket.verifierResult.status,
@@ -207,16 +240,48 @@ async function main(): Promise<void> {
       storageTxShort: storageTxHash
         ? `${storageTxHash.slice(0, 10)}...${storageTxHash.slice(-6)}`
         : undefined,
-      identityRef: evidencePacket.protocolRefs?.identityRef,
+      identityRef,
+      identityLabel: formatIdentityRef(identityRef),
       messageTraceId: evidencePacket.protocolRefs?.messageTraceId
     },
     payout: {
       id: payout.id,
       amount: `$${payout.amount}`,
       currency: payout.currency,
-      status: payout.status,
+      status: releasedPayout.status,
       method: payout.method,
-      note: payout.notes[0]
+      note: payout.notes[0],
+      settlement: settlementReceipt
+        ? {
+            provider: settlementReceipt.provider,
+            status: settlementReceipt.status,
+            amount: `${settlementReceipt.amount} ${settlementReceipt.currency}`,
+            txHash: settlementReceipt.txHash,
+            txShort: `${settlementReceipt.txHash.slice(
+              0,
+              10
+            )}...${settlementReceipt.txHash.slice(-6)}`,
+            recipientShort: `${settlementReceipt.to.slice(
+              0,
+              6
+            )}...${settlementReceipt.to.slice(-4)}`
+          }
+        : {
+            provider: null,
+            status: null,
+            amount: null,
+            txHash: null,
+            txShort: null,
+            recipientShort: null
+          }
+    },
+    maintainerSubmission: {
+      provider: "GitHub",
+      status: githubComment?.status ?? "packet-ready",
+      issueUrl:
+        githubComment?.issueUrl ??
+        "https://github.com/Devpen787/proofforge/issues/1",
+      commentUrl: githubComment?.commentUrl
     },
     projectCredit: {
       rewardPool: `$${project.rewardPool}`,
@@ -247,6 +312,20 @@ async function main(): Promise<void> {
   await mkdir(dirname(outPath), { recursive: true });
   await writeFile(outPath, source, "utf8");
   console.log(`Generated web proof data: ${outPath}`);
+}
+
+function formatIdentityRef(identityRef: string | undefined): string {
+  if (!identityRef) return "docs-runner-01";
+
+  const ensPart = identityRef
+    .split(";")
+    .find((part) => part.startsWith("ens:"));
+  if (ensPart) return ensPart.replace("ens:", "");
+
+  const localPart = identityRef
+    .split(";")
+    .find((part) => part.startsWith("local:"));
+  return localPart?.replace("local:", "") ?? identityRef.split(";")[0];
 }
 
 main().catch((error: unknown) => {

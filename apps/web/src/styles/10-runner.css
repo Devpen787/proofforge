@@ -31,13 +31,12 @@
 }
 
 .runner-timeline-panel {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 .runner-timeline {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
+  gap: 8px;
   list-style: none;
   margin: 18px 0 0;
   padding: 0;
@@ -47,10 +46,11 @@
   display: grid;
   grid-template-columns: 34px minmax(0, 1fr);
   gap: 12px;
+  align-items: center;
   border: 1px solid #a7f3d0;
-  border-radius: 18px;
+  border-radius: 14px;
   background: #ecfdf5;
-  padding: 14px;
+  padding: 12px 14px;
 }
 
 .runner-timeline li.approval {
@@ -73,16 +73,23 @@
   background: #b45309;
 }
 
+.runner-timeline li > div {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.34fr) minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+}
+
 .runner-timeline strong,
 .runner-timeline small,
 .runner-timeline code {
   display: block;
   min-width: 0;
-  overflow-wrap: anywhere;
+  overflow-wrap: break-word;
 }
 
 .runner-timeline small {
-  margin: 3px 0 8px;
+  margin: 0;
   color: #475569;
   font-size: 12px;
   font-weight: 750;
@@ -93,6 +100,7 @@
   background: white;
   color: #334155;
   font-size: 11px;
+  white-space: nowrap;
 }
 
 .agent-run-list {

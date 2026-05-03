@@ -15,6 +15,7 @@ import { PublicProofScreen } from "../screens/PublicProofScreen";
 import { AgentSetupScreen } from "../screens/AgentSetupScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { HelpScreen } from "../screens/HelpScreen";
+import { BuilderPassportScreen } from "../screens/BuilderPassportScreen";
 
 function renderScreen(
   screen: Screen,
@@ -101,20 +102,33 @@ function renderScreen(
           onPublicProof={actions.openPublicProof}
         />
       );
+    case "builder-passport":
+      return (
+        <BuilderPassportScreen
+          onWork={() => actions.setScreen("my-work")}
+          onProjects={() => actions.setScreen("projects")}
+        />
+      );
     case "mission-detail":
       return (
         <MissionDetailScreen
           activeMission={state.activeMission}
           onBack={actions.openOpportunities}
-          onAccept={() => actions.setScreen("run")}
+          onAccept={() =>
+            state.agentRegistered
+              ? actions.setScreen("run")
+              : actions.setScreen("agent-setup")
+          }
         />
       );
     case "run":
       return (
         <RunnerScreen
           activeMission={state.activeMission}
+          agentRegistered={state.agentRegistered}
           onCancel={actions.cancelRun}
           onPacket={actions.approvePacket}
+          onAgentSetup={() => actions.setScreen("agent-setup")}
         />
       );
     case "case-file":
@@ -143,7 +157,7 @@ function renderScreen(
       return (
         <PublicProofScreen
           activeMission={state.activeMission}
-          onBack={() => actions.setScreen("opportunity")}
+          onBack={() => actions.setScreen("projects")}
         />
       );
     case "settings":

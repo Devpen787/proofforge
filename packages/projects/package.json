@@ -11,6 +11,7 @@
   "dependencies": {
     "@proofforge/evidence": "0.0.0",
     "@proofforge/mission": "0.0.0",
-    "@proofforge/payments": "0.0.0"
+    "@proofforge/payments": "0.0.0",
+    "@proofforge/sources": "0.0.0"
   }
 }

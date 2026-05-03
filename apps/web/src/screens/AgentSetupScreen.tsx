@@ -62,6 +62,7 @@ export function AgentSetupScreen({
           <strong>{demoAgentIdentity.id}</strong>
           <small>{demoAgentIdentity.owner} owns this proof node</small>
           <StatusRow label="Status" value="Ready for work" tone="good" />
+          <StatusRow label="ENS" value={demoAgentIdentity.ensRef} tone="good" />
         </aside>
       </div>
 

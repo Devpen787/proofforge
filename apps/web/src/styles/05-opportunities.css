@@ -1,15 +1,12 @@
 .opportunity-command-panel {
-  display: grid;
-  grid-template-columns: minmax(420px, 1fr) minmax(340px, 0.68fr);
-  gap: 18px;
+  display: block;
   border: 0;
   background: transparent;
   padding: 0;
   box-shadow: none;
 }
 
-.opportunity-list-panel,
-.opportunity-detail-panel {
+.opportunity-list-panel {
   min-width: 0;
 }
 
@@ -37,9 +34,99 @@
   color: #047857;
 }
 
-.opportunity-card-list {
+.opportunity-card-list,
+.opportunity-lane-list {
   display: grid;
   gap: 10px;
+}
+
+.opportunity-lane {
+  display: grid;
+  gap: 0;
+}
+
+.opportunity-lane-heading {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 14px 0 6px;
+  color: #047857;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.opportunity-lane-heading b {
+  display: grid;
+  min-width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.github-import-row {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  border: 1px solid #dbeafe;
+  border-radius: 14px;
+  background: #eff6ff;
+  padding: 12px;
+}
+
+.project-request-opportunity {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid #a7f3d0;
+  border-radius: 14px;
+  background: #ecfdf5;
+  padding: 14px;
+}
+
+.project-request-opportunity strong,
+.project-request-opportunity small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: break-word;
+}
+
+.project-request-opportunity small {
+  margin-top: 4px;
+  color: #047857;
+  font-weight: 750;
+}
+
+.github-import-row div {
+  display: grid;
+  gap: 6px;
+  min-width: 0;
+}
+
+.github-import-row input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #bfdbfe;
+  border-radius: 10px;
+  background: white;
+  color: #0f172a;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.github-import-row small {
+  color: #1d4ed8;
+  font-size: 12px;
+  font-weight: 850;
 }
 
 .opportunity-card {
@@ -94,27 +181,6 @@
   padding: 4px 8px;
   font-size: 12px;
   font-weight: 900;
-}
-
-.opportunity-detail-panel {
-  align-self: stretch;
-  border: 1px solid #bbf7d0;
-  border-radius: 18px;
-  background: #f0fdf4;
-  padding: 18px;
-}
-
-.opportunity-detail-panel h2 {
-  margin: 8px 0 8px;
-  font-size: 32px;
-  line-height: 1.04;
-}
-
-.opportunity-detail-panel p:not(.small-label) {
-  margin: 0;
-  color: #047857;
-  font-weight: 800;
-  line-height: 1.45;
 }
 
 .opportunity-detail-stats {

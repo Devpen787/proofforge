@@ -2,9 +2,10 @@ import React from "react";
 import {
   demoProject,
   demoProjectLedgerRows,
-  demoSourceConnections,
-  demoV2Signals
+  demoAgentIdentity,
+  demoSourceConnections
 } from "../demo";
+import { StatusRow } from "../components/ui";
 
 function CompactPerson({
   name,
@@ -73,9 +74,11 @@ function OpportunityRow({
 export function ProjectsScreen({
   projectStarted,
   inviteSent,
+  agentAttached,
   workSuggested,
   onStartProject,
   onInvite,
+  onAttachAgent,
   onSuggestWork,
   onQueue
 }: {
@@ -108,8 +111,17 @@ export function ProjectsScreen({
           </div>
         </div>
         <div className="project-hero-actions">
-          <button className="primary-action" onClick={onSuggestWork}>
-            {workSuggested ? "Project lead ready" : "Suggest project work"}
+          <button
+            className="primary-action"
+            onClick={
+              !workSuggested ? onSuggestWork : inviteSent ? onQueue : onInvite
+            }
+          >
+            {!workSuggested
+              ? "Create work request"
+              : inviteSent
+                ? "Review sent request"
+                : "Send contributor request"}
           </button>
           <button className="secondary-action" onClick={onQueue}>
             Find sourced work
@@ -121,14 +133,43 @@ export function ProjectsScreen({
         <div className="project-action-banner wide" role="status">
           <div>
             <strong>Project started</strong>
-            <span>Invite a contributor or attach an agent.</span>
+            <span>
+              Create a work request, send it, then review submitted proof.
+            </span>
           </div>
           <span className="status-pill safe">Launch draft</span>
         </div>
       )}
 
+      {workSuggested && (
+        <div className="project-request-strip wide" role="status">
+          <div>
+            <p className="small-label">Contributor request</p>
+            <h2>Quickstart proof request is ready.</h2>
+            <span>
+              Source, acceptance owner, proof target, and value path are set.
+            </span>
+          </div>
+          <div className="project-request-actions">
+            <span
+              className={
+                inviteSent ? "status-pill safe" : "status-pill warning"
+              }
+            >
+              {inviteSent ? "Sent to sam@builder.dev" : "Ready to send"}
+            </span>
+            <button
+              className="primary-action"
+              onClick={inviteSent ? onQueue : onInvite}
+            >
+              {inviteSent ? "Open as contributor" : "Send request"}
+            </button>
+          </div>
+        </div>
+      )}
+
       <div className="project-room-main wide">
-        <section className="panel project-opportunities-panel wide">
+        <section className="panel project-opportunities-panel">
           <div className="section-heading">
             <div>
               <p className="small-label">Project work</p>
@@ -143,11 +184,15 @@ export function ProjectsScreen({
               <div className="project-opportunity-row project-opportunity-new">
                 <span className="opportunity-icon">+</span>
                 <div>
-                  <strong>Project Work Lead created</strong>
-                  <small>Clarify before Mission</small>
+                  <strong>Quickstart proof request</strong>
+                  <small>
+                    {inviteSent
+                      ? "Sent to contributor for acceptance"
+                      : "Ready to send to a contributor"}
+                  </small>
                 </div>
                 <button className="secondary-action" onClick={onQueue}>
-                  Triage
+                  Open
                 </button>
               </div>
             )}
@@ -168,10 +213,79 @@ export function ProjectsScreen({
             Open sourced inventory
           </button>
         </section>
+
+        <aside className="panel project-ops-panel">
+          <div className="section-heading">
+            <div>
+              <p className="small-label">Steward actions</p>
+              <h2>Agent, people, value.</h2>
+            </div>
+          </div>
+          <div className="project-ops-list">
+            <div>
+              <span>
+                <small>Proof node</small>
+                <strong>{demoAgentIdentity.id}</strong>
+                <b>
+                  {agentAttached ? "Attached to project" : "Ready to attach"}
+                </b>
+              </span>
+              <button className="secondary-action" onClick={onAttachAgent}>
+                {agentAttached ? "Attached" : "Attach agent"}
+              </button>
+            </div>
+            <div>
+              <span>
+                <small>Contributor</small>
+                <strong>{inviteSent ? "sam@builder.dev" : "Open seat"}</strong>
+                <b>{inviteSent ? "Invite pending" : "Invite not sent"}</b>
+              </span>
+              <button className="secondary-action" onClick={onInvite}>
+                {inviteSent ? "Pending" : "Invite"}
+              </button>
+            </div>
+            <div>
+              <span>
+                <small>Project state</small>
+                <strong>
+                  {projectStarted ? "Active sprint" : "Draft sprint"}
+                </strong>
+                <b>
+                  {projectStarted ? "Accepting proof" : "Needs steward start"}
+                </b>
+              </span>
+              <button className="secondary-action" onClick={onStartProject}>
+                {projectStarted ? "Started" : "Start project"}
+              </button>
+            </div>
+          </div>
+          <div className="project-value-ledger">
+            <StatusRow
+              label="Committed"
+              value={demoProject.proofLedger.committedPool}
+              tone="good"
+            />
+            <StatusRow
+              label="Earned"
+              value={demoProject.proofLedger.earnedPayouts}
+              tone="good"
+            />
+            <StatusRow
+              label="Released"
+              value={demoProject.proofLedger.releasedPayouts}
+              tone="good"
+            />
+            <StatusRow
+              label="Method"
+              value={demoProject.proofLedger.payoutMethod}
+              tone="good"
+            />
+          </div>
+        </aside>
       </div>
 
       <details className="project-detail-drawer wide">
-        <summary>Sources, ledger, and V2 signals</summary>
+        <summary>Sources and proof ledger</summary>
         <div className="project-detail-drawer-body">
           <div>
             <h3>Sources</h3>
@@ -196,10 +310,7 @@ export function ProjectsScreen({
             ))}
           </div>
           <div>
-            <h3>People and next signals</h3>
-            <button className="secondary-action full" onClick={onInvite}>
-              {inviteSent ? "Invite pending" : "Invite contributor"}
-            </button>
+            <h3>People</h3>
             {inviteSent && (
               <CompactPerson
                 name="sam@builder.dev"
@@ -216,18 +327,6 @@ export function ProjectsScreen({
                 status={person.status}
                 tone={person.status === "Pending" ? "warning" : "safe"}
               />
-            ))}
-            <button className="secondary-action full" onClick={onStartProject}>
-              {projectStarted ? "Project started" : "Start project"}
-            </button>
-            {demoV2Signals.map((signal) => (
-              <div className="benefit-row" key={signal}>
-                <div>
-                  <strong>V2</strong>
-                  <small>{signal}</small>
-                </div>
-                <span>Planned</span>
-              </div>
             ))}
           </div>
         </div>

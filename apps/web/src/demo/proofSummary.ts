@@ -7,6 +7,8 @@ export const generatedProofSummary = {
   project: "Docs Onboarding Sprint",
   mission: "Validate installation docs",
   acceptedBy: "fixture-maintainer",
+  acceptedAt: "2026-05-03T03:24:30.708Z",
+  acceptedDate: "May 3, 2026",
   whatWasProven:
     "Run the documented install check and prove whether it works in a clean environment.",
   evidenceSummary:
@@ -39,12 +41,14 @@ export const generatedProofSummary = {
     storageProvider: "0G Storage",
     storageStatus: "live in demo",
     storageUri:
-      "0g://0x4ce83089482f910e5bf463dd52b17b59f9ebd5918d76e677402703cde0d3e799",
-    storageRootShort: "0x4ce83089482f",
+      "0g://0x7722227f06463dc359960b4fb94e67943759d1031813c945013a53ac35d0d997",
+    storageRootShort: "0x7722227f0646",
     storageTxHash:
-      "0xbbe62e7760e58c7997d9325e17ce57b30630d74a27895ef67068b823c0947162",
-    storageTxShort: "0xbbe62e77...947162",
-    identityRef: "local:docs-runner-01;erc-8004-ready",
+      "0x4a6c9914ddeb46d20f6b04ce5ab9305d56bc4b13b3b7180293b9e998388ec741",
+    storageTxShort: "0x4a6c9914...8ec741",
+    identityRef:
+      "ens:proofrunner.jevpen.eth;addr:0x8BB09dcB204794de58957dC594dE35FEA769D141;local:docs-runner-01;erc-8004-ready",
+    identityLabel: "proofrunner.jevpen.eth",
     messageTraceId: "trace:docs-runner-01:verifier-01:packager-01"
   },
   payout: {
@@ -53,7 +57,20 @@ export const generatedProofSummary = {
     currency: "USD",
     status: "earned",
     method: "external_platform",
-    note: "Earned means accepted proof created a payout record."
+    note: "Earned means accepted proof created a payout record.",
+    settlement: {
+      provider: null,
+      status: null,
+      amount: null,
+      txHash: null,
+      txShort: null,
+      recipientShort: null
+    }
+  },
+  maintainerSubmission: {
+    provider: "GitHub",
+    status: "packet-ready",
+    issueUrl: "https://github.com/Devpen787/proofforge/issues/1"
   },
   projectCredit: {
     rewardPool: "$240",
@@ -101,6 +118,17 @@ export const generatedProofSummary = {
       proofability: "84%",
       valuePath: "external",
       mode: "submission context, not user inventory"
+    },
+    {
+      source: "github",
+      title: "ProofForge demo source: validate install proof flow",
+      sourceUrl: "https://github.com/Devpen787/proofforge/issues/1",
+      repo: "Devpen787/proofforge",
+      acceptanceOwner: "@Devpen787",
+      status: "needs_triage",
+      proofability: "57%",
+      valuePath: "reputation",
+      mode: "live local import"
     },
     {
       source: "github",

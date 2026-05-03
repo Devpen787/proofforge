@@ -1,10 +1,9 @@
 import React from "react";
 import {
-  demoConvertedMission,
-  demoConvertedPacket,
-  demoPacket,
-  demoMission,
-  generatedProofSummary
+  generatedProofSummary,
+  getCaseFileTitle,
+  getDemoMission,
+  getDemoPacket
 } from "../demo";
 import type { ActiveMission } from "../app/types";
 import { StatusRow } from "../components/ui";
@@ -22,14 +21,9 @@ export function CaseFileScreen({
   activeMission: ActiveMission;
   onSubmit: () => void;
 }) {
-  const packet =
-    activeMission === "checkout" ? demoConvertedPacket : demoPacket;
-  const mission =
-    activeMission === "checkout" ? demoConvertedMission : demoMission;
-  const caseTitle =
-    activeMission === "checkout"
-      ? "Verified checkout QA with clarified browser targets."
-      : "Validated install docs in a clean fixture.";
+  const packet = getDemoPacket(activeMission);
+  const mission = getDemoMission(activeMission);
+  const caseTitle = getCaseFileTitle(activeMission);
   const packetStatus = rejected
     ? "Rejected"
     : revisionRequested
@@ -94,10 +88,7 @@ export function CaseFileScreen({
               />
               <StatusRow
                 label="Agent"
-                value={
-                  generatedProofSummary.protocolRefs.identityRef ??
-                  "docs-runner-01"
-                }
+                value={generatedProofSummary.protocolRefs.identityLabel}
                 tone="good"
               />
             </div>
@@ -148,7 +139,7 @@ export function CaseFileScreen({
         <aside className="packet-side-gate">
           <section className="packet-submit-panel">
             <p className="small-label">Submit decision</p>
-            <h2>Send the proof, not agent noise.</h2>
+            <h2>Submit the proof packet.</h2>
             <p>
               If accepted: {mission.reward} earned, +12 reputation, +2 credits.
             </p>
@@ -164,6 +155,11 @@ export function CaseFileScreen({
                 tone="good"
               />
               <StatusRow
+                label="Maintainer"
+                value={generatedProofSummary.maintainerSubmission.provider}
+                tone="good"
+              />
+              <StatusRow
                 label="Packet storage"
                 value={
                   generatedProofSummary.protocolRefs.storageRootShort ?? "local"
@@ -176,8 +172,15 @@ export function CaseFileScreen({
               onClick={onSubmit}
               disabled={submitted}
             >
-              {submitted ? "Submitted to Maintainer Inbox" : "Submit Packet"}
+              {submitted ? "Submitted to maintainer" : "Submit to maintainer"}
             </button>
+            <details className="packet-details-drawer">
+              <summary>GitHub submission</summary>
+              <p>
+                {generatedProofSummary.maintainerSubmission.status} ·{" "}
+                {generatedProofSummary.maintainerSubmission.issueUrl}
+              </p>
+            </details>
           </section>
         </aside>
       </div>

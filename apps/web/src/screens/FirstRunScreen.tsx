@@ -1,6 +1,6 @@
 import React from "react";
-import { demoMission } from "../demo";
-import { StatusBlock } from "../components/ui";
+import { demoAgentIdentity, demoMission } from "../demo";
+import { StatusBlock, StatusRow } from "../components/ui";
 
 export function FirstRunScreen({
   onRun,
@@ -21,24 +21,42 @@ export function FirstRunScreen({
       <section className="first-run-contract wide">
         <div className="first-run-contract-body">
           <div className="first-run-contract-copy">
-            <p className="small-label">Starter mission</p>
+            <p className="small-label">Agent-recommended mission</p>
             <h1>{demoMission.title}</h1>
             <p>
-              Run the docs install check locally. Nothing is submitted or paid
-              until review.
+              Your proof node matched this source to its docs-validation skill.
+              Review what it can check before authorizing a run.
             </p>
             <button
               className="primary-action first-run-primary"
               onClick={onRun}
             >
-              Run safest earning mission
+              Review agent assessment
             </button>
           </div>
 
           <aside className="first-run-terms-card">
+            <StatusRow
+              label="Proof node"
+              value={demoAgentIdentity.id}
+              tone="good"
+            />
             <StatusBlock label="Repo" value={demoMission.repo} />
-            <StatusBlock label="Risk" value={demoMission.risk} />
-            <StatusBlock label="Runtime" value={demoMission.runtime} />
+            <StatusRow
+              label="Skill match"
+              value="Docs validation"
+              tone="good"
+            />
+            <StatusRow
+              label="Allowed"
+              value="Local command + logs"
+              tone="good"
+            />
+            <StatusRow
+              label="Blocked"
+              value="PRs, comments, funds"
+              tone="bad"
+            />
             <StatusBlock
               label="Reward"
               value={`${demoMission.reward} + rep + credits`}

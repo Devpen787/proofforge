@@ -297,6 +297,7 @@
   .home-command-panel,
   .home-ledger-panel,
   .home-proof-panel,
+  .home-proof-summary,
   .triage-hero,
   .project-commons-hero {
     grid-column: 1;
@@ -307,6 +308,7 @@
   .home-command-panel,
   .home-ledger-panel,
   .home-proof-panel,
+  .home-proof-summary,
   .triage-hero,
   .opportunity-starter-strip,
   .opportunity-command-panel,

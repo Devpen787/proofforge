@@ -1,4 +1,4 @@
-import { mkdir, rm, writeFile } from "node:fs/promises";
+import { mkdir, readFile, rm, writeFile } from "node:fs/promises";
 import { resolve } from "node:path";
 import { pathToFileURL } from "node:url";
 import { runLocalMission } from "./index";
@@ -47,6 +47,7 @@ export interface DemoPacketResult {
 }
 
 const defaultOutputDir = resolve("demo-output/docs-install");
+const defaultIdentityRef = "local:docs-runner-01;erc-8004-ready";
 
 const lead = workLeadSchema.parse({
   id: "lead_docs_install_001",
@@ -157,13 +158,14 @@ export async function runDemoPacket(
     contentType: "application/json"
   });
 
+  const identityRef = await resolveAgentIdentityRef();
   const packetWithStorageRef = {
     ...packet,
     status: "accepted" as const,
     protocolRefs: {
       ...packet.protocolRefs,
       storageUri: storageReceipt.uri,
-      identityRef: "local:docs-runner-01;erc-8004-ready",
+      identityRef,
       messageTraceId: "trace:docs-runner-01:verifier-01:packager-01"
     }
   };
@@ -213,7 +215,8 @@ export async function runDemoPacket(
     payoutPath,
     projectPath,
     policyPath,
-    storageReceipt
+    storageReceipt,
+    identityRef
   });
   const submissionEvidencePath = resolve(
     outputDir,
@@ -265,6 +268,7 @@ function buildSubmissionEvidence(input: {
   projectPath: string;
   policyPath: string;
   storageReceipt: { provider: string; uri: string; txHash?: string };
+  identityRef: string;
 }) {
   return {
     product: "ProofForge",
@@ -311,25 +315,37 @@ function buildSubmissionEvidence(input: {
       },
       {
         partner: "Agent identity / skills",
-        status: "modeled locally, standards-ready",
+        status: input.identityRef.startsWith("ens:")
+          ? "ENS-resolved in demo"
+          : "modeled locally, ENS/standards-ready",
         productUse:
-          "docs-runner-01 is the bounded proof node; work rolls up to Alex and carries ERC-8004-ready identity plus ERC-8239-ready skill metadata.",
-        proofCommand: "npm run demo:packet",
+          "docs-runner-01 is the bounded proof node; work rolls up to Alex and can carry an ENS-resolved identity plus ERC-8004-ready identity and ERC-8239-ready skill metadata.",
+        proofCommand:
+          "npm run ens:check -- --name <agent.eth> --address <wallet> && npm run demo:packet",
         output: "evidence-packet.json protocolRefs.identityRef"
       },
       {
         partner: "External bounty / payout rail",
-        status: "tracked in V1, no custody",
+        status: "earned in V1; optional 0G testnet settlement receipt",
         productUse:
-          "Accepted proof creates earned payout state; release is a separate manual/external record.",
+          "Accepted proof creates earned payout state; release can attach a real 0G testnet transaction receipt without ProofForge custody.",
         proofCommand:
-          "npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json",
-        output: "payout.json and released-payout.json"
+          "npm run settle:payout -- --in demo-output/docs-install/packet/payout.json",
+        output: "settlement-receipt.json and released-payout.json"
+      },
+      {
+        partner: "GitHub maintainer workflow",
+        status: "live API path, human-approved posting",
+        productUse:
+          "Maintainer packet can be prepared as a GitHub issue comment and posted only with explicit human approval/token.",
+        proofCommand:
+          "npm run submit:github-comment -- --issue https://github.com/Devpen787/proofforge/issues/1 --post",
+        output: "github-maintainer-comment.json"
       }
     ],
     guardrails: [
-      "No automatic GitHub comments or pull requests.",
-      "No wallet signing or payment settlement in V1.",
+      "GitHub comments are never posted without explicit maintainer approval.",
+      "Wallet signing is limited to an explicit release command and testnet receipt.",
       "No funds escrowed or custodied by ProofForge.",
       "No public proof before maintainer acceptance and redaction."
     ]
@@ -374,6 +390,25 @@ ${claims}
 
 ${guardrails}
 `;
+}
+
+async function resolveAgentIdentityRef(): Promise<string> {
+  const path = resolve("demo-output/identity/ens-agent-identity.json");
+
+  try {
+    const receipt = JSON.parse(await readFile(path, "utf8")) as {
+      status?: string;
+      identityRef?: string;
+    };
+
+    if (receipt.status === "resolved" && receipt.identityRef) {
+      return `${receipt.identityRef};local:docs-runner-01;erc-8004-ready`;
+    }
+  } catch {
+    return defaultIdentityRef;
+  }
+
+  return defaultIdentityRef;
 }
 
 function printDemoPacketResult(result: DemoPacketResult): void {

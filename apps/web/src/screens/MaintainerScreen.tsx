@@ -1,10 +1,9 @@
 import React from "react";
 import {
-  demoConvertedMission,
-  demoConvertedPacket,
-  demoMission,
-  demoPacket,
-  generatedProofSummary
+  demoAgentIdentity,
+  generatedProofSummary,
+  getDemoMission,
+  getDemoPacket
 } from "../demo";
 import type { ActiveMission } from "../app/types";
 import { StatusBlock } from "../components/ui";
@@ -26,10 +25,8 @@ export function MaintainerScreen({
   onRevision: () => void;
   onReject: () => void;
 }) {
-  const packet =
-    activeMission === "checkout" ? demoConvertedPacket : demoPacket;
-  const mission =
-    activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const packet = getDemoPacket(activeMission);
+  const mission = getDemoMission(activeMission);
   const hasReviewPacket = submitted || !accepted;
   const decisionState = accepted
     ? "Accepted"
@@ -39,11 +36,17 @@ export function MaintainerScreen({
   const proofFacts = [
     { label: "Verifier", value: generatedProofSummary.verifierStatus },
     { label: "Risk", value: mission.risk },
+    { label: "Source", value: mission.repo },
+    { label: "Proof node", value: demoAgentIdentity.id },
+    { label: "Credit to", value: demoAgentIdentity.owner },
     {
       label: "Storage",
       value: generatedProofSummary.protocolRefs.storageProvider
     },
-    { label: "Artifacts", value: `${packet.artifacts.length} files` },
+    {
+      label: "Submit via",
+      value: generatedProofSummary.maintainerSubmission.provider
+    },
     { label: "Payout", value: generatedProofSummary.payout.amount }
   ];
   return (
@@ -57,7 +60,7 @@ export function MaintainerScreen({
             <p className="small-label">Submitted evidence packet</p>
             <h1>Accept the proof and create the earned record.</h1>
             <p>{mission.title}</p>
-            <span>Docs install proof</span>
+            <span>{mission.repo}</span>
           </div>
           <span
             className={accepted ? "status-pill safe" : "status-pill warning"}
@@ -87,6 +90,10 @@ export function MaintainerScreen({
               {accepted ? "Proof accepted" : "Accept recommended"}
             </strong>
             <span>{packet.recommendedAction}</span>
+            <span>
+              Accepted proof credits {demoAgentIdentity.owner}; GitHub posting
+              and payout release require explicit approval.
+            </span>
             <button
               className="primary-action full"
               onClick={onAccept}

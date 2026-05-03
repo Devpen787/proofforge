@@ -1,5 +1,5 @@
 import React from "react";
-import { generatedProofSummary } from "../demo";
+import { generatedProofSummary, getDemoMission } from "../demo";
 import type { ActiveMission } from "../app/types";
 import { StatusBlock } from "../components/ui";
 
@@ -11,6 +11,7 @@ export function PublicProofScreen({
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
+  const mission = getDemoMission(activeMission);
   const proofFacts = [
     { label: "Status", value: generatedProofSummary.status },
     { label: "Project", value: generatedProofSummary.project },
@@ -21,6 +22,7 @@ export function PublicProofScreen({
           ? "External buyer"
           : generatedProofSummary.acceptedBy
     },
+    { label: "Accepted", value: generatedProofSummary.acceptedDate },
     {
       label: "Reward outcome",
       value: `${generatedProofSummary.payout.amount} ${generatedProofSummary.payout.status}`
@@ -28,6 +30,14 @@ export function PublicProofScreen({
     {
       label: "Stored on",
       value: generatedProofSummary.protocolRefs.storageProvider
+    },
+    {
+      label: "Agent identity",
+      value: generatedProofSummary.protocolRefs.identityLabel
+    },
+    {
+      label: "Release tx",
+      value: generatedProofSummary.payout.settlement.txShort ?? "Pending"
     }
   ];
   const publicEvidence = generatedProofSummary.publicArtifacts.map(
@@ -43,13 +53,13 @@ export function PublicProofScreen({
       <header className="page-header">
         <span>Public Proof / {generatedProofSummary.publicPacketId}</span>
         <button className="secondary-action" onClick={onBack}>
-          Back to Earnings
+          Project ledger
         </button>
       </header>
       <div className="public-share-hero wide">
         <div>
           <p className="small-label">Public proof</p>
-          <h1>{generatedProofSummary.mission}</h1>
+          <h1>{mission.title}</h1>
           <p>
             Accepted by {proofFacts[2].value}. Earned{" "}
             {generatedProofSummary.payout.amount}.
@@ -73,9 +83,6 @@ export function PublicProofScreen({
             onClick={() => setCopied(true)}
           >
             {copied ? "Public link copied" : "Copy public link"}
-          </button>
-          <button className="secondary-action full" onClick={onBack}>
-            View ledger
           </button>
         </aside>
       </div>
@@ -106,6 +113,15 @@ export function PublicProofScreen({
             <small>{generatedProofSummary.protocolRefs.storageStatus}</small>
           </div>
         )}
+        {generatedProofSummary.payout.settlement.txHash && (
+          <div className="artifact-row rich-artifact-row">
+            <span>
+              <strong>0G payout release</strong>
+              <small>{generatedProofSummary.payout.settlement.txHash}</small>
+            </span>
+            <small>{generatedProofSummary.payout.settlement.amount}</small>
+          </div>
+        )}
         {publicEvidence.map((artifact) => (
           <div className="artifact-row rich-artifact-row" key={artifact.label}>
             <span>
@@ -121,6 +137,10 @@ export function PublicProofScreen({
         <h2>{generatedProofSummary.projectCredit.contributor}</h2>
         <div className="public-credit-stats">
           <StatusBlock label="Project" value={generatedProofSummary.project} />
+          <StatusBlock
+            label="Accepted"
+            value={generatedProofSummary.acceptedDate}
+          />
           <StatusBlock
             label="Earned"
             value={generatedProofSummary.payout.amount}

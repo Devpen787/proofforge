@@ -45,10 +45,11 @@ The exact terminal files and routes to show are listed in [DEMO_SCRIPT.md](DEMO_
 
 ```bash
 npm install
-npm test
-npm run build
-npm run 0g:check
-npm run demo:packet
+   npm test
+   npm run build
+   npm run ens:check -- --name <your-agent.eth> --address <agent-wallet>
+   npm run 0g:check
+   npm run demo:packet
 npm run sync:web-proof
 npm run dev
 ```
@@ -98,8 +99,11 @@ Public Proof: http://localhost:5173/#public-proof
 - The web app is a product prototype using seeded data, not a hosted backend.
 - Payments are manual accounting artifacts only; no automatic transfer or escrow happens.
 - 0G storage is adapter-gated and uses local storage unless credentials are configured.
-- ENS and AXL are not live unless completed and verified before submission.
-- Agent identity and coordination trace are modeled locally. Do not claim ENS or AXL unless those integrations are completed and verified.
+- ENS is live only when `npm run ens:check` resolves an ENS name and the
+  resulting identity receipt is carried into the packet.
+- AXL is not live unless completed and verified before submission.
+- Agent identity falls back to the local proof node when ENS is not configured.
+  Do not claim AXL unless that integration is completed and verified.
 - ProofForge does not post GitHub comments, open pull requests, or contact maintainers automatically.
 - Current dependency audit status is documented in [DEPENDENCY_AUDIT.md](DEPENDENCY_AUDIT.md).
 

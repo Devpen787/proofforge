@@ -7,7 +7,16 @@ describe("generated proof summary", () => {
     expect(generatedProofSummary.status).toBe("accepted");
     expect(generatedProofSummary.verifierStatus).toBe("passed");
     expect(generatedProofSummary.policyStatus).toBe("evidence_only");
-    expect(generatedProofSummary.payout.status).toBe("earned");
+    expect(generatedProofSummary.acceptedDate).toBeTruthy();
+    expect(["earned", "released"]).toContain(
+      generatedProofSummary.payout.status
+    );
+    if (generatedProofSummary.payout.settlement.txHash) {
+      expect(generatedProofSummary.payout.settlement.txHash).toMatch(/^0x/);
+    }
+    expect(["packet-ready", "posted"]).toContain(
+      generatedProofSummary.maintainerSubmission.status
+    );
     expect(generatedProofSummary.projectCredit.acceptedPackets).toBe(1);
   });
 

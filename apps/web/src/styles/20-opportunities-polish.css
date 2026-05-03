@@ -1,0 +1,114 @@
+.work-queue-grid {
+  grid-template-columns: minmax(0, 980px);
+}
+
+.work-queue-grid .page-header {
+  align-items: center;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 16px;
+}
+
+.work-queue-grid .opportunity-command-panel {
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+  padding: 22px;
+}
+
+.work-queue-grid .section-heading h2 {
+  font-size: 26px;
+  line-height: 1.08;
+}
+
+.work-queue-grid .opportunity-filter-row {
+  border-bottom: 1px solid var(--pf-line);
+  margin: 10px 0 0;
+  padding-bottom: 14px;
+}
+
+.work-queue-grid .opportunity-filter-row button {
+  border-radius: var(--pf-radius-sm);
+  padding: 7px 10px;
+}
+
+.work-queue-grid .project-request-opportunity {
+  border-color: var(--pf-line);
+  border-left: 3px solid var(--pf-green);
+  border-radius: 0;
+  background: transparent;
+  padding: 16px 0 16px 14px;
+}
+
+.work-queue-grid .project-request-opportunity small {
+  color: var(--pf-muted);
+}
+
+.work-queue-grid .github-import-row {
+  border: 0;
+  border-bottom: 1px solid var(--pf-line);
+  border-radius: 0;
+  background: transparent;
+  padding: 14px 0;
+}
+
+.work-queue-grid .github-import-row input {
+  background: var(--pf-surface-muted);
+}
+
+.work-queue-grid .opportunity-lane-heading {
+  color: var(--pf-muted);
+  padding-top: 18px;
+}
+
+.work-queue-grid .opportunity-lane-heading b {
+  border-radius: var(--pf-radius-sm);
+}
+
+.work-queue-grid .opportunity-card {
+  grid-template-columns: minmax(0, 1fr) 104px;
+  padding: 15px 0;
+}
+
+.work-queue-grid .opportunity-card.selected {
+  border-left: 3px solid var(--pf-green);
+  background: transparent;
+  padding-left: 12px;
+}
+
+.work-queue-grid .opportunity-card-main {
+  grid-template-columns: 28px minmax(0, 1fr);
+}
+
+.work-queue-grid .opportunity-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: var(--pf-radius-sm);
+  background: #eef2ff;
+  color: #4f46e5;
+  font-size: 13px;
+}
+
+.work-queue-grid .opportunity-card-meta {
+  gap: 8px;
+}
+
+.work-queue-grid .opportunity-card-meta span {
+  border: 0;
+  background: transparent;
+  color: var(--pf-muted);
+  padding: 0;
+}
+
+.work-queue-grid .opportunity-card-meta span:nth-child(3),
+.work-queue-grid .opportunity-card-meta span:nth-child(4) {
+  color: var(--pf-green);
+}
+
+.work-queue-grid .opportunity-card .primary-action,
+.work-queue-grid .opportunity-card .secondary-action {
+  min-height: 38px;
+}
+
+.source-inventory-drawer {
+  margin-top: 16px;
+}

@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { chromium, type Page } from "playwright";
 
-const port = 5173;
+const port = 5174;
 const baseUrl = `http://localhost:${port}`;
 const routes = [
   "opportunity",
@@ -10,6 +10,7 @@ const routes = [
   "projects",
   "work-queue",
   "my-work",
+  "builder-passport",
   "mission-detail",
   "run",
   "case-file",
@@ -48,8 +49,13 @@ async function serverIsRunning() {
 }
 
 async function requireText(page: Page, text: string) {
-  const content = await page.locator("body").textContent();
-  if (!content?.includes(text)) {
+  try {
+    await page.waitForFunction(
+      (expected) => document.body.textContent?.includes(expected),
+      text,
+      { timeout: 3_000 }
+    );
+  } catch {
     throw new Error(`Expected page to contain: ${text}`);
   }
 }
@@ -130,48 +136,60 @@ async function runSmoke() {
       viewport: { width: 1280, height: 900 }
     });
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
+    await page.evaluate(() => {
+      localStorage.clear();
+    });
+    await page.reload({ waitUntil: "networkidle" });
     await page.getByRole("button", { name: "See source-backed work" }).click();
-    await requireText(page, "Pick or triage work.");
-    await page.getByRole("button", { name: "Safe" }).click();
-    await page.getByRole("button", { name: "Plan" }).click();
-    await requireText(page, "External QA task imported");
-    await page.getByRole("button", { name: "Reject" }).click();
-    await requireText(page, "Pick or triage work.");
+    await requireText(page, "Choose sourced work.");
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Plan" }).click();
-    await requireText(page, "Pick or triage work.");
+    await page.getByRole("button", { name: "Open sourced inventory" }).click();
+    await requireText(page, "Choose sourced work.");
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await requireText(page, "Work in this project.");
-    await page.getByText("Sources, ledger, and V2 signals").click();
-    await page.getByRole("button", { name: "Start project" }).click();
-    await requireText(page, "Project started");
-    await page.getByRole("button", { name: "Invite contributor" }).click();
-    await requireText(page, "sam@builder.dev");
     await page.getByRole("button", { name: "Find sourced work" }).click();
-    await requireText(page, "Pick or triage work.");
+    await requireText(page, "Choose sourced work.");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Set up proof node" }).click();
-    await requireText(page, "Register the agent that will do the work.");
-    await page.getByRole("button", { name: "Register proof node" }).click();
-    await page.getByRole("button", { name: "Find source-backed work" }).click();
-    await requireText(page, "Pick or triage work.");
-    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Start sourced proof" }).click();
-    await requireText(page, "Nothing is submitted or paid until review.");
-    await page
-      .getByRole("button", { name: "Run safest earning mission" })
-      .click();
-    await requireText(page, "Ready to run");
-    await requireText(page, "Confirm the work.");
-    await page.getByRole("button", { name: "Accept and run" }).click();
-    await requireText(page, "Docs issue found.");
+    if (
+      (await page
+        .getByRole("button", { name: "Set up proof node" })
+        .count()) === 1
+    ) {
+      await page.getByRole("button", { name: "Set up proof node" }).click();
+      await requireText(page, "Register the agent that will do the work.");
+      await page.getByRole("button", { name: "Register proof node" }).click();
+      await page
+        .getByRole("button", { name: "Find source-backed work" })
+        .click();
+      await requireText(page, "Choose sourced work.");
+    } else {
+      await requireText(page, "Find work. Prove it. Get credited.");
+    }
+    await page.evaluate(() => {
+      const savedState = JSON.parse(
+        window.localStorage.getItem("proofforge.v1.demo-state") ?? "{}"
+      );
+      window.localStorage.setItem(
+        "proofforge.v1.demo-state",
+        JSON.stringify({
+          ...savedState,
+          activeMission: "docs",
+          agentRegistered: true
+        })
+      );
+    });
+    await page.goto(`${baseUrl}/#mission-detail`, { waitUntil: "networkidle" });
+    await page.reload({ waitUntil: "networkidle" });
+    await requireText(page, "Validate installation docs");
+    await page.locator("main button.primary-action").first().click();
+    await requireText(page, "Bounded agent run completed.");
     await page.getByRole("button", { name: "Cancel Run" }).click();
-    await requireText(page, "Ready to run");
-    await page.getByRole("button", { name: "Accept and run" }).click();
-    await requireText(page, "Docs issue found.");
-    await page.getByRole("button", { name: "Approve Packet" }).click();
-    await requireText(page, "Send the proof, not agent noise.");
-    await page.getByRole("button", { name: "Submit Packet" }).click();
+    await requireText(page, "Agent assessment");
+    await page.getByRole("button", { name: "Authorize agent run" }).click();
+    await requireText(page, "Bounded agent run completed.");
+    await page.getByRole("button", { name: "Review evidence packet" }).click();
+    await requireText(page, "Submit the proof packet.");
+    await page.getByRole("button", { name: "Submit to maintainer" }).click();
     await requireText(page, "Accept the proof and create the earned record.");
     await page.getByRole("button", { name: "Review Packet" }).click();
     await requireText(page, "Evidence packet preview");
@@ -190,44 +208,53 @@ async function runSmoke() {
     await requireText(page, "Credit");
     await page.getByRole("button", { name: "Copy public link" }).click();
     await requireText(page, "Public link copied");
+
+    await page.goto(`${baseUrl}/#builder-passport`, {
+      waitUntil: "networkidle"
+    });
+    await requireText(page, "Builder Passport / V2");
+    await requireText(page, "Observed work only becomes credit");
+    await requireText(page, "Hackathon prize readiness");
+    await requireText(page, "Sponsor acceptance");
+    await requireText(page, "V2 connection layer");
+    await requireText(page, "Local JSON persistence ready");
+    await page.getByRole("button", { name: "Open tracked projects" }).click();
+    await requireText(page, "Work in this project.");
+
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Import external task" }).click();
+    await page.getByRole("button", { name: "Import work" }).click();
     await requireText(page, "External QA task imported");
-    await requireText(page, "MissingExact browser versions");
+    await requireText(page, "Exact browser versions");
     await page.getByRole("button", { name: "Ask clarification" }).click();
     await requireText(page, "Browser targets are confirmed.");
     await page.getByRole("button", { name: "Convert" }).click();
     await requireText(page, "Ready to run.");
     await page.getByRole("button", { name: "Run converted mission" }).click();
     await requireText(page, "Checkout QA verification");
-    await requireText(page, "Earn if accepted");
-    await page.getByRole("button", { name: "Accept and run" }).click();
+    await requireText(page, "Agent assessment");
+    await page.getByRole("button", { name: "Authorize agent run" }).click();
     await requireText(page, "Runner / Checkout QA verification");
-    await requireText(page, "Docs issue found.");
-    await page.getByRole("button", { name: "Approve Packet" }).click();
+    await requireText(page, "Bounded agent run completed.");
+    await page.getByRole("button", { name: "Review evidence packet" }).click();
     await requireText(
       page,
       "Verified checkout QA with clarified browser targets."
     );
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start sourced proof" }).click();
-    await page
-      .getByRole("button", { name: "Run safest earning mission" })
-      .click();
-    await page.getByRole("button", { name: "Accept and run" }).click();
-    await page.getByRole("button", { name: "Approve Packet" }).click();
-    await page.getByRole("button", { name: "Submit Packet" }).click();
+    await page.getByRole("button", { name: "Review agent assessment" }).click();
+    await page.getByRole("button", { name: "Authorize agent run" }).click();
+    await page.getByRole("button", { name: "Review evidence packet" }).click();
+    await page.getByRole("button", { name: "Submit to maintainer" }).click();
     await page.getByRole("button", { name: "Request Revision" }).click();
     await requireText(page, "Revision requested");
     await requireText(page, "full command transcript");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start sourced proof" }).click();
-    await page
-      .getByRole("button", { name: "Run safest earning mission" })
-      .click();
-    await page.getByRole("button", { name: "Accept and run" }).click();
-    await page.getByRole("button", { name: "Approve Packet" }).click();
-    await page.getByRole("button", { name: "Submit Packet" }).click();
+    await page.getByRole("button", { name: "Review agent assessment" }).click();
+    await page.getByRole("button", { name: "Authorize agent run" }).click();
+    await page.getByRole("button", { name: "Review evidence packet" }).click();
+    await page.getByRole("button", { name: "Submit to maintainer" }).click();
     await page.getByRole("button", { name: "Reject Packet" }).click();
     await requireText(page, "Packet rejected.");
     await page.close();

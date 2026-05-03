@@ -16,6 +16,7 @@ export function activeNavScreen(
     screen === "public-proof"
   )
     return "my-work";
+  if (screen === "builder-passport") return "builder-passport";
   if (screen === "agent-setup") return "opportunity";
   if (
     secondaryNavScreens.includes(screen as (typeof secondaryNavScreens)[number])

@@ -25,6 +25,15 @@ const defaultSavedState: SavedAppState = {
   agentRegistered: false
 };
 
+const activeMissions: ActiveMission[] = [
+  "docs",
+  "windows",
+  "mac",
+  "config",
+  "links",
+  "checkout"
+];
+
 function readSavedAppState(): SavedAppState {
   if (typeof window === "undefined") return defaultSavedState;
   try {
@@ -34,10 +43,11 @@ function readSavedAppState(): SavedAppState {
     return {
       ...defaultSavedState,
       ...parsed,
-      activeMission:
-        parsed.activeMission === "checkout" || parsed.activeMission === "docs"
-          ? parsed.activeMission
-          : defaultSavedState.activeMission
+      activeMission: activeMissions.includes(
+        parsed.activeMission as ActiveMission
+      )
+        ? (parsed.activeMission as ActiveMission)
+        : defaultSavedState.activeMission
     };
   } catch {
     return defaultSavedState;
@@ -119,7 +129,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     registerAgent: () => setAgentRegistered(true),
     startProofJourney: () => {
       resetProof();
-      setScreen("first-run");
+      setScreen(agentRegistered ? "first-run" : "agent-setup");
     },
     openPublicProof: () => setScreen("public-proof"),
     openOpportunities: () => setScreen("work-queue"),
@@ -127,10 +137,18 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     releasePayout: () => setReleased(true),
     resolveRevision: () => setScreen("case-file"),
     runStarterMission: () => {
+      if (!agentRegistered) {
+        setScreen("agent-setup");
+        return;
+      }
       setActiveMission("docs");
       setScreen("mission-detail");
     },
     runMission: (mission) => {
+      if (!agentRegistered) {
+        setScreen("agent-setup");
+        return;
+      }
       setActiveMission(mission);
       setScreen("mission-detail");
     },
@@ -182,10 +200,12 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     },
     startProject: () => setProjectStarted(true),
     inviteContributor: () => setProjectInviteSent(true),
-    attachAgent: () => setProjectAgentAttached(true),
+    attachAgent: () => {
+      setProjectAgentAttached(true);
+      setAgentRegistered(true);
+    },
     suggestWork: () => {
       setProjectWorkSuggested(true);
-      setScreen("work-queue");
     }
   };
 

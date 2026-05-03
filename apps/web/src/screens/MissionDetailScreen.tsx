@@ -1,11 +1,10 @@
 import React from "react";
 import {
-  demoConvertedMission,
-  demoConvertedPacket,
-  demoMission,
+  demoAgentIdentity,
   demoMissionTerms,
-  demoPacket,
-  demoWorkLead
+  demoWorkLead,
+  getDemoMission,
+  getDemoPacket
 } from "../demo";
 import type { ActiveMission } from "../app/types";
 import { StatusBlock, StatusRow } from "../components/ui";
@@ -19,10 +18,8 @@ export function MissionDetailScreen({
   onBack: () => void;
   onAccept: () => void;
 }) {
-  const mission =
-    activeMission === "checkout" ? demoConvertedMission : demoMission;
-  const packet =
-    activeMission === "checkout" ? demoConvertedPacket : demoPacket;
+  const mission = getDemoMission(activeMission);
+  const packet = getDemoPacket(activeMission);
   const owner =
     activeMission === "checkout"
       ? demoWorkLead.acceptsProof
@@ -34,15 +31,38 @@ export function MissionDetailScreen({
           "Safari result is captured with logs",
           "No payment credentials or customer data are exposed"
         ]
-      : [
-          "Documented command is run in a clean fixture",
-          "Failure or success is captured with logs",
-          "Maintainer can understand the next fix"
-        ];
+      : activeMission === "docs"
+        ? [
+            "Documented command is run in a clean fixture",
+            "Failure or success is captured with logs",
+            "Maintainer can understand the next fix"
+          ]
+        : mission.submissionRequirements.slice(0, 3);
   const sourceLabel =
-    activeMission === "checkout" ? "Marketplace task" : "GitHub issue";
-  const valueLabel =
-    activeMission === "checkout" ? "$25 if accepted" : "$8 if accepted";
+    activeMission === "checkout"
+      ? "Marketplace task"
+      : mission.sourceUrl.includes("github.com")
+        ? "GitHub issue"
+        : "Project backlog";
+  const valueLabel = `${mission.reward} if accepted`;
+  const agentChecks =
+    activeMission === "checkout"
+      ? [
+          "Confirmed browser targets after clarification",
+          "Can capture screenshots and console logs",
+          "Cannot touch payment credentials or customer data"
+        ]
+      : activeMission === "docs"
+        ? [
+            "Checked public source issue and repo fixture",
+            "Can run the documented install command locally",
+            "Cannot post comments, open PRs, or spend funds"
+          ]
+        : [
+            `Checked ${sourceLabel.toLowerCase()} and repo fixture`,
+            "Can run bounded local checks and capture evidence",
+            "Cannot post comments, open PRs, or spend funds"
+          ];
 
   return (
     <section className="page-grid mission-detail-grid">
@@ -54,7 +74,7 @@ export function MissionDetailScreen({
       </header>
       <div className="mission-decision-hero wide">
         <div>
-          <p className="small-label">Ready to run</p>
+          <p className="small-label">Agent assessment</p>
           <h2>{mission.title}</h2>
           <p>{packet.objective}</p>
           <div className="mission-detail-facts">
@@ -65,11 +85,11 @@ export function MissionDetailScreen({
           </div>
         </div>
         <aside className="mission-run-card">
-          <span>Earn if accepted</span>
+          <span>Authorize bounded run</span>
           <strong>{mission.reward}</strong>
           <small>{mission.valuePath}</small>
           <button className="primary-action full" onClick={onAccept}>
-            Accept and run
+            Authorize agent run
           </button>
         </aside>
       </div>
@@ -77,7 +97,7 @@ export function MissionDetailScreen({
         <div className="mission-review-header">
           <div>
             <p className="small-label">Before you run</p>
-            <h2>Confirm the work.</h2>
+            <h2>Confirm the source, agent fit, and proof target.</h2>
           </div>
           <StatusRow label="Source" value={sourceLabel} tone="good" />
           <StatusRow label="Value" value={valueLabel} tone="good" />
@@ -93,8 +113,21 @@ export function MissionDetailScreen({
             </div>
           </div>
           <div>
+            <h3>Agent assessment</h3>
+            <div className="mission-criteria-list">
+              {agentChecks.map((item) => (
+                <span key={item}>{item}</span>
+              ))}
+            </div>
+          </div>
+          <div>
             <h3>Mission terms</h3>
             <div className="mission-source-grid">
+              <StatusRow
+                label="Proof node"
+                value={demoAgentIdentity.id}
+                tone="good"
+              />
               {demoMissionTerms.map((term) => (
                 <StatusRow
                   key={term.label}

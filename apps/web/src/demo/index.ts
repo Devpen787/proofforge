@@ -4,3 +4,4 @@ export * from "./packets";
 export * from "./project";
 export * from "./proofSummary";
 export * from "./workLeads";
+export * from "./contributionGraph";

@@ -1,3 +1,5 @@
+import type { ActiveMission } from "../app/types";
+
 export const demoMission = {
   title: "Validate installation docs",
   repo: "proofforge/fixture",
@@ -29,6 +31,75 @@ export const demoConvertedMission = {
     "No real customer or payment data exposed"
   ]
 };
+
+export const demoMissionCatalog: Record<ActiveMission, typeof demoMission> = {
+  docs: demoMission,
+  windows: {
+    title: "Reproduce Windows build error",
+    repo: "proofforge/fixture",
+    reward: "$12",
+    runtime: "35 min",
+    risk: "Low risk",
+    valuePath: "External commons reward, tracked after acceptance",
+    sourceUrl: "https://github.com/proofforge/fixture/issues/2",
+    submissionRequirements: [
+      "Public source issue attached",
+      "Windows environment captured",
+      "Failure logs packaged for maintainer review",
+      "No public comment or PR without approval"
+    ]
+  },
+  mac: {
+    title: "Check Mac install flow",
+    repo: "proofforge/fixture",
+    reward: "$6",
+    runtime: "25 min",
+    risk: "Safe",
+    valuePath: "Project backlog reward, tracked after acceptance",
+    sourceUrl: "https://github.com/proofforge/fixture/issues/3",
+    submissionRequirements: [
+      "Project backlog source attached",
+      "macOS install run captured",
+      "Environment summary included",
+      "No public comment or PR without approval"
+    ]
+  },
+  config: {
+    title: "Validate config docs",
+    repo: "proofforge/fixture",
+    reward: "$8",
+    runtime: "30 min",
+    risk: "Safe",
+    valuePath: "External commons reward, tracked after acceptance",
+    sourceUrl: "https://github.com/proofforge/fixture/issues/4",
+    submissionRequirements: [
+      "Public source issue attached",
+      "Config examples tested in clean workspace",
+      "Observed mismatches packaged as evidence",
+      "No public comment or PR without approval"
+    ]
+  },
+  links: {
+    title: "Fix broken links",
+    repo: "proofforge/fixture",
+    reward: "$5",
+    runtime: "20 min",
+    risk: "Safe",
+    valuePath: "Project backlog reward, tracked after acceptance",
+    sourceUrl: "https://github.com/proofforge/fixture/issues/5",
+    submissionRequirements: [
+      "Project backlog source attached",
+      "Dead links listed with locations",
+      "Replacement targets or follow-up notes included",
+      "No public comment or PR without approval"
+    ]
+  },
+  checkout: demoConvertedMission
+};
+
+export function getDemoMission(activeMission: ActiveMission) {
+  return demoMissionCatalog[activeMission];
+}
 
 export const demoFirstRunSteps = [
   { label: "Choose mission", detail: "Use a safe starter task." },
@@ -65,8 +136,15 @@ export const demoMissionTerms = [
 
 export const demoRunnerTrace = [
   {
-    label: "Sandbox run",
-    detail: "Clean fixture workspace, secrets unmounted.",
+    label: "Assess work",
+    detail: "Checked source, repo, evidence target, value path, and risk.",
+    status: "complete",
+    artifact: "mission.json"
+  },
+  {
+    label: "Run bounded agent",
+    detail:
+      "Clean fixture workspace, secrets unmounted, external actions locked.",
     status: "complete",
     artifact: "runner-result.json"
   },

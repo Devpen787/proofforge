@@ -4,6 +4,35 @@
   margin: 14px 0;
 }
 
+.source-inventory-drawer {
+  margin-top: 14px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 12px;
+}
+
+.source-inventory-drawer summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  color: #047857;
+  cursor: pointer;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.source-inventory-drawer summary b {
+  display: grid;
+  min-width: 26px;
+  height: 26px;
+  place-items: center;
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+}
+
 .source-inventory-row {
   display: grid;
   grid-template-columns:
@@ -11,6 +40,7 @@
     minmax(74px, 0.38fr)
     minmax(92px, 0.48fr)
     minmax(82px, 0.42fr)
+    minmax(104px, 0.52fr)
     minmax(150px, 0.72fr);
   gap: 12px;
   align-items: center;
