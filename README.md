@@ -1,271 +1,210 @@
 # ProofForge
 
-> Open Agents Hackathon project: a protocol-agnostic proof guild for agent-assisted software work.
+ProofForge turns useful software work into accepted proof, so people and their
+agents can be reviewed, credited, paid, and trusted.
 
-**ProofForge connects existing work sources like GitHub, project backlogs, bounty networks, and agent runs, then turns useful work into accepted proof, contribution credit, payout state, and public-safe project history.**
+Built for the **Open Agents Hackathon**.
 
-## 5-Second Version
+- Live app: [https://proofforgehub.vercel.app](https://proofforgehub.vercel.app)
+- Demo script: [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md)
+- Submission checklist:
+  [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md)
 
-AI agents make it cheap to generate code. ProofForge makes it possible to trust, track, and credit the work.
+## Why We Built This
 
-We help builders connect their work sources, see projects they contribute to, let agents or local nodes help safely, prove what works, and track credit or payout only when the contribution holds up.
+Agents make it easier to produce code, checks, research, and fixes. The problem
+is that useful work still gets scattered across GitHub issues, unfinished
+projects, bounties, hackathon teams, grant work, and chats.
 
-## The Mission
+Maintainers do not need more raw agent output. Contributors do not need another
+place where work disappears without credit. Projects need a clear way to turn
+source-backed work into accepted evidence, credit, and payout state.
 
-Build together. Prove the work. Share the credit. Grow the commons.
-
-ProofForge is not a PR spam engine, bounty marketplace, or passive-income app. It is a workbench for producing high-signal software evidence:
-
-- bug reproductions
-- PR verifications
-- failing regression tests
-- docs validation
-- release checks
-- compatibility results
-
-The rule is simple:
-
-> No proof, no credit.
-
-The longer-term flywheel is:
-
-> Connect sources -> track projects -> prove useful work -> get accepted -> record credit/value -> find better work.
-
-## Hackathon Scope
-
-For this hackathon, we are starting with one narrow workflow inside that larger flywheel:
-
-> **GitHub source/import -> qualified mission -> local agent run -> independent verification -> maintainer-safe Proof Pack -> accepted proof -> credit and earned payout state.**
-
-The first demo should prove that ProofForge can:
-
-1. Import a GitHub issue.
-2. Convert it into a source-backed Work Lead and small verifiable Mission.
-3. Tie the run to an identifiable agent or proof node.
-4. Run the mission in a local sandbox.
-5. Capture commands, logs, environment, and result.
-6. Ask a verifier role to independently check the work.
-7. Record the runner -> verifier -> packager -> human approval trace.
-8. Produce a Proof Pack a maintainer can review quickly.
-9. Simulate maintainer acceptance.
-10. Create credit and earned payout state without implying automatic settlement.
-
-### Ethereum / Web3 / Bounty Hook
-
-The MVP should make the Web3 path visible without overclaiming it:
+ProofForge is the layer between messy work and recognized value.
 
 ```text
-GitHub issue / bounty URL / DAO proposal
--> qualified mission terms
--> accepted Proof Pack
--> credit + earned payout state
--> optional wallet, tx hash, receipt, grant, bounty, or treasury reference
+source-backed work
+-> bounded mission
+-> agent-assisted proof
+-> evidence packet
+-> maintainer review
+-> accepted credit / payout state
+-> public proof
 ```
 
-V1 tracks wallet, bounty, and onchain receipt references. Browser wallets can
-sign accepted proof records when available. ProofForge does not custody funds,
-escrow funds, issue tokens, or settle payments automatically.
+ProofForge is **not** another marketplace. It is a proof and coordination layer
+for people, agents, and projects to build useful things together and keep value
+attached to the work.
 
-V1 also includes a minimal EVM `ProofRegistry` contract. A maintainer can deploy
-the registry from MetaMask, then anchor an accepted proof hash, packet URI,
-project id, contributor wallet, reviewer wallet, and payout reference. The
-packet contents still live in the evidence/0G record path; the contract records
-the acceptance anchor.
+## What Works Now
 
-For GitHub authority, V1 stays credential-light. ProofForge generates the
-maintainer-ready GitHub comment and opens the source issue, but the maintainer
-posts from their own GitHub account. The posted comment URL can then be recorded
-back into ProofForge and appears in the public proof and exported records.
+The current V1 is an operational hosted/local-first product flow:
 
-For the exact V1/V2/V3 Web3 boundaries, see
-[docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md](docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md).
+- Register a bounded proof node with owner, skills, and blocked actions.
+- Pick source-backed work from a project issue/backlog-style inventory.
+- Convert work into a narrow mission with risk, value, and acceptance owner.
+- Run a safe evidence-mode proof mission.
+- Generate a maintainer-ready case file.
+- Copy reviewer links and GitHub maintainer comments.
+- Record the posted GitHub source URL back into ProofForge.
+- Sign maintainer acceptance with MetaMask or the demo signer fallback.
+- Mark proof as accepted and earned.
+- Track credit, payout receipt state, and public-safe proof.
+- Prepare a 0G evidence upload handoff and record returned 0G receipts.
+- Prepare non-custodial payout handoff metadata.
+- Publish/pull shared project state through the V1 GUN sync adapter.
+- Optionally anchor accepted proof through the `ProofRegistry` contract if a
+  browser wallet and network are ready.
 
-For the credential-light network persistence model, see
-[docs/NETWORK_PERSISTENCE_V1.md](docs/NETWORK_PERSISTENCE_V1.md).
+## Product Screens
 
-For the Web3/open-source operational completion plan, see
-[docs/WEB3_OPERATIONAL_COMPLETION_PLAN.md](docs/WEB3_OPERATIONAL_COMPLETION_PLAN.md).
-It defines how ProofForge uses GitHub handoff, EIP-712 acceptance, optional EAS
-attestations, 0G record sync, and external payout rails without becoming a
-custodial marketplace or GitHub replacement.
+### Start / Agent Readiness
 
-For the remaining controls before a broad public network, see
-[docs/PRODUCTION_HARDENING.md](docs/PRODUCTION_HARDENING.md).
+![ProofForge home and proof node start](docs/screenshots/01-home.png)
 
-## Evidence Packet
+### Sourced Work Inventory
 
-An evidence packet is the unit of value in ProofForge.
+![ProofForge sourced work inventory](docs/screenshots/02-opportunities.png)
 
-It contains:
+### Bounded Runner
 
-- mission objective
-- source issue or PR
-- repo and commit
-- environment
-- commands run
-- logs and artifacts
-- reproduction result
-- before/after proof when available
-- verifier result
-- risk flags
-- human approval status
-- maintainer-ready summary
+![ProofForge bounded runner](docs/screenshots/03-runner.png)
 
-Maintainers should not receive raw agent output. They should receive clean, verified evidence.
+### Evidence Packet / Case File
 
-## Why This Matters
+![ProofForge case file](docs/screenshots/04-case-file.png)
 
-Open-source and protocol communities already coordinate around useful work, public goods, bounties, grants, onchain treasuries, and reputation.
+### Maintainer Review
 
-ProofForge makes that pattern protocol-agnostic:
+![ProofForge maintainer review](docs/screenshots/05-maintainer.png)
 
-- GitHub keeps the canonical issue or PR.
-- Existing bounty, grant, treasury, and marketplace networks keep their funding flows.
-- Wallets and onchain records can provide payment or credential signals when available.
-- ProofForge links source work, accepted proof, credit, payout state, and project history.
+### Public Proof
 
-The goal is to help people build shared software without drowning maintainers in low-quality AI output.
+![ProofForge public proof](docs/screenshots/06-public-proof.png)
 
-## How Sponsors Fit
+### Settings / Handoffs
 
-Current claim levels are defined in
-[docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md). In short: 0G has an
-implemented credential-gated adapter; ENS and AXL are product-critical identity
-and communication directions but are not live unless completed and verified;
-KeeperHub and Uniswap are later-stage settlement paths.
+![ProofForge settings and handoffs](docs/screenshots/07-settings.png)
+
+## Demo Path
+
+Start clean:
+
+```text
+Settings -> Reset demo state
+```
+
+Then run:
+
+```text
+Home / #opportunity
+-> Set up proof node
+-> Register proof node
+-> Find source-backed work
+-> Run this mission
+-> Accept and run
+-> Approve Packet
+-> Submit Packet
+-> Connect MetaMask or demo signer
+-> paste GitHub acceptance URL
+-> Record GitHub post
+-> Sign acceptance
+-> Accept & Mark Earned
+-> View public proof
+-> Settings handoffs
+```
+
+Sample GitHub acceptance URL for the demo:
+
+```text
+https://github.com/Devpen787/proofforge/issues/1#issuecomment-proof
+```
+
+## Sponsor And Prize Relevance
 
 ### 0G
 
-0G is the persistent memory and evidence layer:
+ProofForge uses 0G as the durable evidence-record path.
 
-- evidence packets
-- run logs
-- project memory
-- contribution records
-- reusable task context
+The hosted app does not put private 0G keys in the browser. Instead, Settings
+exports the proof network record and prepares the runner command:
 
-### Gensyn AXL
+```bash
+npm run 0g:upload-record -- --in <proof-network-record.json>
+```
 
-AXL is the agent/node communication layer:
+When the runner returns a `0g://...` receipt or root, the reviewer records it in
+ProofForge so it appears in Public Proof and exported records.
 
-- runner node
-- verifier node
-- packager agent
-- human approval agent
+This makes 0G meaningful in the product: it is the durable storage rail for
+evidence packets and proof network records, not fake user work.
 
-The builder should not grade its own work.
+### Agent Tooling
 
-### ENS
+ProofForge is agent infrastructure for contribution proof:
 
-ENS can provide readable identities for:
+- bounded proof node identity
+- allowed and blocked actions
+- source-backed mission terms
+- evidence-mode execution
+- verifier result
+- maintainer-ready packet
+- human acceptance before credit or payout state
 
-- proof nodes
-- agents
-- maintainers
-- project namespaces
+The agent is useful because it helps produce evidence safely. It does not post,
+spend, or claim value by itself.
 
-### KeeperHub / Uniswap
+### Ethereum / Wallet / Onchain
 
-These are later-stage integrations for accepted-work payout or settlement. The MVP does not lead with payments.
+ProofForge supports wallet-signed acceptance and includes a minimal EVM
+`ProofRegistry` contract for optional accepted-proof anchoring.
 
-## The Proof Code
+The contract stores proof references and hashes. The private evidence stays in
+the proof packet / 0G record path.
 
-1. No proof, no credit.
-2. Builders do not grade their own work.
-3. Maintainers receive evidence, not noise.
-4. Small missions beat giant drops.
-5. Human judgment guards public action.
-6. Credit follows accepted usefulness.
-7. Commercial work can fund the commons.
-8. The work must hold.
+### GitHub / Open Source
 
-When a contribution is verified, we say:
+GitHub remains the source authority. ProofForge prepares maintainer comments and
+opens the source issue, but maintainers post from their own GitHub account. The
+posted URL is then recorded back into ProofForge and shown in Public Proof.
 
-> The work holds.
+This avoids storing GitHub credentials while still proving the source and review
+handoff.
 
-## Repository Hygiene
+### Payout Rails
 
-This repo is built in small, reviewable steps.
+V1 tracks earned payout and external receipt state. It can prepare Safe, Splits,
+and Drips handoff metadata, but it does not custody funds or automatically move
+money.
 
-Every meaningful contribution should include:
+## Proofs And Verification
 
-- a small scope
-- a clear definition of done
-- evidence that it works
-- tests or logs when applicable
-- no unrelated changes
-
-We are building ProofForge the same way ProofForge expects work to be done.
-
-## Current Status
-
-This repository now has the first working proof slice:
-
-- npm workspace scaffold
-- Evidence Packet schema with validation tests
-- Mission Contract schema with Work Lead conversion tests
-- GitHub issue importer that turns existing public issues into Work Leads
-- constrained local runner that writes artifacts
-- independent verifier that checks runner artifacts
-- policy gate that keeps missions local and evidence-only before approval
-- demo command that generates `evidence-packet.json`, `case-file.md`, `policy.json`, `public-packet.json`, `payout.json`, and `project.json`
-- accepted proof simulation that creates an earned `payout.json`
-- manual release command that creates `released-payout.json`
-- project credit ledger for accepted proof
-- proof-to-earn product UI for the core journey
-
-The current demo uses a deterministic fixture mission first so judges can reproduce the proof path locally.
-
-## Run Locally
-
-Install dependencies:
+Run the full local gate:
 
 ```bash
 npm install
-```
-
-Run tests:
-
-```bash
-npm test
-```
-
-Typecheck:
-
-```bash
+npm run format:check
+npm run lint
 npm run typecheck
+npm test
+npm run build
+npm run smoke:web
 ```
 
-Import an existing GitHub issue as a Work Lead:
+Run the production smoke:
 
 ```bash
-npm run import:github -- --url https://github.com/microsoft/vscode/issues/1
+npm run smoke:web:prod
 ```
 
-This writes a local Work Lead JSON file under:
-
-```text
-demo-output/imports/
-```
-
-The importer only reads public issue data. It does not post comments, open PRs, create payments, or contact maintainers.
-
-Convert a mission-ready Work Lead into a Mission Contract:
-
-```bash
-npm run convert:lead -- --in demo-output/imports/example.work-lead.json
-```
-
-Vague Work Leads fail conversion until the required evidence and missing details are clear.
-
-Generate the first evidence packet:
+Generate deterministic proof artifacts:
 
 ```bash
 npm run demo:packet
 npm run sync:web-proof
 ```
 
-That command writes:
+Generated proof files:
 
 ```text
 demo-output/docs-install/packet/evidence-packet.json
@@ -274,152 +213,118 @@ demo-output/docs-install/packet/policy.json
 demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
 demo-output/docs-install/packet/project.json
+demo-output/docs-install/packet/submission-evidence.json
+demo-output/docs-install/packet/submission-evidence.md
 ```
 
-`sync:web-proof` copies sanitized generated packet, verifier, policy, payout, and project-credit fields into the browser demo without exposing local filesystem paths or raw logs.
-
-By default, the packet is stored through the local storage adapter and the packet records a `file://` storage URI.
-
-The payout file is manual accounting only. It proves the accepted-work state transition:
-
-```text
-Accepted Evidence Packet -> Earned Payout
-```
-
-It does not move money automatically.
-
-Release the earned payout as a separate manual accounting step:
+Import a public GitHub issue as a Work Lead:
 
 ```bash
-npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
+npm run import:github -- --url https://github.com/microsoft/vscode/issues/1
 ```
 
-That proves the second payment transition:
-
-```text
-Earned Payout -> Released Payout
-```
-
-The project file shows the companion coordination state:
-
-```text
-Project -> Work Lead -> Mission -> Accepted Packet -> Contributor Credit
-```
-
-To use the real 0G storage adapter, set:
+Convert a mission-ready Work Lead:
 
 ```bash
-ZERO_G_EVM_RPC=
-ZERO_G_INDEXER_RPC=
-ZERO_G_PRIVATE_KEY=
+npm run convert:lead -- --in demo-output/imports/example.work-lead.json
 ```
 
-To use the browser proof registry with an existing deployment, set:
+Check 0G configuration:
 
 ```bash
-VITE_PROOF_REGISTRY_ADDRESS=
-VITE_PROOF_CONTRIBUTOR_ADDRESS=
+npm run 0g:check
 ```
 
-If no registry address is set, Maintainer Review can deploy the small
-`contracts/ProofRegistry.sol` registry through MetaMask and then anchor the
-accepted proof.
-
-Then run:
-
-```bash
-npm run demo:packet
-```
-
-The 0G adapter uses the official `@0gfoundation/0g-storage-ts-sdk` package and returns a `0g://` storage URI plus transaction hash when upload succeeds.
-
-The hosted app keeps private upload keys out of the browser. Settings can
-prepare the 0G upload by exporting the proof network record and copying the
-runner command:
+Upload a proof network record to 0G when credentials are configured:
 
 ```bash
 npm run 0g:upload-record -- --in <proof-network-record.json>
 ```
 
-After the runner returns a receipt, paste the `0g://...` URI or root back into
-Settings so it appears in Public Proof and exported records.
-
-Settings can also prepare non-custodial payout handoff metadata:
+## Run Locally
 
 ```bash
-npm run payout:handoff -- --payout demo-output/docs-install/packet/payout.json --record <proof-network-record.json> --recipient <wallet>
+npm install
+npm run dev -w apps/web -- --port 5175 --strictPort
 ```
 
-This writes Safe, Splits, and Drips payloads only. ProofForge still does not
-move funds.
-
-`demo-output/` is ignored by git because it is generated proof output.
-
-Run the web prototype:
-
-```bash
-npm run dev
-```
-
-The web app shows the core product loop:
+Open:
 
 ```text
-Home
--> Guided proof flow
--> Projects
--> Opportunities
--> Runner
--> Case File
--> Maintainer Review
--> Proof Ledger / outcome state
--> Public Proof
+http://localhost:5175/#opportunity
 ```
 
-Useful local routes:
+Useful routes:
 
 ```text
-Home: http://localhost:5173/#opportunity
-Guided proof flow: http://localhost:5173/#first-run
-Projects: http://localhost:5173/#projects
-Opportunities: http://localhost:5173/#work-queue
-Mission detail: http://localhost:5173/#mission-detail
-Runner: http://localhost:5173/#run
-Case File: http://localhost:5173/#case-file
-Maintainer Review: http://localhost:5173/#maintainer
-Proof ledger / outcome state: http://localhost:5173/#scoreboard
-Public Proof: http://localhost:5173/#public-proof
-Working Proof: http://localhost:5173/#proof-demo
+Start: http://localhost:5175/#opportunity
+Agent Setup: http://localhost:5175/#agent-setup
+Projects: http://localhost:5175/#projects
+Opportunities: http://localhost:5175/#work-queue
+Mission Detail: http://localhost:5175/#mission-detail
+Runner: http://localhost:5175/#run
+Case File: http://localhost:5175/#case-file
+Maintainer Review: http://localhost:5175/#maintainer
+My Work: http://localhost:5175/#my-work
+Builder Passport: http://localhost:5175/#builder-passport
+Public Proof: http://localhost:5175/#public-proof
+Settings: http://localhost:5175/#settings
 ```
 
-The current web prototype shows:
+## What To Claim Honestly
 
-- Home: next safe action, ready work, and current earning/proof state.
-- Guided proof flow: activation from safe mission to runner.
-- Projects: proof ledger, project backlog, and constrained agent delegations.
-- Opportunities: source import categories, GitHub import command, Work Lead diagnosis, and clarification gate.
-- Runner: local execution, packet output preview, security state, and human approval checkpoint.
-- Case File: maintainer/private/public artifact split.
-- Maintainer Review: decision support with confidence, risk, privacy, artifacts, and payout if accepted.
-- Proof ledger / outcome state: next action, payout state, reputation unlock, and recent activity.
-- Public Proof: shareable accepted proof view with private details removed.
+Working today:
 
-For the current documentation map, see [docs/README.md](docs/README.md).
+- hosted app
+- local-first proof workflow
+- source-backed missions
+- bounded proof-node run
+- evidence packet generation
+- maintainer review flow
+- GitHub handoff and recorded source URL
+- wallet/demo-signed acceptance
+- credit and payout receipt tracking
+- public proof
+- 0G upload handoff and receipt recording
+- optional onchain ProofRegistry anchoring
 
-For the operating rules Codex should follow, see [docs/OPERATING_GUIDE.md](docs/OPERATING_GUIDE.md).
+Not claiming yet:
 
-For the full hackathon recording flow, see [docs/DEMO_SCRIPT.md](docs/DEMO_SCRIPT.md).
+- automatic payout settlement
+- automatic PR creation
+- automatic GitHub posting through OAuth
+- hosted multi-user backend
+- private 0G key in browser
+- live ENS, AXL, KeeperHub, Uniswap, or Gensyn integrations unless separately
+  implemented and verified
 
-For the final submission gate, see [docs/SUBMISSION_CHECKLIST.md](docs/SUBMISSION_CHECKLIST.md).
+## Future
 
-For dependency audit status and current mitigations, see [docs/DEPENDENCY_AUDIT.md](docs/DEPENDENCY_AUDIT.md).
+The larger vision is a contribution layer for the agent economy:
 
-## Next Steps
+- project owners publish useful work as missions
+- contributors and agents safely help
+- proof packets make the work reviewable
+- maintainers accept, reject, or request revisions
+- accepted proof updates credit, reputation, payout, access, or ownership-like
+  benefits
+- projects gain an auditable history of who helped and what held up
 
-1. Add a deployed demo URL.
-2. Record the 2-4 minute hackathon demo video.
-3. Add final demo screenshots or a short visual walkthrough.
-4. Add Docker-backed sandbox execution.
-5. Add live 0G upload instructions when credentials are available.
+The next production milestones are:
+
+1. GitHub App / OAuth install for verified repo ownership and optional live
+   writeback.
+2. Hardened multi-user project permissions.
+3. One-click 0G upload through a safe server/runner boundary.
+4. Optional attestation layer for accepted proof.
+5. Settlement integrations that remain non-custodial and human-approved.
+
+## AI Tooling Transparency
+
+AI tools were used as development assistants for planning, coding, refactoring,
+documentation, and verification. The project includes the source code,
+documentation, proof artifacts, and version history needed to inspect what was
+built and how it works.
 
 ## License
 
