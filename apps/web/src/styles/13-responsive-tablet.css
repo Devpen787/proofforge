@@ -1,0 +1,385 @@
+@media (max-width: 760px) {
+  .app-shell {
+    grid-template-columns: 1fr;
+  }
+
+  .sidebar {
+    min-height: auto;
+    padding: 18px;
+    gap: 14px;
+  }
+
+  .nav-list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .nav-button {
+    width: auto;
+    white-space: nowrap;
+    padding: 9px 11px;
+  }
+
+  .project-header-actions {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    width: 100%;
+  }
+
+  .project-capacity-strip,
+  .home-metrics,
+  .home-focus-panel,
+  .home-command-panel,
+  .source-grid,
+  .pipeline-strip {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .project-capacity-card,
+  .pipeline-step,
+  .source-card {
+    min-width: 0;
+  }
+
+  .node-status {
+    display: none;
+  }
+
+  .main {
+    padding: 28px;
+    overflow: visible;
+  }
+
+  .hero-card {
+    padding: 34px 28px;
+  }
+
+  .hero-card h1 {
+    font-size: 26px;
+    line-height: 1.12;
+  }
+
+  .panel,
+  .terminal-card,
+  .decision-panel,
+  .home-hero,
+  .home-focus-panel,
+  .home-command-panel,
+  .triage-hero,
+  .triage-workbench,
+  .opportunity-command-panel,
+  .work-lead-diagnosis-panel,
+  .opportunity-source-strip,
+  .packet-overview-card,
+  .packet-document,
+  .packet-artifacts-panel,
+  .packet-submit-panel,
+  .packet-advanced,
+  .opportunity-fit-card,
+  .metric,
+  .work-row {
+    max-width: 100%;
+  }
+
+  .page-grid-hero,
+  .home-grid,
+  .runner-grid,
+  .case-grid,
+  .packet-grid,
+  .maintainer-grid,
+  .work-queue-grid,
+  .projects-grid,
+  .mission-detail-grid,
+  .first-run-grid,
+  .metric-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .maintainer-decision-grid,
+  .home-hero,
+  .home-start-card,
+  .home-source-preview,
+  .triage-hero,
+  .maintainer-hero,
+  .maintainer-evidence-grid,
+  .project-commons-hero,
+  .project-room-hero,
+  .project-command-header,
+  .project-command-main,
+  .project-room-main,
+  .project-next-panel,
+  .project-ledger-summary,
+  .project-ledger-panel,
+  .project-credit-panel,
+  .project-credit-body,
+  .project-capacity-strip,
+  .project-work-board,
+  .project-flow-columns,
+  .ledger-mini-grid,
+  .public-proof-grid,
+  .public-share-hero,
+  .public-proof-dossier,
+  .public-fact-grid,
+  .synced-proof-layout,
+  .proof-artifact-grid,
+  .source-grid,
+  .import-command,
+  .import-result-card,
+  .project-work-lead-card,
+  .opportunity-command-panel,
+  .work-lead-diagnosis-panel,
+  .triage-workbench,
+  .triage-next-card,
+  .triage-fact-grid,
+  .triage-decision-panel,
+  .opportunity-source-strip,
+  .packet-overview-card,
+  .packet-workspace,
+  .packet-document-hero,
+  .packet-readiness-strip,
+  .packet-review-body,
+  .packet-full-review,
+  .packet-full-review .compact-artifact-manifest,
+  .packet-review-layout,
+  .packet-summary-grid,
+  .packet-checks-grid,
+  .compact-artifact-manifest,
+  .command-state-grid,
+  .agent-card-grid,
+  .case-dossier-hero,
+  .case-dossier-body,
+  .compact-case-grid,
+  .verification-section,
+  .runner-hero,
+  .runner-timeline,
+  .mission-brief,
+  .mission-decision-hero,
+  .mission-detail-facts,
+  .mission-section-grid,
+  .mission-review-header,
+  .mission-review-grid,
+  .mission-detail-disclosure-grid,
+  .mission-proof-grid,
+  .mission-boundary-grid,
+  .first-run-contract-body,
+  .review-grid,
+  .share-split,
+  .work-lead-card {
+    display: grid;
+    grid-template-columns: 1fr;
+  }
+
+  .project-capacity-strip,
+  .project-room-stats,
+  .home-metrics,
+  .home-stage-strip,
+  .first-run-progress,
+  .source-grid,
+  .pipeline-strip,
+  .ledger-mini-grid,
+  .pipeline-mini-grid,
+  .triage-fact-grid,
+  .opportunity-detail-stats,
+  .packet-overview-stats {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .packet-side-gate,
+  .packet-submit-panel {
+    position: static;
+  }
+
+  .packet-document {
+    padding: 20px;
+    min-width: 0;
+  }
+
+  .packet-document-status {
+    grid-template-columns: 1fr;
+  }
+
+  .opportunity-source-strip .import-command {
+    grid-template-columns: 1fr;
+  }
+
+  .project-side-rail {
+    grid-template-columns: 1fr;
+  }
+
+  .project-secondary-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .project-active-work-panel,
+  .project-people-card {
+    grid-column: 1;
+    grid-row: auto;
+  }
+
+  .pipeline-strip,
+  .work-row,
+  .artifact-row,
+  .activity-row,
+  .compact-row,
+  .decision-row,
+  .project-action-banner,
+  .project-ledger-footer,
+  .opportunity-starter-strip,
+  .opportunity-card,
+  .packet-summary-head {
+    flex-wrap: wrap;
+  }
+
+  .work-main,
+  .work-owner {
+    min-width: 0;
+    width: 100%;
+  }
+
+  .status-block {
+    min-width: min(100%, 180px);
+  }
+
+  .project-ledger-footer {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .project-ledger-footer .secondary-action {
+    width: 100%;
+  }
+
+  .page-header,
+  .section-heading,
+  .project-command-header,
+  .project-action-strip {
+    align-items: stretch;
+    flex-direction: column;
+  }
+
+  .section-heading .secondary-action,
+  .decision-row button {
+    width: 100%;
+  }
+
+  .page-header button,
+  .section-heading button,
+  .project-action-strip button,
+  .decision-row button {
+    width: 100%;
+  }
+
+  .section-heading h2,
+  .page-header code,
+  .pipeline-step,
+  .case-dossier,
+  .project-commons-hero h2,
+  .project-commons-hero p {
+    max-width: 100%;
+  }
+
+  .case-dossier {
+    grid-column: 1;
+  }
+
+  .runner-hero,
+  .runner-timeline-panel {
+    grid-column: 1;
+  }
+
+  .maintainer-hero {
+    grid-column: 1;
+  }
+
+  .home-hero,
+  .home-command-panel,
+  .home-ledger-panel,
+  .home-proof-panel,
+  .triage-hero,
+  .project-commons-hero {
+    grid-column: 1;
+  }
+
+  .project-action-banner,
+  .home-hero,
+  .home-command-panel,
+  .home-ledger-panel,
+  .home-proof-panel,
+  .triage-hero,
+  .opportunity-starter-strip,
+  .opportunity-command-panel,
+  .work-lead-diagnosis-panel,
+  .opportunity-source-strip,
+  .packet-overview-card,
+  .packet-review-layout,
+  .packet-checks-grid,
+  .packet-advanced,
+  .project-commons-hero,
+  .project-room-hero,
+  .project-room-main,
+  .project-credit-panel,
+  .project-command-header,
+  .project-command-main,
+  .project-next-panel,
+  .project-ledger-panel,
+  .project-capacity-strip,
+  .project-work-board,
+  .agent-card-grid,
+  .public-share-hero,
+  .public-proof-dossier,
+  .synced-proof-layout,
+  .synced-proof-panel,
+  .proof-artifact-panel,
+  .mission-decision-hero,
+  .mission-proof-panel {
+    grid-column: 1;
+  }
+
+  .maintainer-card-header {
+    display: grid;
+  }
+  .mission-brief,
+  .mission-detail-main,
+  .mission-proof-panel {
+    grid-column: 1;
+  }
+  .case-file-rail {
+    display: flex;
+    overflow-x: auto;
+    border-right: 0;
+    border-bottom: 1px solid #e2e8f0;
+  }
+
+  .case-dossier-meta {
+    justify-items: start;
+  }
+  .project-header-actions {
+    justify-content: stretch;
+  }
+  .project-header-actions button {
+    width: 100%;
+  }
+
+  .project-detail-drawer-body {
+    grid-template-columns: 1fr;
+  }
+
+  .project-status-stack {
+    grid-template-columns: 1fr;
+  }
+
+  .project-work-lane {
+    min-height: auto;
+  }
+
+  .synced-proof-summary > strong {
+    font-size: 18px;
+    line-height: 1.15;
+  }
+
+  .synced-proof-artifacts code {
+    justify-self: start;
+  }
+}

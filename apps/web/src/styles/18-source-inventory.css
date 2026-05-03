@@ -1,0 +1,55 @@
+.source-inventory-table {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.source-inventory-row {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1.2fr)
+    minmax(74px, 0.38fr)
+    minmax(92px, 0.48fr)
+    minmax(82px, 0.42fr)
+    minmax(150px, 0.72fr);
+  gap: 12px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 0;
+  background: transparent;
+  padding: 12px 0;
+}
+
+.source-inventory-row span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.source-inventory-row strong,
+.source-inventory-row small,
+.source-inventory-row b {
+  overflow-wrap: anywhere;
+}
+
+.source-inventory-row strong {
+  color: #020617;
+}
+
+.source-inventory-row small {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.source-inventory-row b {
+  color: #047857;
+  font-size: 13px;
+}
+
+@media (max-width: 760px) {
+  .source-inventory-row {
+    grid-template-columns: 1fr;
+  }
+}

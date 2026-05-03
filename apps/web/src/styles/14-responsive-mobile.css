@@ -1,0 +1,90 @@
+@media (max-width: 430px) {
+  .main {
+    padding: 18px;
+  }
+
+  .hero-card {
+    padding: 28px 22px;
+  }
+
+  .panel,
+  .terminal-card,
+  .decision-panel,
+  .opportunity-fit-card,
+  .metric,
+  .work-row {
+    max-width: 100%;
+  }
+
+  .hero-card h1 {
+    font-size: 30px;
+  }
+
+  .home-hero {
+    padding: 24px;
+  }
+
+  .home-start-card,
+  .home-source-preview {
+    grid-template-columns: 1fr;
+    padding: 22px;
+  }
+
+  .home-stage-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .first-run-contract {
+    padding: 18px;
+  }
+
+  .first-run-progress,
+  .first-run-contract-body {
+    grid-template-columns: 1fr;
+  }
+
+  .first-run-contract-copy h1 {
+    font-size: 34px;
+    line-height: 1.04;
+  }
+
+  .home-command-panel {
+    grid-template-columns: 1fr;
+    padding: 18px;
+  }
+
+  .home-command-copy .primary-action {
+    width: 100%;
+  }
+
+  .mini-proof-path {
+    grid-template-columns: 1fr;
+  }
+
+  .home-hero h1 {
+    font-size: 34px;
+    line-height: 1.04;
+  }
+
+  .home-start-copy h1 {
+    font-size: 34px;
+    line-height: 1.04;
+  }
+
+  .home-actions button {
+    width: 100%;
+  }
+
+  .project-opportunity-row {
+    grid-template-columns: 34px minmax(0, 1fr);
+  }
+
+  .project-opportunity-row button {
+    grid-column: 1 / -1;
+    width: 100%;
+  }
+
+  .section-heading h2 {
+    font-size: 18px;
+  }
+}

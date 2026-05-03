@@ -1,0 +1,390 @@
+.mission-brief {
+  grid-column: span 2;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 210px;
+  gap: 22px;
+  align-items: end;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.mission-brief h2 {
+  margin: 0;
+  font-size: 42px;
+  line-height: 1.02;
+}
+
+.mission-brief p:not(.small-label) {
+  max-width: 720px;
+  color: #475569;
+  line-height: 1.55;
+}
+
+.mission-reward-card {
+  border: 1px solid #a7f3d0;
+  border-radius: 22px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.mission-reward-card span,
+.mission-reward-card small,
+.mission-reward-card strong {
+  display: block;
+}
+
+.mission-reward-card span,
+.mission-reward-card small {
+  color: #047857;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mission-reward-card strong {
+  margin: 8px 0 5px;
+  color: #047857;
+  font-size: 42px;
+  line-height: 1;
+}
+
+.mission-detail-main {
+  grid-column: span 2;
+}
+
+.mission-detail-main h2 {
+  font-size: 28px;
+}
+
+.mission-detail-facts {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin: 18px 0;
+}
+
+.mission-section-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+  gap: 18px;
+  border-top: 1px solid #e2e8f0;
+  padding-top: 18px;
+}
+
+.mission-section-grid h3 {
+  margin: 0 0 12px;
+}
+
+.mission-accept-panel {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.mission-accept-panel p {
+  color: #475569;
+}
+
+.mission-decision-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 280px;
+  gap: 24px;
+  align-items: stretch;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 30px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.mission-decision-hero h2 {
+  max-width: 760px;
+  margin: 0;
+  font-size: clamp(38px, 5vw, 64px);
+  line-height: 0.98;
+}
+
+.mission-decision-hero p:not(.small-label) {
+  max-width: 740px;
+  margin: 14px 0 0;
+  color: #475569;
+  font-size: 18px;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.mission-run-card {
+  display: grid;
+  align-content: center;
+  border: 1px solid #a7f3d0;
+  border-radius: 24px;
+  background: #ecfdf5;
+  padding: 22px;
+}
+
+.mission-run-card span,
+.mission-run-card strong,
+.mission-run-card small {
+  display: block;
+}
+
+.mission-run-card span,
+.mission-run-card small {
+  color: #047857;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.mission-run-card strong {
+  margin: 8px 0 5px;
+  color: #047857;
+  font-size: 48px;
+  line-height: 1;
+}
+
+.mission-run-card button {
+  margin-top: 18px;
+}
+
+.mission-source-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 0.7fr) minmax(320px, 1fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.mission-source-panel h2 {
+  margin: 0 0 10px;
+  font-size: 28px;
+  line-height: 1.08;
+}
+
+.mission-source-panel p:not(.small-label) {
+  margin: 0;
+  max-width: 620px;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.mission-source-grid {
+  display: grid;
+  gap: 10px;
+}
+
+.mission-proof-panel {
+  grid-column: span 2;
+  align-self: start;
+}
+
+.mission-proof-panel h2 {
+  margin-bottom: 18px;
+  font-size: 34px;
+}
+
+.mission-proof-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 0.85fr) minmax(0, 1fr) minmax(0, 1fr);
+  gap: 18px;
+}
+
+.mission-proof-grid h3 {
+  margin: 0 0 12px;
+}
+
+.mission-criteria-list {
+  display: grid;
+  gap: 10px;
+}
+
+.mission-criteria-list span {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+  padding: 12px;
+  color: #334155;
+  font-weight: 750;
+  line-height: 1.3;
+}
+
+.mission-artifact-box {
+  border: 1px solid #e2e8f0;
+  border-radius: 20px;
+  background: #f8fafc;
+  padding: 16px;
+}
+
+.mission-artifact-box p {
+  margin: 0 0 14px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.mission-boundary-panel {
+  align-self: start;
+}
+
+.mission-boundary-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.mission-boundary-grid h3 {
+  margin: 0 0 8px;
+  color: #64748b;
+  font-size: 12px;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.mission-safety-note {
+  margin-top: 16px;
+  border-radius: 18px;
+  background: #ecfdf5;
+  padding: 14px;
+  color: #047857;
+  font-weight: 900;
+  line-height: 1.35;
+}
+
+.mission-review-panel {
+  display: grid;
+  gap: 18px;
+}
+
+.mission-review-header {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(190px, 0.4fr) minmax(
+      190px,
+      0.4fr
+    );
+  gap: 12px;
+  align-items: end;
+}
+
+.mission-review-header h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.05;
+}
+
+.mission-review-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+}
+
+.mission-review-grid h3,
+.mission-detail-disclosure-grid h3 {
+  margin: 0 0 12px;
+}
+
+.mission-detail-disclosure {
+  border-top: 1px solid #e2e8f0;
+  padding-top: 14px;
+}
+
+.mission-detail-disclosure summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  list-style: none;
+  color: #020617;
+  font-weight: 900;
+}
+
+.mission-detail-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.mission-detail-disclosure summary b {
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.mission-detail-disclosure-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
+  margin-top: 16px;
+}
+
+.tag-row,
+.triage-grid {
+  justify-content: flex-start;
+  flex-wrap: wrap;
+}
+
+.triage-grid,
+.recommendation-box {
+  grid-column: 1 / -1;
+}
+
+.clarification-box {
+  margin: 12px 0;
+  background: white;
+}
+
+.mission-ready-card {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.mission-ready-card strong,
+.mission-ready-card small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.mission-ready-card small {
+  color: #475569;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.mission-created-panel {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.clarification-box span,
+.clarification-box strong {
+  display: block;
+}
+
+.clarification-box span {
+  color: #b45309;
+  font-size: 12px;
+  font-weight: 900;
+  text-transform: uppercase;
+}
+
+.clarification-box strong {
+  margin-top: 4px;
+  overflow-wrap: anywhere;
+}
+
+.status-block {
+  min-width: 180px;
+}
+
+.status-block strong {
+  display: block;
+  margin-top: 6px;
+  overflow-wrap: anywhere;
+}
+
+.terminal-card {
+  background: #06111a;
+  color: white;
+}

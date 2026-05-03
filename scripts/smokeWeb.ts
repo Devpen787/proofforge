@@ -3,7 +3,22 @@ import { chromium, type Page } from "playwright";
 
 const port = 5173;
 const baseUrl = `http://localhost:${port}`;
-const routes = ["opportunity", "first-run", "projects", "work-queue", "mission-detail", "run", "case-file", "maintainer", "scoreboard", "public-proof", "proof-demo"];
+const routes = [
+  "opportunity",
+  "agent-setup",
+  "first-run",
+  "projects",
+  "work-queue",
+  "my-work",
+  "mission-detail",
+  "run",
+  "case-file",
+  "maintainer",
+  "scoreboard",
+  "public-proof",
+  "settings",
+  "help"
+];
 const viewports = [
   { name: "desktop", width: 1440, height: 950 },
   { name: "phone", width: 390, height: 844 }
@@ -43,10 +58,23 @@ async function runSmoke() {
   const useExistingServer = await serverIsRunning();
   const server = useExistingServer
     ? null
-    : spawn("npm", ["run", "dev", "-w", "apps/web", "--", "--port", String(port), "--strictPort"], {
-        stdio: ["ignore", "pipe", "pipe"],
-        env: { ...process.env, FORCE_COLOR: "0" }
-      });
+    : spawn(
+        "npm",
+        [
+          "run",
+          "dev",
+          "-w",
+          "apps/web",
+          "--",
+          "--port",
+          String(port),
+          "--strictPort"
+        ],
+        {
+          stdio: ["ignore", "pipe", "pipe"],
+          env: { ...process.env, FORCE_COLOR: "0" }
+        }
+      );
 
   server?.stdout.on("data", (chunk) => process.stdout.write(chunk));
   server?.stderr.on("data", (chunk) => process.stderr.write(chunk));
@@ -63,7 +91,13 @@ async function runSmoke() {
         await page.goto(`${baseUrl}/#${route}`, { waitUntil: "networkidle" });
         const result = await page.evaluate(
           ({ route, viewportName }) => {
-            const action = document.querySelector("main .primary-action, main .secondary-action, main .warning-action, main .danger-action");
+            const action = document.querySelector(
+              "main .primary-action, main .secondary-action, main .warning-action, main .danger-action"
+            );
+            const heading =
+              document.querySelector("main h1")?.textContent ||
+              document.querySelector("main h2")?.textContent ||
+              "";
             return {
               viewport: viewportName,
               route,
@@ -71,7 +105,7 @@ async function runSmoke() {
               scrollWidth: document.body.scrollWidth,
               overflow: document.body.scrollWidth > window.innerWidth + 1,
               hasAction: Boolean(action),
-              heading: document.querySelector("main h2")?.textContent || ""
+              heading
             };
           },
           { route, viewportName: viewport.name }
@@ -83,104 +117,103 @@ async function runSmoke() {
 
     console.table(results);
 
-    const failures = results.filter((result) => result.overflow || !result.hasAction);
+    const failures = results.filter(
+      (result) => result.overflow || !result.hasAction
+    );
     if (failures.length) {
       console.error("Web smoke failures:");
       console.error(JSON.stringify(failures, null, 2));
       process.exitCode = 1;
     }
 
-    const page = await browser.newPage({ viewport: { width: 1280, height: 900 } });
+    const page = await browser.newPage({
+      viewport: { width: 1280, height: 900 }
+    });
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "View all opportunities" }).click();
-    await requireText(page, "Useful work with proof, owner, and upside.");
+    await page.getByRole("button", { name: "See source-backed work" }).click();
+    await requireText(page, "Pick or triage work.");
     await page.getByRole("button", { name: "Safe" }).click();
     await page.getByRole("button", { name: "Plan" }).click();
-    await requireText(page, "Work Lead ready for triage");
+    await requireText(page, "External QA task imported");
     await page.getByRole("button", { name: "Reject" }).click();
-    await requireText(page, "Useful work with proof, owner, and upside.");
+    await requireText(page, "Pick or triage work.");
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Plan" }).click();
-    await requireText(page, "Useful work with proof, owner, and upside.");
+    await requireText(page, "Pick or triage work.");
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
+    await requireText(page, "Work in this project.");
+    await page.getByText("Sources, ledger, and V2 signals").click();
     await page.getByRole("button", { name: "Start project" }).click();
-    await requireText(page, "New project shell created");
-    await requireText(page, "Choose work with a clear proof path.");
-    await requireText(page, "Proof, credit, and benefits");
-    await requireText(page, "Accepted proof becomes project credit.");
-    await page.getByRole("button", { name: "Invite" }).click();
+    await requireText(page, "Project started");
+    await page.getByRole("button", { name: "Invite contributor" }).click();
     await requireText(page, "sam@builder.dev");
-    await page.getByRole("button", { name: "Attach Agent" }).click();
-    await requireText(page, "browser-qa-02");
-    await page.getByRole("button", { name: "Suggest Work" }).click();
-    await requireText(page, "Project Work Lead created");
-    await requireText(page, "Clarify before Mission");
+    await page.getByRole("button", { name: "Find sourced work" }).click();
+    await requireText(page, "Pick or triage work.");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Start safest proof" }).click();
-    await requireText(page, "Earn your first accepted proof in six steps.");
-    await page.getByRole("button", { name: "Run safest earning mission" }).click();
+    await page.getByRole("button", { name: "Set up proof node" }).click();
+    await requireText(page, "Register the agent that will do the work.");
+    await page.getByRole("button", { name: "Register proof node" }).click();
+    await page.getByRole("button", { name: "Find source-backed work" }).click();
+    await requireText(page, "Pick or triage work.");
+    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Start sourced proof" }).click();
+    await requireText(page, "Nothing is submitted or paid until review.");
+    await page
+      .getByRole("button", { name: "Run safest earning mission" })
+      .click();
     await requireText(page, "Ready to run");
-    await requireText(page, "What the maintainer gets.");
+    await requireText(page, "Confirm the work.");
     await page.getByRole("button", { name: "Accept and run" }).click();
-    await requireText(page, "The run produced evidence. You decide what leaves.");
-    await requireText(page, "Evidence packet draft ready");
-    await requireText(page, "Human approval checkpoint");
+    await requireText(page, "Docs issue found.");
     await page.getByRole("button", { name: "Cancel Run" }).click();
     await requireText(page, "Ready to run");
     await page.getByRole("button", { name: "Accept and run" }).click();
-    await requireText(page, "The run produced evidence. You decide what leaves.");
+    await requireText(page, "Docs issue found.");
     await page.getByRole("button", { name: "Approve Packet" }).click();
-    await requireText(page, "Evidence first. Code later.");
+    await requireText(page, "Send the proof, not agent noise.");
     await page.getByRole("button", { name: "Submit Packet" }).click();
-    await requireText(page, "Review clean proof, not agent noise.");
-    await requireText(page, "Decision consequences");
-    await requireText(page, "Structured revision options");
+    await requireText(page, "Accept the proof and create the earned record.");
     await page.getByRole("button", { name: "Review Packet" }).click();
     await requireText(page, "Evidence packet preview");
     await page.goto(`${baseUrl}/#maintainer`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Accept & Mark Earned" }).first().click();
-    await requireText(page, "Accepted proof is what earns value.");
-    await requireText(page, "Work becomes credit in stages.");
-    await requireText(page, "Public-safe proof appears only after accepted proof.");
+    await page
+      .getByRole("button", { name: "Accept & Mark Earned" })
+      .first()
+      .click();
+    await requireText(page, "Proof accepted.");
     await requireText(page, "Release the earned payout.");
     await page.getByRole("button", { name: "Release payout" }).first().click();
-    await requireText(page, "$8 released");
+    await requireText(page, "Public proof and credit are ready.");
     await page.getByRole("button", { name: "View public proof" }).click();
-    await requireText(page, "Accepted Proof Packet");
-    await requireText(page, "Public proof is not raw runner output.");
-    await requireText(page, "Credit is portable because the packet was accepted.");
-    await requireText(page, "proof://proofforge/packet_docs_install_demo");
+    await requireText(page, "Public proof");
+    await requireText(page, "Shared artifacts.");
+    await requireText(page, "Credit");
     await page.getByRole("button", { name: "Copy public link" }).click();
     await requireText(page, "Public link copied");
-    await page.goto(`${baseUrl}/#proof-demo`, { waitUntil: "networkidle" });
-    await requireText(page, "Working proof, not just a product sketch.");
-    await requireText(page, "npm run demo:packet");
-    await requireText(page, "npm run sync:web-proof");
-    await requireText(page, "Synced from generated artifacts");
-    await requireText(page, "packet_docs_install_demo");
-    await requireText(page, "Proof objects");
-    await page.getByRole("button", { name: "Open Case File" }).click();
-    await requireText(page, "Evidence packet preview");
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Import external task" }).click();
-    await requireText(page, "Imported Work Lead ready for triage");
-    await requireText(page, "External actionNone");
+    await requireText(page, "External QA task imported");
+    await requireText(page, "MissingExact browser versions");
     await page.getByRole("button", { name: "Ask clarification" }).click();
-    await requireText(page, "Mission-ready after clarification.");
-    await page.getByRole("button", { name: "Convert to Mission" }).click();
-    await requireText(page, "Converted mission");
-    await requireText(page, "Checkout QA verification is now a scoped Mission");
+    await requireText(page, "Browser targets are confirmed.");
+    await page.getByRole("button", { name: "Convert" }).click();
+    await requireText(page, "Ready to run.");
     await page.getByRole("button", { name: "Run converted mission" }).click();
     await requireText(page, "Checkout QA verification");
     await requireText(page, "Earn if accepted");
     await page.getByRole("button", { name: "Accept and run" }).click();
     await requireText(page, "Runner / Checkout QA verification");
-    await requireText(page, "Browser test profile isolated");
+    await requireText(page, "Docs issue found.");
     await page.getByRole("button", { name: "Approve Packet" }).click();
-    await requireText(page, "Verified checkout QA with clarified browser targets.");
+    await requireText(
+      page,
+      "Verified checkout QA with clarified browser targets."
+    );
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Start safest proof" }).click();
-    await page.getByRole("button", { name: "Run safest earning mission" }).click();
+    await page.getByRole("button", { name: "Start sourced proof" }).click();
+    await page
+      .getByRole("button", { name: "Run safest earning mission" })
+      .click();
     await page.getByRole("button", { name: "Accept and run" }).click();
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await page.getByRole("button", { name: "Submit Packet" }).click();
@@ -188,14 +221,15 @@ async function runSmoke() {
     await requireText(page, "Revision requested");
     await requireText(page, "full command transcript");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Start safest proof" }).click();
-    await page.getByRole("button", { name: "Run safest earning mission" }).click();
+    await page.getByRole("button", { name: "Start sourced proof" }).click();
+    await page
+      .getByRole("button", { name: "Run safest earning mission" })
+      .click();
     await page.getByRole("button", { name: "Accept and run" }).click();
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await page.getByRole("button", { name: "Reject Packet" }).click();
-    await requireText(page, "Packet rejected. Start again with stronger proof.");
-    await requireText(page, "Earned payoutCancelled");
+    await requireText(page, "Packet rejected.");
     await page.close();
     await browser.close();
     console.log("End-to-end proof journey smoke passed.");

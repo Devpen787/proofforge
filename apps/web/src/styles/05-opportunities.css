@@ -1,0 +1,236 @@
+.opportunity-command-panel {
+  display: grid;
+  grid-template-columns: minmax(420px, 1fr) minmax(340px, 0.68fr);
+  gap: 18px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.opportunity-list-panel,
+.opportunity-detail-panel {
+  min-width: 0;
+}
+
+.opportunity-filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.opportunity-filter-row button {
+  border: 1px solid #e2e8f0;
+  border-radius: 999px;
+  background: #f8fafc;
+  color: #475569;
+  padding: 7px 11px;
+  font-size: 12px;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.opportunity-filter-row button.active {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+  color: #047857;
+}
+
+.opportunity-card-list {
+  display: grid;
+  gap: 10px;
+}
+
+.opportunity-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 0;
+  background: transparent;
+  padding: 14px 0;
+}
+
+.opportunity-card.selected {
+  background: #f0fdf4;
+}
+
+.opportunity-card-main {
+  display: grid;
+  grid-template-columns: 34px minmax(0, 1fr);
+  gap: 12px;
+  align-items: center;
+  min-width: 0;
+}
+
+.opportunity-card strong,
+.opportunity-card small {
+  display: block;
+  min-width: 0;
+  overflow-wrap: anywhere;
+}
+
+.opportunity-card small {
+  margin-top: 3px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.opportunity-card-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+  margin-top: 8px;
+}
+
+.opportunity-card-meta span {
+  border-radius: 999px;
+  background: white;
+  color: #047857;
+  padding: 4px 8px;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.opportunity-detail-panel {
+  align-self: stretch;
+  border: 1px solid #bbf7d0;
+  border-radius: 18px;
+  background: #f0fdf4;
+  padding: 18px;
+}
+
+.opportunity-detail-panel h2 {
+  margin: 8px 0 8px;
+  font-size: 32px;
+  line-height: 1.04;
+}
+
+.opportunity-detail-panel p:not(.small-label) {
+  margin: 0;
+  color: #047857;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.opportunity-detail-stats {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.opportunity-proof-box,
+.triage-decision-panel {
+  border: 1px solid #a7f3d0;
+  border-radius: 18px;
+  background: white;
+  padding: 14px;
+}
+
+.opportunity-proof-box {
+  margin-top: 14px;
+}
+
+.subtle-proof-box {
+  border-color: #e2e8f0;
+  background: #f8fafc;
+}
+
+.opportunity-proof-box strong,
+.opportunity-proof-box span,
+.triage-decision-panel strong,
+.triage-decision-panel p {
+  display: block;
+}
+
+.opportunity-proof-box span,
+.triage-decision-panel p {
+  margin-top: 5px;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.4;
+}
+
+.work-lead-diagnosis-panel {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.7fr) minmax(180px, 0.24fr);
+  gap: 18px;
+  padding: 24px;
+}
+
+.work-lead-summary p:not(.small-label) {
+  margin: 0;
+  color: #475569;
+  font-weight: 750;
+}
+
+.work-lead-summary h2 {
+  margin-bottom: 8px;
+}
+
+.compact-proof-score {
+  align-self: start;
+  margin: 0;
+}
+
+.work-lead-diagnosis-panel .triage-grid,
+.work-lead-diagnosis-panel .triage-decision-panel {
+  grid-column: 1 / -1;
+}
+
+.triage-decision-panel {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.8fr);
+  gap: 16px;
+  align-items: center;
+  border-color: #e2e8f0;
+}
+
+.project-work-lead-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1.2fr) minmax(260px, 0.8fr);
+  gap: 16px;
+  margin-top: 14px;
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.project-work-lead-card h3,
+.project-work-lead-card p {
+  margin: 0;
+}
+
+.project-work-lead-card h3 {
+  font-size: 18px;
+}
+
+.project-work-lead-card p:not(.small-label) {
+  margin-top: 8px;
+  color: #475569;
+}
+
+.mission-created-grid {
+  display: grid;
+  gap: 8px;
+  margin: 14px 0;
+}
+
+.proof-score strong {
+  display: block;
+  color: #047857;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.status-block span,
+.proof-score span,
+.proof-score small {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}

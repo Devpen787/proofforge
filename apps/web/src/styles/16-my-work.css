@@ -1,0 +1,257 @@
+.my-work-grid {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.my-work-hero {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px 0 26px;
+}
+
+.my-work-hero-copy {
+  display: grid;
+  align-content: start;
+  justify-items: start;
+}
+
+.my-work-hero h1 {
+  margin: 0;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1;
+}
+
+.my-work-hero p:not(.small-label) {
+  max-width: 680px;
+  color: #475569;
+  font-weight: 700;
+  line-height: 1.5;
+}
+
+.my-work-command {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.my-work-ledger {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 14px;
+  align-items: center;
+  border: 1px solid #bbf7d0;
+  border-radius: 18px;
+  background: #f0fdf4;
+  padding: 16px 18px;
+}
+
+.my-work-ledger .small-label {
+  grid-column: 1 / -1;
+  margin: 0;
+}
+
+.my-work-ledger-table {
+  display: grid;
+  grid-template-columns:
+    minmax(180px, 1.35fr)
+    minmax(130px, 0.8fr)
+    minmax(72px, 0.45fr)
+    minmax(72px, 0.45fr)
+    minmax(92px, 0.55fr)
+    minmax(118px, 0.62fr);
+  gap: 14px;
+  min-width: 0;
+}
+
+.my-work-ledger-table span {
+  display: grid;
+  gap: 2px;
+  min-width: 0;
+}
+
+.my-work-ledger-table small {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.my-work-ledger-table strong {
+  color: #047857;
+  font-weight: 950;
+  overflow-wrap: anywhere;
+}
+
+.my-work-ledger h2 {
+  margin: 0;
+  font-size: 24px;
+  line-height: 1.08;
+  overflow-wrap: anywhere;
+}
+
+.my-work-list {
+  display: grid;
+  gap: 10px;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  box-shadow: none;
+}
+
+.my-work-table {
+  display: grid;
+  gap: 8px;
+}
+
+.my-work-row {
+  display: grid;
+  grid-template-columns:
+    minmax(160px, 1.2fr)
+    minmax(90px, 0.55fr)
+    minmax(82px, 0.5fr)
+    minmax(92px, 0.55fr)
+    auto;
+  gap: 12px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+  border-radius: 0;
+  background: transparent;
+  padding: 14px 0;
+  text-align: left;
+  cursor: pointer;
+}
+
+.my-work-row:hover {
+  background: #f8fafc;
+}
+
+.my-work-row span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.my-work-row strong,
+.my-work-row small,
+.my-work-row b {
+  overflow-wrap: anywhere;
+}
+
+.my-work-row small {
+  color: #64748b;
+  font-weight: 750;
+}
+
+.my-work-row b {
+  color: #020617;
+}
+
+.my-work-row .start-pill {
+  justify-self: end;
+  white-space: nowrap;
+}
+
+.my-work-value-card {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-content: start;
+  gap: 10px;
+  padding: 22px;
+}
+
+.my-work-value-card .small-label,
+.my-work-value-card h2,
+.my-work-value-card .soft-divider {
+  grid-column: 1 / -1;
+}
+
+.my-work-value-card h2 {
+  margin: 0 0 6px;
+  font-size: 28px;
+  line-height: 1.08;
+}
+
+.soft-divider {
+  width: 100%;
+  border: 0;
+  border-top: 1px solid #e2e8f0;
+  margin: 4px 0;
+}
+
+.my-work-disclosure {
+  padding: 18px;
+}
+
+.my-work-disclosure summary {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.my-work-disclosure summary::-webkit-details-marker {
+  display: none;
+}
+
+.my-work-disclosure summary span {
+  display: grid;
+  gap: 4px;
+}
+
+.my-work-disclosure summary strong {
+  font-size: 18px;
+}
+
+.my-work-disclosure summary b {
+  border-radius: 999px;
+  background: #ecfdf5;
+  color: #047857;
+  padding: 7px 10px;
+  font-size: 12px;
+}
+
+.my-work-rails-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.my-work-rails-grid > div {
+  display: grid;
+  align-content: start;
+  gap: 8px;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.my-work-rails-grid h3 {
+  margin: 0;
+  font-size: 18px;
+}
+
+@media (max-width: 760px) {
+  .my-work-grid,
+  .my-work-command,
+  .my-work-rails-grid,
+  .my-work-hero,
+  .my-work-ledger,
+  .my-work-ledger-table,
+  .my-work-row {
+    grid-template-columns: 1fr;
+  }
+  .my-work-row .start-pill {
+    justify-self: start;
+  }
+}
+
+@media (max-width: 720px) {
+  .my-work-hero {
+    padding: 22px;
+  }
+}

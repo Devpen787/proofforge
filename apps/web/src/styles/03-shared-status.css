@@ -1,0 +1,192 @@
+.status-pill {
+  border-radius: 999px;
+  padding: 5px 9px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.status-pill.safe {
+  color: #047857;
+  background: #ecfdf5;
+}
+
+.status-pill.warning {
+  color: #b45309;
+  background: #fffbeb;
+}
+
+.pipeline-strip {
+  margin-top: 22px;
+}
+
+.pipeline-step,
+.status-block,
+.proof-score,
+.recommendation-box,
+.agent-card,
+.source-card,
+.triage-hero,
+.triage-workbench,
+.triage-gate-card,
+.triage-context-card,
+.triage-next-card,
+.import-command,
+.import-result-card,
+.project-action-banner,
+.project-work-lead-card,
+.mission-ready-card,
+.clarification-box {
+  border: 1px solid #e2e8f0;
+  background: #f8fafc;
+  border-radius: 18px;
+  padding: 16px;
+}
+
+.project-action-banner {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.project-action-banner strong,
+.project-action-banner span {
+  display: block;
+}
+
+.triage-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 0.34fr);
+  gap: 20px;
+  align-items: stretch;
+  background: white;
+  border-radius: 24px;
+  padding: 28px;
+}
+
+.triage-hero h1 {
+  max-width: 720px;
+  margin: 0 0 10px;
+  font-size: 46px;
+  line-height: 1;
+  letter-spacing: 0;
+}
+
+.triage-hero p:not(.small-label) {
+  max-width: 700px;
+  color: #475569;
+  font-weight: 700;
+  line-height: 1.55;
+}
+
+.triage-hero-state {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.triage-workbench {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(230px, 0.3fr);
+  gap: 16px;
+  background: white;
+  border-radius: 24px;
+  padding: 24px;
+}
+
+.triage-workbench-main {
+  min-width: 0;
+}
+
+.triage-workbench-main h1 {
+  max-width: 760px;
+  margin: 0 0 8px;
+  font-size: clamp(34px, 4vw, 52px);
+  line-height: 1;
+}
+
+.triage-workbench-main p:not(.small-label) {
+  max-width: 780px;
+  margin: 0;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.triage-gate-card {
+  display: grid;
+  align-content: start;
+  gap: 9px;
+  background: #f8fafc;
+}
+
+.triage-gate-card > span,
+.triage-gate-card > small {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.triage-gate-card > strong {
+  color: #047857;
+  font-size: 36px;
+  line-height: 0.9;
+}
+
+.triage-context-card,
+.triage-next-card {
+  grid-column: 1 / -1;
+}
+
+.triage-context-card {
+  background: #f8fafc;
+}
+
+.triage-fact-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.triage-next-card {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(360px, 0.72fr);
+  gap: 18px;
+  align-items: center;
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.compact-triage {
+  grid-template-columns: minmax(0, 1fr);
+  border: 1px solid #e2e8f0;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.compact-triage h1 {
+  max-width: 760px;
+  margin: 0 0 12px;
+  font-size: clamp(36px, 4vw, 56px);
+  line-height: 1;
+}
+
+.triage-fit-table {
+  display: grid;
+  gap: 0;
+  border-top: 1px solid #e2e8f0;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px 0;
+}
+
+.compact-triage-action {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.44fr);
+  border: 0;
+  background: transparent;
+  padding: 0;
+}

@@ -1,0 +1,303 @@
+.triage-next-card h2 {
+  margin: 0;
+  font-size: 28px;
+  line-height: 1.06;
+}
+
+.triage-next-card p:not(.small-label) {
+  margin: 8px 0 0;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.45;
+}
+
+.project-action-banner > div > span {
+  margin-top: 4px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.command-state-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+
+.agent-card-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 14px;
+  margin-top: 16px;
+}
+
+.maintainer-focus-grid {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.maintainer-review-console {
+  display: grid;
+  gap: 18px;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 26px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.maintainer-review-header,
+.maintainer-review-body,
+.maintainer-review-grid,
+.maintainer-boundary-grid {
+  display: grid;
+  gap: 16px;
+}
+
+.maintainer-review-header {
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: start;
+  border-bottom: 1px solid #e2e8f0;
+  padding-bottom: 18px;
+}
+
+.maintainer-review-header h1 {
+  margin: 0;
+  font-size: 34px;
+  line-height: 1.03;
+  letter-spacing: 0;
+}
+
+.maintainer-review-header p:not(.small-label) {
+  margin: 8px 0 0;
+  color: #475569;
+  font-weight: 800;
+}
+
+.maintainer-review-header span:not(.status-pill) {
+  display: block;
+  margin-top: 6px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.maintainer-review-body {
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 0.34fr);
+  align-items: stretch;
+}
+
+.maintainer-proof-panel,
+.maintainer-decision-rail,
+.maintainer-gate-panel,
+.maintainer-artifact-panel,
+.maintainer-privacy-panel,
+.maintainer-payout-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 16px;
+}
+
+.maintainer-proof-panel {
+  display: grid;
+  align-content: space-between;
+  gap: 18px;
+  background: #f0fdf4;
+  border-color: #bbf7d0;
+}
+
+.maintainer-proof-panel h2 {
+  max-width: 860px;
+  margin: 0;
+  color: #064e3b;
+  font-size: 34px;
+  line-height: 1.08;
+  letter-spacing: 0;
+}
+
+.maintainer-fact-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.maintainer-fact-strip .status-block {
+  background: white;
+}
+
+.maintainer-decision-rail {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  background: white;
+}
+
+.maintainer-decision-rail strong {
+  font-size: 22px;
+  line-height: 1.1;
+}
+
+.maintainer-decision-rail > span {
+  margin-bottom: 6px;
+  color: #475569;
+  font-size: 13px;
+  font-weight: 700;
+  line-height: 1.45;
+}
+
+.maintainer-review-grid {
+  grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
+}
+
+.maintainer-review-grid h3 {
+  margin: 0 0 10px;
+  font-size: 16px;
+}
+
+.maintainer-gate-panel,
+.maintainer-artifact-panel {
+  align-self: start;
+}
+
+.maintainer-gate-panel {
+  display: grid;
+  gap: 8px;
+}
+
+.maintainer-artifact-panel {
+  grid-row: span 2;
+}
+
+.maintainer-boundary-grid {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.maintainer-boundary-grid > div {
+  display: grid;
+  gap: 8px;
+  border: 1px solid #e2e8f0;
+  border-radius: 14px;
+  background: white;
+  padding: 12px;
+}
+
+.maintainer-boundary-grid strong,
+.maintainer-boundary-grid span {
+  overflow-wrap: anywhere;
+}
+
+.maintainer-boundary-grid strong {
+  font-size: 13px;
+}
+
+.maintainer-boundary-grid span {
+  color: #475569;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+.revision-reasons {
+  display: grid;
+  gap: 8px;
+  margin-top: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #fffbeb;
+  border-color: #fde68a;
+  padding: 16px;
+}
+
+.revision-reasons span {
+  color: #78350f;
+  font-size: 13px;
+  font-weight: 750;
+}
+
+@media (max-width: 920px) {
+  .maintainer-review-header,
+  .maintainer-review-body,
+  .maintainer-review-grid,
+  .maintainer-boundary-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .maintainer-fact-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 430px) {
+  .maintainer-review-console {
+    padding: 18px;
+  }
+
+  .maintainer-review-header h1,
+  .maintainer-proof-panel h2 {
+    font-size: 28px;
+  }
+
+  .maintainer-fact-strip {
+    grid-template-columns: 1fr;
+  }
+}
+
+.pipeline-step {
+  flex: 1;
+}
+
+.source-grid {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 14px;
+}
+
+.compact-list,
+.diagnosis-grid,
+.packet-facts {
+  display: grid;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.compact-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 11px 0;
+}
+
+.compact-row span,
+.compact-row strong,
+.compact-row small {
+  min-width: 0;
+}
+
+.compact-row strong,
+.compact-row small {
+  display: block;
+  overflow-wrap: anywhere;
+}
+
+.compact-row small {
+  margin-top: 3px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.compact-row > b,
+.compact-row > .status-pill {
+  flex: 0 0 auto;
+}
+
+.source-card small {
+  display: block;
+  color: #64748b;
+  font-weight: 700;
+  line-height: 1.45;
+}

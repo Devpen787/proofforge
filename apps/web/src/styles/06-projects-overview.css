@@ -1,0 +1,364 @@
+.project-commons-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 360px;
+  gap: 24px;
+  align-items: stretch;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 32px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-commons-hero h2 {
+  max-width: 780px;
+  margin: 0;
+  font-size: 46px;
+  line-height: 1.02;
+}
+
+.project-commons-hero p:not(.small-label),
+.command-room p,
+.project-ledger-summary p {
+  color: #475569;
+  line-height: 1.55;
+}
+
+.project-action-strip {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 24px;
+}
+
+.shared-mission-card {
+  display: grid;
+  gap: 11px;
+  align-content: start;
+  border: 1px solid #a7f3d0;
+  border-radius: 22px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.shared-mission-card strong,
+.shared-mission-card p {
+  display: block;
+  margin: 0;
+}
+
+.shared-mission-card .status-row {
+  border-color: #a7f3d0;
+}
+
+.project-capacity-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 14px;
+  grid-column: 1 / -1;
+}
+
+.project-capacity-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 16px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-capacity-card strong,
+.project-capacity-card span,
+.project-capacity-card small {
+  display: block;
+}
+
+.project-capacity-card strong {
+  color: #047857;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.project-capacity-card span {
+  margin-top: 4px;
+  color: #020617;
+  font-weight: 900;
+}
+
+.project-capacity-card small {
+  margin-top: 4px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.project-next-panel {
+  grid-column: span 2;
+  border-color: #a7f3d0;
+}
+
+.project-lanes-panel,
+.project-backlog-panel {
+  align-self: start;
+}
+
+.project-ledger-panel {
+  display: grid;
+  grid-template-columns: minmax(280px, 0.65fr) minmax(0, 1fr);
+  gap: 20px;
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-ledger-summary {
+  display: grid;
+  gap: 18px;
+  align-items: start;
+}
+
+.project-ledger-summary h2 {
+  margin: 0;
+  font-size: 30px;
+  line-height: 1.08;
+}
+
+.ledger-mini-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.project-proof-history {
+  display: grid;
+  gap: 10px;
+  margin: 0;
+}
+
+.project-proof-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 13px;
+}
+
+.project-proof-row strong,
+.project-proof-row small {
+  display: block;
+}
+
+.project-proof-row small {
+  margin-top: 2px;
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.project-proof-row b {
+  color: #047857;
+  white-space: nowrap;
+}
+
+.project-room-grid {
+  grid-template-columns: 1fr;
+}
+
+.project-room-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 22px;
+  align-items: start;
+  border: 1px solid #e2e8f0;
+  border-radius: 28px;
+  background: white;
+  padding: 30px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-kicker {
+  color: #64748b;
+  font-size: 13px;
+  font-weight: 850;
+}
+
+.project-room-hero h1 {
+  max-width: 760px;
+  margin: 10px 0 8px;
+  font-size: clamp(38px, 4vw, 58px);
+  line-height: 0.98;
+  letter-spacing: 0;
+}
+
+.project-room-hero p:not(.small-label) {
+  max-width: 640px;
+  margin: 0 0 16px;
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.project-next-move {
+  border: 1px solid #a7f3d0;
+  border-radius: 24px;
+  background: #ecfdf5;
+  padding: 18px;
+}
+
+.project-next-move h2 {
+  margin: 0 0 8px;
+  font-size: 24px;
+  line-height: 1.08;
+}
+
+.project-next-move p:not(.small-label) {
+  margin-bottom: 14px;
+  color: #047857;
+  font-size: 13px;
+  font-weight: 800;
+}
+
+.project-secondary-actions {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  margin-top: 10px;
+}
+
+.project-secondary-actions .secondary-action {
+  padding-inline: 10px;
+}
+
+.project-room-stats {
+  grid-column: 1 / -1;
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.project-stat {
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: #f8fafc;
+  padding: 13px;
+}
+
+.project-stat strong,
+.project-stat span,
+.project-stat small {
+  display: block;
+}
+
+.project-stat strong {
+  color: #047857;
+  font-size: 28px;
+  line-height: 1;
+}
+
+.project-stat span {
+  margin-top: 5px;
+  font-weight: 900;
+}
+
+.project-stat small {
+  margin-top: 2px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.project-room-main {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 20px;
+  align-items: start;
+}
+
+.project-focus-card,
+.project-people-card,
+.project-credit-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  background: white;
+  padding: 24px;
+  box-shadow: 0 1px 2px rgba(15, 23, 42, 0.04);
+}
+
+.project-focus-card {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.project-focus-card h2,
+.project-people-card h2 {
+  margin: 0 0 10px;
+  font-size: 25px;
+  line-height: 1.06;
+}
+
+.project-focus-card p {
+  margin: 0;
+  color: #047857;
+  font-weight: 800;
+  line-height: 1.45;
+}
+
+.project-focus-meta {
+  display: grid;
+  gap: 8px;
+  margin: 16px 0;
+}
+
+.project-flow-columns {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.project-flow-columns h3 {
+  margin: 0 0 10px;
+  color: #475569;
+  font-size: 12px;
+  font-weight: 950;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.project-flow-card {
+  border: 1px solid #e2e8f0;
+  border-radius: 16px;
+  background: #f8fafc;
+  padding: 12px;
+  margin-bottom: 8px;
+}
+
+.project-flow-card.review {
+  border-color: #fde68a;
+  background: #fffbeb;
+}
+
+.project-flow-card.accepted {
+  border-color: #a7f3d0;
+  background: #ecfdf5;
+}
+
+.project-flow-card strong,
+.project-flow-card small {
+  display: block;
+}
+
+.project-flow-card strong {
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.project-flow-card small {
+  margin-top: 6px;
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 800;
+}

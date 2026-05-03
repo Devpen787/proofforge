@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { generatedProofSummary } from "../src/generatedProof";
+import { generatedProofSummary } from "../src/demo";
 
 describe("generated proof summary", () => {
   it("exposes the generated packet outcome to the web demo", () => {
