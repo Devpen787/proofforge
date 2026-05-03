@@ -1,13 +1,13 @@
 import React from "react";
 import type { WorkSourceImport } from "@proofforge/sources";
 import { importGitHubIssueLead } from "@proofforge/sources";
-import {
-  demoProject,
-  demoProjectWorkLead,
-  demoWorkLead,
-  generatedProofSummary
-} from "../demo";
-import type { ActiveMission, ProjectRequest } from "../app/types";
+import { demoProject, demoProjectWorkLead, demoWorkLead } from "../demo";
+import { formatReward } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  ProjectRequest
+} from "../app/types";
 import { StatusRow } from "../components/ui";
 
 export function WorkQueueScreen({
@@ -21,6 +21,8 @@ export function WorkQueueScreen({
   onConvertLead,
   onRejectLead,
   onRun,
+  onImportGitHubMission,
+  importedMission,
   projectRequest
 }: {
   importedLead: boolean;
@@ -33,11 +35,13 @@ export function WorkQueueScreen({
   onConvertLead: () => void;
   onRejectLead: () => void;
   onRun: (mission: ActiveMission) => void;
+  onImportGitHubMission: (mission: ImportedMission) => void;
+  importedMission: ImportedMission | null;
   projectRequest: ProjectRequest;
 }) {
   const [activeFilter, setActiveFilter] = React.useState("Best fit");
   const [githubUrl, setGithubUrl] = React.useState(
-    "https://github.com/proofforge-demo/proofforge/issues/1"
+    "https://github.com/microsoft/vscode/issues/1"
   );
   const [liveImport, setLiveImport] = React.useState<WorkSourceImport | null>(
     null
@@ -47,38 +51,42 @@ export function WorkQueueScreen({
   >("idle");
   const proofability = workLeadClarified ? "88%" : demoWorkLead.proofability;
   const triageMode = importedLead || workLeadClarified || workLeadConverted;
-  const sourceUseLabel = (mode: string) =>
-    mode.includes("submission context")
-      ? "Submission checklist"
-      : "Runnable work lead";
-  const valuePathLabel = (valuePath: string) =>
-    valuePath === "external" ? "External reward" : "Reputation";
   const importGitHubIssue = async () => {
     setImportStatus("loading");
     try {
       const imported = await importGitHubIssueLead({ url: githubUrl });
       setLiveImport(imported);
+      onImportGitHubMission({
+        title: imported.lead.title,
+        repo: imported.lead.repo,
+        reward:
+          imported.lead.reward?.type === "cash" ||
+          imported.lead.reward?.type === "external"
+            ? formatReward(
+                imported.lead.reward?.amount,
+                imported.lead.reward?.currency
+              )
+            : "Credit",
+        runtime: "30 min",
+        risk: imported.lead.riskLevel === "low" ? "Safe" : "Needs review",
+        valuePath:
+          imported.lead.reward?.type === "cash" ||
+          imported.lead.reward?.type === "external"
+            ? "External reward, tracked after acceptance"
+            : "Repository credit, tracked after acceptance",
+        sourceUrl: imported.lead.sourceUrl,
+        acceptanceOwner: imported.lead.acceptanceOwner,
+        objective: imported.lead.rawRequest,
+        proofability: `${imported.lead.proofability}%`,
+        requirements: imported.lead.desiredEvidence,
+        issueNumber: imported.ref.issueNumber,
+        importedAt: imported.importedAt
+      });
       setImportStatus("idle");
     } catch {
       setImportStatus("failed");
     }
   };
-  const importedSources = liveImport
-    ? [
-        {
-          source: liveImport.source,
-          title: liveImport.lead.title,
-          sourceUrl: liveImport.lead.sourceUrl,
-          repo: liveImport.lead.repo,
-          acceptanceOwner: liveImport.lead.acceptanceOwner,
-          status: liveImport.lead.status,
-          proofability: `${liveImport.lead.proofability}%`,
-          valuePath: liveImport.lead.reward?.type ?? "reputation",
-          mode: "live browser import"
-        },
-        ...generatedProofSummary.generatedWorkSources
-      ]
-    : generatedProofSummary.generatedWorkSources;
   const readyOpportunities = demoProject.opportunities.filter(
     (opportunity) => opportunity.state === "Ready to run"
   );
@@ -301,17 +309,32 @@ export function WorkQueueScreen({
                     {liveImport.ref.issueNumber}: {liveImport.lead.status}
                   </small>
                 )}
+                {importedMission && !liveImport && (
+                  <small>
+                    Imported {importedMission.repo}: ready to assess.
+                  </small>
+                )}
                 {importStatus === "failed" && (
                   <small>Import failed. Check the issue URL.</small>
                 )}
               </div>
-              <button
-                className="secondary-action"
-                onClick={importGitHubIssue}
-                disabled={importStatus === "loading"}
-              >
-                {importStatus === "loading" ? "Importing" : "Import"}
-              </button>
+              <div className="github-import-actions">
+                <button
+                  className="secondary-action"
+                  onClick={importGitHubIssue}
+                  disabled={importStatus === "loading"}
+                >
+                  {importStatus === "loading" ? "Importing" : "Import"}
+                </button>
+                {importedMission && (
+                  <button
+                    className="primary-action"
+                    onClick={() => onRun("github")}
+                  >
+                    Assess imported issue
+                  </button>
+                )}
+              </div>
             </article>
 
             <section className="opportunity-lane">
@@ -335,47 +358,6 @@ export function WorkQueueScreen({
               )}
             </section>
           </div>
-          <details className="source-inventory-drawer">
-            <summary>
-              Source context <b>{importedSources.length}</b>
-            </summary>
-            <div
-              className="source-inventory-table"
-              aria-label="Imported sources"
-            >
-              {importedSources.map((source, index) => (
-                <div
-                  className="source-inventory-row"
-                  key={`${source.source}-${source.repo}-${source.title}-${index}`}
-                >
-                  <span>
-                    <strong>{source.title}</strong>
-                    <small>{source.repo}</small>
-                  </span>
-                  <span>
-                    <small>Source</small>
-                    <b>{source.source}</b>
-                  </span>
-                  <span>
-                    <small>Owner</small>
-                    <b>{source.acceptanceOwner}</b>
-                  </span>
-                  <span>
-                    <small>Status</small>
-                    <b>{source.status.replace("_", " ")}</b>
-                  </span>
-                  <span>
-                    <small>Value</small>
-                    <b>{valuePathLabel(source.valuePath)}</b>
-                  </span>
-                  <span>
-                    <small>Action</small>
-                    <b>{sourceUseLabel(source.mode)}</b>
-                  </span>
-                </div>
-              ))}
-            </div>
-          </details>
         </div>
       </div>
     </section>

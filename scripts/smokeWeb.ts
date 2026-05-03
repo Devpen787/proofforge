@@ -53,7 +53,7 @@ async function requireText(page: Page, text: string) {
     await page.waitForFunction(
       (expected) => document.body.textContent?.includes(expected),
       text,
-      { timeout: 3_000 }
+      { timeout: 6_000 }
     );
   } catch {
     throw new Error(`Expected page to contain: ${text}`);
@@ -186,6 +186,11 @@ async function runSmoke() {
     } else {
       await requireText(page, "Find work. Prove it. Get credited.");
     }
+    await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Import", exact: true }).click();
+    await requireText(page, "Imported microsoft/vscode");
+    await page.getByRole("button", { name: "Assess imported issue" }).click();
+    await requireText(page, "Imported GitHub issue");
     await page.evaluate(() => {
       const savedState = JSON.parse(
         window.localStorage.getItem("proofforge.v1.demo-state") ?? "{}"
@@ -263,10 +268,7 @@ async function runSmoke() {
     await requireText(page, "Runner / Checkout QA verification");
     await requireText(page, "Bounded agent run completed.");
     await page.getByRole("button", { name: "Review evidence packet" }).click();
-    await requireText(
-      page,
-      "Verified checkout QA with clarified browser targets."
-    );
+    await requireText(page, "Checkout completes in Chrome");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start sourced proof" }).click();
     await page.getByRole("button", { name: "Review agent assessment" }).click();

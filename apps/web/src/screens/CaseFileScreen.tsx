@@ -1,11 +1,12 @@
 import React from "react";
-import {
-  generatedProofSummary,
-  getCaseFileTitle,
-  getDemoMission,
-  getDemoPacket
-} from "../demo";
-import type { ActiveMission } from "../app/types";
+import { generatedProofSummary, getDemoPacket } from "../demo";
+import { getMissionDisplay } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  PayoutReceipt,
+  ProjectRequest
+} from "../app/types";
 import { StatusRow } from "../components/ui";
 
 export function CaseFileScreen({
@@ -13,17 +14,33 @@ export function CaseFileScreen({
   revisionRequested,
   rejected,
   activeMission,
-  onSubmit
+  projectRequest,
+  importedMission,
+  payoutReceipt,
+  onSubmit,
+  onExportPacket
 }: {
   submitted: boolean;
   revisionRequested: boolean;
   rejected: boolean;
   activeMission: ActiveMission;
+  projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
+  payoutReceipt: PayoutReceipt | null;
   onSubmit: () => void;
+  onExportPacket: () => void;
 }) {
+  const [copiedReviewLink, setCopiedReviewLink] = React.useState(false);
   const packet = getDemoPacket(activeMission);
-  const mission = getDemoMission(activeMission);
-  const caseTitle = getCaseFileTitle(activeMission);
+  const mission = getMissionDisplay({
+    activeMission,
+    projectRequest,
+    importedMission
+  });
+  const caseTitle =
+    activeMission === "github" && importedMission
+      ? `${importedMission.title} evidence is ready.`
+      : mission.result;
   const packetStatus = rejected
     ? "Rejected"
     : revisionRequested
@@ -31,11 +48,17 @@ export function CaseFileScreen({
       : submitted
         ? "Submitted"
         : "Maintainer-ready";
+  const copyReviewerLink = async () => {
+    const url = new URL(window.location.href);
+    url.hash = `maintainer?packet=${encodeURIComponent(mission.packetId)}`;
+    await navigator.clipboard?.writeText(url.toString()).catch(() => undefined);
+    setCopiedReviewLink(true);
+  };
 
   return (
     <section className="page-grid packet-grid">
       <header className="page-header">
-        <span>Case File / {packet.id}</span>
+        <span>Case File / {mission.packetId}</span>
       </header>
 
       {revisionRequested && (
@@ -97,15 +120,15 @@ export function CaseFileScreen({
           <div className="packet-summary-panel">
             <div>
               <span>Tested</span>
-              <strong>{packet.objective}</strong>
+              <strong>{mission.objective}</strong>
             </div>
             <div>
               <span>Result</span>
-              <strong>{packet.result}</strong>
+              <strong>{mission.result}</strong>
             </div>
             <div>
               <span>Decision recommendation</span>
-              <strong>{packet.recommendedAction}</strong>
+              <strong>{mission.recommendedAction}</strong>
             </div>
           </div>
 
@@ -146,7 +169,7 @@ export function CaseFileScreen({
             <div className="packet-value-box">
               <StatusRow
                 label="Source"
-                value={packet.valueRefs.bountySource}
+                value={mission.sourceLabel}
                 tone="good"
               />
               <StatusRow
@@ -174,6 +197,20 @@ export function CaseFileScreen({
             >
               {submitted ? "Submitted to maintainer" : "Submit to maintainer"}
             </button>
+            <button
+              className="secondary-action full"
+              onClick={copyReviewerLink}
+            >
+              {copiedReviewLink ? "Reviewer link copied" : "Copy reviewer link"}
+            </button>
+            <button className="secondary-action full" onClick={onExportPacket}>
+              Export proof packet
+            </button>
+            <StatusRow
+              label="Wallet receipt"
+              value={payoutReceipt ? payoutReceipt.txHash : "After acceptance"}
+              tone={payoutReceipt ? "good" : "bad"}
+            />
             <details className="packet-details-drawer">
               <summary>GitHub submission</summary>
               <p>

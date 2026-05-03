@@ -1,31 +1,44 @@
 import React from "react";
-import { generatedProofSummary, getDemoMission } from "../demo";
-import type { ActiveMission } from "../app/types";
+import { generatedProofSummary } from "../demo";
+import { getMissionDisplay } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  PayoutReceipt,
+  ProjectRequest
+} from "../app/types";
 import { StatusBlock } from "../components/ui";
 
 export function PublicProofScreen({
   activeMission,
+  projectRequest,
+  importedMission,
+  payoutReceipt,
   onBack
 }: {
   activeMission: ActiveMission;
+  projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
+  payoutReceipt: PayoutReceipt | null;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
-  const mission = getDemoMission(activeMission);
+  const mission = getMissionDisplay({
+    activeMission,
+    projectRequest,
+    importedMission
+  });
   const proofFacts = [
     { label: "Status", value: generatedProofSummary.status },
-    { label: "Project", value: generatedProofSummary.project },
+    { label: "Project", value: mission.repo },
     {
       label: "Accepted by",
-      value:
-        activeMission === "checkout"
-          ? "External buyer"
-          : generatedProofSummary.acceptedBy
+      value: mission.owner
     },
     { label: "Accepted", value: generatedProofSummary.acceptedDate },
     {
       label: "Reward outcome",
-      value: `${generatedProofSummary.payout.amount} ${generatedProofSummary.payout.status}`
+      value: `${mission.reward} accepted`
     },
     {
       label: "Stored on",
@@ -37,7 +50,7 @@ export function PublicProofScreen({
     },
     {
       label: "Release tx",
-      value: generatedProofSummary.payout.settlement.txShort ?? "Pending"
+      value: payoutReceipt?.txHash ?? "Pending"
     }
   ];
   const publicEvidence = generatedProofSummary.publicArtifacts.map(
@@ -47,11 +60,17 @@ export function PublicProofScreen({
       status: "Public ref"
     })
   );
+  const copyPublicLink = async () => {
+    const url = new URL(window.location.href);
+    url.hash = `public-proof?packet=${encodeURIComponent(mission.packetId)}`;
+    await navigator.clipboard?.writeText(url.toString()).catch(() => undefined);
+    setCopied(true);
+  };
 
   return (
     <section className="page-grid public-proof-grid">
       <header className="page-header">
-        <span>Public Proof / {generatedProofSummary.publicPacketId}</span>
+        <span>Public Proof / public_{mission.packetId}</span>
         <button className="secondary-action" onClick={onBack}>
           Project ledger
         </button>
@@ -61,8 +80,7 @@ export function PublicProofScreen({
           <p className="small-label">Public proof</p>
           <h1>{mission.title}</h1>
           <p>
-            Accepted by {proofFacts[2].value}. Earned{" "}
-            {generatedProofSummary.payout.amount}.
+            Accepted by {proofFacts[2].value}. Earned {mission.reward}.
           </p>
           <div className="public-badge-row">
             <span className="status-pill safe">Accepted</span>
@@ -73,15 +91,12 @@ export function PublicProofScreen({
           aria-label="Public proof reference"
         >
           <span className="status-pill safe">Shareable proof</span>
-          <strong>{generatedProofSummary.publicPacketId}</strong>
+          <strong>public_{mission.packetId}</strong>
           <small>
             {generatedProofSummary.protocolRefs.storageTxShort ??
               generatedProofSummary.protocolRefs.storageRootShort}
           </small>
-          <button
-            className="primary-action full"
-            onClick={() => setCopied(true)}
-          >
+          <button className="primary-action full" onClick={copyPublicLink}>
             {copied ? "Public link copied" : "Copy public link"}
           </button>
         </aside>
@@ -89,7 +104,7 @@ export function PublicProofScreen({
       <div className="public-proof-dossier">
         <div className="public-proof-summary">
           <p className="small-label">What was proven</p>
-          <h2>{generatedProofSummary.whatWasProven}</h2>
+          <h2>{mission.objective}</h2>
           <div className="public-fact-grid">
             {proofFacts.map((fact) => (
               <StatusBlock
@@ -136,15 +151,12 @@ export function PublicProofScreen({
         <p className="small-label">Credit</p>
         <h2>{generatedProofSummary.projectCredit.contributor}</h2>
         <div className="public-credit-stats">
-          <StatusBlock label="Project" value={generatedProofSummary.project} />
+          <StatusBlock label="Project" value={mission.repo} />
           <StatusBlock
             label="Accepted"
             value={generatedProofSummary.acceptedDate}
           />
-          <StatusBlock
-            label="Earned"
-            value={generatedProofSummary.payout.amount}
-          />
+          <StatusBlock label="Earned" value={mission.reward} />
           <StatusBlock
             label="Reputation"
             value={`+${generatedProofSummary.projectCredit.points}`}

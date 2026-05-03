@@ -1,41 +1,36 @@
 import React from "react";
-import {
-  demoAgentIdentity,
-  demoMissionTerms,
-  demoWorkLead,
-  getDemoMission,
-  getDemoPacket
-} from "../demo";
-import type { ActiveMission, ProjectRequest } from "../app/types";
+import { demoAgentIdentity, demoMissionTerms } from "../demo";
+import { getMissionDisplay } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  ProjectRequest
+} from "../app/types";
 import { StatusBlock, StatusRow } from "../components/ui";
 
 export function MissionDetailScreen({
   activeMission,
   projectRequest,
+  importedMission,
   onBack,
   onAccept
 }: {
   activeMission: ActiveMission;
   projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
   onBack: () => void;
   onAccept: () => void;
 }) {
-  const mission = getDemoMission(activeMission);
-  const packet = getDemoPacket(activeMission);
-  const owner =
-    activeMission === "request"
-      ? projectRequest.acceptanceOwner
-      : activeMission === "checkout"
-        ? demoWorkLead.acceptsProof
-        : "Commons reviewer";
-  const missionTitle =
-    activeMission === "request" ? projectRequest.title : mission.title;
-  const missionObjective =
-    activeMission === "request" ? projectRequest.detail : packet.objective;
-  const missionReward =
-    activeMission === "request" ? projectRequest.reward : mission.reward;
-  const missionRepo =
-    activeMission === "request" ? projectRequest.projectName : mission.repo;
+  const mission = getMissionDisplay({
+    activeMission,
+    projectRequest,
+    importedMission
+  });
+  const owner = mission.owner;
+  const missionTitle = mission.title;
+  const missionObjective = mission.objective;
+  const missionReward = mission.reward;
+  const missionRepo = mission.repo;
   const successCriteria =
     activeMission === "request"
       ? [
@@ -43,27 +38,35 @@ export function MissionDetailScreen({
           "Acceptance owner and value are clear",
           "Evidence packet can prove the requested outcome"
         ]
-      : activeMission === "checkout"
+      : activeMission === "github" && importedMission
         ? [
-            "Chrome checkout completes with expected confirmation",
-            "Safari result is captured with logs",
-            "No payment credentials or customer data are exposed"
+            "Original GitHub issue stays attached",
+            "Proof target is derived from public issue context",
+            "No comment or PR is posted without maintainer approval"
           ]
-        : activeMission === "docs"
+        : activeMission === "checkout"
           ? [
-              "Documented command is run in a clean fixture",
-              "Failure or success is captured with logs",
-              "Maintainer can understand the next fix"
+              "Chrome checkout completes with expected confirmation",
+              "Safari result is captured with logs",
+              "No payment credentials or customer data are exposed"
             ]
-          : mission.submissionRequirements.slice(0, 3);
+          : activeMission === "docs"
+            ? [
+                "Documented command is run in a clean fixture",
+                "Failure or success is captured with logs",
+                "Maintainer can understand the next fix"
+              ]
+            : mission.submissionRequirements.slice(0, 3);
   const sourceLabel =
     activeMission === "request"
       ? "Project request"
-      : activeMission === "checkout"
-        ? "Marketplace task"
-        : mission.sourceUrl.includes("github.com")
-          ? "GitHub issue"
-          : "Project backlog";
+      : activeMission === "github"
+        ? "GitHub issue"
+        : activeMission === "checkout"
+          ? "Marketplace task"
+          : mission.sourceUrl.includes("github.com")
+            ? "GitHub issue"
+            : "Project backlog";
   const valueLabel = `${missionReward} if accepted`;
   const agentChecks =
     activeMission === "checkout"
@@ -78,11 +81,17 @@ export function MissionDetailScreen({
             "Can run the documented install command locally",
             "Cannot post comments, open PRs, or spend funds"
           ]
-        : [
-            `Checked ${sourceLabel.toLowerCase()} and repo fixture`,
-            "Can run bounded local checks and capture evidence",
-            "Cannot post comments, open PRs, or spend funds"
-          ];
+        : activeMission === "github" && importedMission
+          ? [
+              `Imported ${importedMission.repo} issue #${importedMission.issueNumber ?? "source"}`,
+              "Can inspect the source and package reproducible evidence",
+              "Cannot post comments, open PRs, or spend funds"
+            ]
+          : [
+              `Checked ${sourceLabel.toLowerCase()} and repo fixture`,
+              "Can run bounded local checks and capture evidence",
+              "Cannot post comments, open PRs, or spend funds"
+            ];
 
   return (
     <section className="page-grid mission-detail-grid">

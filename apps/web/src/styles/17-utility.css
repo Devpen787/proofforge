@@ -49,6 +49,41 @@
   margin-top: 4px;
 }
 
+.settings-field {
+  display: grid;
+  gap: 6px;
+}
+
+.settings-field span {
+  color: #64748b;
+  font-size: 12px;
+  font-weight: 850;
+}
+
+.settings-field input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 10px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+
+.settings-file-action {
+  cursor: pointer;
+}
+
+.settings-file-action input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+}
+
 .utility-lifecycle {
   padding: 24px;
 }

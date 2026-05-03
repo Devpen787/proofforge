@@ -4,93 +4,22 @@ import type {
   ActiveMission,
   AppActions,
   AppState,
-  ProjectRequest
+  ImportedMission,
+  PayoutReceipt,
+  ProjectRequest,
+  WalletIdentity
 } from "./types";
 import { screenFromHash } from "./helpers";
-
-type SavedAppState = Omit<AppState, "screen">;
-
-const PERSIST_KEY = "proofforge.v1.demo-state";
-
-const defaultProjectRequest: ProjectRequest = {
-  projectName: "Docs Onboarding Sprint",
-  projectPurpose: "Turn install friction into accepted proof packets.",
-  title: "Quickstart proof request",
-  detail: "Run the quickstart in a clean environment and package evidence.",
-  reward: "$10",
-  acceptanceOwner: "Docs steward",
-  inviteEmail: "sam@builder.dev"
-};
-
-const defaultSavedState: SavedAppState = {
-  packetReady: false,
-  submitted: false,
-  accepted: false,
-  released: false,
-  revisionRequested: false,
-  rejected: false,
-  importedLead: false,
-  projectStarted: false,
-  projectInviteSent: false,
-  projectAgentAttached: false,
-  projectWorkSuggested: false,
-  workLeadClarified: false,
-  workLeadConverted: false,
-  activeMission: "docs",
-  agentRegistered: false,
-  projectRequest: defaultProjectRequest
-};
-
-const activeMissions: ActiveMission[] = [
-  "docs",
-  "windows",
-  "mac",
-  "config",
-  "links",
-  "checkout",
-  "request"
-];
-
-function readSavedAppState(): SavedAppState {
-  if (typeof window === "undefined") return defaultSavedState;
-  try {
-    const raw = window.localStorage.getItem(PERSIST_KEY);
-    if (!raw) return defaultSavedState;
-    const parsed = JSON.parse(raw) as Partial<SavedAppState>;
-    return {
-      ...defaultSavedState,
-      ...parsed,
-      activeMission: activeMissions.includes(
-        parsed.activeMission as ActiveMission
-      )
-        ? (parsed.activeMission as ActiveMission)
-        : defaultSavedState.activeMission,
-      projectRequest: {
-        ...defaultProjectRequest,
-        ...(parsed.projectRequest ?? {})
-      }
-    };
-  } catch {
-    return defaultSavedState;
-  }
-}
-
-function saveAppState(state: SavedAppState) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
-}
-
-function downloadJson(filename: string, data: unknown) {
-  const blob = new Blob([JSON.stringify(data, null, 2)], {
-    type: "application/json"
-  });
-  const url = URL.createObjectURL(blob);
-  const anchor = document.createElement("a");
-  anchor.href = url;
-  anchor.download = filename;
-  anchor.click();
-  URL.revokeObjectURL(url);
-}
+import { buildProofPacket } from "./missionDisplay";
+import {
+  activeMissions,
+  defaultProjectRequest,
+  downloadJson,
+  persistKey,
+  readSavedAppState,
+  saveAppState,
+  type SavedAppState
+} from "./workspaceState";
 
 function useHashScreen() {
   const [screen, setScreenState] = React.useState<Screen>(screenFromHash);
@@ -150,6 +79,12 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [projectRequest, setProjectRequest] = React.useState<ProjectRequest>(
     savedState.projectRequest
   );
+  const [importedMission, setImportedMission] =
+    React.useState<ImportedMission | null>(savedState.importedMission);
+  const [payoutReceipt, setPayoutReceipt] =
+    React.useState<PayoutReceipt | null>(savedState.payoutReceipt);
+  const [walletIdentity, setWalletIdentity] =
+    React.useState<WalletIdentity | null>(savedState.walletIdentity);
 
   const resetProof = React.useCallback(() => {
     setPacketReady(false);
@@ -159,6 +94,36 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     setRevisionRequested(false);
     setRejected(false);
   }, []);
+
+  const applyImportedState = React.useCallback(
+    (nextState: Partial<SavedAppState>) => {
+      setPacketReady(Boolean(nextState.packetReady));
+      setSubmitted(Boolean(nextState.submitted));
+      setAccepted(Boolean(nextState.accepted));
+      setReleased(Boolean(nextState.released));
+      setRevisionRequested(Boolean(nextState.revisionRequested));
+      setRejected(Boolean(nextState.rejected));
+      setImportedLead(Boolean(nextState.importedLead));
+      setProjectStarted(Boolean(nextState.projectStarted));
+      setProjectInviteSent(Boolean(nextState.projectInviteSent));
+      setProjectAgentAttached(Boolean(nextState.projectAgentAttached));
+      setProjectWorkSuggested(Boolean(nextState.projectWorkSuggested));
+      setWorkLeadClarified(Boolean(nextState.workLeadClarified));
+      setWorkLeadConverted(Boolean(nextState.workLeadConverted));
+      setAgentRegistered(Boolean(nextState.agentRegistered));
+      if (activeMissions.includes(nextState.activeMission as ActiveMission)) {
+        setActiveMission(nextState.activeMission as ActiveMission);
+      }
+      setProjectRequest({
+        ...defaultProjectRequest,
+        ...(nextState.projectRequest ?? {})
+      });
+      setImportedMission(nextState.importedMission ?? null);
+      setPayoutReceipt(nextState.payoutReceipt ?? null);
+      setWalletIdentity(nextState.walletIdentity ?? null);
+    },
+    []
+  );
 
   const actions: AppActions = {
     setScreen,
@@ -174,7 +139,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       downloadJson("proofforge-workspace.json", readSavedAppState());
     },
     resetWorkspace: () => {
-      window.localStorage.removeItem(PERSIST_KEY);
+      window.localStorage.removeItem(persistKey);
       window.location.hash = "opportunity";
       window.location.reload();
     },
@@ -193,8 +158,17 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
         setScreen("agent-setup");
         return;
       }
+      resetProof();
       setActiveMission(mission);
       setScreen("mission-detail");
+    },
+    importGitHubMission: (mission) => {
+      resetProof();
+      setImportedMission(mission);
+      setImportedLead(false);
+      setWorkLeadClarified(false);
+      setWorkLeadConverted(false);
+      setActiveMission("github");
     },
     cancelRun: () => setScreen("mission-detail"),
     approvePacket: () => {
@@ -265,6 +239,46 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
         setProjectRequest((current) => ({ ...current, ...request }));
       }
       setProjectWorkSuggested(true);
+    },
+    recordPayoutReceipt: (receipt) => {
+      setPayoutReceipt(receipt);
+      setReleased(true);
+    },
+    exportPacket: () => {
+      downloadJson(
+        "proofforge-proof-packet.json",
+        buildProofPacket({
+          activeMission,
+          projectRequest,
+          importedMission,
+          payoutReceipt
+        })
+      );
+    },
+    importWorkspace: (nextState) => {
+      applyImportedState(nextState);
+      setScreen("opportunity");
+    },
+    connectWallet: async () => {
+      const provider = window.ethereum;
+      if (!provider) return;
+      const accounts = (await provider.request({
+        method: "eth_requestAccounts"
+      })) as string[];
+      const address = accounts[0];
+      if (!address) return;
+      setWalletIdentity((current) => ({
+        address,
+        ensName: current?.ensName ?? "proofrunner.proofforge.eth",
+        connectedAt: new Date().toISOString()
+      }));
+    },
+    saveEnsName: (ensName) => {
+      setWalletIdentity((current) => ({
+        address: current?.address ?? "Wallet not connected",
+        ensName,
+        connectedAt: current?.connectedAt ?? new Date().toISOString()
+      }));
     }
   };
 
@@ -285,7 +299,10 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     workLeadConverted,
     activeMission,
     agentRegistered,
-    projectRequest
+    projectRequest,
+    importedMission,
+    payoutReceipt,
+    walletIdentity
   };
 
   React.useEffect(() => {
@@ -305,7 +322,10 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       workLeadConverted,
       activeMission,
       agentRegistered,
-      projectRequest
+      projectRequest,
+      importedMission,
+      payoutReceipt,
+      walletIdentity
     });
   }, [
     packetReady,
@@ -323,7 +343,10 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     workLeadConverted,
     activeMission,
     agentRegistered,
-    projectRequest
+    projectRequest,
+    importedMission,
+    payoutReceipt,
+    walletIdentity
   ]);
 
   return { state, actions };

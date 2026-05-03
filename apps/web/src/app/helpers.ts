@@ -30,7 +30,7 @@ export function activeNavScreen(
 }
 
 export function screenFromHash(): Screen {
-  const candidate = window.location.hash.replace("#", "");
+  const candidate = window.location.hash.replace("#", "").split("?")[0];
   return screens.includes(candidate as Screen)
     ? (candidate as Screen)
     : "opportunity";

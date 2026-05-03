@@ -2,16 +2,22 @@ import React from "react";
 import {
   demoAgentIdentity,
   generatedProofSummary,
-  getDemoMission,
   getDemoPacket
 } from "../demo";
-import type { ActiveMission } from "../app/types";
+import { getMissionDisplay } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  ProjectRequest
+} from "../app/types";
 import { StatusBlock } from "../components/ui";
 
 export function MaintainerScreen({
   submitted,
   accepted,
   activeMission,
+  projectRequest,
+  importedMission,
   onAccept,
   onReview,
   onRevision,
@@ -20,13 +26,19 @@ export function MaintainerScreen({
   submitted: boolean;
   accepted: boolean;
   activeMission: ActiveMission;
+  projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
   onAccept: () => void;
   onReview: () => void;
   onRevision: () => void;
   onReject: () => void;
 }) {
   const packet = getDemoPacket(activeMission);
-  const mission = getDemoMission(activeMission);
+  const mission = getMissionDisplay({
+    activeMission,
+    projectRequest,
+    importedMission
+  });
   const hasReviewPacket = submitted || !accepted;
   const decisionState = accepted
     ? "Accepted"
@@ -47,7 +59,7 @@ export function MaintainerScreen({
       label: "Submit via",
       value: generatedProofSummary.maintainerSubmission.provider
     },
-    { label: "Payout", value: generatedProofSummary.payout.amount }
+    { label: "Value", value: mission.reward }
   ];
   return (
     <section className="page-grid maintainer-focus-grid">

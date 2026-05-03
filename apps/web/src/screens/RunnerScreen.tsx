@@ -1,11 +1,17 @@
 import React from "react";
-import { demoAgentIdentity, getDemoMission, demoRunnerTrace } from "../demo";
-import type { ActiveMission, ProjectRequest } from "../app/types";
+import { demoAgentIdentity, demoRunnerTrace } from "../demo";
+import { getMissionDisplay } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  ProjectRequest
+} from "../app/types";
 import { RunnerTimeline, StatusRow } from "../components/ui";
 
 export function RunnerScreen({
   activeMission,
   projectRequest,
+  importedMission,
   agentRegistered,
   onCancel,
   onPacket,
@@ -13,16 +19,19 @@ export function RunnerScreen({
 }: {
   activeMission: ActiveMission;
   projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
   agentRegistered: boolean;
   onCancel: () => void;
   onPacket: () => void;
   onAgentSetup: () => void;
 }) {
-  const mission = getDemoMission(activeMission);
-  const missionTitle =
-    activeMission === "request" ? projectRequest.title : mission.title;
-  const missionReward =
-    activeMission === "request" ? projectRequest.reward : mission.reward;
+  const mission = getMissionDisplay({
+    activeMission,
+    projectRequest,
+    importedMission
+  });
+  const missionTitle = mission.title;
+  const missionReward = mission.reward;
   const output =
     activeMission === "request"
       ? `$ npm run proof:project-request
@@ -41,8 +50,26 @@ Artifacts written:
 runner-result.json
 request-evidence.json
 environment.json`
-      : activeMission === "checkout"
-        ? `$ npm run proof:browser
+      : activeMission === "github" && importedMission
+        ? `$ npm run proof:github -- --url ${importedMission.sourceUrl}
+
+Agent assessment:
+source=${importedMission.sourceUrl}
+repo=${importedMission.repo}
+accepted_by=${importedMission.acceptanceOwner}
+allowed=source inspection, local checks, logs, evidence packaging
+blocked=GitHub comments, PRs, secrets, funds
+
+Assessing imported GitHub issue...
+Proof target: ${importedMission.objective}
+Evidence captured for maintainer review.
+
+Artifacts written:
+github-source.json
+runner-result.json
+environment.json`
+        : activeMission === "checkout"
+          ? `$ npm run proof:browser
 
 Agent assessment:
 source=external marketplace task
@@ -59,8 +86,8 @@ browser-report.json
 chrome.png
 safari.png
 environment.json`
-        : activeMission === "docs"
-          ? `$ npm run proof:check
+          : activeMission === "docs"
+            ? `$ npm run proof:check
 
 Agent assessment:
 source=GitHub issue + repo fixture
@@ -76,7 +103,7 @@ runner-result.json
 stdout.log
 stderr.log
 environment.json`
-          : `$ npm run proof:check -- --mission ${activeMission}
+            : `$ npm run proof:check -- --mission ${activeMission}
 
 Agent assessment:
 source=${mission.sourceUrl}

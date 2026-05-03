@@ -95,6 +95,21 @@ export const demoMissionCatalog: Record<ActiveMission, typeof demoMission> = {
     ]
   },
   checkout: demoConvertedMission,
+  github: {
+    title: "Imported GitHub issue",
+    repo: "github/imported",
+    reward: "Credit",
+    runtime: "30 min",
+    risk: "Safe",
+    valuePath: "Repository credit or external reward when attached",
+    sourceUrl: "https://github.com/proofforge-demo/proofforge/issues/1",
+    submissionRequirements: [
+      "Imported GitHub issue attached",
+      "Proof objective confirmed from issue context",
+      "Evidence packet generated before any public reply",
+      "No public comment or PR without approval"
+    ]
+  },
   request: {
     title: "Project work request",
     repo: "project/request",

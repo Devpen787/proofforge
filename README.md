@@ -60,8 +60,8 @@ The current product slice supports:
 1. Create a project workspace with purpose and contribution context.
 2. Create a project work request with reward, acceptance owner, and contributor
    invite.
-3. Import a GitHub issue as a source-backed Work Lead.
-4. Convert qualified work into a small verifiable Mission.
+3. Import a real public GitHub issue directly inside the web app.
+4. Convert qualified GitHub/project work into a small verifiable Mission.
 5. Tie the run to an identifiable agent or proof node.
 6. Run the mission in a local sandbox.
 7. Capture commands, logs, environment, and result.
@@ -70,7 +70,10 @@ The current product slice supports:
 10. Produce a Proof Pack a maintainer can review quickly.
 11. Let a maintainer accept, request revision, or reject the packet in the
     product flow.
-12. Create credit and earned payout state without implying automatic settlement.
+12. Export the Proof Pack, copy reviewer/public links, and create credit or
+    earned payout state without implying automatic settlement.
+13. Record an external wallet receipt after acceptance when a payout actually
+    happens.
 
 ### Ethereum / Web3 / Bounty Work
 
@@ -259,6 +262,12 @@ This repository now has the first working proof slice:
 - manual release command that creates `released-payout.json`
 - project credit ledger for accepted proof
 - contribution proof product UI for the core journey
+- web GitHub issue import that creates a runnable Mission
+- proof packet export from the Case File
+- copyable reviewer and public proof links
+- MetaMask wallet connection state and editable ENS proof-node label
+- manual wallet receipt tracking after acceptance
+- workspace import/export for local-first portability
 - Builder Passport surface for observed history, accepted proof, agent runs, and
   proof-gated value signals
 
@@ -270,13 +279,16 @@ ProofForge V1 is usable today as a local single-user product workbench:
 
 1. Create or edit a project workspace in `Projects`.
 2. Create a work request with reward, acceptance owner, and contributor invite.
-3. Open `Opportunities` and accept the request as sourced work.
+3. Open `Opportunities` and either accept the request or import a public GitHub
+   issue as sourced work.
 4. Confirm the mission terms and agent permissions.
 5. Run the bounded proof node.
-6. Review and submit the Case File.
-7. Accept, request revision, or reject as the reviewer.
-8. Track accepted credit, earned/released payout state, Builder Passport, and
-   Public Proof.
+6. Review, export, and submit the Case File.
+7. Copy a reviewer link or accept, request revision, or reject as the reviewer.
+8. Track accepted credit, earned/released payout state, wallet receipts, Builder
+   Passport, and Public Proof.
+9. Export or import the local workspace JSON to reproduce the same state in
+   another browser.
 
 The current V1 is not yet a hosted multi-user network. It does not include
 GitHub OAuth, live collaborator accounts, automatic maintainer outreach, or

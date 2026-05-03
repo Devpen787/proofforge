@@ -1,20 +1,37 @@
 import React from "react";
 import { demoAgentIdentity } from "../demo";
 import { StatusRow } from "../components/ui";
+import type { AppState, WalletIdentity } from "../app/types";
 
 export function SettingsScreen({
   agentRegistered,
   onAgentSetup,
   onHelp,
   onExport,
-  onReset
+  onImport,
+  onReset,
+  onConnectWallet,
+  onSaveEnsName,
+  walletIdentity
 }: {
   agentRegistered: boolean;
   onAgentSetup: () => void;
   onHelp: () => void;
   onExport: () => void;
+  onImport: (state: Partial<Omit<AppState, "screen">>) => void;
   onReset: () => void;
+  onConnectWallet: () => Promise<void>;
+  onSaveEnsName: (ensName: string) => void;
+  walletIdentity: WalletIdentity | null;
 }) {
+  const [ensName, setEnsName] = React.useState(
+    walletIdentity?.ensName ?? demoAgentIdentity.ensRef
+  );
+  const importWorkspace = async (file: File | undefined) => {
+    if (!file) return;
+    const text = await file.text();
+    onImport(JSON.parse(text) as Partial<Omit<AppState, "screen">>);
+  };
   return (
     <section className="page-grid utility-grid">
       <div className="utility-hero wide">
@@ -55,8 +72,35 @@ export function SettingsScreen({
         <p className="small-label">Payout</p>
         <h2>Collection rules</h2>
         <StatusRow label="Method" value="Manual / external" tone="good" />
-        <StatusRow label="Wallet" value="Receipt reference only" tone="bad" />
+        <StatusRow
+          label="Wallet"
+          value={
+            walletIdentity?.address
+              ? `${walletIdentity.address.slice(0, 6)}...${walletIdentity.address.slice(-4)}`
+              : "Not connected"
+          }
+          tone={walletIdentity?.address ? "good" : "bad"}
+        />
         <StatusRow label="Release" value="After acceptance" tone="good" />
+        <div className="settings-action-row">
+          <button className="secondary-action" onClick={onConnectWallet}>
+            Connect wallet
+          </button>
+        </div>
+        <label className="settings-field">
+          <span>Agent ENS</span>
+          <input
+            aria-label="Agent ENS name"
+            value={ensName}
+            onChange={(event) => setEnsName(event.target.value)}
+          />
+        </label>
+        <button
+          className="secondary-action"
+          onClick={() => onSaveEnsName(ensName)}
+        >
+          Save ENS name
+        </button>
       </section>
 
       <section className="panel utility-panel">
@@ -68,6 +112,15 @@ export function SettingsScreen({
           <button className="secondary-action" onClick={onExport}>
             Export workspace
           </button>
+          <label className="secondary-action settings-file-action">
+            Import workspace
+            <input
+              aria-label="Import workspace file"
+              type="file"
+              accept="application/json"
+              onChange={(event) => importWorkspace(event.target.files?.[0])}
+            />
+          </label>
           <button className="danger-action" onClick={onReset}>
             Reset workspace
           </button>

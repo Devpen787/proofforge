@@ -90,6 +90,35 @@
   overflow-wrap: anywhere;
 }
 
+.my-work-receipt {
+  display: grid;
+  grid-template-columns: minmax(220px, 0.7fr) minmax(260px, 1fr) auto;
+  gap: 12px;
+  align-items: center;
+  border: 1px solid #e2e8f0;
+  border-radius: 18px;
+  background: white;
+  padding: 16px 18px;
+}
+
+.my-work-receipt h2 {
+  margin: 0;
+  font-size: 20px;
+  line-height: 1.1;
+}
+
+.my-work-receipt input {
+  width: 100%;
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #f8fafc;
+  padding: 11px 12px;
+  font: inherit;
+  font-size: 14px;
+  font-weight: 800;
+}
+
 .my-work-list {
   display: grid;
   gap: 10px;
@@ -242,6 +271,7 @@
   .my-work-hero,
   .my-work-ledger,
   .my-work-ledger-table,
+  .my-work-receipt,
   .my-work-row {
     grid-template-columns: 1fr;
   }

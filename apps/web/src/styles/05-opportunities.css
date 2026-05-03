@@ -111,6 +111,13 @@
   min-width: 0;
 }
 
+.github-import-actions {
+  display: flex;
+  gap: 8px;
+  align-items: end;
+  justify-content: end;
+}
+
 .github-import-row input {
   width: 100%;
   min-width: 0;

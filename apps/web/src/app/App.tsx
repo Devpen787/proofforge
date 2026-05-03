@@ -85,7 +85,9 @@ function renderScreen(
           onConvertLead={actions.convertLead}
           onRejectLead={actions.rejectLead}
           onRun={actions.runMission}
+          onImportGitHubMission={actions.importGitHubMission}
           projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
         />
       );
     case "my-work":
@@ -97,11 +99,16 @@ function renderScreen(
           released={state.released}
           revisionRequested={state.revisionRequested}
           rejected={state.rejected}
+          activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
+          payoutReceipt={state.payoutReceipt}
           onMission={actions.runStarterMission}
           onClarify={actions.openOpportunities}
           onCaseFile={actions.openCaseFile}
           onAgentSetup={() => actions.setScreen("agent-setup")}
           onRelease={actions.releasePayout}
+          onRecordPayout={actions.recordPayoutReceipt}
           onPublicProof={actions.openPublicProof}
         />
       );
@@ -117,6 +124,7 @@ function renderScreen(
         <MissionDetailScreen
           activeMission={state.activeMission}
           projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
           onBack={actions.openOpportunities}
           onAccept={() =>
             state.agentRegistered
@@ -130,6 +138,7 @@ function renderScreen(
         <RunnerScreen
           activeMission={state.activeMission}
           projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
           agentRegistered={state.agentRegistered}
           onCancel={actions.cancelRun}
           onPacket={actions.approvePacket}
@@ -143,7 +152,11 @@ function renderScreen(
           revisionRequested={state.revisionRequested}
           rejected={state.rejected}
           activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
+          payoutReceipt={state.payoutReceipt}
           onSubmit={actions.submitPacket}
+          onExportPacket={actions.exportPacket}
         />
       );
     case "maintainer":
@@ -152,6 +165,8 @@ function renderScreen(
           submitted={state.submitted}
           accepted={state.accepted}
           activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
           onAccept={actions.acceptPacket}
           onReview={actions.openCaseFile}
           onRevision={actions.requestRevision}
@@ -162,6 +177,9 @@ function renderScreen(
       return (
         <PublicProofScreen
           activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
+          importedMission={state.importedMission}
+          payoutReceipt={state.payoutReceipt}
           onBack={() => actions.setScreen("projects")}
         />
       );
@@ -172,7 +190,11 @@ function renderScreen(
           onAgentSetup={() => actions.setScreen("agent-setup")}
           onHelp={() => actions.setScreen("help")}
           onExport={actions.exportWorkspace}
+          onImport={actions.importWorkspace}
           onReset={actions.resetWorkspace}
+          onConnectWallet={actions.connectWallet}
+          onSaveEnsName={actions.saveEnsName}
+          walletIdentity={state.walletIdentity}
         />
       );
     case "help":

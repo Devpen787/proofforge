@@ -1,5 +1,12 @@
 import React from "react";
 import { demoMyWork, generatedProofSummary } from "../demo";
+import { getMissionDisplay } from "../app/missionDisplay";
+import type {
+  ActiveMission,
+  ImportedMission,
+  PayoutReceipt,
+  ProjectRequest
+} from "../app/types";
 
 export function MyWorkScreen({
   agentRegistered,
@@ -8,11 +15,16 @@ export function MyWorkScreen({
   released,
   revisionRequested,
   rejected,
+  activeMission,
+  projectRequest,
+  importedMission,
+  payoutReceipt,
   onMission,
   onClarify,
   onCaseFile,
   onAgentSetup,
   onRelease,
+  onRecordPayout,
   onPublicProof
 }: {
   agentRegistered: boolean;
@@ -21,13 +33,30 @@ export function MyWorkScreen({
   released: boolean;
   revisionRequested: boolean;
   rejected: boolean;
+  activeMission: ActiveMission;
+  projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
+  payoutReceipt: PayoutReceipt | null;
   onMission: () => void;
   onClarify: () => void;
   onCaseFile: () => void;
   onAgentSetup: () => void;
   onRelease: () => void;
+  onRecordPayout: (receipt: PayoutReceipt) => void;
   onPublicProof: () => void;
 }) {
+  const mission = getMissionDisplay({
+    activeMission,
+    projectRequest,
+    importedMission
+  });
+  const [receiptDraft, setReceiptDraft] = React.useState<PayoutReceipt>({
+    chain: "0G Galileo",
+    token: "0G",
+    amount: mission.reward,
+    txHash: payoutReceipt?.txHash ?? "",
+    recipient: "Contributor wallet"
+  });
   const nextAction = !agentRegistered
     ? {
         label: "Set up proof node",
@@ -46,11 +75,17 @@ export function MyWorkScreen({
         }
       : accepted && !released
         ? {
-            label: "Release payout",
-            title: "The payout is earned. Collection is next.",
+            label:
+              mission.reward === "Credit"
+                ? "View public proof"
+                : "Release payout",
+            title:
+              mission.reward === "Credit"
+                ? "The proof is accepted. Record payout only if one happens."
+                : "The payout is earned. Record release when it happens.",
             detail:
               "Maintainer acceptance created credit and an earned payout. Release is a separate manual step in V1.",
-            action: onRelease
+            action: mission.reward === "Credit" ? onPublicProof : onRelease
           }
         : accepted && released
           ? {
@@ -79,6 +114,8 @@ export function MyWorkScreen({
   const workRows = [
     {
       ...demoMyWork[0],
+      title: mission.title,
+      project: mission.repo,
       source: "GitHub issue",
       status: accepted ? "Accepted" : submitted ? "In review" : "Ready",
       action: accepted ? "View proof" : submitted ? "Open packet" : "Run",
@@ -128,11 +165,11 @@ export function MyWorkScreen({
           <div className="my-work-ledger-table">
             <span>
               <small>Proof</small>
-              <strong>Docs install proof</strong>
+              <strong>{mission.title}</strong>
             </span>
             <span>
               <small>Accepted by</small>
-              <strong>{generatedProofSummary.acceptedBy}</strong>
+              <strong>{mission.owner}</strong>
             </span>
             <span>
               <small>Credit</small>
@@ -140,15 +177,12 @@ export function MyWorkScreen({
             </span>
             <span>
               <small>Earned</small>
-              <strong>{generatedProofSummary.payout.amount}</strong>
+              <strong>{mission.reward}</strong>
             </span>
             <span>
               <small>Release</small>
               <strong>
-                {released
-                  ? (generatedProofSummary.payout.settlement.txShort ??
-                    "Released")
-                  : "Pending"}
+                {released ? payoutReceipt?.txHash || "Released" : "Pending"}
               </strong>
             </span>
             <span>
@@ -158,6 +192,32 @@ export function MyWorkScreen({
               </strong>
             </span>
           </div>
+        </section>
+      )}
+
+      {accepted && !released && (
+        <section className="my-work-receipt wide">
+          <div>
+            <p className="small-label">Wallet receipt</p>
+            <h2>Track external payout release.</h2>
+          </div>
+          <input
+            aria-label="Payout transaction hash"
+            placeholder="Paste wallet tx hash or receipt reference"
+            value={receiptDraft.txHash}
+            onChange={(event) =>
+              setReceiptDraft((current) => ({
+                ...current,
+                txHash: event.target.value
+              }))
+            }
+          />
+          <button
+            className="primary-action"
+            onClick={() => onRecordPayout(receiptDraft)}
+          >
+            Record release
+          </button>
         </section>
       )}
 

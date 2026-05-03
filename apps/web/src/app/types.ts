@@ -7,7 +7,24 @@ export type ActiveMission =
   | "config"
   | "links"
   | "checkout"
+  | "github"
   | "request";
+
+export interface ImportedMission {
+  title: string;
+  repo: string;
+  reward: string;
+  runtime: string;
+  risk: string;
+  valuePath: string;
+  sourceUrl: string;
+  acceptanceOwner: string;
+  objective: string;
+  proofability: string;
+  requirements: string[];
+  issueNumber?: number;
+  importedAt: string;
+}
 
 export interface ProjectRequest {
   projectName: string;
@@ -17,6 +34,20 @@ export interface ProjectRequest {
   reward: string;
   acceptanceOwner: string;
   inviteEmail: string;
+}
+
+export interface PayoutReceipt {
+  chain: string;
+  token: string;
+  amount: string;
+  txHash: string;
+  recipient: string;
+}
+
+export interface WalletIdentity {
+  address: string;
+  ensName: string;
+  connectedAt: string;
 }
 
 export interface AppState {
@@ -37,6 +68,9 @@ export interface AppState {
   activeMission: ActiveMission;
   agentRegistered: boolean;
   projectRequest: ProjectRequest;
+  importedMission: ImportedMission | null;
+  payoutReceipt: PayoutReceipt | null;
+  walletIdentity: WalletIdentity | null;
 }
 
 export interface AppActions {
@@ -52,6 +86,7 @@ export interface AppActions {
   resolveRevision: () => void;
   runStarterMission: () => void;
   runMission: (mission: ActiveMission) => void;
+  importGitHubMission: (mission: ImportedMission) => void;
   cancelRun: () => void;
   approvePacket: () => void;
   submitPacket: () => void;
@@ -71,6 +106,11 @@ export interface AppActions {
   inviteContributor: (email?: string) => void;
   attachAgent: () => void;
   suggestWork: (request?: Partial<ProjectRequest>) => void;
+  recordPayoutReceipt: (receipt: PayoutReceipt) => void;
+  exportPacket: () => void;
+  importWorkspace: (state: Partial<Omit<AppState, "screen">>) => void;
+  connectWallet: () => Promise<void>;
+  saveEnsName: (ensName: string) => void;
 }
 
 export type Tone = "good" | "bad";
