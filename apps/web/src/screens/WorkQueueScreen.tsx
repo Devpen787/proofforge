@@ -148,12 +148,12 @@ function TriagePane({
             key={row.label}
             label={row.label}
             value={
-              row.label === "Missing detail" && clarified ? "Confirmed" : row.value
+              row.label === "Missing detail" && clarified
+                ? "Confirmed"
+                : row.value
             }
             tone={
-              row.label === "Missing detail" && clarified
-                ? "good"
-                : row.tone
+              row.label === "Missing detail" && clarified ? "good" : row.tone
             }
           />
         ))}
@@ -220,8 +220,9 @@ export function WorkQueueScreen({
   const [githubUrl, setGithubUrl] = React.useState(
     "https://github.com/microsoft/vscode/issues/1"
   );
-  const [liveImport, setLiveImport] =
-    React.useState<WorkSourceImport | null>(null);
+  const [liveImport, setLiveImport] = React.useState<WorkSourceImport | null>(
+    null
+  );
   const [importStatus, setImportStatus] = React.useState<
     "idle" | "loading" | "failed"
   >("idle");
@@ -231,7 +232,8 @@ export function WorkQueueScreen({
   );
   const selected = ready[0];
   const average = Math.round(
-    ready.reduce((total, item) => total + score(item.proofability), 0) / ready.length
+    ready.reduce((total, item) => total + score(item.proofability), 0) /
+      ready.length
   );
 
   const importGitHubIssue = async () => {

@@ -241,7 +241,10 @@
 .pf-work-head,
 .pf-work-table-row {
   display: grid;
-  grid-template-columns: minmax(250px, 1.4fr) minmax(150px, 0.85fr) 76px 72px 82px 64px;
+  grid-template-columns: minmax(250px, 1.4fr) minmax(
+      150px,
+      0.85fr
+    ) 76px 72px 82px 64px;
   align-items: center;
   gap: 12px;
 }

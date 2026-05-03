@@ -161,7 +161,9 @@ export function CaseFileScreen({
                 <div key={artifact}>
                   <strong>{artifact}</strong>
                   <span>
-                    {artifact.includes("log") ? "Private by default" : "Maintainer"}
+                    {artifact.includes("log")
+                      ? "Private by default"
+                      : "Maintainer"}
                   </span>
                 </div>
               ))}
@@ -182,7 +184,11 @@ export function CaseFileScreen({
           <aside className="pf-case-submit">
             <p className="small-label">Submit decision</p>
             <h2>Evidence first. Code later.</h2>
-            <StatusRow label="If accepted" value={`${mission.reward} earned`} tone="good" />
+            <StatusRow
+              label="If accepted"
+              value={`${mission.reward} earned`}
+              tone="good"
+            />
             <StatusRow label="Reputation" value="+12" tone="good" />
             <StatusRow label="Credits" value="+2" tone="good" />
             <StatusRow label="Release" value="Manual/external" tone="good" />
@@ -210,10 +216,16 @@ export function CaseFileScreen({
             >
               {submitted ? "Submitted" : "Submit to maintainer"}
             </button>
-            <button className="secondary-action full" onClick={copyReviewerLink}>
+            <button
+              className="secondary-action full"
+              onClick={copyReviewerLink}
+            >
               {copiedReviewLink ? "Reviewer link copied" : "Copy reviewer link"}
             </button>
-            <button className="secondary-action full" onClick={copyGitHubComment}>
+            <button
+              className="secondary-action full"
+              onClick={copyGitHubComment}
+            >
               {copiedGitHubComment ? "Comment copied" : "Copy GitHub comment"}
             </button>
             {mission.sourceUrl.startsWith("http") ? (

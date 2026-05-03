@@ -170,10 +170,9 @@
 }
 
 .pf-work-row {
-  grid-template-columns: minmax(220px, 1fr) minmax(
-      140px,
-      190px
-    ) 72px 72px 96px 70px;
+  grid-template-columns:
+    minmax(220px, 1fr) minmax(140px, 190px)
+    72px 72px 96px 70px;
   align-items: center;
 }
 

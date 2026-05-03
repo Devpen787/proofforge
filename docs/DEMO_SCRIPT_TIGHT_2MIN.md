@@ -90,21 +90,21 @@ If time:
 
 **Say the author script verbatim; click these labels.** Verified by **full click-through** on the deployed app (2026-05-03). Local `apps/web` can lag Vercel—**rehearse on production** before recording.
 
-| Author script | Production control |
-|---------------|--------------------|
-| `Set up proof node` | **`Set up proof node`** |
-| `Register proof node` | **`Register proof node`** |
-| `Find source-backed work` | **`Find source-backed work`** _(after register; before that you may see **`Browse work first`**)_ |
-| `Start sourced proof` | Say while **Opportunities** is in focus, or tap **`Start sourced proof`** from **Home** when it appears; skip if you remain on the queue after **`Find`**. |
-| `Run safest earning mission` | **Opportunities** (`#work-queue`): optional **`Safe`** filter → **`Run this mission`** on *Validate installation docs*. |
-| `Accept and run` | **`Accept and run`** (`#mission-detail`). |
-| `Approve Packet` | **`Approve Packet`** (`#run`). |
-| `Submit Packet` | **`Submit Packet`** (`#case-file`). |
-| `Connect MetaMask or demo signer` | **`Connect MetaMask`** on maintainer _(embedded tool run still surfaced **`Sign acceptance`** for the demo path)_. |
-| `Record GitHub post` | Paste into **`GitHub acceptance URL`** → **`Record GitHub post`** → **`GitHub source verified`**. |
-| `Sign acceptance` → `Accept & Mark Earned` | **`Sign acceptance`** then **`Accept & Mark Earned`** _(order as verified this session)_. |
-| `View public proof` | **Home**: **`View public proof`** ( **`Release payout`** also available). |
-| Settings “if time” | **`Prepare 0G upload`**, **`Prepare payout handoff`**, **`Publish shared project`**, **`Reset demo state`**. |
+| Author script                              | Production control                                                                                                                                         |
+| ------------------------------------------ | ---------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `Set up proof node`                        | **`Set up proof node`**                                                                                                                                    |
+| `Register proof node`                      | **`Register proof node`**                                                                                                                                  |
+| `Find source-backed work`                  | **`Find source-backed work`** _(after register; before that you may see **`Browse work first`**)_                                                          |
+| `Start sourced proof`                      | Say while **Opportunities** is in focus, or tap **`Start sourced proof`** from **Home** when it appears; skip if you remain on the queue after **`Find`**. |
+| `Run safest earning mission`               | **Opportunities** (`#work-queue`): optional **`Safe`** filter → **`Run this mission`** on _Validate installation docs_.                                    |
+| `Accept and run`                           | **`Accept and run`** (`#mission-detail`).                                                                                                                  |
+| `Approve Packet`                           | **`Approve Packet`** (`#run`).                                                                                                                             |
+| `Submit Packet`                            | **`Submit Packet`** (`#case-file`).                                                                                                                        |
+| `Connect MetaMask or demo signer`          | **`Connect MetaMask`** on maintainer _(embedded tool run still surfaced **`Sign acceptance`** for the demo path)_.                                         |
+| `Record GitHub post`                       | Paste into **`GitHub acceptance URL`** → **`Record GitHub post`** → **`GitHub source verified`**.                                                          |
+| `Sign acceptance` → `Accept & Mark Earned` | **`Sign acceptance`** then **`Accept & Mark Earned`** _(order as verified this session)_.                                                                  |
+| `View public proof`                        | **Home**: **`View public proof`** ( **`Release payout`** also available).                                                                                  |
+| Settings “if time”                         | **`Prepare 0G upload`**, **`Prepare payout handoff`**, **`Publish shared project`**, **`Reset demo state`**.                                               |
 
 ---
 

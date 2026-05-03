@@ -167,9 +167,21 @@ export function RunnerScreen({
 
           <aside className="pf-runner-rail">
             <p className="small-label">Run control</p>
-            <StatusRow label="Proof node" value={demoAgentIdentity.id} tone="good" />
-            <StatusRow label="Owner" value={demoAgentIdentity.owner} tone="good" />
-            <StatusRow label="Earn if accepted" value={mission.reward} tone="good" />
+            <StatusRow
+              label="Proof node"
+              value={demoAgentIdentity.id}
+              tone="good"
+            />
+            <StatusRow
+              label="Owner"
+              value={demoAgentIdentity.owner}
+              tone="good"
+            />
+            <StatusRow
+              label="Earn if accepted"
+              value={mission.reward}
+              tone="good"
+            />
             <StatusRow label="External actions" value="Locked" tone="bad" />
             <StatusRow label="Packet state" value="Draft ready" tone="good" />
 

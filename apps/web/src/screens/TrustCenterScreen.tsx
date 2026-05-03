@@ -76,9 +76,17 @@ export function TrustCenterScreen({
             value={agentRegistered ? "Registered" : "Local profile"}
             tone={agentRegistered ? "good" : "bad"}
           />
-          <StatusRow label="Owner" value={demoAgentIdentity.owner} tone="good" />
+          <StatusRow
+            label="Owner"
+            value={demoAgentIdentity.owner}
+            tone="good"
+          />
           <StatusRow label="Skills" value="Declared only" tone="good" />
-          <StatusRow label="Events" value={String(proofEvents.length)} tone="good" />
+          <StatusRow
+            label="Events"
+            value={String(proofEvents.length)}
+            tone="good"
+          />
           <button className="secondary-action full" onClick={onSettings}>
             Integration settings
           </button>

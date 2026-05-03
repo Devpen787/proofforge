@@ -13,7 +13,10 @@
 
 .work-queue-grid .pf-source-head,
 .work-queue-grid .pf-source-row {
-  grid-template-columns: minmax(220px, 1.25fr) minmax(82px, 0.55fr) minmax(96px, 0.65fr) 58px 74px 74px;
+  grid-template-columns: minmax(220px, 1.25fr) minmax(82px, 0.55fr) minmax(
+      96px,
+      0.65fr
+    ) 58px 74px 74px;
   gap: 10px;
 }
 

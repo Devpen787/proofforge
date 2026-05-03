@@ -168,11 +168,31 @@ export function MyWorkScreen({
       />
 
       <div className="pf-work-state-strip">
-        <StatusRow label="Active" value={submitted ? "Submitted" : "Ready"} tone="good" />
-        <StatusRow label="Accepted" value={accepted ? "Yes" : "Waiting"} tone={accepted ? "good" : "bad"} />
-        <StatusRow label="Earned" value={accepted ? mission.reward : "$0"} tone={accepted ? "good" : "bad"} />
-        <StatusRow label="Released" value={released ? "Recorded" : "Pending"} tone={released ? "good" : "bad"} />
-        <StatusRow label="Public" value={accepted ? "Ready" : "Hidden"} tone={accepted ? "good" : "bad"} />
+        <StatusRow
+          label="Active"
+          value={submitted ? "Submitted" : "Ready"}
+          tone="good"
+        />
+        <StatusRow
+          label="Accepted"
+          value={accepted ? "Yes" : "Waiting"}
+          tone={accepted ? "good" : "bad"}
+        />
+        <StatusRow
+          label="Earned"
+          value={accepted ? mission.reward : "$0"}
+          tone={accepted ? "good" : "bad"}
+        />
+        <StatusRow
+          label="Released"
+          value={released ? "Recorded" : "Pending"}
+          tone={released ? "good" : "bad"}
+        />
+        <StatusRow
+          label="Public"
+          value={accepted ? "Ready" : "Hidden"}
+          tone={accepted ? "good" : "bad"}
+        />
       </div>
 
       <div className="pf-my-work-layout">
@@ -185,7 +205,11 @@ export function MyWorkScreen({
             <span>Action</span>
           </div>
           {currentRows.map((item) => (
-            <button className="pf-work-row" key={item.title} onClick={item.onClick}>
+            <button
+              className="pf-work-row"
+              key={item.title}
+              onClick={item.onClick}
+            >
               <strong>{item.title}</strong>
               <span>{item.source}</span>
               <span>{item.status}</span>
@@ -202,10 +226,28 @@ export function MyWorkScreen({
         <aside className="pf-work-detail">
           <p className="small-label">Selected proof</p>
           <h2>{mission.title}</h2>
-          <StatusRow label="State" value={creditState} tone={accepted ? "good" : "bad"} />
-          <StatusRow label="Accepted by" value={accepted ? mission.owner : "Waiting"} tone={accepted ? "good" : "bad"} />
-          <StatusRow label="Credit" value={`+${generatedProofSummary.projectCredit.points}`} tone={accepted ? "good" : "bad"} />
-          <StatusRow label="Receipt" value={released ? payoutReceipt?.txHash || "Recorded" : "Not released"} tone={released ? "good" : "bad"} />
+          <StatusRow
+            label="State"
+            value={creditState}
+            tone={accepted ? "good" : "bad"}
+          />
+          <StatusRow
+            label="Accepted by"
+            value={accepted ? mission.owner : "Waiting"}
+            tone={accepted ? "good" : "bad"}
+          />
+          <StatusRow
+            label="Credit"
+            value={`+${generatedProofSummary.projectCredit.points}`}
+            tone={accepted ? "good" : "bad"}
+          />
+          <StatusRow
+            label="Receipt"
+            value={
+              released ? payoutReceipt?.txHash || "Recorded" : "Not released"
+            }
+            tone={released ? "good" : "bad"}
+          />
           {accepted && !released ? (
             <div className="pf-work-receipt">
               <input

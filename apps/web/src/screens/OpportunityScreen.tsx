@@ -1,9 +1,5 @@
 import React from "react";
-import {
-  demoProject,
-  demoWork,
-  generatedProofSummary
-} from "../demo";
+import { demoProject, demoWork, generatedProofSummary } from "../demo";
 import type { ActiveMission } from "../app/types";
 
 export function OpportunityScreen({
@@ -109,7 +105,9 @@ export function OpportunityScreen({
               ▶
             </span>
             <div>
-              <strong>{selectedWork.risk} · {selectedWork.runtime}</strong>
+              <strong>
+                {selectedWork.risk} · {selectedWork.runtime}
+              </strong>
               <small>Accepted by {selectedWork.owner}</small>
             </div>
           </div>

@@ -64,7 +64,11 @@ export function SettingsScreen({
             <p className="small-label">Work sources</p>
             <StatusRow label="GitHub" value="Issue import ready" tone="good" />
             <StatusRow label="Marketplace" value="Manual import" tone="good" />
-            <StatusRow label="Project backlog" value="Local demo source" tone="good" />
+            <StatusRow
+              label="Project backlog"
+              value="Local demo source"
+              tone="good"
+            />
           </section>
           <section>
             <p className="small-label">Agent</p>
@@ -73,8 +77,16 @@ export function SettingsScreen({
               value={agentRegistered ? "Registered" : "Local profile"}
               tone={agentRegistered ? "good" : "bad"}
             />
-            <StatusRow label="Owner" value={demoAgentIdentity.owner} tone="good" />
-            <StatusRow label="Skills" value="docs, repo, command, evidence" tone="good" />
+            <StatusRow
+              label="Owner"
+              value={demoAgentIdentity.owner}
+              tone="good"
+            />
+            <StatusRow
+              label="Skills"
+              value="docs, repo, command, evidence"
+              tone="good"
+            />
           </section>
           <section>
             <p className="small-label">Wallet and payout</p>
@@ -88,7 +100,11 @@ export function SettingsScreen({
           </section>
           <section>
             <p className="small-label">0G-ready proof record</p>
-            <StatusRow label="Events" value={String(proofEvents.length)} tone="good" />
+            <StatusRow
+              label="Events"
+              value={String(proofEvents.length)}
+              tone="good"
+            />
             <StatusRow
               label="Latest hash"
               value={proofEvents.at(-1)?.eventHash ?? "No events yet"}
@@ -96,7 +112,9 @@ export function SettingsScreen({
             />
             <StatusRow
               label="Signature"
-              value={proofEvents.at(-1)?.signature ? "Wallet signed" : "Unsigned"}
+              value={
+                proofEvents.at(-1)?.signature ? "Wallet signed" : "Unsigned"
+              }
               tone={proofEvents.at(-1)?.signature ? "good" : "bad"}
             />
           </section>
@@ -131,7 +149,10 @@ export function SettingsScreen({
           >
             Sign latest proof event
           </button>
-          <button className="secondary-action full" onClick={onExportProofRecord}>
+          <button
+            className="secondary-action full"
+            onClick={onExportProofRecord}
+          >
             Export proof record
           </button>
           <button className="secondary-action full" onClick={onExport}>

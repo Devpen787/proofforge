@@ -8,7 +8,13 @@ import type {
   ProjectRequest,
   WalletIdentity
 } from "../app/types";
-import { DetailPane, PageHeader, PageSurface, RowList, StatusRow } from "../components/ui";
+import {
+  DetailPane,
+  PageHeader,
+  PageSurface,
+  RowList,
+  StatusRow
+} from "../components/ui";
 
 export function MaintainerScreen({
   submitted,
@@ -82,7 +88,9 @@ export function MaintainerScreen({
         title="Decide submitted proof."
         subtitle="One accepted packet creates an earned record. Release stays separate."
         actions={
-          <span className={accepted ? "status-pill safe" : "status-pill warning"}>
+          <span
+            className={accepted ? "status-pill safe" : "status-pill warning"}
+          >
             {decisionState}
           </span>
         }
@@ -113,11 +121,27 @@ export function MaintainerScreen({
         </RowList>
 
         <DetailPane eyebrow="Selected packet" title={mission.title}>
-          <StatusRow label="What was proven" value={packet.result} tone="good" />
+          <StatusRow
+            label="What was proven"
+            value={packet.result}
+            tone="good"
+          />
           <StatusRow label="Risk" value={mission.risk} tone="good" />
-          <StatusRow label="Proof node" value={demoAgentIdentity.id} tone="good" />
-          <StatusRow label="Credit to" value={demoAgentIdentity.owner} tone="good" />
-          <StatusRow label="Earned if accepted" value={mission.reward} tone="good" />
+          <StatusRow
+            label="Proof node"
+            value={demoAgentIdentity.id}
+            tone="good"
+          />
+          <StatusRow
+            label="Credit to"
+            value={demoAgentIdentity.owner}
+            tone="good"
+          />
+          <StatusRow
+            label="Earned if accepted"
+            value={mission.reward}
+            tone="good"
+          />
           <p className="pf-muted-copy">{packet.recommendedAction}</p>
           <div className="pf-maintainer-actions">
             <button className="secondary-action full" onClick={onReview}>

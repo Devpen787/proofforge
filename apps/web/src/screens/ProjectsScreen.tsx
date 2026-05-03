@@ -347,52 +347,52 @@ export function ProjectsScreen({
         </div>
 
         <details className="project-detail-drawer">
-        <summary>Sources and proof ledger</summary>
-        <div className="project-detail-drawer-body">
-          <div>
-            <h3>Sources</h3>
-            {demoSourceConnections.map((source) => (
-              <div className="project-flow-card" key={source.name}>
-                <strong>{source.name}</strong>
-                <small>
-                  {source.state} · {source.detail}
-                </small>
-              </div>
-            ))}
+          <summary>Sources and proof ledger</summary>
+          <div className="project-detail-drawer-body">
+            <div>
+              <h3>Sources</h3>
+              {demoSourceConnections.map((source) => (
+                <div className="project-flow-card" key={source.name}>
+                  <strong>{source.name}</strong>
+                  <small>
+                    {source.state} · {source.detail}
+                  </small>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3>Proof ledger</h3>
+              {demoProjectLedgerRows.map((row) => (
+                <div className="project-flow-card" key={row.proof}>
+                  <strong>{row.work}</strong>
+                  <small>
+                    {row.source} · {row.status} · {row.value}
+                  </small>
+                </div>
+              ))}
+            </div>
+            <div>
+              <h3>People</h3>
+              {inviteSent && (
+                <CompactPerson
+                  name={projectRequest.inviteEmail}
+                  role="Contributor invite"
+                  status="Pending"
+                  tone="warning"
+                />
+              )}
+              {demoProject.peopleRoster.slice(0, 2).map((person) => (
+                <CompactPerson
+                  key={person.name}
+                  name={person.name}
+                  role={person.role}
+                  status={person.status}
+                  tone={person.status === "Pending" ? "warning" : "safe"}
+                />
+              ))}
+            </div>
           </div>
-          <div>
-            <h3>Proof ledger</h3>
-            {demoProjectLedgerRows.map((row) => (
-              <div className="project-flow-card" key={row.proof}>
-                <strong>{row.work}</strong>
-                <small>
-                  {row.source} · {row.status} · {row.value}
-                </small>
-              </div>
-            ))}
-          </div>
-          <div>
-            <h3>People</h3>
-            {inviteSent && (
-              <CompactPerson
-                name={projectRequest.inviteEmail}
-                role="Contributor invite"
-                status="Pending"
-                tone="warning"
-              />
-            )}
-            {demoProject.peopleRoster.slice(0, 2).map((person) => (
-              <CompactPerson
-                key={person.name}
-                name={person.name}
-                role={person.role}
-                status={person.status}
-                tone={person.status === "Pending" ? "warning" : "safe"}
-              />
-            ))}
-          </div>
-        </div>
-      </details>
+        </details>
       </PageSurface>
     </section>
   );
