@@ -46,178 +46,115 @@ http://localhost:5173/#opportunity
 
 ## Recording Script
 
-### 0:00-0:10 - Open On Home
+Target length: about 2 minutes. Read this naturally. Do not explain every field;
+let the screen carry the details.
 
-Screen:
+### 0:00-0:10 - Home
 
-- Show Home at `/#opportunity`.
-- Keep the profile, wallet state, project status, tracker, and activity visible.
+Show `/#opportunity`.
 
-Voiceover:
+Say:
 
-> ProofForge turns real software work into safe agent missions. A developer
-> connects a proof node, finds sourced work, runs a bounded agent, and gets an
-> evidence packet a maintainer can accept.
+> ProofForge turns sourced software work into safe agent missions, evidence
+> packets, maintainer acceptance, and tracked credit. The goal is simple: prove
+> what an agent did, who owns it, and why it should count.
 
-Click:
+Click `Set up proof node`.
 
-- If the primary button says `Set up proof node`, click it.
-- If the primary button says `Start sourced proof`, click it and continue from
-  `First Run`.
+### 0:10-0:25 - Agent Setup
 
-### 0:10-0:25 - Register The Agent
+Show proof node identity, owner, skills, ENS, and blocked actions.
 
-Screen:
+Say:
 
-- Show Agent Setup.
-- Point at proof node identity, owner, skills, and blocked actions.
+> First we register the proof node. This is the agent that can inspect public
+> repos, run local checks, and package evidence. It cannot spend funds, open PRs,
+> or post comments on its own. The work stays bounded.
 
-Voiceover:
+Click `Register proof node`, then `Find source-backed work`.
 
-> The agent angle is not hidden. The product starts by registering a proof node:
-> who owns it, what it can do, and what it is blocked from doing. In V1, it can
-> inspect, run local checks, and package evidence. It cannot spend funds, open
-> PRs, or post externally without a human step.
+### 0:25-0:40 - Opportunities
 
-Click:
+Show `/#work-queue`, the GitHub issue import, and the mission list.
 
-- Click `Register proof node`.
-- Click `Find source-backed work`.
+Say:
 
-### 0:25-0:40 - Show Work Inventory
+> Work starts from a real source: a GitHub issue, project backlog, marketplace
+> task, or maintainer request. ProofForge turns that into missions the agent can
+> assess instead of letting it freestyle.
 
-Screen:
+Click `Assess` on `Validate installation docs`.
 
-- Show Opportunities at `/#work-queue`.
-- Show the imported GitHub issue field and the mission list.
+### 0:40-0:55 - Mission Detail
 
-Voiceover:
+Show source, reward, runtime, risk, acceptance owner, and agent assessment.
 
-> ProofForge does not ask agents to freestyle. Work starts from a source: a
-> GitHub issue, project backlog, marketplace task, or maintainer request. The
-> inventory separates ready missions from work that needs clarification.
+Say:
 
-Click:
+> Before anything runs, I can see what will be proven, what the agent is allowed
+> to do, who accepts the proof, and what value is attached. This is the contract
+> for the run.
 
-- Click `Assess` on `Validate installation docs`.
-- On Mission Detail, pause on source, reward, proofability, agent fit, and
-  acceptance owner.
+Click `Authorize agent run`.
 
-### 0:40-0:55 - Accept One Mission
+### 0:55-1:10 - Runner
 
-Screen:
+Show the run summary and live output.
 
-- Show Mission Detail at `/#mission-detail`.
+Say:
 
-Voiceover:
+> The proof node runs the local check, captures logs and environment details,
+> blocks external actions, and writes artifacts. No secrets, no funds, no public
+> posting.
 
-> Before the agent runs, the user sees what will be proven, which proof node
-> will run it, what value is attached, and what the acceptance path is. This is
-> the coordination layer: source, agent, proof, acceptance, value.
+Click `Review evidence packet`.
 
-Click:
+### 1:10-1:25 - Case File
 
-- Click `Authorize agent run`.
+Show result, artifacts, privacy, security, and 0G storage reference.
 
-### 0:55-1:15 - Run The Bounded Agent
+Say:
 
-Screen:
+> The output becomes a maintainer-ready case file: what was tested, what passed,
+> what failed, what was hidden, and where the public-safe packet is stored. Here
+> the proof is anchored with a 0G Storage reference.
 
-- Show Runner at `/#run`.
-- Keep Live output visible.
-- Show the proof trace if it fits cleanly; otherwise keep focus on the top run
-  summary and terminal-like output.
+Click `Submit to maintainer`.
 
-Voiceover:
+### 1:25-1:40 - Maintainer Review
 
-> Now the proof node runs inside the allowed boundary. It checks the source,
-> runs the local proof command, captures logs and environment, blocks external
-> actions, and writes the artifacts that become the evidence packet.
+Show the decision screen.
 
-Click:
+Say:
 
-- Click `Review evidence packet`.
+> The maintainer sees the proof, not agent noise. They can accept, request a
+> revision, or reject it. Acceptance creates the earned record, project credit,
+> and payout state.
 
-### 1:15-1:30 - Submit The Case File
+Click `Accept & Mark Earned`.
 
-Screen:
+### 1:40-1:55 - Earned State
 
-- Show Case File at `/#case-file`.
-- Show result, decision recommendation, artifacts, privacy, security, and 0G
-  storage reference if present.
+Show accepted Home state.
 
-Voiceover:
+Say:
 
-> The output is not just a screenshot or chat transcript. It is a case file with
-> runner output, verifier checks, privacy review, security boundaries, and a
-> public-safe packet. When configured, ProofForge can anchor the packet through
-> 0G Storage so the proof has a durable reference.
+> Now the work is accepted. V1 tracks payout manually, so we are not pretending
+> settlement is automatic. But the user has accepted proof, credit, reputation,
+> and a clear payout state they can use today.
 
-Click:
+Click `Release payout`, then `View public proof`.
 
-- Click `Submit to maintainer`.
+### 1:55-2:10 - Public Proof And Close
 
-### 1:30-1:45 - Maintainer Accepts
+Show `/#public-proof`: accepted proof, `proofrunner.jevpen.eth`, 0G storage,
+artifacts, and credit.
 
-Screen:
+Say:
 
-- Show Maintainer Review at `/#maintainer`.
-
-Voiceover:
-
-> The maintainer gets the decision surface, not agent noise. They can accept,
-> request revision, or reject. Acceptance creates the earned record, project
-> credit, and payout state.
-
-Click:
-
-- Click `Accept & Mark Earned`.
-
-### 1:45-2:05 - Show Earned Value And Public Proof
-
-Screen:
-
-- Show the accepted Home state after maintainer acceptance.
-- Then use My Work (`/#my-work`) only if you want a fuller work ledger shot.
-- Show accepted proof, earned payout, release state, reputation, and activity.
-
-Voiceover:
-
-> This is what makes it usable today: the work can be sourced, bounded, proven,
-> reviewed, and credited. V1 tracks payout manually, so it does not pretend to
-> be automatic settlement. It gives teams an auditable record they can use now.
-
-Click:
-
-- If visible, click `Release payout`.
-- Click `View public proof`.
-
-### 2:05-2:20 - Close On Proof And Prize Relevance
-
-Screen:
-
-- Show Public Proof at `/#public-proof`.
-- Then briefly show terminal output or generated files:
-
-```text
-demo-output/docs-install/packet/evidence-packet.json
-demo-output/docs-install/packet/case-file.md
-demo-output/docs-install/packet/public-packet.json
-demo-output/docs-install/packet/submission-evidence.md
-```
-
-Voiceover:
-
-> For 0G, ProofForge is agent infrastructure: a proof node, skill and permission
-> boundary, durable evidence storage, and a working example agent mission. The
-> ENS can resolve the agent identity attached to the packet. The next versions
-> make source ingestion live, add stronger sandboxing, add peer agent
-> coordination such as AXL, and move payout release from tracked/manual to real
-> on-chain settlement.
-
-Final line:
-
-> ProofForge is the missing coordination layer between sourced work, bounded
+> This is the shareable proof: the agent identity resolves through ENS, the
+> packet has a 0G storage reference, and the accepted work rolls up to the
+> builder. ProofForge is the coordination layer between sourced work, bounded
 > agents, maintainer trust, and portable proof of value.
 
 ## Fast Version If You Need 90 Seconds
