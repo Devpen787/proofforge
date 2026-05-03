@@ -171,6 +171,8 @@ function renderScreen(
           agentRegistered={state.agentRegistered}
           onAgentSetup={() => actions.setScreen("agent-setup")}
           onHelp={() => actions.setScreen("help")}
+          onExport={actions.exportWorkspace}
+          onReset={actions.resetWorkspace}
         />
       );
     case "help":

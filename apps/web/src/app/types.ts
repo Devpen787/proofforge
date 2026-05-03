@@ -46,6 +46,8 @@ export interface AppActions {
   openPublicProof: () => void;
   openOpportunities: () => void;
   openCaseFile: () => void;
+  exportWorkspace: () => void;
+  resetWorkspace: () => void;
   releasePayout: () => void;
   resolveRevision: () => void;
   runStarterMission: () => void;

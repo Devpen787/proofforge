@@ -80,6 +80,18 @@ function saveAppState(state: SavedAppState) {
   window.localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
 }
 
+function downloadJson(filename: string, data: unknown) {
+  const blob = new Blob([JSON.stringify(data, null, 2)], {
+    type: "application/json"
+  });
+  const url = URL.createObjectURL(blob);
+  const anchor = document.createElement("a");
+  anchor.href = url;
+  anchor.download = filename;
+  anchor.click();
+  URL.revokeObjectURL(url);
+}
+
 function useHashScreen() {
   const [screen, setScreenState] = React.useState<Screen>(screenFromHash);
 
@@ -158,6 +170,14 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     openPublicProof: () => setScreen("public-proof"),
     openOpportunities: () => setScreen("work-queue"),
     openCaseFile: () => setScreen("case-file"),
+    exportWorkspace: () => {
+      downloadJson("proofforge-workspace.json", readSavedAppState());
+    },
+    resetWorkspace: () => {
+      window.localStorage.removeItem(PERSIST_KEY);
+      window.location.hash = "opportunity";
+      window.location.reload();
+    },
     releasePayout: () => setReleased(true),
     resolveRevision: () => setScreen("case-file"),
     runStarterMission: () => {

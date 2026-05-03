@@ -242,6 +242,12 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Open tracked projects" }).click();
     await requireText(page, "Work in this project.");
 
+    await page.goto(`${baseUrl}/#settings`, { waitUntil: "networkidle" });
+    await requireText(page, "Local V1 state");
+    await requireText(page, "Browser local");
+    await requireText(page, "Export workspace");
+    await requireText(page, "Reset workspace");
+
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Import work" }).click();
     await requireText(page, "External QA task imported");

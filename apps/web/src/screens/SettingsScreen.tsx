@@ -5,11 +5,15 @@ import { StatusRow } from "../components/ui";
 export function SettingsScreen({
   agentRegistered,
   onAgentSetup,
-  onHelp
+  onHelp,
+  onExport,
+  onReset
 }: {
   agentRegistered: boolean;
   onAgentSetup: () => void;
   onHelp: () => void;
+  onExport: () => void;
+  onReset: () => void;
 }) {
   return (
     <section className="page-grid utility-grid">
@@ -53,6 +57,21 @@ export function SettingsScreen({
         <StatusRow label="Method" value="Manual / external" tone="good" />
         <StatusRow label="Wallet" value="Receipt reference only" tone="bad" />
         <StatusRow label="Release" value="After acceptance" tone="good" />
+      </section>
+
+      <section className="panel utility-panel">
+        <p className="small-label">Workspace</p>
+        <h2>Local V1 state</h2>
+        <StatusRow label="Storage" value="Browser local" tone="good" />
+        <StatusRow label="Mode" value="Single user" tone="good" />
+        <div className="settings-action-row">
+          <button className="secondary-action" onClick={onExport}>
+            Export workspace
+          </button>
+          <button className="danger-action" onClick={onReset}>
+            Reset workspace
+          </button>
+        </div>
       </section>
 
       <details className="panel wide utility-disclosure">

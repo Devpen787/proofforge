@@ -1,0 +1,7 @@
+{
+  "buildCommand": "npm run build -w apps/web",
+  "framework": "vite",
+  "installCommand": "npm install",
+  "outputDirectory": "apps/web/dist",
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
+}
