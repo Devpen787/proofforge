@@ -59,6 +59,14 @@ export interface AppActions {
   importWorkspaceFile: (file: File) => Promise<void>;
   exportNetworkRecord: () => Promise<void>;
   exportProjectRecord: () => Promise<void>;
+  publishProjectSync: (input: {
+    peerUrl?: string;
+    key: string;
+  }) => Promise<string>;
+  pullProjectSync: (input: {
+    peerUrl?: string;
+    key: string;
+  }) => Promise<string>;
   connectWallet: () => Promise<void>;
   signAcceptance: () => Promise<void>;
   recordPayoutReceipt: (receipt: string) => void;

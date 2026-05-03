@@ -72,13 +72,16 @@ V1/V1.5:
 - Upload records to 0G.
 - Publish sync manifests.
 - Pull records by 0G root and verify content hash/signature.
+- Publish and pull mutable shared project state through a GUN peer URL plus a
+  project sync key. This is for collaboration state, not final proof authority.
 
 V2:
 
 - Ceramic / ComposeDB for wallet-owned project, mission, review, and ledger
   streams.
 - GUN for lightweight local-first realtime sync if speed matters more than
-  queryability.
+  queryability. The first adapter is implemented in Settings as optional mutable
+  project sync.
 - OrbitDB if the app needs IPFS-native CRDT logs.
 
 ### Automatic Payout Settlement

@@ -13,6 +13,11 @@ import {
 } from "./acceptanceTypedData";
 import { createNetworkRecord, downloadJson } from "./networkRecords";
 import { createProjectRecord } from "./projectRecords";
+import {
+  normalizeProjectSyncKey,
+  publishProjectRecordToGun,
+  pullProjectRecordFromGun
+} from "./gunProjectSync";
 import { readSharedStateFromHash } from "./shareRecords";
 
 type SavedAppState = Omit<AppState, "screen">;
@@ -322,6 +327,21 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     exportProjectRecord: async () => {
       const record = await createProjectRecord(state);
       downloadJson(`${record.id}.proof-project-record.json`, record);
+    },
+    publishProjectSync: async (input) => {
+      const record = await createProjectRecord(state);
+      return publishProjectRecordToGun(record, {
+        key: normalizeProjectSyncKey(input.key),
+        peerUrl: input.peerUrl
+      });
+    },
+    pullProjectSync: async (input) => {
+      const record = await pullProjectRecordFromGun({
+        key: normalizeProjectSyncKey(input.key),
+        peerUrl: input.peerUrl
+      });
+      applySavedState(record.state);
+      return record.project.name;
     },
     connectWallet: async () => {
       const ethereum = getEthereumProvider();

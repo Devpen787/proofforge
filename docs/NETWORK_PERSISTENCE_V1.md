@@ -32,6 +32,10 @@ people.
   writes a project sync manifest with the 0G root and content hash.
 - `npm run sync:pull-project -- --manifest <project-sync.json>` can pull and
   verify that project snapshot before browser import.
+- Settings can publish or pull a mutable shared project through an optional GUN
+  peer URL and project sync key. Without a peer URL, it remains local-first in
+  the browser. This is the first realtime/open-source sync adapter; 0G project
+  records remain the verifiable snapshot fallback.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 
@@ -65,9 +69,11 @@ source work -> mission -> bounded agent proof -> evidence packet
 
 The V1 sync model is immutable-record sync, not realtime collaborative editing.
 ProofForge publishes accepted proof records and project snapshots, then other
-users pull and verify those records. This solves cross-machine proof and project
-state sharing without turning ProofForge into a custodial marketplace, repo
-permission system, or payment processor.
+users pull and verify those records. For mutable workspace coordination, the app
+can also publish a project record through GUN using a shared sync key and
+optional peer URL. This solves cross-machine proof and project state sharing
+without turning ProofForge into a custodial marketplace, repo permission system,
+or payment processor.
 
 ## What Remains For Full Network Production
 

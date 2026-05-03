@@ -214,6 +214,20 @@ async function runSmoke() {
     await requireText(page, "Import workspace file");
     await requireText(page, "Export network record");
     await requireText(page, "Export project record");
+    await requireText(page, "Publish shared project");
+    await page
+      .getByPlaceholder("docs-onboarding-sprint")
+      .fill("docs-onboarding-sprint-smoke");
+    await page.getByRole("button", { name: "Publish shared project" }).click();
+    await page
+      .getByText("Published proofforge/project/docs-onboarding", {
+        exact: false
+      })
+      .waitFor({ timeout: 5000 });
+    await page.getByRole("button", { name: "Pull shared project" }).click();
+    await page
+      .getByText("Pulled Docs Onboarding Sprint", { exact: false })
+      .waitFor({ timeout: 5000 });
     await page
       .getByPlaceholder("0x... or external receipt URL")
       .fill("https://etherscan.io/tx/0xproof");

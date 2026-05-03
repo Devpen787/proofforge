@@ -14,6 +14,8 @@ export function SettingsScreen({
   onImportWorkspaceFile,
   onExportNetworkRecord,
   onExportProjectRecord,
+  onPublishProjectSync,
+  onPullProjectSync,
   onConnectWallet,
   onRecordPayoutReceipt,
   onAgentSetup,
@@ -29,6 +31,14 @@ export function SettingsScreen({
   onImportWorkspaceFile: (file: File) => Promise<void>;
   onExportNetworkRecord: () => Promise<void>;
   onExportProjectRecord: () => Promise<void>;
+  onPublishProjectSync: (input: {
+    peerUrl?: string;
+    key: string;
+  }) => Promise<string>;
+  onPullProjectSync: (input: {
+    peerUrl?: string;
+    key: string;
+  }) => Promise<string>;
   onConnectWallet: () => void;
   onRecordPayoutReceipt: (receipt: string) => void;
   onAgentSetup: () => void;
@@ -36,6 +46,11 @@ export function SettingsScreen({
 }) {
   const importInputRef = React.useRef<HTMLInputElement | null>(null);
   const [receiptInput, setReceiptInput] = React.useState(payoutReceiptRef);
+  const [syncPeerUrl, setSyncPeerUrl] = React.useState("");
+  const [syncKey, setSyncKey] = React.useState("docs-onboarding-sprint");
+  const [syncStatus, setSyncStatus] = React.useState("Ready");
+
+  const syncInput = { peerUrl: syncPeerUrl, key: syncKey };
 
   return (
     <section className="page-grid utility-grid">
@@ -116,6 +131,7 @@ export function SettingsScreen({
         <StatusRow label="Reviewer links" value="Share state" tone="good" />
         <StatusRow label="Public proof" value="Share state" tone="good" />
         <StatusRow label="Project sync" value="Export-ready JSON" tone="good" />
+        <StatusRow label="Mutable sync" value={syncStatus} tone="good" />
         <StatusRow label="0G" value="Export-ready JSON" tone="good" />
         <StatusRow
           label="Payout receipt"
@@ -157,6 +173,61 @@ export function SettingsScreen({
             Export project record
           </button>
         </div>
+        <form
+          className="utility-action-stack"
+          onSubmit={(event) => {
+            event.preventDefault();
+          }}
+        >
+          <label>
+            <small>Project sync key</small>
+            <input
+              value={syncKey}
+              onChange={(event) => setSyncKey(event.currentTarget.value)}
+              placeholder="docs-onboarding-sprint"
+            />
+          </label>
+          <label>
+            <small>GUN peer URL</small>
+            <input
+              value={syncPeerUrl}
+              onChange={(event) => setSyncPeerUrl(event.currentTarget.value)}
+              placeholder="Optional peer, e.g. https://relay.example/gun"
+            />
+          </label>
+          <button
+            className="secondary-action full"
+            type="button"
+            onClick={() => {
+              setSyncStatus("Publishing...");
+              void onPublishProjectSync(syncInput)
+                .then((key) => setSyncStatus(`Published ${key}`))
+                .catch((error: unknown) =>
+                  setSyncStatus(
+                    error instanceof Error ? error.message : "Failed"
+                  )
+                );
+            }}
+          >
+            Publish shared project
+          </button>
+          <button
+            className="secondary-action full"
+            type="button"
+            onClick={() => {
+              setSyncStatus("Pulling...");
+              void onPullProjectSync(syncInput)
+                .then((project) => setSyncStatus(`Pulled ${project}`))
+                .catch((error: unknown) =>
+                  setSyncStatus(
+                    error instanceof Error ? error.message : "Failed"
+                  )
+                );
+            }}
+          >
+            Pull shared project
+          </button>
+        </form>
         <form
           className="utility-action-stack"
           onSubmit={(event) => {
