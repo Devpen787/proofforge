@@ -107,6 +107,8 @@ export interface AppActions {
   openPublicProof: () => void;
   openOpportunities: () => void;
   openCaseFile: () => void;
+  openEarnings: () => void;
+  openTrustCenter: () => void;
   exportWorkspace: () => void;
   resetWorkspace: () => void;
   releasePayout: () => void;

@@ -13,9 +13,11 @@ export function activeNavScreen(
   if (
     screen === "case-file" ||
     screen === "maintainer" ||
+    screen === "earnings" ||
     screen === "public-proof"
   )
     return "my-work";
+  if (screen === "trust-center") return "settings";
   if (screen === "builder-passport") return "builder-passport";
   if (screen === "agent-setup") return "opportunity";
   if (

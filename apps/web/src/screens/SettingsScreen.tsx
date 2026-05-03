@@ -1,11 +1,17 @@
 import React from "react";
 import { demoAgentIdentity } from "../demo";
-import { StatusRow } from "../components/ui";
+import { PageHeader, PageSurface, RowList, StatusRow } from "../components/ui";
 import type { AppState, ProofEvent, WalletIdentity } from "../app/types";
+
+function maskAddress(address?: string) {
+  if (!address) return "Not connected";
+  return `${address.slice(0, 6)}...${address.slice(-4)}`;
+}
 
 export function SettingsScreen({
   agentRegistered,
   onAgentSetup,
+  onTrustCenter,
   onHelp,
   onExport,
   onImport,
@@ -19,6 +25,7 @@ export function SettingsScreen({
 }: {
   agentRegistered: boolean;
   onAgentSetup: () => void;
+  onTrustCenter: () => void;
   onHelp: () => void;
   onExport: () => void;
   onImport: (state: Partial<Omit<AppState, "screen">>) => void;
@@ -39,86 +46,119 @@ export function SettingsScreen({
     onImport(JSON.parse(text) as Partial<Omit<AppState, "screen">>);
   };
   return (
-    <section className="page-grid utility-grid">
-      <div className="utility-hero wide">
-        <div>
-          <p className="small-label">Settings</p>
-          <h1>Connections, agent, payout preferences.</h1>
-          <p>
-            Configure the rails once. Keep the work screens focused on doing the
-            work.
-          </p>
-        </div>
-        <button className="primary-action" onClick={onAgentSetup}>
-          {agentRegistered ? "Review agent" : "Set up proof node"}
-        </button>
-      </div>
+    <PageSurface className="wide pf-settings-surface">
+      <PageHeader
+        eyebrow="Settings"
+        title="Connections and demo readiness."
+        subtitle="Account rails live here so proof workflows stay focused."
+        actions={
+          <button className="primary-action" onClick={onAgentSetup}>
+            {agentRegistered ? "Review agent" : "Set up proof node"}
+          </button>
+        }
+      />
 
-      <section className="panel utility-panel">
-        <p className="small-label">Sources</p>
-        <h2>Work imports</h2>
-        <StatusRow label="GitHub" value="Issue import ready" tone="good" />
-        <StatusRow label="Marketplace" value="Manual import" tone="good" />
-        <StatusRow label="Project backlog" value="Demo source" tone="good" />
-      </section>
+      <div className="pf-settings-layout">
+        <RowList className="pf-settings-groups">
+          <section>
+            <p className="small-label">Work sources</p>
+            <StatusRow label="GitHub" value="Issue import ready" tone="good" />
+            <StatusRow label="Marketplace" value="Manual import" tone="good" />
+            <StatusRow
+              label="Project backlog"
+              value="Local demo source"
+              tone="good"
+            />
+          </section>
+          <section>
+            <p className="small-label">Agent</p>
+            <StatusRow
+              label={demoAgentIdentity.id}
+              value={agentRegistered ? "Registered" : "Local profile"}
+              tone={agentRegistered ? "good" : "bad"}
+            />
+            <StatusRow
+              label="Owner"
+              value={demoAgentIdentity.owner}
+              tone="good"
+            />
+            <StatusRow
+              label="Skills"
+              value="docs, repo, command, evidence"
+              tone="good"
+            />
+          </section>
+          <section>
+            <p className="small-label">Wallet and payout</p>
+            <StatusRow
+              label="Wallet"
+              value={maskAddress(walletIdentity?.address)}
+              tone={walletIdentity?.address ? "good" : "bad"}
+            />
+            <StatusRow label="Payout" value="Manual/external" tone="good" />
+            <StatusRow label="Release" value="After acceptance" tone="good" />
+          </section>
+          <section>
+            <p className="small-label">0G-ready proof record</p>
+            <StatusRow
+              label="Events"
+              value={String(proofEvents.length)}
+              tone="good"
+            />
+            <StatusRow
+              label="Latest hash"
+              value={proofEvents.at(-1)?.eventHash ?? "No events yet"}
+              tone={proofEvents.length ? "good" : "bad"}
+            />
+            <StatusRow
+              label="Signature"
+              value={
+                proofEvents.at(-1)?.signature ? "Wallet signed" : "Unsigned"
+              }
+              tone={proofEvents.at(-1)?.signature ? "good" : "bad"}
+            />
+          </section>
+        </RowList>
 
-      <section className="panel utility-panel">
-        <p className="small-label">Agent</p>
-        <h2>{demoAgentIdentity.id}</h2>
-        <StatusRow
-          label="Status"
-          value={agentRegistered ? "Registered" : "Local profile"}
-          tone={agentRegistered ? "good" : "bad"}
-        />
-        <StatusRow label="Identity" value="8004-ready" tone="good" />
-        <StatusRow label="Skills" value="8239-ready" tone="good" />
-      </section>
-
-      <section className="panel utility-panel">
-        <p className="small-label">Payout</p>
-        <h2>Collection rules</h2>
-        <StatusRow label="Method" value="Manual / external" tone="good" />
-        <StatusRow
-          label="Wallet"
-          value={
-            walletIdentity?.address
-              ? `${walletIdentity.address.slice(0, 6)}...${walletIdentity.address.slice(-4)}`
-              : "Not connected"
-          }
-          tone={walletIdentity?.address ? "good" : "bad"}
-        />
-        <StatusRow label="Release" value="After acceptance" tone="good" />
-        <div className="settings-action-row">
-          <button className="secondary-action" onClick={onConnectWallet}>
+        <aside className="pf-settings-actions">
+          <p className="small-label">Actions</p>
+          <button className="secondary-action full" onClick={onConnectWallet}>
             Connect wallet
           </button>
-        </div>
-        <label className="settings-field">
-          <span>Agent ENS</span>
-          <input
-            aria-label="Agent ENS name"
-            value={ensName}
-            onChange={(event) => setEnsName(event.target.value)}
-          />
-        </label>
-        <button
-          className="secondary-action"
-          onClick={() => onSaveEnsName(ensName)}
-        >
-          Save ENS name
-        </button>
-      </section>
-
-      <section className="panel utility-panel">
-        <p className="small-label">Workspace</p>
-        <h2>Local V1 state</h2>
-        <StatusRow label="Storage" value="Browser local" tone="good" />
-        <StatusRow label="Mode" value="Single user" tone="good" />
-        <div className="settings-action-row">
-          <button className="secondary-action" onClick={onExport}>
+          <button className="secondary-action full" onClick={onTrustCenter}>
+            Trust Center
+          </button>
+          <label className="settings-field">
+            <span>Agent ENS</span>
+            <input
+              aria-label="Agent ENS name"
+              value={ensName}
+              onChange={(event) => setEnsName(event.target.value)}
+            />
+          </label>
+          <button
+            className="secondary-action full"
+            onClick={() => onSaveEnsName(ensName)}
+          >
+            Save ENS name
+          </button>
+          <button
+            className="secondary-action full"
+            onClick={onSignLatestProofEvent}
+            disabled={!proofEvents.length}
+          >
+            Sign latest proof event
+          </button>
+          <button
+            className="secondary-action full"
+            onClick={onExportProofRecord}
+          >
+            Export proof record
+          </button>
+          <button className="secondary-action full" onClick={onExport}>
             Export workspace
           </button>
-          <label className="secondary-action settings-file-action">
+          <label className="secondary-action full settings-file-action">
             Import workspace
             <input
               aria-label="Import workspace file"
@@ -127,69 +167,14 @@ export function SettingsScreen({
               onChange={(event) => importWorkspace(event.target.files?.[0])}
             />
           </label>
-          <button className="danger-action" onClick={onReset}>
+          <button className="danger-action full" onClick={onReset}>
             Reset workspace
           </button>
-        </div>
-      </section>
-
-      <section className="panel utility-panel">
-        <p className="small-label">Proof record</p>
-        <h2>Signed event chain</h2>
-        <StatusRow
-          label="Events"
-          value={String(proofEvents.length)}
-          tone="good"
-        />
-        <StatusRow
-          label="Latest hash"
-          value={proofEvents.at(-1)?.eventHash ?? "No events yet"}
-          tone={proofEvents.length ? "good" : "bad"}
-        />
-        <StatusRow
-          label="Signature"
-          value={proofEvents.at(-1)?.signature ? "Wallet signed" : "Unsigned"}
-          tone={proofEvents.at(-1)?.signature ? "good" : "bad"}
-        />
-        <div className="settings-action-row">
-          <button
-            className="secondary-action"
-            onClick={onSignLatestProofEvent}
-            disabled={!proofEvents.length}
-          >
-            Sign latest
+          <button className="secondary-action full" onClick={onHelp}>
+            Open Help
           </button>
-          <button className="secondary-action" onClick={onExportProofRecord}>
-            Export record
-          </button>
-        </div>
-      </section>
-
-      <details className="panel wide utility-disclosure">
-        <summary>
-          <span>
-            <small className="small-label">Defaults</small>
-            <strong>Privacy and safety policy</strong>
-          </span>
-          <b>Show</b>
-        </summary>
-        <div className="utility-rule-grid">
-          {[
-            ["Public comments", "Require approval"],
-            ["Pull requests", "Require approval"],
-            ["Secrets", "Never mounted"],
-            ["Raw logs", "Private by default"],
-            ["Local paths", "Masked"],
-            ["Funds", "Never spent by agent"]
-          ].map(([label, value]) => (
-            <StatusRow key={label} label={label} value={value} tone="good" />
-          ))}
-        </div>
-      </details>
-
-      <button className="secondary-action utility-help-link" onClick={onHelp}>
-        Open Help
-      </button>
-    </section>
+        </aside>
+      </div>
+    </PageSurface>
   );
 }

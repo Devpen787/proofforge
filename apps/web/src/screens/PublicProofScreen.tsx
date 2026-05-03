@@ -1,6 +1,7 @@
 import React from "react";
 import { generatedProofSummary } from "../demo";
 import { getMissionDisplay } from "../app/missionDisplay";
+import { buildShareUrl, type ShareState } from "../app/shareRecords";
 import type {
   ActiveMission,
   ImportedMission,
@@ -14,12 +15,14 @@ export function PublicProofScreen({
   projectRequest,
   importedMission,
   payoutReceipt,
+  shareState,
   onBack
 }: {
   activeMission: ActiveMission;
   projectRequest: ProjectRequest;
   importedMission: ImportedMission | null;
   payoutReceipt: PayoutReceipt | null;
+  shareState: ShareState;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -61,8 +64,10 @@ export function PublicProofScreen({
     })
   );
   const copyPublicLink = async () => {
-    const url = new URL(window.location.href);
-    url.hash = `public-proof?packet=${encodeURIComponent(mission.packetId)}`;
+    const url = buildShareUrl("public-proof", {
+      ...shareState,
+      accepted: true
+    });
     await navigator.clipboard?.writeText(url.toString()).catch(() => undefined);
     setCopied(true);
   };

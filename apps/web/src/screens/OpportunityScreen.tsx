@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  demoAgentIdentity,
-  demoProject,
-  demoWork,
-  generatedProofSummary
-} from "../demo";
+import { demoProject, demoWork, generatedProofSummary } from "../demo";
 import type { ActiveMission } from "../app/types";
 
 export function OpportunityScreen({
@@ -50,7 +45,7 @@ export function OpportunityScreen({
         ? "Packet rejected."
         : accepted || released
           ? "Proof accepted."
-          : "Find work. Prove it. Get credited.";
+          : "Find useful work. Prove it. Earn accepted credit.";
   const heroBody = !agentRegistered
     ? "Connect the local worker before running sourced tasks."
     : revisionRequested
@@ -66,245 +61,142 @@ export function OpportunityScreen({
     ? "Set up proof node"
     : revisionRequested
       ? "Open Case File"
-      : accepted && !released
-        ? "Release payout"
-        : "Start sourced proof";
+      : released
+        ? "View public proof"
+        : accepted && !released
+          ? "Release payout"
+          : "Start sourced proof";
   const handlePrimary = !agentRegistered
     ? onAgentSetup
     : revisionRequested
       ? onResolveRevision
-      : accepted && !released
-        ? onRelease
-        : onStart;
+      : released
+        ? onPublicProof
+        : accepted && !released
+          ? onRelease
+          : onStart;
+  const selectedWork = demoWork[1] || demoWork[0];
 
   return (
-    <section className="page-grid home-grid">
-      <div className="home-start-card wide">
-        <div className="home-start-copy">
-          <span className="status-pill safe">{packetState}</span>
+    <section className="page-grid pf-home-reference">
+      <div className="pf-home-hero">
+        <div className="pf-home-copy">
+          <span className="pf-state-chip">{packetState}</span>
           <h1>{heroTitle}</h1>
           <p>{heroBody}</p>
-          <div className="home-actions">
+          <div className="pf-home-actions">
             <button className="primary-action" onClick={handlePrimary}>
               {primaryAction}
             </button>
-            {!agentRegistered && (
-              <button
-                className="secondary-action"
-                onClick={onViewOpportunities}
-              >
-                See source-backed work
-              </button>
-            )}
-            {revisionRequested && (
-              <button className="secondary-action" onClick={onStart}>
-                Start sourced proof
-              </button>
-            )}
-            {(accepted || released) && (
-              <button className="secondary-action" onClick={onPublicProof}>
-                View public proof
-              </button>
-            )}
+            <button className="secondary-action" onClick={onViewOpportunities}>
+              View source-backed work
+            </button>
           </div>
         </div>
-        <aside className="home-profile-panel">
-          <div className="home-profile-head">
-            <span className="mini-avatar">A</span>
-            <span>
-              <strong>Alex</strong>
-              <small>
-                {agentRegistered ? demoAgentIdentity.id : "No node yet"}
-              </small>
-            </span>
+
+        <aside className="pf-selected-mission" aria-label="Selected mission">
+          <div className="pf-selected-topline">
+            <span>Selected mission</span>
+            <b>{agentRegistered ? "Ready" : "Node needed"}</b>
           </div>
-          <div className="home-profile-grid">
-            <span>
-              <small>Wallet</small>
-              <strong>{released ? "Released" : "Manual payout"}</strong>
+          <h2>{selectedWork.title}</h2>
+          <div className="pf-selected-card">
+            <span className="pf-play-dot" aria-hidden="true">
+              ▶
             </span>
-            <span>
-              <small>Project</small>
-              <strong>{demoProject.name}</strong>
-            </span>
-            <span>
-              <small>Reputation</small>
-              <strong>164</strong>
-            </span>
-            <span>
-              <small>Level</small>
-              <strong>4</strong>
-            </span>
+            <div>
+              <strong>
+                {selectedWork.risk} · {selectedWork.runtime}
+              </strong>
+              <small>Accepted by {selectedWork.owner}</small>
+            </div>
           </div>
+          <dl>
+            <div>
+              <dt>Reward</dt>
+              <dd>{selectedWork.reward} + rep + credits</dd>
+            </div>
+            <div>
+              <dt>Approval</dt>
+              <dd>Before submit</dd>
+            </div>
+            <div>
+              <dt>Project</dt>
+              <dd>{demoProject.name}</dd>
+            </div>
+          </dl>
         </aside>
       </div>
 
-      <section className="home-tracker-strip wide">
-        <span>
-          <strong>{accepted || released ? "$8" : "$0"}</strong>
-          <small>Earned</small>
-        </span>
-        <span>
-          <strong>{accepted && !released ? "$8" : "$0"}</strong>
-          <small>Pending release</small>
-        </span>
-        <span>
-          <strong>{demoProject.acceptedProof}</strong>
-          <small>Project proofs</small>
-        </span>
-        <span>
-          <strong>{demoProject.opportunities.length}</strong>
-          <small>Open missions</small>
-        </span>
-      </section>
-
-      {agentRegistered && !accepted && !released && (
-        <section className="panel wide home-work-compact">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Ready work</p>
-              <h2>Pick one sourced mission.</h2>
-            </div>
-            <button className="link-button" onClick={onViewOpportunities}>
-              View all
-            </button>
-          </div>
-          {demoWork.slice(0, 2).map((work) => (
-            <button className="work-row" key={work.title} onClick={onStart}>
-              <span className="work-main">
-                <strong>{work.title}</strong>
-                <small>{work.repo}</small>
-              </span>
-              <span className="work-owner">
-                <small>Accepts proof</small>
-                <b>{work.owner}</b>
-              </span>
-              <b>{work.reward}</b>
-              <small>{work.runtime}</small>
-              <span className={`status-pill ${work.tone}`}>{work.risk}</span>
-              <span className="start-pill">Start</span>
-            </button>
-          ))}
+      {accepted || released ? (
+        <section className="pf-accepted-summary" aria-label="Accepted proof">
+          <span>
+            <small>Proof</small>
+            <strong>{generatedProofSummary.mission}</strong>
+          </span>
+          <span>
+            <small>Accepted by</small>
+            <strong>{generatedProofSummary.acceptedBy}</strong>
+          </span>
+          <span>
+            <small>Earned</small>
+            <strong>{generatedProofSummary.payout.amount}</strong>
+          </span>
+          <span>
+            <small>Release</small>
+            <strong>{released ? "Released" : "Pending"}</strong>
+          </span>
         </section>
-      )}
+      ) : null}
 
-      {(revisionRequested || rejected) && (
-        <section className="panel wide home-work-compact">
-          <div className="section-heading">
-            <h2>Ready work for you</h2>
-            <button className="link-button" onClick={onViewOpportunities}>
-              View all opportunities
-            </button>
+      <section className="pf-work-table-card">
+        <div className="pf-table-heading">
+          <div>
+            <p className="small-label">Ready work for you</p>
+            <h2>Choose useful work with a clear proof path.</h2>
           </div>
-          {demoWork.slice(0, 2).map((work) => (
-            <button className="work-row" key={work.title} onClick={onStart}>
-              <span className="work-main">
-                <strong>{work.title}</strong>
-                <small>{work.repo}</small>
-              </span>
-              <span className="work-owner">
-                <small>Accepts proof</small>
-                <b>{work.owner}</b>
-              </span>
-              <b>{work.reward}</b>
-              <small>{work.runtime}</small>
-              <span className={`status-pill ${work.tone}`}>{work.risk}</span>
-              <span className="start-pill">Start</span>
-            </button>
-          ))}
-        </section>
-      )}
+          <button className="secondary-action" onClick={onViewOpportunities}>
+            View all opportunities
+          </button>
+        </div>
 
-      {(accepted || released) && (
-        <section className="panel wide home-work-compact">
-          <div className="section-heading">
-            <div>
-              <p className="small-label">Accepted proof</p>
-              <h2>Credit and next work.</h2>
-            </div>
-            <button className="link-button" onClick={onViewOpportunities}>
-              View opportunities
-            </button>
+        <div className="pf-work-table" role="table" aria-label="Ready work">
+          <div className="pf-work-head" role="row">
+            <span>Mission</span>
+            <span>Accepts proof</span>
+            <span>Reward</span>
+            <span>Runtime</span>
+            <span>Risk</span>
+            <span />
           </div>
-          <div className="home-proof-summary">
-            <span>
-              <small>Proof</small>
-              <strong>{generatedProofSummary.mission}</strong>
-            </span>
-            <span>
-              <small>Accepted by</small>
-              <strong>{generatedProofSummary.acceptedBy}</strong>
-            </span>
-            <span>
-              <small>Earned</small>
-              <strong>{generatedProofSummary.payout.amount}</strong>
-            </span>
-            <span>
-              <small>Release</small>
-              <strong>{released ? "Released" : "Pending"}</strong>
-            </span>
-            <span>
-              <small>Stored on</small>
-              <strong>
-                {generatedProofSummary.protocolRefs.storageProvider}
-              </strong>
-            </span>
-          </div>
-          <div className="home-next-work">
-            {demoWork.slice(0, 2).map((work) => (
-              <button className="work-row" key={work.title} onClick={onStart}>
-                <span className="work-main">
+          {demoWork.map((work) => (
+            <button
+              className="pf-work-table-row"
+              key={work.title}
+              onClick={onStart}
+              role="row"
+            >
+              <span className="pf-work-title" role="cell">
+                <i aria-hidden="true">▶</i>
+                <span>
                   <strong>{work.title}</strong>
                   <small>{work.repo}</small>
                 </span>
-                <span className="work-owner">
-                  <small>Accepts proof</small>
-                  <b>{work.owner}</b>
-                </span>
-                <b>{work.reward}</b>
-                <small>{work.runtime}</small>
-                <span className={`status-pill ${work.tone}`}>{work.risk}</span>
-                <span className="start-pill">Start</span>
-              </button>
-            ))}
-          </div>
-        </section>
-      )}
-
-      <section className="panel wide home-activity-panel">
-        <div className="section-heading">
-          <div>
-            <p className="small-label">Activity</p>
-            <h2>What changed.</h2>
-          </div>
-          <button className="link-button" onClick={onViewOpportunities}>
-            Find work
-          </button>
-        </div>
-        <div className="home-activity-list">
-          <span>
-            <b>Proof node</b>
-            <strong>
-              {agentRegistered ? "Ready for local runs" : "Setup needed"}
-            </strong>
-            <small>Current</small>
-          </span>
-          <span>
-            <b>Project</b>
-            <strong>{demoProject.name}</strong>
-            <small>{demoProject.opportunities.length} sourced missions</small>
-          </span>
-          <span>
-            <b>Latest proof</b>
-            <strong>
-              {accepted || released
-                ? "Accepted by maintainer"
-                : "No packet submitted"}
-            </strong>
-            <small>
-              {accepted || released ? "+12 reputation" : "Start a mission"}
-            </small>
-          </span>
+              </span>
+              <span role="cell">
+                <small>Accepts proof</small>
+                <b>{work.owner}</b>
+              </span>
+              <b role="cell">{work.reward}</b>
+              <span role="cell">{work.runtime}</span>
+              <span className={`status-pill ${work.tone}`} role="cell">
+                {work.risk}
+              </span>
+              <span className="start-pill" role="cell">
+                Start
+              </span>
+            </button>
+          ))}
         </div>
       </section>
     </section>

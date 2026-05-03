@@ -20,6 +20,8 @@ describe("web routes", () => {
       "run",
       "case-file",
       "maintainer",
+      "earnings",
+      "trust-center",
       "scoreboard",
       "public-proof",
       "settings",
@@ -37,6 +39,8 @@ describe("web routes", () => {
     expect(routeLabels["builder-passport"]).toBe("Passport");
     expect(routeLabels["mission-detail"]).toBe("Mission Detail");
     expect(routeLabels["case-file"]).toBe("Case File");
+    expect(routeLabels.earnings).toBe("Earnings");
+    expect(routeLabels["trust-center"]).toBe("Trust Center");
     expect(routeLabels.scoreboard).toBe("Home");
     expect(routeLabels["public-proof"]).toBe("Public Proof");
     expect(routeLabels.settings).toBe("Settings");

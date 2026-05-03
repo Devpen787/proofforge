@@ -1,0 +1,23 @@
+@media (min-width: 761px) {
+  .main {
+    overflow: visible;
+  }
+
+  .page-grid {
+    max-width: none;
+  }
+
+  .pf-page-surface {
+    max-width: none;
+  }
+
+  .work-queue-grid,
+  .project-room-grid,
+  .packet-grid,
+  .runner-grid,
+  .mission-detail-grid,
+  .maintainer-grid,
+  .first-run-grid {
+    width: min(1180px, calc(100vw - 296px));
+  }
+}

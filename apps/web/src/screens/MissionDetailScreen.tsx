@@ -6,7 +6,50 @@ import type {
   ImportedMission,
   ProjectRequest
 } from "../app/types";
-import { StatusBlock, StatusRow } from "../components/ui";
+import {
+  ActionBar,
+  DetailPane,
+  PageHeader,
+  PageSurface,
+  RowList,
+  StatusRow
+} from "../components/ui";
+
+function criteriaFor(activeMission: ActiveMission, imported: boolean) {
+  if (activeMission === "request") {
+    return [
+      "Project steward request is attached",
+      "Acceptance owner and value are clear",
+      "Evidence packet can prove the requested outcome"
+    ];
+  }
+  if (activeMission === "github" && imported) {
+    return [
+      "Original GitHub issue stays attached",
+      "Proof target is derived from public issue context",
+      "No comment or PR is posted without approval"
+    ];
+  }
+  if (activeMission === "checkout") {
+    return [
+      "Chrome checkout completes with expected confirmation",
+      "Safari result is captured with logs",
+      "No payment credentials or customer data are exposed"
+    ];
+  }
+  return [
+    "Documented command runs in a clean fixture",
+    "Failure or success is captured with logs",
+    "Maintainer can understand the next fix"
+  ];
+}
+
+function sourceKind(mission: ReturnType<typeof getMissionDisplay>) {
+  if (mission.sourceUrl.startsWith("project://")) return "Project request";
+  if (mission.sourceUrl.includes("github.com")) return "GitHub issue";
+  if (mission.sourceLabel) return mission.sourceLabel;
+  return "External source";
+}
 
 export function MissionDetailScreen({
   activeMission,
@@ -26,179 +69,127 @@ export function MissionDetailScreen({
     projectRequest,
     importedMission
   });
-  const owner = mission.owner;
-  const missionTitle = mission.title;
-  const missionObjective = mission.objective;
-  const missionReward = mission.reward;
-  const missionRepo = mission.repo;
-  const successCriteria =
-    activeMission === "request"
-      ? [
-          "Project steward request is attached",
-          "Acceptance owner and value are clear",
-          "Evidence packet can prove the requested outcome"
-        ]
-      : activeMission === "github" && importedMission
-        ? [
-            "Original GitHub issue stays attached",
-            "Proof target is derived from public issue context",
-            "No comment or PR is posted without maintainer approval"
-          ]
-        : activeMission === "checkout"
-          ? [
-              "Chrome checkout completes with expected confirmation",
-              "Safari result is captured with logs",
-              "No payment credentials or customer data are exposed"
-            ]
-          : activeMission === "docs"
-            ? [
-                "Documented command is run in a clean fixture",
-                "Failure or success is captured with logs",
-                "Maintainer can understand the next fix"
-              ]
-            : mission.submissionRequirements.slice(0, 3);
-  const sourceLabel =
-    activeMission === "request"
-      ? "Project request"
-      : activeMission === "github"
-        ? "GitHub issue"
-        : activeMission === "checkout"
-          ? "Marketplace task"
-          : mission.sourceUrl.includes("github.com")
-            ? "GitHub issue"
-            : "Project backlog";
-  const valueLabel = `${missionReward} if accepted`;
-  const agentChecks =
-    activeMission === "checkout"
-      ? [
-          "Confirmed browser targets after clarification",
-          "Can capture screenshots and console logs",
-          "Cannot touch payment credentials or customer data"
-        ]
-      : activeMission === "docs"
-        ? [
-            "Checked public source issue and repo fixture",
-            "Can run the documented install command locally",
-            "Cannot post comments, open PRs, or spend funds"
-          ]
-        : activeMission === "github" && importedMission
-          ? [
-              `Imported ${importedMission.repo} issue #${importedMission.issueNumber ?? "source"}`,
-              "Can inspect the source and package reproducible evidence",
-              "Cannot post comments, open PRs, or spend funds"
-            ]
-          : [
-              `Checked ${sourceLabel.toLowerCase()} and repo fixture`,
-              "Can run bounded local checks and capture evidence",
-              "Cannot post comments, open PRs, or spend funds"
-            ];
+  const source = sourceKind(mission);
+  const successCriteria = criteriaFor(activeMission, Boolean(importedMission));
+  const packageFiles = [
+    "evidence-packet.json",
+    "case-file.md",
+    "runner-result.json",
+    "stdout.log"
+  ];
 
   return (
     <section className="page-grid mission-detail-grid">
-      <header className="page-header">
-        <span>Mission Detail / {missionTitle}</span>
-        <button className="secondary-action" onClick={onBack}>
-          Back to Opportunities
-        </button>
-      </header>
-      <div className="mission-decision-hero wide">
-        <div>
-          <p className="small-label">Agent assessment</p>
-          <h2>{missionTitle}</h2>
-          <p>{missionObjective}</p>
-          <div className="mission-detail-facts">
-            <StatusBlock label="Accepts proof" value={owner} />
-            <StatusBlock label="Risk" value={mission.risk} />
-            <StatusBlock label="Runtime" value={mission.runtime} />
-            <StatusBlock label="Source" value={missionRepo} />
-          </div>
-        </div>
-        <aside className="mission-run-card">
-          <span>Authorize bounded run</span>
-          <strong>{missionReward}</strong>
-          <small>{mission.valuePath}</small>
-          <button className="primary-action full" onClick={onAccept}>
-            Authorize agent run
-          </button>
-        </aside>
-      </div>
-      <div className="panel mission-review-panel wide">
-        <div className="mission-review-header">
-          <div>
-            <p className="small-label">Before you run</p>
-            <h2>Confirm the source, agent fit, and proof target.</h2>
-          </div>
-          <StatusRow label="Source" value={sourceLabel} tone="good" />
-          <StatusRow label="Value" value={valueLabel} tone="good" />
+      <PageSurface className="wide">
+        <PageHeader
+          eyebrow="Mission preflight"
+          title={mission.title}
+          subtitle={mission.objective}
+          actions={
+            <>
+              <button className="secondary-action" onClick={onBack}>
+                Back to opportunities
+              </button>
+              <button className="primary-action" onClick={onAccept}>
+                Authorize bounded run
+              </button>
+            </>
+          }
+        />
+
+        <div className="pf-preflight-summary">
+          <StatusRow label="Source" value={source} tone="good" />
+          <StatusRow label="Accepts proof" value={mission.owner} tone="good" />
+          <StatusRow label="Value" value={mission.reward} tone="good" />
+          <StatusRow label="Safety" value={mission.risk} tone="good" />
+          <StatusRow label="Runtime" value={mission.runtime} tone="good" />
         </div>
 
-        <div className="mission-review-grid">
+        <div className="pf-mission-layout">
           <div>
-            <h3>Success criteria</h3>
-            <div className="mission-criteria-list">
+            <div className="pf-section-title">
+              <p className="small-label">Requirements</p>
+              <h2>Run only if this proof target is clear.</h2>
+            </div>
+
+            <RowList className="pf-check-list">
               {successCriteria.map((item) => (
-                <span key={item}>{item}</span>
+                <div key={item}>
+                  <span>✓</span>
+                  <strong>{item}</strong>
+                </div>
               ))}
+            </RowList>
+
+            <div className="pf-proof-package">
+              <div>
+                <p className="small-label">Proof package</p>
+                <h2>What the packet will include.</h2>
+              </div>
+              <div>
+                {packageFiles.map((file) => (
+                  <span key={file}>{file}</span>
+                ))}
+              </div>
             </div>
-          </div>
-          <div>
-            <h3>Agent assessment</h3>
-            <div className="mission-criteria-list">
-              {agentChecks.map((item) => (
-                <span key={item}>{item}</span>
-              ))}
-            </div>
-          </div>
-          <div>
-            <h3>Mission terms</h3>
-            <div className="mission-source-grid">
-              <StatusRow
-                label="Proof node"
-                value={demoAgentIdentity.id}
-                tone="good"
-              />
-              {demoMissionTerms.map((term) => (
+
+            <details className="pf-compact-details">
+              <summary>Full requirements and source link</summary>
+              <div>
                 <StatusRow
-                  key={term.label}
-                  label={term.label}
-                  value={term.label === "Acceptance owner" ? owner : term.value}
+                  label="Source URL"
+                  value={mission.sourceUrl}
                   tone="good"
                 />
-              ))}
-            </div>
+                <StatusRow
+                  label="Value path"
+                  value={mission.valuePath}
+                  tone="good"
+                />
+                {mission.submissionRequirements.map((requirement) => (
+                  <StatusRow
+                    key={requirement}
+                    label={requirement}
+                    value="Required"
+                    tone="good"
+                  />
+                ))}
+              </div>
+            </details>
           </div>
+
+          <DetailPane eyebrow="Bounded agent" title={demoAgentIdentity.id}>
+            <StatusRow
+              label="Owner"
+              value={demoAgentIdentity.owner}
+              tone="good"
+            />
+            <StatusRow
+              label="Skills"
+              value={demoAgentIdentity.skills.join(", ")}
+              tone="good"
+            />
+            {demoMissionTerms.slice(3).map((term) => (
+              <StatusRow
+                key={term.label}
+                label={term.label}
+                value={term.value}
+                tone="good"
+              />
+            ))}
+            <div className="pf-agent-boundary">
+              <span>Allowed: clone repo, run commands, capture logs.</span>
+              <span>Blocked: PRs, comments, secrets, funds.</span>
+            </div>
+          </DetailPane>
         </div>
 
-        <details className="mission-detail-disclosure">
-          <summary>
-            <span>Details</span>
-            <b>No external action</b>
-          </summary>
-          <div className="mission-detail-disclosure-grid">
-            <div>
-              <h3>Source requirements</h3>
-              <StatusRow
-                label="Source URL"
-                value={mission.sourceUrl}
-                tone="good"
-              />
-              <StatusRow
-                label="Value path"
-                value={mission.valuePath}
-                tone="good"
-              />
-              {mission.submissionRequirements.map((requirement) => (
-                <StatusRow
-                  key={requirement}
-                  label={requirement}
-                  value="Required"
-                  tone="good"
-                />
-              ))}
-            </div>
-          </div>
-        </details>
-      </div>
+        <ActionBar>
+          <span className="status-pill safe">
+            No external action before approval
+          </span>
+        </ActionBar>
+      </PageSurface>
     </section>
   );
 }

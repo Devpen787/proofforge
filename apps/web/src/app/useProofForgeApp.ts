@@ -25,10 +25,30 @@ import {
   type SavedAppState
 } from "./workspaceState";
 import { useHashScreen } from "./useHashScreen";
+import { readSharedStateFromHash } from "./shareRecords";
 
 export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const { screen, setScreen } = useHashScreen();
-  const savedState = React.useMemo(() => readSavedAppState(), []);
+  const savedState = React.useMemo(() => {
+    const query = new URLSearchParams(window.location.search);
+    const seedRegistered = query.get("seed") === "registered";
+    return {
+      ...readSavedAppState(),
+      ...(readSharedStateFromHash() ?? {}),
+      ...(seedRegistered
+        ? {
+            activeMission: "docs" as ActiveMission,
+            agentRegistered: true,
+            packetReady: false,
+            submitted: false,
+            accepted: false,
+            released: false,
+            revisionRequested: false,
+            rejected: false
+          }
+        : {})
+    };
+  }, []);
   const [packetReady, setPacketReady] = React.useState(savedState.packetReady);
   const [submitted, setSubmitted] = React.useState(savedState.submitted);
   const [accepted, setAccepted] = React.useState(savedState.accepted);
@@ -164,6 +184,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     openPublicProof: () => setScreen("public-proof"),
     openOpportunities: () => setScreen("work-queue"),
     openCaseFile: () => setScreen("case-file"),
+    openEarnings: () => setScreen("earnings"),
+    openTrustCenter: () => setScreen("trust-center"),
     exportWorkspace: () => {
       downloadJson("proofforge-workspace.json", readSavedAppState());
     },
@@ -224,7 +246,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setAccepted(true);
       setReleased(false);
       appendEvent("packet_accepted");
-      setScreen("opportunity");
+      setScreen("my-work");
     },
     requestRevision: () => {
       setSubmitted(false);

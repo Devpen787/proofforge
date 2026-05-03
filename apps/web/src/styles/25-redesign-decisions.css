@@ -1,0 +1,166 @@
+.pf-maintainer-layout,
+.pf-my-work-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) 340px;
+  gap: 20px;
+  align-items: start;
+}
+
+.pf-maintainer-row,
+.pf-work-row {
+  display: grid;
+  grid-template-columns: minmax(160px, 1.3fr) minmax(90px, 0.8fr) 92px 72px 72px;
+  gap: 14px;
+  align-items: center;
+  width: 100%;
+  border: 0;
+  border-bottom: 1px solid var(--pf-line);
+  background: transparent;
+  padding: 16px 0;
+  color: var(--pf-ink);
+  text-align: left;
+}
+
+.pf-maintainer-row.head,
+.pf-work-row.head {
+  color: var(--pf-muted);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.pf-maintainer-row:not(.head),
+.pf-work-row:not(.head) {
+  cursor: pointer;
+  font-weight: 800;
+}
+
+.pf-maintainer-row.selected {
+  border-radius: 14px;
+  background: var(--pf-green-soft);
+  padding-inline: 12px;
+}
+
+.pf-maintainer-row span,
+.pf-work-row span {
+  min-width: 0;
+  color: var(--pf-muted);
+  font-weight: 800;
+}
+
+.pf-maintainer-row strong,
+.pf-work-row strong,
+.pf-work-row b {
+  min-width: 0;
+  color: var(--pf-ink);
+}
+
+.pf-maintainer-actions,
+.pf-work-links,
+.pf-work-receipt {
+  display: grid;
+  gap: 10px;
+}
+
+.pf-work-state-strip {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 10px;
+}
+
+.pf-work-detail {
+  display: grid;
+  gap: 12px;
+  border: 1px solid var(--pf-line);
+  border-radius: 18px;
+  background: var(--pf-surface-muted);
+  padding: 18px;
+}
+
+.pf-work-detail h2 {
+  margin: 0;
+  color: var(--pf-ink);
+  font-size: 24px;
+  line-height: 1.05;
+}
+
+.pf-work-receipt input {
+  min-width: 0;
+  border: 1px solid var(--pf-line);
+  border-radius: 12px;
+  background: var(--pf-surface);
+  padding: 12px;
+  color: var(--pf-ink);
+  font: inherit;
+  font-weight: 800;
+}
+
+@media (max-width: 560px) {
+  .pf-maintainer-layout,
+  .pf-my-work-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 1600px) {
+  .pf-maintainer-layout,
+  .pf-my-work-layout {
+    grid-template-columns: 1fr;
+  }
+
+  .pf-maintainer-row.head,
+  .pf-work-row.head {
+    display: none;
+  }
+
+  .pf-maintainer-row,
+  .pf-work-row {
+    grid-template-columns: minmax(0, 1fr) auto;
+    gap: 6px 14px;
+    margin-bottom: 10px;
+    border: 1px solid var(--pf-line);
+    border-radius: 16px;
+    background: var(--pf-surface);
+    padding: 14px;
+  }
+
+  .pf-maintainer-row.selected {
+    padding: 14px;
+  }
+
+  .pf-maintainer-row strong,
+  .pf-work-row strong {
+    grid-column: 1;
+    overflow-wrap: anywhere;
+  }
+
+  .pf-maintainer-row span,
+  .pf-work-row span,
+  .pf-work-row b {
+    overflow-wrap: anywhere;
+  }
+
+  .pf-maintainer-row span:first-of-type,
+  .pf-work-row span:first-of-type {
+    grid-column: 1;
+  }
+
+  .pf-maintainer-row span:last-child,
+  .pf-work-row b {
+    justify-self: end;
+    text-align: right;
+  }
+
+  .pf-work-state-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 760px) {
+  .pf-maintainer-layout,
+  .pf-my-work-layout,
+  .pf-work-state-strip {
+    grid-template-columns: 1fr;
+  }
+}

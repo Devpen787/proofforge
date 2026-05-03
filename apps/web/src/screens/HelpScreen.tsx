@@ -1,13 +1,21 @@
 import React from "react";
-import { StatusRow } from "../components/ui";
+import { PageHeader, PageSurface, RowList, StatusRow } from "../components/ui";
 
-const lifecycle = [
-  "Source work",
-  "Run agent",
-  "Create packet",
-  "Maintainer accepts",
-  "Track value"
+const helpRows = [
+  ["Opportunity", "Sourced work that may become a mission"],
+  ["Mission", "Runnable proof scope with owner, value, and safety"],
+  ["Packet", "Reviewable evidence for a maintainer"],
+  ["Credit", "Accepted contribution record"],
+  ["Earned", "Accepted proof with value recorded"],
+  ["Released", "External payout or receipt marked paid"]
 ];
+
+const policyRows = [
+  ["Agent can", "Run commands and package evidence", "good"],
+  ["Agent cannot", "Post, open PRs, access secrets, or spend", "bad"],
+  ["Submission", "Requires human approval", "good"],
+  ["Raw logs", "Private unless explicitly exported", "good"]
+] as const;
 
 export function HelpScreen({
   onStart,
@@ -17,65 +25,43 @@ export function HelpScreen({
   onSettings: () => void;
 }) {
   return (
-    <section className="page-grid utility-grid">
-      <div className="utility-hero wide">
-        <div>
-          <p className="small-label">Help</p>
-          <h1>ProofForge in plain terms.</h1>
-          <p>
-            The product screens stay short. This page holds the definitions,
-            rules, and payout semantics.
-          </p>
-        </div>
-        <button className="primary-action" onClick={onStart}>
-          Start proof flow
-        </button>
-      </div>
+    <PageSurface className="wide pf-help-surface">
+      <PageHeader
+        eyebrow="Help"
+        title="ProofForge in plain terms."
+        subtitle="Reference material only. You do not need this page to finish the demo flow."
+        actions={
+          <button className="primary-action" onClick={onStart}>
+            Start proof flow
+          </button>
+        }
+      />
 
-      <section className="panel wide utility-lifecycle">
-        <p className="small-label">Lifecycle</p>
-        <h2>Proof before payout.</h2>
-        <div>
-          {lifecycle.map((step, index) => (
-            <span key={step}>
-              <b>{index + 1}</b>
-              {step}
-            </span>
+      <div className="pf-help-layout">
+        <RowList className="pf-help-table">
+          <div className="pf-help-row head">
+            <span>Term</span>
+            <span>Meaning</span>
+          </div>
+          {helpRows.map(([term, meaning]) => (
+            <div className="pf-help-row" key={term}>
+              <strong>{term}</strong>
+              <span>{meaning}</span>
+            </div>
           ))}
-        </div>
-      </section>
+        </RowList>
 
-      <section className="panel utility-panel">
-        <p className="small-label">Glossary</p>
-        <h2>Core terms</h2>
-        <StatusRow label="Opportunity" value="Sourced work" tone="good" />
-        <StatusRow label="Mission" value="Runnable proof scope" tone="good" />
-        <StatusRow label="Packet" value="Reviewable evidence" tone="good" />
-        <StatusRow label="Credit" value="Accepted contribution" tone="good" />
-      </section>
-
-      <section className="panel utility-panel">
-        <p className="small-label">Payout</p>
-        <h2>Earned is not released.</h2>
-        <StatusRow label="Earned" value="Accepted proof" tone="good" />
-        <StatusRow label="Released" value="Marked paid" tone="good" />
-        <StatusRow label="Rejected" value="No payout" tone="bad" />
-      </section>
-
-      <section className="panel utility-panel">
-        <p className="small-label">Agent safety</p>
-        <h2>Useful, boxed in.</h2>
-        <StatusRow label="Can" value="Run and package proof" tone="good" />
-        <StatusRow label="Cannot" value="Post, PR, or spend" tone="bad" />
-        <StatusRow label="Approval" value="Required to submit" tone="good" />
-      </section>
-
-      <button
-        className="secondary-action utility-help-link"
-        onClick={onSettings}
-      >
-        Open Settings
-      </button>
-    </section>
+        <aside className="pf-help-detail">
+          <p className="small-label">Rules</p>
+          <h2>Proof before payout.</h2>
+          {policyRows.map(([label, value, tone]) => (
+            <StatusRow key={label} label={label} value={value} tone={tone} />
+          ))}
+          <button className="secondary-action full" onClick={onSettings}>
+            Open Settings
+          </button>
+        </aside>
+      </div>
+    </PageSurface>
   );
 }
