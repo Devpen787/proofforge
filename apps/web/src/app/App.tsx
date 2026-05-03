@@ -64,10 +64,12 @@ function renderScreen(
           agentAttached={state.projectAgentAttached}
           workSuggested={state.projectWorkSuggested}
           onStartProject={actions.startProject}
+          onSaveProject={actions.saveProjectProfile}
           onInvite={actions.inviteContributor}
           onAttachAgent={actions.attachAgent}
           onSuggestWork={actions.suggestWork}
           onQueue={actions.openOpportunities}
+          projectRequest={state.projectRequest}
         />
       );
     case "work-queue":
@@ -83,6 +85,7 @@ function renderScreen(
           onConvertLead={actions.convertLead}
           onRejectLead={actions.rejectLead}
           onRun={actions.runMission}
+          projectRequest={state.projectRequest}
         />
       );
     case "my-work":
@@ -113,6 +116,7 @@ function renderScreen(
       return (
         <MissionDetailScreen
           activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
           onBack={actions.openOpportunities}
           onAccept={() =>
             state.agentRegistered
@@ -125,6 +129,7 @@ function renderScreen(
       return (
         <RunnerScreen
           activeMission={state.activeMission}
+          projectRequest={state.projectRequest}
           agentRegistered={state.agentRegistered}
           onCancel={actions.cancelRun}
           onPacket={actions.approvePacket}

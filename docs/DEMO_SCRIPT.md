@@ -5,8 +5,34 @@ what to show, what to click, and what to say.
 
 ## Five-Second Pitch
 
-ProofForge helps developers and their agents turn useful work into accepted
-proof, so contributions can be tracked, reviewed, credited, and paid for.
+ProofForge helps people and agents move useful projects forward, turn the work
+into accepted proof, and track the credit, payout, reputation, or access that
+follows.
+
+## Core Thesis
+
+ProofForge is not another marketplace. It is the contribution layer between
+messy work and recognized value.
+
+People already work across their own projects, open-source repos, protocol
+backlogs, bounty boards, grant milestones, marketplaces, and chats. Agents make
+it easier to help, but without a shared proof and acceptance layer the result is
+still scattered effort, unclear credit, and too many unfinished projects.
+
+ProofForge turns that work into a simple loop:
+
+```text
+source-backed project work
+-> human or bounded agent help
+-> evidence packet
+-> maintainer or steward acceptance
+-> credit, payout, reputation, access, and project history
+```
+
+The north star is a living contribution economy: useful projects get more help,
+contributors and agent owners get recognized, and accepted work compounds back
+into the project instead of disappearing in issues, chats, or one-off bounty
+boards.
 
 ## Pre-Recording Setup
 
@@ -55,10 +81,18 @@ Show `/#opportunity`.
 
 Say:
 
-> ProofForge is the layer between messy work and recognized value. It helps
-> developers and their agents take useful work from GitHub, bounties,
-> marketplaces, or project backlogs, turn it into accepted proof, and track the
-> credit or payout that follows.
+> ProofForge helps people and agents move useful projects forward. It takes
+> work from GitHub, project backlogs, bounties, marketplaces, or maintainer
+> requests, turns it into accepted proof, and tracks the credit or payout that
+> follows.
+>
+> We built this because the future of software work is more collective: people
+> working on their own projects, other people's projects, protocols, grants, and
+> open-source systems, with agents helping along the way. But today that work is
+> scattered across issues, chats, bounty boards, and half-finished projects.
+> ProofForge is not another marketplace. It is the coordination and proof layer
+> that shows what helped, who helped, what was accepted, and how the value rolls
+> back to the contributor and the project.
 
 Click `Set up proof node`.
 
@@ -82,8 +116,9 @@ Show `/#work-queue`, the GitHub issue import, and the mission list.
 Say:
 
 > Work starts from a real source: a GitHub issue, project backlog, marketplace
-> task, bounty, or maintainer request. ProofForge turns that messy source into a
-> mission a person and bounded agent can actually assess and complete.
+> task, bounty, grant milestone, or maintainer request. ProofForge turns that
+> messy source into a mission a person and bounded agent can actually assess and
+> complete.
 
 Click `Assess` on `Validate installation docs`.
 
@@ -156,8 +191,9 @@ Say:
 
 > This is the shareable proof: the agent identity resolves through ENS, the
 > packet has a 0G storage reference, and the accepted work rolls up to the
-> builder and project. ProofForge helps people and agents coordinate around
-> useful work, prove what holds, and compound value together.
+> builder and project. ProofForge is how useful work becomes a contribution
+> record: people bring projects, agents help safely, humans accept the evidence,
+> and credit or payout can compound into the next round of work.
 
 ## Fast Version If You Need 90 Seconds
 
@@ -228,9 +264,9 @@ Honest limits:
 - Maintainer review is an in-product role flow, not a live GitHub PR/comment
   workflow unless the GitHub submit command is run and succeeds.
 - The web app uses seeded/generated product data, not a hosted backend.
-- Production sandboxing, live OAuth ingestion, AXL agent messaging, KeeperHub
-  execution, and Uniswap settlement are future tracks unless implemented and
-  shown with real proof.
+- Production sandboxing, live OAuth ingestion, peer agent messaging, reliable
+  execution services, and automatic settlement are future tracks unless
+  implemented and shown with real proof.
 
 ## Prize Positioning
 
@@ -242,13 +278,9 @@ Primary fit:
 - `0G - Best Autonomous Agents, Swarms & iNFT Innovations`: the demo includes a
   working proof agent mission with persistent evidence and a clear path to more
   capable agent coordination.
+- `ENS - Best ENS Integration for AI Agents`: ProofForge uses ENS as an agent
+  identity layer when `npm run ens:check` resolves the proof node name and the
+  packet/public proof carries that identity.
 
-Secondary/future fit:
-
-- ENS: now credible if the video shows `npm run ens:check` resolving an agent
-  name and the packet/public proof carrying that identity.
-- Gensyn AXL: peer-to-peer agent coordination.
-- KeeperHub: reliable execution and payment release.
-- Uniswap: agentic settlement only if a real API integration is added.
-
-Do not present secondary tracks as completed unless the video shows them working.
+Do not present other sponsor tracks unless the video shows their technology
+working inside the product.

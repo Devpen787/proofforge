@@ -7,7 +7,7 @@ import {
   demoWorkLead,
   generatedProofSummary
 } from "../demo";
-import type { ActiveMission } from "../app/types";
+import type { ActiveMission, ProjectRequest } from "../app/types";
 import { StatusRow } from "../components/ui";
 
 export function WorkQueueScreen({
@@ -20,7 +20,8 @@ export function WorkQueueScreen({
   onClarifyLead,
   onConvertLead,
   onRejectLead,
-  onRun
+  onRun,
+  projectRequest
 }: {
   importedLead: boolean;
   projectWorkSuggested: boolean;
@@ -32,6 +33,7 @@ export function WorkQueueScreen({
   onConvertLead: () => void;
   onRejectLead: () => void;
   onRun: (mission: ActiveMission) => void;
+  projectRequest: ProjectRequest;
 }) {
   const [activeFilter, setActiveFilter] = React.useState("Best fit");
   const [githubUrl, setGithubUrl] = React.useState(
@@ -267,18 +269,18 @@ export function WorkQueueScreen({
               <article className="project-request-opportunity">
                 <div>
                   <p className="small-label">Project request</p>
-                  <strong>{demoProjectWorkLead.title}</strong>
-                  <small>{demoProjectWorkLead.rawRequest}</small>
+                  <strong>{projectRequest.title}</strong>
+                  <small>{projectRequest.detail}</small>
                   <div className="opportunity-card-meta">
-                    <span>{demoProjectWorkLead.source}</span>
-                    <span>Docs steward accepts</span>
+                    <span>{projectRequest.projectName}</span>
+                    <span>{projectRequest.acceptanceOwner} accepts</span>
                     <span>Contributor request</span>
-                    <span>{demoProjectWorkLead.proofability} proofable</span>
+                    <span>88% proofable</span>
                   </div>
                 </div>
                 <button
                   className="primary-action"
-                  onClick={() => onRun("docs")}
+                  onClick={() => onRun("request")}
                 >
                   Accept request
                 </button>

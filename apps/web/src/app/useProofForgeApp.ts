@@ -1,11 +1,26 @@
 import React from "react";
 import type { Screen } from "../routes";
-import type { ActiveMission, AppActions, AppState } from "./types";
+import type {
+  ActiveMission,
+  AppActions,
+  AppState,
+  ProjectRequest
+} from "./types";
 import { screenFromHash } from "./helpers";
 
 type SavedAppState = Omit<AppState, "screen">;
 
 const PERSIST_KEY = "proofforge.v1.demo-state";
+
+const defaultProjectRequest: ProjectRequest = {
+  projectName: "Docs Onboarding Sprint",
+  projectPurpose: "Turn install friction into accepted proof packets.",
+  title: "Quickstart proof request",
+  detail: "Run the quickstart in a clean environment and package evidence.",
+  reward: "$10",
+  acceptanceOwner: "Docs steward",
+  inviteEmail: "sam@builder.dev"
+};
 
 const defaultSavedState: SavedAppState = {
   packetReady: false,
@@ -22,7 +37,8 @@ const defaultSavedState: SavedAppState = {
   workLeadClarified: false,
   workLeadConverted: false,
   activeMission: "docs",
-  agentRegistered: false
+  agentRegistered: false,
+  projectRequest: defaultProjectRequest
 };
 
 const activeMissions: ActiveMission[] = [
@@ -31,7 +47,8 @@ const activeMissions: ActiveMission[] = [
   "mac",
   "config",
   "links",
-  "checkout"
+  "checkout",
+  "request"
 ];
 
 function readSavedAppState(): SavedAppState {
@@ -47,7 +64,11 @@ function readSavedAppState(): SavedAppState {
         parsed.activeMission as ActiveMission
       )
         ? (parsed.activeMission as ActiveMission)
-        : defaultSavedState.activeMission
+        : defaultSavedState.activeMission,
+      projectRequest: {
+        ...defaultProjectRequest,
+        ...(parsed.projectRequest ?? {})
+      }
     };
   } catch {
     return defaultSavedState;
@@ -113,6 +134,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   );
   const [activeMission, setActiveMission] = React.useState<ActiveMission>(
     savedState.activeMission
+  );
+  const [projectRequest, setProjectRequest] = React.useState<ProjectRequest>(
+    savedState.projectRequest
   );
 
   const resetProof = React.useCallback(() => {
@@ -199,12 +223,27 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setWorkLeadConverted(false);
     },
     startProject: () => setProjectStarted(true),
-    inviteContributor: () => setProjectInviteSent(true),
+    saveProjectProfile: (profile) => {
+      setProjectRequest((current) => ({ ...current, ...profile }));
+      setProjectStarted(true);
+    },
+    inviteContributor: (email) => {
+      if (email) {
+        setProjectRequest((current) => ({
+          ...current,
+          inviteEmail: email
+        }));
+      }
+      setProjectInviteSent(true);
+    },
     attachAgent: () => {
       setProjectAgentAttached(true);
       setAgentRegistered(true);
     },
-    suggestWork: () => {
+    suggestWork: (request) => {
+      if (request) {
+        setProjectRequest((current) => ({ ...current, ...request }));
+      }
       setProjectWorkSuggested(true);
     }
   };
@@ -225,7 +264,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     workLeadClarified,
     workLeadConverted,
     activeMission,
-    agentRegistered
+    agentRegistered,
+    projectRequest
   };
 
   React.useEffect(() => {
@@ -244,7 +284,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       workLeadClarified,
       workLeadConverted,
       activeMission,
-      agentRegistered
+      agentRegistered,
+      projectRequest
     });
   }, [
     packetReady,
@@ -261,7 +302,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     workLeadClarified,
     workLeadConverted,
     activeMission,
-    agentRegistered
+    agentRegistered,
+    projectRequest
   ]);
 
   return { state, actions };

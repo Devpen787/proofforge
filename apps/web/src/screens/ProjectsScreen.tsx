@@ -5,6 +5,7 @@ import {
   demoAgentIdentity,
   demoSourceConnections
 } from "../demo";
+import type { ProjectRequest } from "../app/types";
 import { StatusRow } from "../components/ui";
 
 function CompactPerson({
@@ -77,30 +78,56 @@ export function ProjectsScreen({
   agentAttached,
   workSuggested,
   onStartProject,
+  onSaveProject,
   onInvite,
   onAttachAgent,
   onSuggestWork,
-  onQueue
+  onQueue,
+  projectRequest
 }: {
   projectStarted: boolean;
   inviteSent: boolean;
   agentAttached: boolean;
   workSuggested: boolean;
   onStartProject: () => void;
-  onInvite: () => void;
+  onSaveProject: (profile: {
+    projectName: string;
+    projectPurpose: string;
+  }) => void;
+  onInvite: (email?: string) => void;
   onAttachAgent: () => void;
-  onSuggestWork: () => void;
+  onSuggestWork: (request?: Partial<ProjectRequest>) => void;
   onQueue: () => void;
+  projectRequest: ProjectRequest;
 }) {
   const primaryOpportunity = demoProject.opportunities[0];
+  const [projectName, setProjectName] = React.useState(
+    projectRequest.projectName
+  );
+  const [projectPurpose, setProjectPurpose] = React.useState(
+    projectRequest.projectPurpose
+  );
+  const [requestTitle, setRequestTitle] = React.useState(projectRequest.title);
+  const [requestDetail, setRequestDetail] = React.useState(
+    projectRequest.detail
+  );
+  const [requestReward, setRequestReward] = React.useState(
+    projectRequest.reward
+  );
+  const [acceptanceOwner, setAcceptanceOwner] = React.useState(
+    projectRequest.acceptanceOwner
+  );
+  const [inviteEmail, setInviteEmail] = React.useState(
+    projectRequest.inviteEmail
+  );
 
   return (
     <section className="page-grid project-room-grid">
       <header className="project-room-hero wide">
         <div className="project-hero-copy">
           <span className="project-kicker">Projects / {demoProject.name}</span>
-          <h1>{demoProject.name}</h1>
-          <p>{demoProject.purpose}</p>
+          <h1>{projectRequest.projectName}</h1>
+          <p>{projectRequest.projectPurpose}</p>
           <div className="tag-row">
             <span className="status-pill safe">Active</span>
             {demoProject.lanes.map((lane) => (
@@ -114,7 +141,18 @@ export function ProjectsScreen({
           <button
             className="primary-action"
             onClick={
-              !workSuggested ? onSuggestWork : inviteSent ? onQueue : onInvite
+              !workSuggested
+                ? () =>
+                    onSuggestWork({
+                      title: requestTitle,
+                      detail: requestDetail,
+                      reward: requestReward,
+                      acceptanceOwner,
+                      inviteEmail
+                    })
+                : inviteSent
+                  ? onQueue
+                  : () => onInvite(inviteEmail)
             }
           >
             {!workSuggested
@@ -141,11 +179,88 @@ export function ProjectsScreen({
         </div>
       )}
 
+      {!projectStarted && (
+        <section className="project-request-strip wide">
+          <div>
+            <p className="small-label">Create project</p>
+            <h2>Define the workspace people and agents can help.</h2>
+          </div>
+          <div className="project-form-grid">
+            <input
+              aria-label="Project name"
+              value={projectName}
+              onChange={(event) => setProjectName(event.target.value)}
+            />
+            <input
+              aria-label="Project purpose"
+              value={projectPurpose}
+              onChange={(event) => setProjectPurpose(event.target.value)}
+            />
+            <button
+              className="primary-action"
+              onClick={() => onSaveProject({ projectName, projectPurpose })}
+            >
+              Save project
+            </button>
+          </div>
+        </section>
+      )}
+
+      {projectStarted && !workSuggested && (
+        <section className="project-request-strip wide">
+          <div>
+            <p className="small-label">Create work request</p>
+            <h2>Ask a contributor or agent owner to prove useful work.</h2>
+          </div>
+          <div className="project-form-grid request-form-grid">
+            <input
+              aria-label="Work request title"
+              value={requestTitle}
+              onChange={(event) => setRequestTitle(event.target.value)}
+            />
+            <input
+              aria-label="Evidence request"
+              value={requestDetail}
+              onChange={(event) => setRequestDetail(event.target.value)}
+            />
+            <input
+              aria-label="Reward"
+              value={requestReward}
+              onChange={(event) => setRequestReward(event.target.value)}
+            />
+            <input
+              aria-label="Acceptance owner"
+              value={acceptanceOwner}
+              onChange={(event) => setAcceptanceOwner(event.target.value)}
+            />
+            <input
+              aria-label="Contributor email"
+              value={inviteEmail}
+              onChange={(event) => setInviteEmail(event.target.value)}
+            />
+            <button
+              className="primary-action"
+              onClick={() =>
+                onSuggestWork({
+                  title: requestTitle,
+                  detail: requestDetail,
+                  reward: requestReward,
+                  acceptanceOwner,
+                  inviteEmail
+                })
+              }
+            >
+              Create request
+            </button>
+          </div>
+        </section>
+      )}
+
       {workSuggested && (
         <div className="project-request-strip wide" role="status">
           <div>
             <p className="small-label">Contributor request</p>
-            <h2>Quickstart proof request is ready.</h2>
+            <h2>{projectRequest.title} is ready.</h2>
             <span>
               Source, acceptance owner, proof target, and value path are set.
             </span>
@@ -156,11 +271,13 @@ export function ProjectsScreen({
                 inviteSent ? "status-pill safe" : "status-pill warning"
               }
             >
-              {inviteSent ? "Sent to sam@builder.dev" : "Ready to send"}
+              {inviteSent
+                ? `Sent to ${projectRequest.inviteEmail}`
+                : "Ready to send"}
             </span>
             <button
               className="primary-action"
-              onClick={inviteSent ? onQueue : onInvite}
+              onClick={inviteSent ? onQueue : () => onInvite(inviteEmail)}
             >
               {inviteSent ? "Open as contributor" : "Send request"}
             </button>
@@ -184,7 +301,7 @@ export function ProjectsScreen({
               <div className="project-opportunity-row project-opportunity-new">
                 <span className="opportunity-icon">+</span>
                 <div>
-                  <strong>Quickstart proof request</strong>
+                  <strong>{projectRequest.title}</strong>
                   <small>
                     {inviteSent
                       ? "Sent to contributor for acceptance"
@@ -241,12 +358,14 @@ export function ProjectsScreen({
             <div>
               <span>
                 <small>Contributor</small>
-                <strong>{inviteSent ? "sam@builder.dev" : "Open seat"}</strong>
+                <strong>
+                  {inviteSent ? projectRequest.inviteEmail : "Open seat"}
+                </strong>
                 <b>{inviteSent ? "Invite pending" : "Invite not sent"}</b>
               </span>
               <button
                 className="secondary-action"
-                onClick={onInvite}
+                onClick={() => onInvite(inviteEmail)}
                 disabled={inviteSent}
               >
                 {inviteSent ? "Pending" : "Invite"}
@@ -325,7 +444,7 @@ export function ProjectsScreen({
             <h3>People</h3>
             {inviteSent && (
               <CompactPerson
-                name="sam@builder.dev"
+                name={projectRequest.inviteEmail}
                 role="Contributor invite"
                 status="Pending"
                 tone="warning"

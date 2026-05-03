@@ -6,45 +6,65 @@ import {
   getDemoMission,
   getDemoPacket
 } from "../demo";
-import type { ActiveMission } from "../app/types";
+import type { ActiveMission, ProjectRequest } from "../app/types";
 import { StatusBlock, StatusRow } from "../components/ui";
 
 export function MissionDetailScreen({
   activeMission,
+  projectRequest,
   onBack,
   onAccept
 }: {
   activeMission: ActiveMission;
+  projectRequest: ProjectRequest;
   onBack: () => void;
   onAccept: () => void;
 }) {
   const mission = getDemoMission(activeMission);
   const packet = getDemoPacket(activeMission);
   const owner =
-    activeMission === "checkout"
-      ? demoWorkLead.acceptsProof
-      : "Commons reviewer";
+    activeMission === "request"
+      ? projectRequest.acceptanceOwner
+      : activeMission === "checkout"
+        ? demoWorkLead.acceptsProof
+        : "Commons reviewer";
+  const missionTitle =
+    activeMission === "request" ? projectRequest.title : mission.title;
+  const missionObjective =
+    activeMission === "request" ? projectRequest.detail : packet.objective;
+  const missionReward =
+    activeMission === "request" ? projectRequest.reward : mission.reward;
+  const missionRepo =
+    activeMission === "request" ? projectRequest.projectName : mission.repo;
   const successCriteria =
-    activeMission === "checkout"
+    activeMission === "request"
       ? [
-          "Chrome checkout completes with expected confirmation",
-          "Safari result is captured with logs",
-          "No payment credentials or customer data are exposed"
+          "Project steward request is attached",
+          "Acceptance owner and value are clear",
+          "Evidence packet can prove the requested outcome"
         ]
-      : activeMission === "docs"
+      : activeMission === "checkout"
         ? [
-            "Documented command is run in a clean fixture",
-            "Failure or success is captured with logs",
-            "Maintainer can understand the next fix"
+            "Chrome checkout completes with expected confirmation",
+            "Safari result is captured with logs",
+            "No payment credentials or customer data are exposed"
           ]
-        : mission.submissionRequirements.slice(0, 3);
+        : activeMission === "docs"
+          ? [
+              "Documented command is run in a clean fixture",
+              "Failure or success is captured with logs",
+              "Maintainer can understand the next fix"
+            ]
+          : mission.submissionRequirements.slice(0, 3);
   const sourceLabel =
-    activeMission === "checkout"
-      ? "Marketplace task"
-      : mission.sourceUrl.includes("github.com")
-        ? "GitHub issue"
-        : "Project backlog";
-  const valueLabel = `${mission.reward} if accepted`;
+    activeMission === "request"
+      ? "Project request"
+      : activeMission === "checkout"
+        ? "Marketplace task"
+        : mission.sourceUrl.includes("github.com")
+          ? "GitHub issue"
+          : "Project backlog";
+  const valueLabel = `${missionReward} if accepted`;
   const agentChecks =
     activeMission === "checkout"
       ? [
@@ -67,7 +87,7 @@ export function MissionDetailScreen({
   return (
     <section className="page-grid mission-detail-grid">
       <header className="page-header">
-        <span>Mission Detail / {mission.title}</span>
+        <span>Mission Detail / {missionTitle}</span>
         <button className="secondary-action" onClick={onBack}>
           Back to Opportunities
         </button>
@@ -75,18 +95,18 @@ export function MissionDetailScreen({
       <div className="mission-decision-hero wide">
         <div>
           <p className="small-label">Agent assessment</p>
-          <h2>{mission.title}</h2>
-          <p>{packet.objective}</p>
+          <h2>{missionTitle}</h2>
+          <p>{missionObjective}</p>
           <div className="mission-detail-facts">
             <StatusBlock label="Accepts proof" value={owner} />
             <StatusBlock label="Risk" value={mission.risk} />
             <StatusBlock label="Runtime" value={mission.runtime} />
-            <StatusBlock label="Source" value={mission.repo} />
+            <StatusBlock label="Source" value={missionRepo} />
           </div>
         </div>
         <aside className="mission-run-card">
           <span>Authorize bounded run</span>
-          <strong>{mission.reward}</strong>
+          <strong>{missionReward}</strong>
           <small>{mission.valuePath}</small>
           <button className="primary-action full" onClick={onAccept}>
             Authorize agent run

@@ -147,6 +147,27 @@ async function runSmoke() {
     await requireText(page, "Choose sourced work.");
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await requireText(page, "Work in this project.");
+    await page.getByLabel("Project name").fill("ProofForge Smoke Project");
+    await page
+      .getByLabel("Project purpose")
+      .fill("Make proof requests testable.");
+    await page.getByRole("button", { name: "Save project" }).click();
+    await requireText(page, "Create work request");
+    await page.getByLabel("Work request title").fill("Smoke proof request");
+    await page
+      .getByLabel("Evidence request")
+      .fill("Run a bounded smoke proof and package evidence.");
+    await page.getByLabel("Reward").fill("$11");
+    await page.getByLabel("Acceptance owner").fill("Smoke reviewer");
+    await page.getByLabel("Contributor email").fill("smoke@builder.dev");
+    await page.getByRole("button", { name: "Create request" }).click();
+    await requireText(page, "Smoke proof request is ready.");
+    await page.getByRole("button", { name: "Send request" }).click();
+    await requireText(page, "Sent to smoke@builder.dev");
+    await page.getByRole("button", { name: "Open as contributor" }).click();
+    await requireText(page, "Smoke proof request");
+    await requireText(page, "Smoke reviewer accepts");
+    await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Find sourced work" }).click();
     await requireText(page, "Choose sourced work.");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });

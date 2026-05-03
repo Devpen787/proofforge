@@ -99,17 +99,6 @@ export const generatedProofSummary = {
   generatedWorkSources: [
     {
       source: "ethglobal",
-      title: "Uniswap Foundation: Best Uniswap API integration",
-      sourceUrl: "https://ethglobal.com/events/open-agents",
-      repo: "uniswap-foundation/ethglobal-open-agents",
-      acceptanceOwner: "Uniswap Foundation",
-      status: "proofable",
-      proofability: "84%",
-      valuePath: "external",
-      mode: "submission context, not user inventory"
-    },
-    {
-      source: "ethglobal",
       title: "0G: Best Agent Framework, Tooling & Core Extensions",
       sourceUrl: "https://ethglobal.com/events/open-agents",
       repo: "0g/ethglobal-open-agents",
@@ -117,7 +106,18 @@ export const generatedProofSummary = {
       status: "proofable",
       proofability: "84%",
       valuePath: "external",
-      mode: "submission context, not user inventory"
+      mode: "partner prize fit"
+    },
+    {
+      source: "ethglobal",
+      title: "ENS: Best ENS Integration for AI Agents",
+      sourceUrl: "https://ethglobal.com/events/open-agents",
+      repo: "ens/agent-identity",
+      acceptanceOwner: "ENS",
+      status: "proofable",
+      proofability: "82%",
+      valuePath: "identity",
+      mode: "partner prize fit"
     },
     {
       source: "github",

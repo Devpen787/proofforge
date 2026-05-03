@@ -94,7 +94,22 @@ export const demoMissionCatalog: Record<ActiveMission, typeof demoMission> = {
       "No public comment or PR without approval"
     ]
   },
-  checkout: demoConvertedMission
+  checkout: demoConvertedMission,
+  request: {
+    title: "Project work request",
+    repo: "project/request",
+    reward: "$10",
+    runtime: "30 min",
+    risk: "Safe",
+    valuePath: "Project-defined reward, tracked after acceptance",
+    sourceUrl: "project://work-request",
+    submissionRequirements: [
+      "Project steward request attached",
+      "Acceptance owner confirmed",
+      "Evidence target captured",
+      "No public comment or PR without approval"
+    ]
+  }
 };
 
 export function getDemoMission(activeMission: ActiveMission) {

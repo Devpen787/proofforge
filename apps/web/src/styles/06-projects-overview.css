@@ -28,6 +28,31 @@
   gap: 10px;
 }
 
+.project-form-grid {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(240px, 1.4fr) auto;
+  gap: 10px;
+  align-items: center;
+}
+
+.project-form-grid.request-form-grid {
+  grid-template-columns:
+    minmax(180px, 1fr) minmax(260px, 1.4fr) minmax(90px, 0.4fr)
+    minmax(150px, 0.8fr) minmax(190px, 1fr) auto;
+}
+
+.project-form-grid input {
+  min-width: 0;
+  height: 46px;
+  border: 1px solid #bfdbfe;
+  border-radius: 14px;
+  background: white;
+  padding: 0 14px;
+  color: #020617;
+  font: inherit;
+  font-weight: 800;
+}
+
 .project-room-grid {
   grid-template-columns: 1fr;
 }
@@ -282,6 +307,12 @@
 }
 
 @media (max-width: 980px) {
+  .project-form-grid,
+  .project-form-grid.request-form-grid {
+    grid-template-columns: 1fr;
+    width: 100%;
+  }
+
   .project-room-main,
   .project-room-hero {
     grid-template-columns: 1fr;

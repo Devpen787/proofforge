@@ -1,25 +1,48 @@
 import React from "react";
 import { demoAgentIdentity, getDemoMission, demoRunnerTrace } from "../demo";
-import type { ActiveMission } from "../app/types";
+import type { ActiveMission, ProjectRequest } from "../app/types";
 import { RunnerTimeline, StatusRow } from "../components/ui";
 
 export function RunnerScreen({
   activeMission,
+  projectRequest,
   agentRegistered,
   onCancel,
   onPacket,
   onAgentSetup
 }: {
   activeMission: ActiveMission;
+  projectRequest: ProjectRequest;
   agentRegistered: boolean;
   onCancel: () => void;
   onPacket: () => void;
   onAgentSetup: () => void;
 }) {
   const mission = getDemoMission(activeMission);
+  const missionTitle =
+    activeMission === "request" ? projectRequest.title : mission.title;
+  const missionReward =
+    activeMission === "request" ? projectRequest.reward : mission.reward;
   const output =
-    activeMission === "checkout"
-      ? `$ npm run proof:browser
+    activeMission === "request"
+      ? `$ npm run proof:project-request
+
+Agent assessment:
+project=${projectRequest.projectName}
+request="${projectRequest.title}"
+accepted_by=${projectRequest.acceptanceOwner}
+allowed=local checks, logs, evidence packaging
+blocked=public posts, PRs, secrets, funds
+
+Running bounded proof for project request...
+Evidence captured for contributor review.
+
+Artifacts written:
+runner-result.json
+request-evidence.json
+environment.json`
+      : activeMission === "checkout"
+        ? `$ npm run proof:browser
 
 Agent assessment:
 source=external marketplace task
@@ -36,8 +59,8 @@ browser-report.json
 chrome.png
 safari.png
 environment.json`
-      : activeMission === "docs"
-        ? `$ npm run proof:check
+        : activeMission === "docs"
+          ? `$ npm run proof:check
 
 Agent assessment:
 source=GitHub issue + repo fixture
@@ -53,7 +76,7 @@ runner-result.json
 stdout.log
 stderr.log
 environment.json`
-        : `$ npm run proof:check -- --mission ${activeMission}
+          : `$ npm run proof:check -- --mission ${activeMission}
 
 Agent assessment:
 source=${mission.sourceUrl}
@@ -74,7 +97,7 @@ environment.json`;
     return (
       <section className="page-grid runner-grid">
         <header className="page-header">
-          <span>Runner / {mission.title}</span>
+          <span>Runner / {missionTitle}</span>
         </header>
         <div className="runner-hero wide">
           <div>
@@ -101,7 +124,7 @@ environment.json`;
   return (
     <section className="page-grid runner-grid">
       <header className="page-header">
-        <span>Runner / {mission.title}</span>
+        <span>Runner / {missionTitle}</span>
         <button className="danger-action" onClick={onCancel}>
           Cancel Run
         </button>
@@ -131,7 +154,7 @@ environment.json`;
           />
           <StatusRow
             label="Earn if accepted"
-            value={mission.reward}
+            value={missionReward}
             tone="good"
           />
           <StatusRow label="External actions" value="Locked" tone="bad" />

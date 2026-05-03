@@ -8,6 +8,7 @@ Use this before final hackathon submission.
 - Local demo URL: `http://localhost:5173/#opportunity`
 - Deployed demo URL: add after deployment
 - Demo video URL: add after recording
+- AI tool attribution: [`AI_ATTRIBUTION.md`](AI_ATTRIBUTION.md)
 
 ## Demo Video Requirements
 
@@ -20,7 +21,8 @@ Use this before final hackathon submission.
 
 ## Recommended Video Flow
 
-1. State the problem: agents create more output, but maintainers need trusted proof.
+1. State the problem: useful project work is scattered, agents create more
+   output, and maintainers need trusted proof before credit or payout.
 2. Show the agent/node identity and allowed/blocked actions.
 3. Run `npm run demo:packet`.
 4. Run `npm run sync:web-proof` to sync sanitized generated proof data into the browser demo.
@@ -34,10 +36,11 @@ Use this before final hackathon submission.
    - Runner (`#run`)
    - Case File (`#case-file`)
    - Maintainer Review (`#maintainer`)
-   - Proof ledger / outcome state (`#scoreboard`)
+   - My Work (`#my-work`)
    - Public Proof (`#public-proof`)
    - Reproducible terminal proof commands from this checklist
-9. Close with: ProofForge turns existing work into safe missions, evidence packets, accepted proof, and credit.
+9. Close with: ProofForge turns existing work into safe missions, evidence
+   packets, accepted proof, and credit or payout state.
 
 The exact terminal files and routes to show are listed in [DEMO_SCRIPT.md](DEMO_SCRIPT.md#recording-checklist).
 
@@ -45,11 +48,11 @@ The exact terminal files and routes to show are listed in [DEMO_SCRIPT.md](DEMO_
 
 ```bash
 npm install
-   npm test
-   npm run build
-   npm run ens:check -- --name <your-agent.eth> --address <agent-wallet>
-   npm run 0g:check
-   npm run demo:packet
+npm test
+npm run build
+npm run ens:check -- --name <your-agent.eth> --address <agent-wallet>
+npm run 0g:check
+npm run demo:packet
 npm run sync:web-proof
 npm run dev
 ```
@@ -77,24 +80,33 @@ Mission detail: http://localhost:5173/#mission-detail
 Runner: http://localhost:5173/#run
 Case File: http://localhost:5173/#case-file
 Maintainer Review: http://localhost:5173/#maintainer
-Proof ledger / outcome state: http://localhost:5173/#scoreboard
+My Work: http://localhost:5173/#my-work
+Builder Passport: http://localhost:5173/#builder-passport
 Public Proof: http://localhost:5173/#public-proof
 ```
 
 ## What Works Now
 
+- Project steward can create/edit a local project workspace.
+- Project steward can create a work request with reward, acceptance owner, and
+  contributor invite.
+- Contributor can open that request from Opportunities and run it through the
+  mission/proof flow.
 - GitHub issue import creates a local Work Lead from public issue data.
 - Mission conversion blocks vague or incomplete work.
 - Local runner creates deterministic proof artifacts.
 - Independent verifier checks runner artifacts.
 - Evidence Packet, Case File, Public Packet, Policy, Payout, and Project artifacts are generated.
-- Submission evidence artifact lists GitHub, ETHGlobal, 0G, agent identity/skills, and payout/receipt claims with proof commands.
+- Submission evidence artifact lists GitHub, 0G, agent identity/skills, and
+  payout/receipt claims with proof commands.
 - Earned payout and released payout are separate accounting states.
 - Web prototype demonstrates the user journey and review surfaces.
 - Route registration has automated test coverage.
+- AI tool usage is documented in [`AI_ATTRIBUTION.md`](AI_ATTRIBUTION.md).
 
 ## Known Limits
 
+- V1 is local single-user state, not hosted multi-user SaaS yet.
 - The current runner is deterministic and local; Docker-backed sandboxing is a later step.
 - The web app is a product prototype using seeded data, not a hosted backend.
 - Payments are manual accounting artifacts only; no automatic transfer or escrow happens.

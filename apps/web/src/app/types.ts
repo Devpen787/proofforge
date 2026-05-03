@@ -6,7 +6,18 @@ export type ActiveMission =
   | "mac"
   | "config"
   | "links"
-  | "checkout";
+  | "checkout"
+  | "request";
+
+export interface ProjectRequest {
+  projectName: string;
+  projectPurpose: string;
+  title: string;
+  detail: string;
+  reward: string;
+  acceptanceOwner: string;
+  inviteEmail: string;
+}
 
 export interface AppState {
   screen: Screen;
@@ -25,6 +36,7 @@ export interface AppState {
   workLeadConverted: boolean;
   activeMission: ActiveMission;
   agentRegistered: boolean;
+  projectRequest: ProjectRequest;
 }
 
 export interface AppActions {
@@ -50,9 +62,13 @@ export interface AppActions {
   convertLead: () => void;
   rejectLead: () => void;
   startProject: () => void;
-  inviteContributor: () => void;
+  saveProjectProfile: (profile: {
+    projectName: string;
+    projectPurpose: string;
+  }) => void;
+  inviteContributor: (email?: string) => void;
   attachAgent: () => void;
-  suggestWork: () => void;
+  suggestWork: (request?: Partial<ProjectRequest>) => void;
 }
 
 export type Tone = "good" | "bad";
