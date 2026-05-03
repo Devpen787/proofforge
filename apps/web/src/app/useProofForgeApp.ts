@@ -1,16 +1,20 @@
 import React from "react";
-import type { Screen } from "../routes";
 import type {
   ActiveMission,
   AppActions,
   AppState,
   ImportedMission,
   PayoutReceipt,
+  ProofEvent,
   ProjectRequest,
   WalletIdentity
 } from "./types";
-import { screenFromHash } from "./helpers";
 import { buildProofPacket } from "./missionDisplay";
+import {
+  buildProofRecord,
+  createProofEvent,
+  signableEventMessage
+} from "./proofEvents";
 import {
   activeMissions,
   defaultProjectRequest,
@@ -20,23 +24,7 @@ import {
   saveAppState,
   type SavedAppState
 } from "./workspaceState";
-
-function useHashScreen() {
-  const [screen, setScreenState] = React.useState<Screen>(screenFromHash);
-
-  const setScreen = React.useCallback((nextScreen: Screen) => {
-    window.location.hash = nextScreen;
-    setScreenState(nextScreen);
-  }, []);
-
-  React.useEffect(() => {
-    const onHashChange = () => setScreenState(screenFromHash());
-    window.addEventListener("hashchange", onHashChange);
-    return () => window.removeEventListener("hashchange", onHashChange);
-  }, []);
-
-  return { screen, setScreen };
-}
+import { useHashScreen } from "./useHashScreen";
 
 export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const { screen, setScreen } = useHashScreen();
@@ -85,6 +73,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     React.useState<PayoutReceipt | null>(savedState.payoutReceipt);
   const [walletIdentity, setWalletIdentity] =
     React.useState<WalletIdentity | null>(savedState.walletIdentity);
+  const [proofEvents, setProofEvents] = React.useState<ProofEvent[]>(
+    savedState.proofEvents
+  );
 
   const resetProof = React.useCallback(() => {
     setPacketReady(false);
@@ -121,8 +112,46 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setImportedMission(nextState.importedMission ?? null);
       setPayoutReceipt(nextState.payoutReceipt ?? null);
       setWalletIdentity(nextState.walletIdentity ?? null);
+      setProofEvents(nextState.proofEvents ?? []);
     },
     []
+  );
+
+  const proofPacket = React.useCallback(
+    () =>
+      buildProofPacket({
+        activeMission,
+        projectRequest,
+        importedMission,
+        payoutReceipt
+      }),
+    [activeMission, importedMission, payoutReceipt, projectRequest]
+  );
+
+  const appendEvent = React.useCallback(
+    (
+      type: ProofEvent["type"],
+      payload?: Record<string, unknown>,
+      overrides?: {
+        mission?: ActiveMission;
+        imported?: ImportedMission | null;
+        wallet?: WalletIdentity | null;
+      }
+    ) => {
+      setProofEvents((current) => [
+        ...current,
+        createProofEvent({
+          type,
+          activeMission: overrides?.mission ?? activeMission,
+          projectRequest,
+          importedMission: overrides?.imported ?? importedMission,
+          walletIdentity: overrides?.wallet ?? walletIdentity,
+          payload,
+          previous: current.at(-1)
+        })
+      ]);
+    },
+    [activeMission, importedMission, projectRequest, walletIdentity]
   );
 
   const actions: AppActions = {
@@ -169,16 +198,23 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setWorkLeadClarified(false);
       setWorkLeadConverted(false);
       setActiveMission("github");
+      appendEvent(
+        "github_imported",
+        { repo: mission.repo, issueNumber: mission.issueNumber },
+        { mission: "github", imported: mission }
+      );
     },
     cancelRun: () => setScreen("mission-detail"),
     approvePacket: () => {
       setPacketReady(true);
+      appendEvent("packet_ready");
       setScreen("case-file");
     },
     submitPacket: () => {
       setSubmitted(true);
       setRevisionRequested(false);
       setRejected(false);
+      appendEvent("packet_submitted");
       setScreen("maintainer");
     },
     acceptPacket: () => {
@@ -187,12 +223,14 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setRejected(false);
       setAccepted(true);
       setReleased(false);
+      appendEvent("packet_accepted");
       setScreen("opportunity");
     },
     requestRevision: () => {
       setSubmitted(false);
       setRevisionRequested(true);
       setRejected(false);
+      appendEvent("revision_requested");
       setScreen("case-file");
     },
     rejectPacket: () => {
@@ -201,6 +239,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setReleased(false);
       setRevisionRequested(false);
       setRejected(true);
+      appendEvent("packet_rejected");
       setScreen("opportunity");
     },
     importExternalTask: () => setImportedLead(true),
@@ -243,20 +282,18 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     recordPayoutReceipt: (receipt) => {
       setPayoutReceipt(receipt);
       setReleased(true);
+      appendEvent("payout_receipt_recorded", {
+        amount: receipt.amount,
+        txHash: receipt.txHash,
+        chain: receipt.chain
+      });
     },
     exportPacket: () => {
-      downloadJson(
-        "proofforge-proof-packet.json",
-        buildProofPacket({
-          activeMission,
-          projectRequest,
-          importedMission,
-          payoutReceipt
-        })
-      );
+      downloadJson("proofforge-proof-packet.json", proofPacket());
     },
     importWorkspace: (nextState) => {
       applyImportedState(nextState);
+      appendEvent("workspace_imported", { source: "workspace JSON" });
       setScreen("opportunity");
     },
     connectWallet: async () => {
@@ -267,21 +304,52 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       })) as string[];
       const address = accounts[0];
       if (!address) return;
-      setWalletIdentity((current) => ({
+      const nextWallet = {
         address,
-        ensName: current?.ensName ?? "proofrunner.proofforge.eth",
+        ensName: walletIdentity?.ensName ?? "proofrunner.proofforge.eth",
         connectedAt: new Date().toISOString()
-      }));
+      };
+      setWalletIdentity(nextWallet);
+      appendEvent("wallet_connected", { address }, { wallet: nextWallet });
     },
     saveEnsName: (ensName) => {
-      setWalletIdentity((current) => ({
-        address: current?.address ?? "Wallet not connected",
+      const nextWallet = {
+        address: walletIdentity?.address ?? "Wallet not connected",
         ensName,
-        connectedAt: current?.connectedAt ?? new Date().toISOString()
-      }));
+        connectedAt: walletIdentity?.connectedAt ?? new Date().toISOString()
+      };
+      setWalletIdentity(nextWallet);
+      appendEvent("ens_saved", { ensName }, { wallet: nextWallet });
+    },
+    signLatestProofEvent: async () => {
+      const provider = window.ethereum;
+      const event = proofEvents.at(-1);
+      if (!provider || !event || !walletIdentity?.address) return;
+      const signature = (await provider.request({
+        method: "personal_sign",
+        params: [signableEventMessage(event), walletIdentity.address]
+      })) as string;
+      setProofEvents((current) =>
+        current.map((item, index) =>
+          index === current.length - 1 ? { ...item, signature } : item
+        )
+      );
+    },
+    exportProofRecord: () => {
+      downloadJson(
+        "proofforge-proof-record.json",
+        buildProofRecord({
+          events: proofEvents,
+          packet: proofPacket(),
+          walletIdentity
+        })
+      );
     }
   };
 
+  // Persisting local V1 state is intentionally render-driven; localStorage writes
+  // do not update React state.
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const state: AppState = {
     screen,
     packetReady,
@@ -302,52 +370,15 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     projectRequest,
     importedMission,
     payoutReceipt,
-    walletIdentity
+    walletIdentity,
+    proofEvents
   };
 
   React.useEffect(() => {
-    saveAppState({
-      packetReady,
-      submitted,
-      accepted,
-      released,
-      revisionRequested,
-      rejected,
-      importedLead,
-      projectStarted,
-      projectInviteSent,
-      projectAgentAttached,
-      projectWorkSuggested,
-      workLeadClarified,
-      workLeadConverted,
-      activeMission,
-      agentRegistered,
-      projectRequest,
-      importedMission,
-      payoutReceipt,
-      walletIdentity
-    });
-  }, [
-    packetReady,
-    submitted,
-    accepted,
-    released,
-    revisionRequested,
-    rejected,
-    importedLead,
-    projectStarted,
-    projectInviteSent,
-    projectAgentAttached,
-    projectWorkSuggested,
-    workLeadClarified,
-    workLeadConverted,
-    activeMission,
-    agentRegistered,
-    projectRequest,
-    importedMission,
-    payoutReceipt,
-    walletIdentity
-  ]);
+    const { screen: _screen, ...saved } = state;
+    void _screen;
+    saveAppState(saved);
+  }, [state]);
 
   return { state, actions };
 }

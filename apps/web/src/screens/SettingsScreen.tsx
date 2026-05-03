@@ -1,7 +1,7 @@
 import React from "react";
 import { demoAgentIdentity } from "../demo";
 import { StatusRow } from "../components/ui";
-import type { AppState, WalletIdentity } from "../app/types";
+import type { AppState, ProofEvent, WalletIdentity } from "../app/types";
 
 export function SettingsScreen({
   agentRegistered,
@@ -12,6 +12,9 @@ export function SettingsScreen({
   onReset,
   onConnectWallet,
   onSaveEnsName,
+  onSignLatestProofEvent,
+  onExportProofRecord,
+  proofEvents,
   walletIdentity
 }: {
   agentRegistered: boolean;
@@ -22,6 +25,9 @@ export function SettingsScreen({
   onReset: () => void;
   onConnectWallet: () => Promise<void>;
   onSaveEnsName: (ensName: string) => void;
+  onSignLatestProofEvent: () => Promise<void>;
+  onExportProofRecord: () => void;
+  proofEvents: ProofEvent[];
   walletIdentity: WalletIdentity | null;
 }) {
   const [ensName, setEnsName] = React.useState(
@@ -123,6 +129,38 @@ export function SettingsScreen({
           </label>
           <button className="danger-action" onClick={onReset}>
             Reset workspace
+          </button>
+        </div>
+      </section>
+
+      <section className="panel utility-panel">
+        <p className="small-label">Proof record</p>
+        <h2>Signed event chain</h2>
+        <StatusRow
+          label="Events"
+          value={String(proofEvents.length)}
+          tone="good"
+        />
+        <StatusRow
+          label="Latest hash"
+          value={proofEvents.at(-1)?.eventHash ?? "No events yet"}
+          tone={proofEvents.length ? "good" : "bad"}
+        />
+        <StatusRow
+          label="Signature"
+          value={proofEvents.at(-1)?.signature ? "Wallet signed" : "Unsigned"}
+          tone={proofEvents.at(-1)?.signature ? "good" : "bad"}
+        />
+        <div className="settings-action-row">
+          <button
+            className="secondary-action"
+            onClick={onSignLatestProofEvent}
+            disabled={!proofEvents.length}
+          >
+            Sign latest
+          </button>
+          <button className="secondary-action" onClick={onExportProofRecord}>
+            Export record
           </button>
         </div>
       </section>

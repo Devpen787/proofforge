@@ -74,6 +74,8 @@ The current product slice supports:
     earned payout state without implying automatic settlement.
 13. Record an external wallet receipt after acceptance when a payout actually
     happens.
+14. Export a hash-linked ProofForge event record for source import, packet
+    readiness, submission, acceptance, and payout receipt state.
 
 ### Ethereum / Web3 / Bounty Work
 
@@ -90,8 +92,17 @@ GitHub issue / bounty URL / DAO proposal
 V1 tracks wallet, bounty, and onchain receipt references. It does not custody
 funds, escrow funds, issue tokens, or settle payments automatically.
 
+ProofForge also keeps a local signed-event chain for the state it does own:
+source import, proof packet creation, review decisions, accepted credit, and
+manual payout receipts. That record can be wallet-signed and exported from
+Settings as 0G-ready JSON.
+
 For the exact V1/V2/V3 Web3 boundaries, see
 [docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md](docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md).
+
+For the authority boundary between ProofForge, GitHub, maintainers, wallets,
+bounty platforms, and storage networks, see
+[docs/AUTHORITY_MODEL.md](docs/AUTHORITY_MODEL.md).
 
 ## Evidence Packet
 

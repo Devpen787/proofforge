@@ -194,6 +194,9 @@ function renderScreen(
           onReset={actions.resetWorkspace}
           onConnectWallet={actions.connectWallet}
           onSaveEnsName={actions.saveEnsName}
+          onSignLatestProofEvent={actions.signLatestProofEvent}
+          onExportProofRecord={actions.exportProofRecord}
+          proofEvents={state.proofEvents}
           walletIdentity={state.walletIdentity}
         />
       );

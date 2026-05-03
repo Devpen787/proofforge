@@ -1,0 +1,134 @@
+# ProofForge Authority Model
+
+ProofForge is not the authority system for project ownership, repository
+permissions, bounty rules, grant approval, or wallet custody.
+
+ProofForge is the contribution-proof layer between existing work systems and
+recognized value.
+
+## Core Rule
+
+```text
+Existing systems keep authority.
+ProofForge records proof, review, credit, and payout state.
+```
+
+## What ProofForge Owns
+
+ProofForge owns the workflow state required to turn useful work into accepted
+proof:
+
+- source intake from GitHub issues, PRs, project requests, bounty URLs, grant
+  milestones, marketplace tasks, or backlog items
+- mission framing: what will be proven, by whom, with what evidence
+- proof-node identity, skills, allowed actions, and blocked actions
+- bounded run trace and verifier result
+- evidence packet and public-safe proof packet
+- review flow: submit, accept, revise, reject
+- accepted contribution ledger
+- manual payout or receipt state
+- public proof record
+- exportable workspace and proof-event data
+
+## What ProofForge Does Not Own
+
+ProofForge does not decide or override:
+
+- GitHub repo ownership
+- GitHub issue, PR, branch, or merge permissions
+- maintainer authority
+- project governance
+- bounty platform payout eligibility
+- DAO grant approval
+- wallet custody
+- automatic settlement
+- whether an external source must accept a contribution
+
+If the source system already defines authority, ProofForge references that
+authority rather than replacing it.
+
+## Source Authority
+
+Every mission should carry a source authority reference:
+
+```json
+{
+  "sourceUrl": "https://github.com/org/repo/issues/123",
+  "sourceType": "github_issue",
+  "repo": "org/repo",
+  "acceptanceAuthority": "@repo-maintainer",
+  "externalRules": "GitHub repo and issue permissions"
+}
+```
+
+For external bounties or grants:
+
+```json
+{
+  "sourceUrl": "https://bounty-or-grant.example/task/123",
+  "sourceType": "bounty_source",
+  "acceptanceAuthority": "program reviewer",
+  "externalRules": "external platform terms"
+}
+```
+
+## ProofForge Authority Boundary
+
+ProofForge can say:
+
+- this work came from this source
+- this proof node ran within these limits
+- this packet contains these artifacts
+- this reviewer accepted, rejected, or requested revision in ProofForge
+- this acceptance created a ProofForge credit record
+- this payout receipt was recorded after acceptance
+- this public proof is derived from this packet and event log
+
+ProofForge should not say:
+
+- the contributor has merge rights
+- a bounty must pay
+- a grant was awarded
+- a maintainer accepted in GitHub unless a GitHub reference exists
+- funds were settled unless a wallet receipt or transaction reference exists
+
+## V1 Network Model
+
+ProofForge V1 can be hosted as a static app because the network is not a
+central database. The network model is:
+
+```text
+GitHub / bounty / project source authority
++ wallet / ENS identity
++ ProofForge signed event log
++ 0G proof packet storage
++ public proof link
+```
+
+This gives V1 a real ETH-native operational path without owning project
+permissions:
+
+1. Contributor imports source-backed work.
+2. Proof node frames and runs a bounded mission.
+3. ProofForge packages a packet.
+4. Contributor signs the proof submission.
+5. Reviewer accepts, revises, or rejects.
+6. Acceptance creates a credit event.
+7. Optional payout receipt references the external settlement.
+8. Public proof references the packet, event log, source authority, and proof
+   node.
+
+## Later Integrations
+
+Later versions can verify external acceptance through:
+
+- GitHub comment or PR references
+- GitHub App installation
+- bounty platform APIs
+- grant program review records
+- Ceramic profile or reputation streams
+- 0G Chain anchoring
+- wallet-signed maintainer receipts
+
+Those integrations strengthen the source authority reference. They do not make
+ProofForge the owner of external project permissions.

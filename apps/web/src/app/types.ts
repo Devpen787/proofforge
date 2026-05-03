@@ -50,6 +50,32 @@ export interface WalletIdentity {
   connectedAt: string;
 }
 
+export type ProofEventType =
+  | "workspace_imported"
+  | "wallet_connected"
+  | "ens_saved"
+  | "github_imported"
+  | "mission_started"
+  | "packet_ready"
+  | "packet_submitted"
+  | "packet_accepted"
+  | "revision_requested"
+  | "packet_rejected"
+  | "payout_receipt_recorded";
+
+export interface ProofEvent {
+  id: string;
+  type: ProofEventType;
+  createdAt: string;
+  actor: string;
+  sourceUrl?: string;
+  packetId?: string;
+  payload: Record<string, unknown>;
+  previousHash?: string;
+  eventHash: string;
+  signature?: string;
+}
+
 export interface AppState {
   screen: Screen;
   packetReady: boolean;
@@ -71,6 +97,7 @@ export interface AppState {
   importedMission: ImportedMission | null;
   payoutReceipt: PayoutReceipt | null;
   walletIdentity: WalletIdentity | null;
+  proofEvents: ProofEvent[];
 }
 
 export interface AppActions {
@@ -111,6 +138,8 @@ export interface AppActions {
   importWorkspace: (state: Partial<Omit<AppState, "screen">>) => void;
   connectWallet: () => Promise<void>;
   saveEnsName: (ensName: string) => void;
+  signLatestProofEvent: () => Promise<void>;
+  exportProofRecord: () => void;
 }
 
 export type Tone = "good" | "bad";
