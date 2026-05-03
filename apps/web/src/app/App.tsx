@@ -191,6 +191,7 @@ function renderScreen(
           zeroGReceiptUri={state.zeroGReceiptUri}
           onExportWorkspace={actions.exportWorkspace}
           onImportWorkspaceFile={actions.importWorkspaceFile}
+          onResetDemoState={actions.resetDemoState}
           onExportNetworkRecord={actions.exportNetworkRecord}
           onExportProjectRecord={actions.exportProjectRecord}
           onPrepareZeroGUpload={actions.prepareZeroGUpload}

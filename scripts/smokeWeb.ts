@@ -221,6 +221,7 @@ async function runSmoke() {
     await page.goto(`${baseUrl}/#settings`, { waitUntil: "networkidle" });
     await requireText(page, "Portable persistence");
     await requireText(page, "Import workspace file");
+    await requireText(page, "Reset demo state");
     await requireText(page, "Export network record");
     await requireText(page, "Export project record");
     await requireText(page, "Prepare 0G upload");

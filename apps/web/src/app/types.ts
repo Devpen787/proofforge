@@ -63,6 +63,7 @@ export interface AppActions {
   suggestWork: () => void;
   exportWorkspace: () => void;
   importWorkspaceFile: (file: File) => Promise<void>;
+  resetDemoState: () => void;
   exportNetworkRecord: () => Promise<void>;
   exportProjectRecord: () => Promise<void>;
   prepareZeroGUpload: () => Promise<string>;

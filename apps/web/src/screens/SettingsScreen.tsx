@@ -13,6 +13,7 @@ export function SettingsScreen({
   zeroGReceiptUri,
   onExportWorkspace,
   onImportWorkspaceFile,
+  onResetDemoState,
   onExportNetworkRecord,
   onExportProjectRecord,
   onPrepareZeroGUpload,
@@ -34,6 +35,7 @@ export function SettingsScreen({
   zeroGReceiptUri: string;
   onExportWorkspace: () => void;
   onImportWorkspaceFile: (file: File) => Promise<void>;
+  onResetDemoState: () => void;
   onExportNetworkRecord: () => Promise<void>;
   onExportProjectRecord: () => Promise<void>;
   onPrepareZeroGUpload: () => Promise<string>;
@@ -174,6 +176,9 @@ export function SettingsScreen({
               event.currentTarget.value = "";
             }}
           />
+          <button className="warning-action full" onClick={onResetDemoState}>
+            Reset demo state
+          </button>
           <button
             className="secondary-action full"
             onClick={() => void onExportNetworkRecord()}

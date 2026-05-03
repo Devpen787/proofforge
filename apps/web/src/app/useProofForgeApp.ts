@@ -91,6 +91,11 @@ function saveAppState(state: SavedAppState) {
   window.localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
 }
 
+function clearAppState() {
+  if (typeof window === "undefined") return;
+  window.localStorage.removeItem(PERSIST_KEY);
+}
+
 async function copyText(value: string) {
   await navigator.clipboard?.writeText(value).catch(() => undefined);
 }
@@ -363,6 +368,11 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
             ? parsed.state
             : (parsed as Partial<SavedAppState>);
       applySavedState(nextState);
+    },
+    resetDemoState: () => {
+      clearAppState();
+      applySavedState(defaultSavedState);
+      setScreen("opportunity");
     },
     exportNetworkRecord: async () => {
       const record = await createNetworkRecord("workspace_snapshot", state);
