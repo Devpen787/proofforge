@@ -35,6 +35,11 @@ For the completed ETHGlobal/GitHub prior-art, bounty mechanics, and Ethereum MCP
 For what belongs in V1, V2, and V3, use
 [`PRODUCT_ROADMAP_VERSIONS.md`](./PRODUCT_ROADMAP_VERSIONS.md).
 
+For the concrete Web3/open-source path to operational V1/V2, including
+GitHub handoff, EIP-712 acceptance, EAS, 0G sync, Ceramic/GUN/OrbitDB, and
+payout rails, use
+[`WEB3_OPERATIONAL_COMPLETION_PLAN.md`](./WEB3_OPERATIONAL_COMPLETION_PLAN.md).
+
 ## One-Sentence Product
 
 ProofForge helps developers register agents or nodes, pick useful project work, run it safely, submit proof, get human acceptance, and earn credit, benefits, or payout.

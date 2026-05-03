@@ -7,6 +7,10 @@ import type {
   WalletProviderMode
 } from "./types";
 import { screenFromHash } from "./helpers";
+import {
+  createAcceptanceFallbackMessage,
+  createAcceptanceTypedData
+} from "./acceptanceTypedData";
 import { createNetworkRecord, downloadJson } from "./networkRecords";
 import { readSharedStateFromHash } from "./shareRecords";
 
@@ -75,6 +79,17 @@ function getEthereumProvider(): EthereumProvider | null {
   const candidate = (window as Window & { ethereum?: EthereumProvider })
     .ethereum;
   return candidate?.request ? candidate : null;
+}
+
+async function getBrowserChainId() {
+  const ethereum = getEthereumProvider();
+  if (!ethereum) return 1;
+  try {
+    const chainId = await ethereum.request({ method: "eth_chainId" });
+    return typeof chainId === "string" ? Number.parseInt(chainId, 16) : 1;
+  } catch {
+    return 1;
+  }
 }
 
 async function sha256Hex(value: string) {
@@ -321,24 +336,45 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setWalletProvider("local-demo");
     },
     signAcceptance: async () => {
-      const message = JSON.stringify({
-        domain: "ProofForge",
-        action: "accept-proof",
+      const timestamp = new Date().toISOString();
+      const chainId = await getBrowserChainId();
+      const acceptanceInput = {
+        chainId,
         accepted,
         activeMission,
         submitted,
-        packet: "packet_docs_install_demo",
-        at: new Date().toISOString()
-      });
-      setAcceptanceMessage(message);
+        packetId: "packet_docs_install_demo",
+        project: "Docs Onboarding Sprint",
+        mission:
+          activeMission === "checkout"
+            ? "Checkout QA verification"
+            : "Validate installation docs",
+        storageRoot: "0x4ce83089482f",
+        payout: "$8 external/manual",
+        timestamp
+      };
+      const typedData = createAcceptanceTypedData(acceptanceInput);
+      const fallbackMessage = createAcceptanceFallbackMessage(acceptanceInput);
       const ethereum = getEthereumProvider();
       if (ethereum && walletAddress && walletProvider === "browser") {
-        const signature = await ethereum.request({
-          method: "personal_sign",
-          params: [message, walletAddress]
-        });
-        setAcceptanceSignature(String(signature));
-        return;
+        const typedMessage = JSON.stringify(typedData);
+        try {
+          const signature = await ethereum.request({
+            method: "eth_signTypedData_v4",
+            params: [walletAddress, typedMessage]
+          });
+          setAcceptanceMessage(typedMessage);
+          setAcceptanceSignature(String(signature));
+          return;
+        } catch {
+          const signature = await ethereum.request({
+            method: "personal_sign",
+            params: [fallbackMessage, walletAddress]
+          });
+          setAcceptanceMessage(fallbackMessage);
+          setAcceptanceSignature(String(signature));
+          return;
+        }
       }
 
       if (!walletConnected) {
@@ -346,8 +382,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
         setWalletAddress("local-demo-reviewer");
         setWalletProvider("local-demo");
       }
+      setAcceptanceMessage(fallbackMessage);
       setAcceptanceSignature(
-        `local-demo-sig:${(await sha256Hex(message)).slice(0, 32)}`
+        `local-demo-sig:${(await sha256Hex(fallbackMessage)).slice(0, 32)}`
       );
     },
     recordPayoutReceipt: (receipt) => {

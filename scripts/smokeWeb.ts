@@ -170,6 +170,8 @@ async function runSmoke() {
     const reviewerLink = await page.evaluate(() =>
       navigator.clipboard.readText().catch(() => "")
     );
+    await page.getByRole("button", { name: "Copy GitHub CLI command" }).click();
+    await requireText(page, "GitHub CLI command copied");
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await requireText(page, "Accept the proof and create the earned record.");
     if (reviewerLink.includes("#maintainer?share=")) {

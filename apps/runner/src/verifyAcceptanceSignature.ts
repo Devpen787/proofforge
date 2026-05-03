@@ -1,9 +1,10 @@
 import { readFile } from "node:fs/promises";
 import { pathToFileURL } from "node:url";
-import { verifyMessage } from "ethers";
+import { verifyMessage, verifyTypedData } from "ethers";
 
 export interface AcceptanceSignatureVerification {
   status: "verified" | "demo_only" | "missing" | "mismatch";
+  method?: "eip712" | "personal_sign" | "local_demo";
   walletProvider?: string;
   walletAddress?: string;
   recoveredAddress?: string;
@@ -20,6 +21,13 @@ interface ProofNetworkRecordLike {
   };
 }
 
+interface Eip712MessageLike {
+  types?: Record<string, Array<{ name: string; type: string }>>;
+  primaryType?: string;
+  domain?: Record<string, unknown>;
+  message?: Record<string, unknown>;
+}
+
 export function verifyAcceptanceSignatureRecord(
   record: ProofNetworkRecordLike
 ): AcceptanceSignatureVerification {
@@ -33,6 +41,7 @@ export function verifyAcceptanceSignatureRecord(
       status: "missing",
       walletProvider,
       walletAddress,
+      method: undefined,
       reason: "No acceptance signature and message were recorded."
     };
   }
@@ -42,6 +51,7 @@ export function verifyAcceptanceSignatureRecord(
       status: "demo_only",
       walletProvider,
       walletAddress,
+      method: "local_demo",
       signature,
       reason:
         "Signature was produced by the explicit local demo signer, not a browser wallet."
@@ -52,6 +62,7 @@ export function verifyAcceptanceSignatureRecord(
     return {
       status: "missing",
       walletProvider,
+      method: detectSignatureMethod(message),
       signature,
       reason:
         "Browser wallet signature exists but no wallet address was recorded."
@@ -59,7 +70,11 @@ export function verifyAcceptanceSignatureRecord(
   }
 
   try {
-    const recoveredAddress = verifyMessage(message, signature);
+    const method = detectSignatureMethod(message);
+    const recoveredAddress =
+      method === "eip712"
+        ? verifyEip712Acceptance(message, signature)
+        : verifyMessage(message, signature);
     const verified =
       recoveredAddress.toLowerCase() === walletAddress.toLowerCase();
 
@@ -68,6 +83,7 @@ export function verifyAcceptanceSignatureRecord(
       walletProvider,
       walletAddress,
       recoveredAddress,
+      method,
       signature,
       reason: verified
         ? "Recovered signer matches the recorded wallet address."
@@ -78,11 +94,46 @@ export function verifyAcceptanceSignatureRecord(
       status: "mismatch",
       walletProvider,
       walletAddress,
+      method: detectSignatureMethod(message),
       signature,
       reason:
         error instanceof Error ? error.message : "Signature recovery failed."
     };
   }
+}
+
+function detectSignatureMethod(message: string): "eip712" | "personal_sign" {
+  try {
+    const parsed = JSON.parse(message) as Eip712MessageLike;
+    if (
+      parsed.primaryType &&
+      parsed.domain &&
+      parsed.message &&
+      parsed.types?.[parsed.primaryType]
+    ) {
+      return "eip712";
+    }
+  } catch {
+    // Non-JSON messages are personal_sign payloads.
+  }
+
+  return "personal_sign";
+}
+
+function verifyEip712Acceptance(message: string, signature: string): string {
+  const parsed = JSON.parse(message) as Eip712MessageLike;
+  if (
+    !parsed.domain ||
+    !parsed.types ||
+    !parsed.primaryType ||
+    !parsed.message
+  ) {
+    throw new Error("EIP-712 acceptance message is incomplete.");
+  }
+
+  const { EIP712Domain: _domain, ...types } = parsed.types;
+  void _domain;
+  return verifyTypedData(parsed.domain, types, parsed.message, signature);
 }
 
 export async function verifyAcceptanceSignatureFile(

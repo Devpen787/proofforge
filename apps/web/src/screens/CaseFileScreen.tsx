@@ -27,6 +27,7 @@ export function CaseFileScreen({
 }) {
   const [copiedReviewLink, setCopiedReviewLink] = React.useState(false);
   const [copiedGitHubComment, setCopiedGitHubComment] = React.useState(false);
+  const [copiedGitHubCommand, setCopiedGitHubCommand] = React.useState(false);
   const packet =
     activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission =
@@ -67,6 +68,13 @@ export function CaseFileScreen({
       "The proof node ran in evidence-only mode. It did not open a PR, post before approval, access secrets, or spend funds."
     ].join("\n");
     await navigator.clipboard?.writeText(comment).catch(() => undefined);
+  };
+  const copyGitHubCommand = async () => {
+    setCopiedGitHubCommand(true);
+    const issueUrl = "https://github.com/Devpen787/proofforge/issues/1";
+    await navigator.clipboard
+      ?.writeText(`gh issue comment ${issueUrl} --body-file proof-comment.md`)
+      .catch(() => undefined);
   };
 
   return (
@@ -222,6 +230,14 @@ export function CaseFileScreen({
               {copiedGitHubComment
                 ? "GitHub comment copied"
                 : "Copy GitHub comment"}
+            </button>
+            <button
+              className="secondary-action full"
+              onClick={copyGitHubCommand}
+            >
+              {copiedGitHubCommand
+                ? "GitHub CLI command copied"
+                : "Copy GitHub CLI command"}
             </button>
           </section>
         </aside>

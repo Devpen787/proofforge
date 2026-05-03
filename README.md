@@ -72,6 +72,12 @@ For the exact V1/V2/V3 Web3 boundaries, see
 For the credential-light network persistence model, see
 [docs/NETWORK_PERSISTENCE_V1.md](docs/NETWORK_PERSISTENCE_V1.md).
 
+For the Web3/open-source operational completion plan, see
+[docs/WEB3_OPERATIONAL_COMPLETION_PLAN.md](docs/WEB3_OPERATIONAL_COMPLETION_PLAN.md).
+It defines how ProofForge uses GitHub handoff, EIP-712 acceptance, optional EAS
+attestations, 0G record sync, and external payout rails without becoming a
+custodial marketplace or GitHub replacement.
+
 ## Evidence Packet
 
 An evidence packet is the unit of value in ProofForge.
