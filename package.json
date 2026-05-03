@@ -16,6 +16,7 @@
     "import:github-history": "tsx apps/runner/src/importGitHubHistory.ts",
     "0g:check": "tsx apps/runner/src/checkZeroGConfig.ts",
     "0g:set-key": "tsx apps/runner/src/setZeroGPrivateKey.ts",
+    "0g:upload-record": "tsx apps/runner/src/uploadNetworkRecordToZeroG.ts",
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",
     "format": "prettier --write .",
     "format:check": "prettier --check .",
@@ -24,6 +25,7 @@
     "dev": "npm run dev -w apps/web",
     "release:payout": "tsx apps/runner/src/releasePayout.ts",
     "smoke:web": "tsx scripts/smokeWeb.ts",
+    "smoke:web:prod": "PROOFFORGE_BASE_URL=https://proofforgehub.vercel.app tsx scripts/smokeWeb.ts",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"
   },

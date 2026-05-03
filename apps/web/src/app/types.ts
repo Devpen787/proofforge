@@ -19,6 +19,10 @@ export interface AppState {
   workLeadConverted: boolean;
   activeMission: ActiveMission;
   agentRegistered: boolean;
+  walletConnected: boolean;
+  acceptanceSignature: string;
+  payoutReceiptRef: string;
+  zeroGReceiptUri: string;
 }
 
 export interface AppActions {
@@ -48,7 +52,11 @@ export interface AppActions {
   attachAgent: () => void;
   suggestWork: () => void;
   exportWorkspace: () => void;
+  importWorkspaceFile: (file: File) => Promise<void>;
   exportNetworkRecord: () => Promise<void>;
+  connectWallet: () => void;
+  signAcceptance: () => Promise<void>;
+  recordPayoutReceipt: (receipt: string) => void;
 }
 
 export type Tone = "good" | "bad";

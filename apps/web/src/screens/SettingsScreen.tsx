@@ -4,17 +4,32 @@ import { StatusRow } from "../components/ui";
 
 export function SettingsScreen({
   agentRegistered,
+  walletConnected,
+  acceptanceSignature,
+  payoutReceiptRef,
   onExportWorkspace,
+  onImportWorkspaceFile,
   onExportNetworkRecord,
+  onConnectWallet,
+  onRecordPayoutReceipt,
   onAgentSetup,
   onHelp
 }: {
   agentRegistered: boolean;
+  walletConnected: boolean;
+  acceptanceSignature: string;
+  payoutReceiptRef: string;
   onExportWorkspace: () => void;
+  onImportWorkspaceFile: (file: File) => Promise<void>;
   onExportNetworkRecord: () => Promise<void>;
+  onConnectWallet: () => void;
+  onRecordPayoutReceipt: (receipt: string) => void;
   onAgentSetup: () => void;
   onHelp: () => void;
 }) {
+  const importInputRef = React.useRef<HTMLInputElement | null>(null);
+  const [receiptInput, setReceiptInput] = React.useState(payoutReceiptRef);
+
   return (
     <section className="page-grid utility-grid">
       <div className="utility-hero wide">
@@ -55,8 +70,22 @@ export function SettingsScreen({
         <p className="small-label">Payout</p>
         <h2>Collection rules</h2>
         <StatusRow label="Method" value="Manual / external" tone="good" />
-        <StatusRow label="Wallet" value="Receipt reference only" tone="bad" />
+        <StatusRow
+          label="Wallet"
+          value={
+            walletConnected ? "Connected locally" : "Receipt reference only"
+          }
+          tone={walletConnected ? "good" : "bad"}
+        />
         <StatusRow label="Release" value="After acceptance" tone="good" />
+        <StatusRow
+          label="Signature"
+          value={acceptanceSignature ? "Acceptance signed" : "Optional"}
+          tone={acceptanceSignature ? "good" : "bad"}
+        />
+        <button className="secondary-action full" onClick={onConnectWallet}>
+          {walletConnected ? "Wallet connected" : "Connect wallet"}
+        </button>
       </section>
 
       <section className="panel utility-panel">
@@ -65,10 +94,33 @@ export function SettingsScreen({
         <StatusRow label="Reviewer links" value="Share state" tone="good" />
         <StatusRow label="Public proof" value="Share state" tone="good" />
         <StatusRow label="0G" value="Export-ready JSON" tone="good" />
+        <StatusRow
+          label="Payout receipt"
+          value={payoutReceiptRef || "Not recorded"}
+          tone={payoutReceiptRef ? "good" : "bad"}
+        />
         <div className="utility-action-stack">
           <button className="secondary-action full" onClick={onExportWorkspace}>
             Export workspace
           </button>
+          <button
+            className="secondary-action full"
+            onClick={() => importInputRef.current?.click()}
+          >
+            Import workspace file
+          </button>
+          <input
+            ref={importInputRef}
+            aria-label="Import workspace file"
+            hidden
+            type="file"
+            accept="application/json,.json"
+            onChange={(event) => {
+              const file = event.currentTarget.files?.[0];
+              if (file) void onImportWorkspaceFile(file);
+              event.currentTarget.value = "";
+            }}
+          />
           <button
             className="secondary-action full"
             onClick={() => void onExportNetworkRecord()}
@@ -76,6 +128,25 @@ export function SettingsScreen({
             Export network record
           </button>
         </div>
+        <form
+          className="utility-action-stack"
+          onSubmit={(event) => {
+            event.preventDefault();
+            onRecordPayoutReceipt(receiptInput);
+          }}
+        >
+          <label>
+            <small>Payout receipt or tx hash</small>
+            <input
+              value={receiptInput}
+              onChange={(event) => setReceiptInput(event.currentTarget.value)}
+              placeholder="0x... or external receipt URL"
+            />
+          </label>
+          <button className="secondary-action full" type="submit">
+            Record payout receipt
+          </button>
+        </form>
       </section>
 
       <details className="panel wide utility-disclosure">

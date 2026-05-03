@@ -2,7 +2,8 @@ import { spawn } from "node:child_process";
 import { chromium, type Page } from "playwright";
 
 const port = 5174;
-const baseUrl = `http://localhost:${port}`;
+const baseUrl = process.env.PROOFFORGE_BASE_URL ?? `http://localhost:${port}`;
+const shouldStartLocalServer = !process.env.PROOFFORGE_BASE_URL;
 const routes = [
   "opportunity",
   "agent-setup",
@@ -56,26 +57,27 @@ async function requireText(page: Page, text: string) {
 }
 
 async function runSmoke() {
-  const useExistingServer = await serverIsRunning();
-  const server = useExistingServer
-    ? null
-    : spawn(
-        "npm",
-        [
-          "run",
-          "dev",
-          "-w",
-          "apps/web",
-          "--",
-          "--port",
-          String(port),
-          "--strictPort"
-        ],
-        {
-          stdio: ["ignore", "pipe", "pipe"],
-          env: { ...process.env, FORCE_COLOR: "0" }
-        }
-      );
+  const useExistingServer = shouldStartLocalServer && (await serverIsRunning());
+  const server =
+    useExistingServer || !shouldStartLocalServer
+      ? null
+      : spawn(
+          "npm",
+          [
+            "run",
+            "dev",
+            "-w",
+            "apps/web",
+            "--",
+            "--port",
+            String(port),
+            "--strictPort"
+          ],
+          {
+            stdio: ["ignore", "pipe", "pipe"],
+            env: { ...process.env, FORCE_COLOR: "0" }
+          }
+        );
 
   server?.stdout.on("data", (chunk) => process.stdout.write(chunk));
   server?.stderr.on("data", (chunk) => process.stderr.write(chunk));
@@ -163,8 +165,24 @@ async function runSmoke() {
     await requireText(page, "Docs issue found.");
     await page.getByRole("button", { name: "Approve Packet" }).click();
     await requireText(page, "Send the proof, not agent noise.");
+    await page.getByRole("button", { name: "Copy reviewer link" }).click();
+    await requireText(page, "Reviewer link copied");
+    const reviewerLink = await page.evaluate(() =>
+      navigator.clipboard.readText().catch(() => "")
+    );
     await page.getByRole("button", { name: "Submit Packet" }).click();
     await requireText(page, "Accept the proof and create the earned record.");
+    if (reviewerLink.includes("#maintainer?share=")) {
+      const reviewerPage = await browser.newPage({
+        viewport: { width: 1280, height: 900 }
+      });
+      await reviewerPage.goto(reviewerLink, { waitUntil: "networkidle" });
+      await requireText(
+        reviewerPage,
+        "Accept the proof and create the earned record."
+      );
+      await reviewerPage.close();
+    }
     await page.getByRole("button", { name: "Review Packet" }).click();
     await requireText(page, "Evidence packet preview");
     await page.goto(`${baseUrl}/#maintainer`, { waitUntil: "networkidle" });
@@ -173,6 +191,12 @@ async function runSmoke() {
       .first()
       .click();
     await requireText(page, "Proof accepted.");
+    await page.goto(`${baseUrl}/#maintainer`, { waitUntil: "networkidle" });
+    await page.getByRole("button", { name: "Connect wallet" }).click();
+    await requireText(page, "Ready");
+    await page.getByRole("button", { name: "Sign acceptance" }).click();
+    await requireText(page, "Acceptance signed");
+    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await requireText(page, "Release the earned payout.");
     await page.getByRole("button", { name: "Release payout" }).first().click();
     await requireText(page, "Public proof and credit are ready.");
@@ -182,6 +206,16 @@ async function runSmoke() {
     await requireText(page, "Credit");
     await page.getByRole("button", { name: "Copy public link" }).click();
     await requireText(page, "Public link copied");
+
+    await page.goto(`${baseUrl}/#settings`, { waitUntil: "networkidle" });
+    await requireText(page, "Portable persistence");
+    await requireText(page, "Import workspace file");
+    await requireText(page, "Export network record");
+    await page
+      .getByPlaceholder("0x... or external receipt URL")
+      .fill("https://etherscan.io/tx/0xproof");
+    await page.getByRole("button", { name: "Record payout receipt" }).click();
+    await requireText(page, "https://etherscan.io/tx/0xproof");
 
     await page.goto(`${baseUrl}/#builder-passport`, {
       waitUntil: "networkidle"

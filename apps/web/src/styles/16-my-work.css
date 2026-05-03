@@ -104,6 +104,14 @@
   gap: 8px;
 }
 
+.my-work-receipt-form {
+  display: grid;
+  grid-template-columns: minmax(260px, 1fr) auto;
+  gap: 12px;
+  align-items: end;
+  margin-top: 16px;
+}
+
 .my-work-row {
   display: grid;
   grid-template-columns:

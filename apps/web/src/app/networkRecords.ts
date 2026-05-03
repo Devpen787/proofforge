@@ -26,6 +26,11 @@ export interface ProofForgeNetworkRecord {
     payout: "external-receipt";
     storage: "0g-ready";
   };
+  receipts: {
+    walletSignature?: string;
+    payoutReceipt?: string;
+    zeroGReceipt?: string;
+  };
   boundaries: string[];
 }
 
@@ -76,6 +81,11 @@ export async function createNetworkRecord(
       wallet: "local-signature",
       payout: "external-receipt",
       storage: "0g-ready"
+    },
+    receipts: {
+      walletSignature: state.acceptanceSignature || undefined,
+      payoutReceipt: state.payoutReceiptRef || undefined,
+      zeroGReceipt: state.zeroGReceiptUri || undefined
     },
     boundaries: [
       "ProofForge does not hold GitHub credentials by default.",

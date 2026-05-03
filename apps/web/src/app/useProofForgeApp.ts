@@ -24,8 +24,23 @@ const defaultSavedState: SavedAppState = {
   workLeadClarified: false,
   workLeadConverted: false,
   activeMission: "docs",
-  agentRegistered: false
+  agentRegistered: false,
+  walletConnected: false,
+  acceptanceSignature: "",
+  payoutReceiptRef: "",
+  zeroGReceiptUri: ""
 };
+
+function normalizeSavedState(input: Partial<SavedAppState>): SavedAppState {
+  return {
+    ...defaultSavedState,
+    ...input,
+    activeMission:
+      input.activeMission === "checkout" || input.activeMission === "docs"
+        ? input.activeMission
+        : defaultSavedState.activeMission
+  };
+}
 
 function readSavedAppState(): SavedAppState {
   if (typeof window === "undefined") return defaultSavedState;
@@ -33,18 +48,7 @@ function readSavedAppState(): SavedAppState {
     const raw = window.localStorage.getItem(PERSIST_KEY);
     const parsed = raw ? (JSON.parse(raw) as Partial<SavedAppState>) : {};
     const shared = readSharedStateFromHash() ?? {};
-    return {
-      ...defaultSavedState,
-      ...parsed,
-      ...shared,
-      activeMission:
-        shared.activeMission === "checkout" || shared.activeMission === "docs"
-          ? shared.activeMission
-          : parsed.activeMission === "checkout" ||
-              parsed.activeMission === "docs"
-            ? parsed.activeMission
-            : defaultSavedState.activeMission
-    };
+    return normalizeSavedState({ ...parsed, ...shared });
   } catch {
     return defaultSavedState;
   }
@@ -110,6 +114,18 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [activeMission, setActiveMission] = React.useState<ActiveMission>(
     savedState.activeMission
   );
+  const [walletConnected, setWalletConnected] = React.useState(
+    savedState.walletConnected
+  );
+  const [acceptanceSignature, setAcceptanceSignature] = React.useState(
+    savedState.acceptanceSignature
+  );
+  const [payoutReceiptRef, setPayoutReceiptRef] = React.useState(
+    savedState.payoutReceiptRef
+  );
+  const [zeroGReceiptUri, setZeroGReceiptUri] = React.useState(
+    savedState.zeroGReceiptUri
+  );
 
   const resetProof = React.useCallback(() => {
     setPacketReady(false);
@@ -118,7 +134,36 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     setReleased(false);
     setRevisionRequested(false);
     setRejected(false);
+    setAcceptanceSignature("");
+    setPayoutReceiptRef("");
   }, []);
+
+  const applySavedState = React.useCallback(
+    (nextState: Partial<SavedAppState>) => {
+      const normalized = normalizeSavedState(nextState);
+      setPacketReady(normalized.packetReady);
+      setSubmitted(normalized.submitted);
+      setAccepted(normalized.accepted);
+      setReleased(normalized.released);
+      setRevisionRequested(normalized.revisionRequested);
+      setRejected(normalized.rejected);
+      setImportedLead(normalized.importedLead);
+      setProjectStarted(normalized.projectStarted);
+      setProjectInviteSent(normalized.projectInviteSent);
+      setProjectAgentAttached(normalized.projectAgentAttached);
+      setProjectWorkSuggested(normalized.projectWorkSuggested);
+      setWorkLeadClarified(normalized.workLeadClarified);
+      setWorkLeadConverted(normalized.workLeadConverted);
+      setActiveMission(normalized.activeMission);
+      setAgentRegistered(normalized.agentRegistered);
+      setWalletConnected(normalized.walletConnected);
+      setAcceptanceSignature(normalized.acceptanceSignature);
+      setPayoutReceiptRef(normalized.payoutReceiptRef);
+      setZeroGReceiptUri(normalized.zeroGReceiptUri);
+      saveAppState(normalized);
+    },
+    []
+  );
 
   const actions: AppActions = {
     setScreen,
@@ -196,9 +241,47 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     exportWorkspace: () => {
       downloadJson("proofforge-workspace.json", readSavedAppState());
     },
+    importWorkspaceFile: async (file) => {
+      const parsed = JSON.parse(await file.text()) as
+        | Partial<SavedAppState>
+        | {
+            appState?: Partial<SavedAppState>;
+            receipts?: { zeroGReceipt?: string };
+          };
+      const nextState: Partial<SavedAppState> =
+        "appState" in parsed && parsed.appState
+          ? {
+              ...parsed.appState,
+              zeroGReceiptUri:
+                parsed.receipts?.zeroGReceipt ?? parsed.appState.zeroGReceiptUri
+            }
+          : (parsed as Partial<SavedAppState>);
+      applySavedState(nextState);
+    },
     exportNetworkRecord: async () => {
       const record = await createNetworkRecord("workspace_snapshot", state);
       downloadJson(`${record.id}.proof-network-record.json`, record);
+    },
+    connectWallet: () => setWalletConnected(true),
+    signAcceptance: async () => {
+      const signatureSeed = JSON.stringify({
+        accepted,
+        activeMission,
+        submitted,
+        at: new Date().toISOString()
+      });
+      const bytes = new TextEncoder().encode(signatureSeed);
+      const digest = await crypto.subtle.digest("SHA-256", bytes);
+      const signature = [...new Uint8Array(digest)]
+        .map((byte) => byte.toString(16).padStart(2, "0"))
+        .join("")
+        .slice(0, 32);
+      setWalletConnected(true);
+      setAcceptanceSignature(`local-wallet-sig:${signature}`);
+    },
+    recordPayoutReceipt: (receipt) => {
+      setPayoutReceiptRef(receipt.trim());
+      if (receipt.trim()) setReleased(true);
     }
   };
 
@@ -218,7 +301,11 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     workLeadClarified,
     workLeadConverted,
     activeMission,
-    agentRegistered
+    agentRegistered,
+    walletConnected,
+    acceptanceSignature,
+    payoutReceiptRef,
+    zeroGReceiptUri
   };
 
   React.useEffect(() => {
@@ -237,7 +324,11 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       workLeadClarified,
       workLeadConverted,
       activeMission,
-      agentRegistered
+      agentRegistered,
+      walletConnected,
+      acceptanceSignature,
+      payoutReceiptRef,
+      zeroGReceiptUri
     });
   }, [
     packetReady,
@@ -254,7 +345,11 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     workLeadClarified,
     workLeadConverted,
     activeMission,
-    agentRegistered
+    agentRegistered,
+    walletConnected,
+    acceptanceSignature,
+    payoutReceiptRef,
+    zeroGReceiptUri
   ]);
 
   return { state, actions };

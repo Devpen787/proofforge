@@ -13,7 +13,11 @@ export function MaintainerScreen({
   submitted,
   accepted,
   activeMission,
+  walletConnected,
+  acceptanceSignature,
   onAccept,
+  onConnectWallet,
+  onSignAcceptance,
   onReview,
   onRevision,
   onReject
@@ -21,7 +25,11 @@ export function MaintainerScreen({
   submitted: boolean;
   accepted: boolean;
   activeMission: ActiveMission;
+  walletConnected: boolean;
+  acceptanceSignature: string;
   onAccept: () => void;
+  onConnectWallet: () => void;
+  onSignAcceptance: () => Promise<void>;
   onReview: () => void;
   onRevision: () => void;
   onReject: () => void;
@@ -44,7 +52,15 @@ export function MaintainerScreen({
       value: generatedProofSummary.protocolRefs.storageProvider
     },
     { label: "Artifacts", value: `${packet.artifacts.length} files` },
-    { label: "Payout", value: generatedProofSummary.payout.amount }
+    { label: "Payout", value: generatedProofSummary.payout.amount },
+    {
+      label: "Reviewer signature",
+      value: acceptanceSignature
+        ? "Wallet signed"
+        : walletConnected
+          ? "Ready"
+          : "Wallet optional"
+    }
   ];
   return (
     <section className="page-grid maintainer-focus-grid">
@@ -94,6 +110,23 @@ export function MaintainerScreen({
             >
               {accepted ? "Accepted" : "Accept & Mark Earned"}
             </button>
+            {!walletConnected && (
+              <button
+                className="secondary-action full"
+                onClick={onConnectWallet}
+              >
+                Connect wallet
+              </button>
+            )}
+            {accepted && (
+              <button
+                className="secondary-action full"
+                onClick={() => void onSignAcceptance()}
+                disabled={Boolean(acceptanceSignature)}
+              >
+                {acceptanceSignature ? "Acceptance signed" : "Sign acceptance"}
+              </button>
+            )}
             {!accepted && (
               <>
                 <button className="warning-action full" onClick={onRevision}>

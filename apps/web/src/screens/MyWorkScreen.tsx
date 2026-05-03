@@ -8,12 +8,14 @@ export function MyWorkScreen({
   released,
   revisionRequested,
   rejected,
+  payoutReceiptRef,
   onMission,
   onClarify,
   onCaseFile,
   onAgentSetup,
   onRelease,
-  onPublicProof
+  onPublicProof,
+  onRecordPayoutReceipt
 }: {
   agentRegistered: boolean;
   submitted: boolean;
@@ -21,13 +23,16 @@ export function MyWorkScreen({
   released: boolean;
   revisionRequested: boolean;
   rejected: boolean;
+  payoutReceiptRef: string;
   onMission: () => void;
   onClarify: () => void;
   onCaseFile: () => void;
   onAgentSetup: () => void;
   onRelease: () => void;
   onPublicProof: () => void;
+  onRecordPayoutReceipt: (receipt: string) => void;
 }) {
+  const [receiptInput, setReceiptInput] = React.useState(payoutReceiptRef);
   const nextAction = !agentRegistered
     ? {
         label: "Set up proof node",
@@ -141,7 +146,9 @@ export function MyWorkScreen({
             </span>
             <span>
               <small>Release</small>
-              <strong>{released ? "Released" : "Pending"}</strong>
+              <strong>
+                {payoutReceiptRef || (released ? "Released" : "Pending")}
+              </strong>
             </span>
             <span>
               <small>Storage</small>
@@ -192,6 +199,29 @@ export function MyWorkScreen({
               </button>
             ))}
           </div>
+          {accepted && (
+            <form
+              className="my-work-receipt-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                onRecordPayoutReceipt(receiptInput);
+              }}
+            >
+              <label>
+                <small>Payout receipt or tx hash</small>
+                <input
+                  value={receiptInput}
+                  onChange={(event) =>
+                    setReceiptInput(event.currentTarget.value)
+                  }
+                  placeholder="0x... or external receipt URL"
+                />
+              </label>
+              <button className="secondary-action" type="submit">
+                Record payout receipt
+              </button>
+            </form>
+          )}
         </section>
       </div>
     </section>

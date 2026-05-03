@@ -95,12 +95,14 @@ function renderScreen(
           released={state.released}
           revisionRequested={state.revisionRequested}
           rejected={state.rejected}
+          payoutReceiptRef={state.payoutReceiptRef}
           onMission={actions.runStarterMission}
           onClarify={actions.openOpportunities}
           onCaseFile={actions.openCaseFile}
           onAgentSetup={() => actions.setScreen("agent-setup")}
           onRelease={actions.releasePayout}
           onPublicProof={actions.openPublicProof}
+          onRecordPayoutReceipt={actions.recordPayoutReceipt}
         />
       );
     case "builder-passport":
@@ -143,7 +145,11 @@ function renderScreen(
           submitted={state.submitted}
           accepted={state.accepted}
           activeMission={state.activeMission}
+          walletConnected={state.walletConnected}
+          acceptanceSignature={state.acceptanceSignature}
           onAccept={actions.acceptPacket}
+          onConnectWallet={actions.connectWallet}
+          onSignAcceptance={actions.signAcceptance}
           onReview={actions.openCaseFile}
           onRevision={actions.requestRevision}
           onReject={actions.rejectPacket}
@@ -161,8 +167,14 @@ function renderScreen(
       return (
         <SettingsScreen
           agentRegistered={state.agentRegistered}
+          walletConnected={state.walletConnected}
+          acceptanceSignature={state.acceptanceSignature}
+          payoutReceiptRef={state.payoutReceiptRef}
           onExportWorkspace={actions.exportWorkspace}
+          onImportWorkspaceFile={actions.importWorkspaceFile}
           onExportNetworkRecord={actions.exportNetworkRecord}
+          onConnectWallet={actions.connectWallet}
+          onRecordPayoutReceipt={actions.recordPayoutReceipt}
           onAgentSetup={() => actions.setScreen("agent-setup")}
           onHelp={() => actions.setScreen("help")}
         />

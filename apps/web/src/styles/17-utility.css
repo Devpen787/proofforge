@@ -121,6 +121,24 @@
   margin-top: 6px;
 }
 
+.utility-action-stack label,
+.my-work-receipt-form label {
+  display: grid;
+  gap: 6px;
+}
+
+.utility-action-stack input,
+.my-work-receipt-form input {
+  min-width: 0;
+  border: 1px solid #cbd5e1;
+  border-radius: 12px;
+  background: #fff;
+  color: #020617;
+  padding: 11px 12px;
+  font: inherit;
+  font-weight: 800;
+}
+
 .utility-help-link {
   justify-self: start;
 }
