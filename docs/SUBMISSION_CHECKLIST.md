@@ -6,7 +6,7 @@ Use this before final hackathon submission.
 
 - Public GitHub repository: `<public repository URL>`
 - Local demo URL: `http://localhost:5173/#opportunity`
-- Deployed demo URL: add after deployment
+- Deployed product URL: `https://proofforgehub.vercel.app`
 - Demo video URL: add after recording
 - AI tool attribution: [`AI_ATTRIBUTION.md`](AI_ATTRIBUTION.md)
 

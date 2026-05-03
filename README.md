@@ -284,6 +284,12 @@ automatic wallet settlement. Those are the next production layers.
 
 ## Run Locally
 
+Live product URL:
+
+```text
+https://proofforgehub.vercel.app
+```
+
 Install dependencies:
 
 ```bash
