@@ -90,6 +90,13 @@ V1:
 - Track earned value after acceptance.
 - Track released payout by receipt URL, tx hash, Safe tx, Splits config, Drips
   project, or marketplace receipt.
+- Generate payout handoff payloads:
+
+```bash
+npm run payout:handoff -- --payout <payout.json> --record <proof-network-record.json> --recipient <wallet>
+```
+
+This writes Safe, Splits, and Drips metadata without executing settlement.
 
 V2:
 

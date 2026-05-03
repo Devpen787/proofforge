@@ -59,6 +59,15 @@ Optional payout release command:
 npm run release:payout -- --in demo-output/docs-install/packet/payout.json --out demo-output/docs-install/packet/released-payout.json
 ```
 
+Optional payout rail handoff command:
+
+```bash
+npm run payout:handoff -- --payout demo-output/docs-install/packet/payout.json --record <proof-network-record.json> --recipient <wallet>
+```
+
+This prepares Safe, Splits, and Drips metadata only. ProofForge does not custody
+or move funds.
+
 Optional public work import command:
 
 ```bash

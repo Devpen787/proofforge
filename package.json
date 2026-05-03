@@ -25,6 +25,7 @@
     "github:handoff": "tsx apps/runner/src/createGitHubHandoff.ts",
     "sync:web-proof": "tsx scripts/generateWebProofData.ts",
     "dev": "npm run dev -w apps/web",
+    "payout:handoff": "tsx apps/runner/src/createPayoutHandoff.ts",
     "release:payout": "tsx apps/runner/src/releasePayout.ts",
     "sync:publish-record": "tsx apps/runner/src/syncNetworkRecord.ts publish",
     "sync:publish-project": "tsx apps/runner/src/syncProjectRecord.ts publish",
