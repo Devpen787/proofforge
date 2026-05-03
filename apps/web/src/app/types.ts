@@ -47,6 +47,8 @@ export interface AppActions {
   inviteContributor: () => void;
   attachAgent: () => void;
   suggestWork: () => void;
+  exportWorkspace: () => void;
+  exportNetworkRecord: () => Promise<void>;
 }
 
 export type Tone = "good" | "bad";

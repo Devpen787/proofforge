@@ -235,6 +235,211 @@
   font-size: 18px;
 }
 
+.passport-grid {
+  grid-template-columns: minmax(0, 1.35fr) minmax(280px, 0.65fr);
+}
+
+.passport-hero {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(240px, 0.36fr);
+  gap: 22px;
+  align-items: stretch;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 8px 0 26px;
+}
+
+.passport-hero h1 {
+  margin: 0;
+  font-size: clamp(34px, 4vw, 56px);
+  line-height: 1;
+}
+
+.passport-hero p:not(.small-label),
+.passport-id-card small {
+  color: #475569;
+  font-weight: 750;
+  line-height: 1.5;
+}
+
+.passport-id-card {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid #bbf7d0;
+  border-radius: 18px;
+  background: #f0fdf4;
+  padding: 18px;
+}
+
+.passport-id-card strong {
+  color: #064e3b;
+  font-size: 28px;
+  overflow-wrap: anywhere;
+}
+
+.passport-stats {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 12px;
+}
+
+.passport-panel {
+  display: grid;
+  align-content: start;
+  gap: 14px;
+}
+
+.passport-row-list,
+.passport-recommendations,
+.passport-prize-grid,
+.passport-v2-status {
+  display: grid;
+  gap: 8px;
+}
+
+.passport-row,
+.passport-recommendation {
+  display: grid;
+  grid-template-columns: minmax(180px, 1.25fr) repeat(3, minmax(90px, 0.6fr));
+  gap: 12px;
+  align-items: center;
+  border: 0;
+  border-bottom: 1px solid #e2e8f0;
+  background: transparent;
+  padding: 12px 0;
+  text-align: left;
+}
+
+.passport-recommendation {
+  grid-template-columns: minmax(220px, 1fr) minmax(180px, 0.6fr);
+  cursor: pointer;
+}
+
+.passport-row span,
+.passport-recommendation span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.passport-row strong,
+.passport-row small,
+.passport-row b,
+.passport-recommendation strong,
+.passport-recommendation small,
+.passport-recommendation b {
+  overflow-wrap: anywhere;
+}
+
+.passport-row small,
+.passport-recommendation small {
+  color: #64748b;
+  font-weight: 750;
+}
+
+.passport-row b,
+.passport-recommendation b {
+  color: #020617;
+}
+
+.passport-prize-grid {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+}
+
+.passport-prize-item {
+  display: grid;
+  align-content: start;
+  gap: 10px;
+  border: 1px solid #e2e8f0;
+  border-radius: 8px;
+  background: #f8fafc;
+  padding: 14px;
+}
+
+.passport-prize-item span {
+  display: grid;
+  gap: 4px;
+  min-width: 0;
+}
+
+.passport-prize-item strong,
+.passport-prize-item small,
+.passport-prize-item code {
+  overflow-wrap: anywhere;
+}
+
+.passport-prize-item small {
+  color: #64748b;
+  font-weight: 750;
+  line-height: 1.35;
+}
+
+.passport-prize-item b {
+  color: #0f172a;
+  font-size: 12px;
+  text-transform: uppercase;
+}
+
+.passport-prize-item code {
+  border-radius: 6px;
+  background: #ffffff;
+  color: #475569;
+  padding: 6px 7px;
+  font-size: 12px;
+}
+
+.passport-v2-grid {
+  display: grid;
+  grid-template-columns: minmax(260px, 0.78fr) minmax(0, 1.22fr);
+  gap: 18px;
+  align-items: start;
+}
+
+.passport-connection-row {
+  display: grid;
+  grid-template-columns: minmax(180px, 1fr) minmax(120px, 0.38fr);
+  gap: 12px;
+  align-items: center;
+  border-bottom: 1px solid #e2e8f0;
+  padding: 12px 0;
+}
+
+.passport-connection-row span {
+  display: grid;
+  gap: 3px;
+  min-width: 0;
+}
+
+.passport-connection-row strong,
+.passport-connection-row small,
+.passport-connection-row b {
+  overflow-wrap: anywhere;
+}
+
+.passport-connection-row small {
+  color: #64748b;
+  font-weight: 750;
+}
+
+.passport-connection-row b {
+  color: #020617;
+}
+
+.passport-specialties {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.passport-specialties span {
+  border-radius: 999px;
+  background: #f1f5f9;
+  color: #0f172a;
+  padding: 7px 10px;
+  font-size: 12px;
+  font-weight: 850;
+}
+
 @media (max-width: 760px) {
   .my-work-grid,
   .my-work-command,
@@ -242,7 +447,15 @@
   .my-work-hero,
   .my-work-ledger,
   .my-work-ledger-table,
-  .my-work-row {
+  .my-work-row,
+  .passport-grid,
+  .passport-hero,
+  .passport-stats,
+  .passport-row,
+  .passport-recommendation,
+  .passport-prize-grid,
+  .passport-v2-grid,
+  .passport-connection-row {
     grid-template-columns: 1fr;
   }
   .my-work-row .start-pill {

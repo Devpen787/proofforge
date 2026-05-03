@@ -15,6 +15,8 @@ import { PublicProofScreen } from "../screens/PublicProofScreen";
 import { AgentSetupScreen } from "../screens/AgentSetupScreen";
 import { SettingsScreen } from "../screens/SettingsScreen";
 import { HelpScreen } from "../screens/HelpScreen";
+import { BuilderPassportScreen } from "../screens/BuilderPassportScreen";
+import { extractShareState } from "./shareRecords";
 
 function renderScreen(
   screen: Screen,
@@ -101,6 +103,13 @@ function renderScreen(
           onPublicProof={actions.openPublicProof}
         />
       );
+    case "builder-passport":
+      return (
+        <BuilderPassportScreen
+          onWork={() => actions.setScreen("my-work")}
+          onProjects={() => actions.setScreen("projects")}
+        />
+      );
     case "mission-detail":
       return (
         <MissionDetailScreen
@@ -124,6 +133,7 @@ function renderScreen(
           revisionRequested={state.revisionRequested}
           rejected={state.rejected}
           activeMission={state.activeMission}
+          shareState={extractShareState(state)}
           onSubmit={actions.submitPacket}
         />
       );
@@ -143,6 +153,7 @@ function renderScreen(
       return (
         <PublicProofScreen
           activeMission={state.activeMission}
+          shareState={extractShareState(state)}
           onBack={() => actions.setScreen("opportunity")}
         />
       );
@@ -150,6 +161,8 @@ function renderScreen(
       return (
         <SettingsScreen
           agentRegistered={state.agentRegistered}
+          onExportWorkspace={actions.exportWorkspace}
+          onExportNetworkRecord={actions.exportNetworkRecord}
           onAgentSetup={() => actions.setScreen("agent-setup")}
           onHelp={() => actions.setScreen("help")}
         />

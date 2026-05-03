@@ -482,6 +482,75 @@ What value or public proof followed?
 What can I work on next?
 ```
 
+### V2 Completion Boundary
+
+The local V2 implementation now covers the full product shape without claiming
+production integrations that require deployed credentials:
+
+- GitHub connection references can store OAuth and webhook configuration state.
+- Wallet identity and onchain receipts are read-only value signals.
+- Contribution graph snapshots can persist through local JSON storage.
+- Marketplace and hackathon imports can be tracked as adapter snapshots.
+- Project membership, roles, and permissions are represented in the project
+  model.
+- Credential and badge references are proof-gated and can only attach after an
+  accepted Proof Pack.
+
+Production OAuth apps, hosted webhooks, live wallet signature checks, and
+external marketplace write APIs remain deployment/configuration work. They
+should plug into these V2 contracts rather than bypassing the proof graph.
+
+### First V2 Implementation Slice
+
+The first V2 upgrade should be additive to the V1 proof loop:
+
+- keep `Project -> Work Lead -> Mission -> Proof Pack -> Acceptance` as the
+  trusted path
+- add a contribution graph over the top of the existing project ledger
+- import GitHub account activity as `observed`, not accepted credit
+- link observed work to accepted Proof Packs only after maintainer acceptance
+- attach wallet, receipt, bounty, grant, and credential records as value
+  signals, not as proof by themselves
+- roll agent runs up to the owner and preserve specialties, failure/revision
+  state, and project attachments
+- expose this as Builder Passport: observed work, accepted proof, linked value
+  signals, project history, agent history, and next recommended missions
+- upgrade hackathon prize/bounty imports into proof readiness checklists:
+  repository proof, demo proof, protocol-use proof, deployment references,
+  sponsor-requested feedback files, agent framework proof, architecture notes,
+  and sponsor acceptance
+
+The first user-facing V2 surface is deliberately small. It should answer:
+
+```text
+What did ProofForge observe?
+What was accepted?
+What value or receipt was linked after acceptance?
+What did my agent do for me?
+Which bounty or prize requirements still need evidence?
+Where should I contribute next?
+```
+
+Do not add settlement, escrow, marketplace sync, badge issuance, or autonomous
+agent participation as V2 defaults. Those remain V3 unless implemented and
+verified.
+
+Current local commands:
+
+```bash
+npm run import:github-history -- --login <github-login>
+npm run import:ethglobal -- --event "Open Agents"
+```
+
+This writes observed GitHub issues and pull requests under `demo-output/imports`.
+The imported records are graph inputs only. They do not create credit, payout,
+public proof, or maintainer acceptance by themselves.
+
+ETHGlobal prize imports produce source-backed work leads with submission
+requirements. V2 classifies sponsor wording into concrete evidence fields, but
+still does not submit projects, claim sponsor acceptance, or represent prize
+payment.
+
 ## V3: Network And Agent Economy Layer
 
 ### Promise

@@ -5,6 +5,7 @@ export const screens = [
   "projects",
   "work-queue",
   "my-work",
+  "builder-passport",
   "mission-detail",
   "run",
   "case-file",
@@ -21,7 +22,8 @@ export const primaryNavScreens = [
   "opportunity",
   "projects",
   "work-queue",
-  "my-work"
+  "my-work",
+  "builder-passport"
 ] as const satisfies readonly Screen[];
 
 export const secondaryNavScreens = [
@@ -36,6 +38,7 @@ export const routeLabels: Record<Screen, string> = {
   projects: "Projects",
   "work-queue": "Opportunities",
   "my-work": "My Work",
+  "builder-passport": "Passport",
   "mission-detail": "Mission Detail",
   run: "Runner",
   "case-file": "Case File",

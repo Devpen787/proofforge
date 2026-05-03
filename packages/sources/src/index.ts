@@ -32,6 +32,50 @@ export interface WorkSourceImport {
   };
 }
 
+export type GitHubObservedContributionKind = "issue" | "pull_request";
+
+export type GitHubAcceptanceSignal = "open" | "closed" | "merged" | "unknown";
+
+export interface GitHubObservedContribution {
+  id: string;
+  kind: GitHubObservedContributionKind;
+  title: string;
+  sourceUrl: string;
+  repo: string;
+  state: "open" | "closed";
+  authoredAt: string;
+  closedAt?: string;
+  acceptanceSignal: GitHubAcceptanceSignal;
+  proofStatus: "observed_not_accepted_credit";
+  notes: string[];
+}
+
+export interface GitHubContributionHistoryImport {
+  source: "github";
+  importedAt: string;
+  login: string;
+  observed: GitHubObservedContribution[];
+  claimBoundary: "observed_history_is_not_accepted_credit";
+}
+
+interface GitHubSearchIssueItem {
+  html_url: string;
+  title: string;
+  state: "open" | "closed";
+  repository_url?: string;
+  created_at?: string;
+  closed_at?: string | null;
+  pull_request?: {
+    url?: string;
+    html_url?: string;
+    merged_at?: string | null;
+  };
+}
+
+interface GitHubSearchPayload {
+  items?: GitHubSearchIssueItem[];
+}
+
 export interface EthGlobalPrizePayload {
   name: string;
   about?: string;
@@ -50,6 +94,38 @@ export interface EthGlobalPrizeImport {
   leads: WorkLead[];
   sponsors: number;
   prizeCount: number;
+}
+
+export const hackathonPrizeRequirementCategories = [
+  "repository",
+  "demo",
+  "protocol_use",
+  "deployment",
+  "feedback_file",
+  "agent_framework",
+  "architecture",
+  "sponsor_acceptance",
+  "unknown"
+] as const;
+
+export type HackathonPrizeRequirementCategory =
+  (typeof hackathonPrizeRequirementCategories)[number];
+
+export interface ClassifiedHackathonRequirement {
+  category: HackathonPrizeRequirementCategory;
+  label: string;
+  detail: string;
+  required: boolean;
+  sourceText: string;
+}
+
+export interface HackathonReadinessItem {
+  category: HackathonPrizeRequirementCategory;
+  label: string;
+  detail: string;
+  required: boolean;
+  evidenceField: string;
+  status: "required" | "ready" | "blocked";
 }
 
 export const ethAgentSourceCategories = [
@@ -441,6 +517,74 @@ export function getEthAgentSourceCatalogEntry(
   return entry;
 }
 
+export function classifyHackathonPrizeRequirement(
+  text: string
+): ClassifiedHackathonRequirement[] {
+  const normalized = normalizeRequirementText(text);
+  if (!normalized) return [];
+
+  const matches = prizeRequirementRules
+    .filter((rule) => rule.patterns.some((pattern) => pattern.test(normalized)))
+    .map((rule) => ({
+      category: rule.category,
+      label: rule.label,
+      detail: rule.detail,
+      required: true,
+      sourceText: normalized
+    }));
+
+  if (matches.length) return matches;
+
+  return [
+    {
+      category: "unknown",
+      label: "Sponsor requirement",
+      detail:
+        "Review the sponsor wording and convert it into a concrete proof artifact before submission.",
+      required: true,
+      sourceText: normalized
+    }
+  ];
+}
+
+export function buildHackathonReadinessChecklist(
+  lead: WorkLead
+): HackathonReadinessItem[] {
+  const requirements = lead.submissionRequirements.flatMap((requirement) =>
+    classifyHackathonPrizeRequirement(
+      `${requirement.label}. ${requirement.detail}`
+    )
+  );
+  const desiredEvidence = lead.desiredEvidence.flatMap((evidence) =>
+    classifyHackathonPrizeRequirement(evidence)
+  );
+  const classified = dedupeClassifiedRequirements([
+    ...requirements,
+    ...desiredEvidence,
+    ...classifyHackathonPrizeRequirement(
+      `${lead.title}. ${lead.rawRequest}. ${lead.acceptanceOwner}`
+    ),
+    {
+      category: "sponsor_acceptance",
+      label: "Sponsor acceptance",
+      detail:
+        "Sponsor or hackathon reviewer must accept the submission before any prize claim is represented.",
+      required: true,
+      sourceText: lead.acceptanceOwner
+    }
+  ]);
+
+  return classified.map((requirement) => ({
+    category: requirement.category,
+    label: requirement.label,
+    detail: requirement.detail,
+    required: requirement.required,
+    evidenceField: evidenceFieldForRequirement(requirement.category),
+    status:
+      requirement.category === "sponsor_acceptance" ? "blocked" : "required"
+  }));
+}
+
 export type IssueFetch = (
   url: string,
   init?: { headers?: Record<string, string> }
@@ -577,6 +721,42 @@ export async function importGitHubIssueLead(input: {
   };
 }
 
+export async function importGitHubContributionHistory(input: {
+  login: string;
+  fetch?: JsonFetch;
+  now?: Date;
+  perPage?: number;
+}): Promise<GitHubContributionHistoryImport> {
+  const login = input.login.trim();
+  if (!/^[a-zA-Z0-9-]+$/.test(login)) {
+    throw new Error(
+      "GitHub login must contain only letters, numbers, or dashes."
+    );
+  }
+
+  const fetcher = input.fetch ?? globalThis.fetch;
+  if (!fetcher) throw new Error("No fetch implementation available.");
+
+  const perPage = input.perPage ?? 20;
+  const [issues, pullRequests] = await Promise.all([
+    fetchGitHubSearch(fetcher, `author:${login} type:issue`, perPage),
+    fetchGitHubSearch(fetcher, `author:${login} type:pr`, perPage)
+  ]);
+
+  return {
+    source: "github",
+    importedAt: (input.now ?? new Date()).toISOString(),
+    login,
+    observed: dedupeObservedContributions([
+      ...issues.map((item) => toObservedContribution(item, "issue")),
+      ...pullRequests.map((item) =>
+        toObservedContribution(item, "pull_request")
+      )
+    ]),
+    claimBoundary: "observed_history_is_not_accepted_credit"
+  };
+}
+
 export async function importEthGlobalPrizeLeads(input: {
   event: string;
   fetch?: JsonFetch;
@@ -682,6 +862,238 @@ function parseGitHubIssuePayload(input: unknown): GitHubIssuePayload {
     user: issue.user ?? null,
     repository_url: issue.repository_url
   };
+}
+
+async function fetchGitHubSearch(
+  fetcher: JsonFetch,
+  query: string,
+  perPage: number
+): Promise<GitHubSearchIssueItem[]> {
+  const url = `https://api.github.com/search/issues?q=${encodeURIComponent(
+    query
+  )}&sort=updated&order=desc&per_page=${perPage}`;
+  const response = await fetcher(url, {
+    headers: {
+      accept: "application/vnd.github+json",
+      "user-agent": "proofforge-source-importer"
+    }
+  });
+  if (!response.ok) {
+    throw new Error(
+      `GitHub contribution history import failed with status ${response.status}.`
+    );
+  }
+
+  const payload = parseGitHubSearchPayload(await response.json());
+  return payload.items ?? [];
+}
+
+function parseGitHubSearchPayload(input: unknown): GitHubSearchPayload {
+  if (!input || typeof input !== "object") {
+    throw new Error("GitHub search response was not an object.");
+  }
+  const items = (input as GitHubSearchPayload).items;
+  if (!Array.isArray(items)) {
+    throw new Error("GitHub search response is missing items.");
+  }
+
+  return {
+    items: items.filter((item) => Boolean(item?.html_url && item?.title))
+  };
+}
+
+function toObservedContribution(
+  item: GitHubSearchIssueItem,
+  fallbackKind: GitHubObservedContributionKind
+): GitHubObservedContribution {
+  const kind = item.pull_request ? "pull_request" : fallbackKind;
+  const repo = repoFromGitHubApiUrl(item.repository_url);
+  const acceptanceSignal = acceptanceSignalFor(item, kind);
+
+  return {
+    id: `github_${kind}_${repo.replace("/", "_")}_${numberFromGitHubUrl(
+      item.html_url
+    )}`.toLowerCase(),
+    kind,
+    title: item.title,
+    sourceUrl: item.html_url,
+    repo,
+    state: item.state ?? "open",
+    authoredAt: item.created_at ?? new Date(0).toISOString(),
+    closedAt: item.closed_at ?? undefined,
+    acceptanceSignal,
+    proofStatus: "observed_not_accepted_credit",
+    notes: [
+      "Imported from GitHub account history.",
+      "This is observed activity, not accepted ProofForge credit."
+    ]
+  };
+}
+
+function acceptanceSignalFor(
+  item: GitHubSearchIssueItem,
+  kind: GitHubObservedContributionKind
+): GitHubAcceptanceSignal {
+  if (kind === "pull_request" && item.pull_request?.merged_at) return "merged";
+  if (item.state === "closed") return "closed";
+  if (item.state === "open") return "open";
+  return "unknown";
+}
+
+function repoFromGitHubApiUrl(repositoryUrl: string | undefined): string {
+  if (!repositoryUrl) return "unknown/repository";
+  const marker = "/repos/";
+  const index = repositoryUrl.indexOf(marker);
+  return index >= 0
+    ? repositoryUrl.slice(index + marker.length)
+    : "unknown/repository";
+}
+
+function numberFromGitHubUrl(url: string): string {
+  return url.split("/").filter(Boolean).at(-1) ?? "unknown";
+}
+
+function dedupeObservedContributions(
+  contributions: GitHubObservedContribution[]
+): GitHubObservedContribution[] {
+  const seen = new Set<string>();
+  const deduped: GitHubObservedContribution[] = [];
+
+  for (const contribution of contributions) {
+    if (seen.has(contribution.sourceUrl)) continue;
+    seen.add(contribution.sourceUrl);
+    deduped.push(contribution);
+  }
+
+  return deduped;
+}
+
+const prizeRequirementRules: Array<{
+  category: Exclude<HackathonPrizeRequirementCategory, "unknown">;
+  label: string;
+  detail: string;
+  patterns: RegExp[];
+}> = [
+  {
+    category: "repository",
+    label: "Repository proof",
+    detail:
+      "Submission must include a public repository with source code and reviewer-readable setup notes.",
+    patterns: [/\brepo(?:sitory)?\b/i, /\bgithub\b/i, /\breadme\b/i]
+  },
+  {
+    category: "demo",
+    label: "Working demo",
+    detail:
+      "Proof Pack must include a runnable demo, deployed app, video, or screenshots that show the sponsor flow working.",
+    patterns: [/\bdemo\b/i, /\bvideo\b/i, /\bscreenshot\b/i, /\bshowcase\b/i]
+  },
+  {
+    category: "protocol_use",
+    label: "Protocol-use proof",
+    detail:
+      "Proof Pack must identify the sponsor API, SDK, contract, model, or protocol feature used and where it appears in the project.",
+    patterns: [
+      /\bapi\b/i,
+      /\bsdk\b/i,
+      /\bprotocol\b/i,
+      /\bcontract\b/i,
+      /\bintegration\b/i
+    ]
+  },
+  {
+    category: "deployment",
+    label: "Deployment proof",
+    detail:
+      "Submission must include deployment evidence such as a live URL, contract address, transaction, or network reference.",
+    patterns: [
+      /\bdeploy(?:ed|ment)?\b/i,
+      /\blive url\b/i,
+      /\bcontract address\b/i,
+      /\btx(?:hash)?\b/i,
+      /\btransaction\b/i,
+      /\btestnet\b/i,
+      /\bmainnet\b/i
+    ]
+  },
+  {
+    category: "feedback_file",
+    label: "Feedback file",
+    detail:
+      "Repository must include the sponsor-requested feedback artifact, such as FEEDBACK.md in the repo root.",
+    patterns: [/\bfeedback\.md\b/i, /\bfeedback file\b/i]
+  },
+  {
+    category: "agent_framework",
+    label: "Agent framework proof",
+    detail:
+      "Proof Pack must show how the agent, tool calls, model workflow, or framework produced useful work.",
+    patterns: [
+      /\bagent\b/i,
+      /\bai agent\b/i,
+      /\btool call\b/i,
+      /\bframework\b/i,
+      /\bautonomous\b/i
+    ]
+  },
+  {
+    category: "architecture",
+    label: "Architecture explanation",
+    detail:
+      "Submission must explain the product architecture, data flow, and sponsor integration boundary.",
+    patterns: [/\barchitecture\b/i, /\bdiagram\b/i, /\bhow it works\b/i]
+  },
+  {
+    category: "sponsor_acceptance",
+    label: "Sponsor acceptance",
+    detail:
+      "Sponsor or hackathon reviewer must accept the submission before any prize claim is represented.",
+    patterns: [/\bqualification\b/i, /\bmust\b/i, /\bjudg/i, /\breviewer\b/i]
+  }
+];
+
+function normalizeRequirementText(text: string): string {
+  return text.trim().replace(/\s+/g, " ");
+}
+
+function dedupeClassifiedRequirements(
+  requirements: ClassifiedHackathonRequirement[]
+): ClassifiedHackathonRequirement[] {
+  const seen = new Set<HackathonPrizeRequirementCategory>();
+  const deduped: ClassifiedHackathonRequirement[] = [];
+
+  for (const requirement of requirements) {
+    if (seen.has(requirement.category)) continue;
+    seen.add(requirement.category);
+    deduped.push(requirement);
+  }
+
+  return deduped;
+}
+
+function evidenceFieldForRequirement(
+  category: HackathonPrizeRequirementCategory
+): string {
+  switch (category) {
+    case "repository":
+      return "sourceUrl";
+    case "demo":
+      return "demoUrl";
+    case "protocol_use":
+      return "integrationSummary";
+    case "deployment":
+      return "deploymentReference";
+    case "feedback_file":
+      return "feedbackArtifact";
+    case "agent_framework":
+      return "agentRunRecord";
+    case "architecture":
+      return "architectureNotes";
+    case "sponsor_acceptance":
+      return "reviewDecision";
+    case "unknown":
+      return "manualReview";
+  }
 }
 
 function labelName(label: string | { name?: string | null }): string {
@@ -800,7 +1212,7 @@ function extractPrizeRequirements(
   prize: EthGlobalPrizePayload["prizes"][number]
 ) {
   const qualification = prize.qualifications?.trim();
-  const requirements = [
+  const requirements: WorkLead["submissionRequirements"] = [
     {
       label: "Public project submission",
       detail:
@@ -814,6 +1226,24 @@ function extractPrizeRequirements(
       required: true
     }
   ];
+
+  for (const requirement of dedupeClassifiedRequirements(
+    [prize.description, qualification ?? ""].flatMap((text) =>
+      classifyHackathonPrizeRequirement(text)
+    )
+  )) {
+    if (
+      requirement.category === "unknown" ||
+      requirements.some((item) => item.label === requirement.label)
+    ) {
+      continue;
+    }
+    requirements.push({
+      label: requirement.label,
+      detail: requirement.detail,
+      required: requirement.required
+    });
+  }
 
   if (qualification) {
     requirements.push({

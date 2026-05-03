@@ -1,7 +1,7 @@
 import { spawn } from "node:child_process";
 import { chromium, type Page } from "playwright";
 
-const port = 5173;
+const port = 5174;
 const baseUrl = `http://localhost:${port}`;
 const routes = [
   "opportunity",
@@ -10,6 +10,7 @@ const routes = [
   "projects",
   "work-queue",
   "my-work",
+  "builder-passport",
   "mission-detail",
   "run",
   "case-file",
@@ -130,16 +131,12 @@ async function runSmoke() {
       viewport: { width: 1280, height: 900 }
     });
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "See source-backed work" }).click();
+    await page.getByRole("button", { name: "Set up proof node" }).click();
+    await requireText(page, "Register the agent that will do the work.");
+    await page.getByRole("button", { name: "Register proof node" }).click();
+    await page.getByRole("button", { name: "Find source-backed work" }).click();
     await requireText(page, "Pick or triage work.");
-    await page.getByRole("button", { name: "Safe" }).click();
-    await page.getByRole("button", { name: "Plan" }).click();
-    await requireText(page, "External QA task imported");
-    await page.getByRole("button", { name: "Reject" }).click();
-    await requireText(page, "Pick or triage work.");
-    await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Plan" }).click();
-    await requireText(page, "Pick or triage work.");
+
     await page.goto(`${baseUrl}/#projects`, { waitUntil: "networkidle" });
     await requireText(page, "Work in this project.");
     await page.getByText("Sources, ledger, and V2 signals").click();
@@ -149,12 +146,7 @@ async function runSmoke() {
     await requireText(page, "sam@builder.dev");
     await page.getByRole("button", { name: "Find sourced work" }).click();
     await requireText(page, "Pick or triage work.");
-    await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Set up proof node" }).click();
-    await requireText(page, "Register the agent that will do the work.");
-    await page.getByRole("button", { name: "Register proof node" }).click();
-    await page.getByRole("button", { name: "Find source-backed work" }).click();
-    await requireText(page, "Pick or triage work.");
+
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start sourced proof" }).click();
     await requireText(page, "Nothing is submitted or paid until review.");
@@ -190,10 +182,23 @@ async function runSmoke() {
     await requireText(page, "Credit");
     await page.getByRole("button", { name: "Copy public link" }).click();
     await requireText(page, "Public link copied");
+
+    await page.goto(`${baseUrl}/#builder-passport`, {
+      waitUntil: "networkidle"
+    });
+    await requireText(page, "Builder Passport / V2");
+    await requireText(page, "Observed work only becomes credit");
+    await requireText(page, "Hackathon prize readiness");
+    await requireText(page, "Sponsor acceptance");
+    await requireText(page, "V2 connection layer");
+    await requireText(page, "Local JSON persistence ready");
+    await page.getByRole("button", { name: "Open tracked projects" }).click();
+    await requireText(page, "Work in this project.");
+
     await page.goto(`${baseUrl}/#work-queue`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Import external task" }).click();
     await requireText(page, "External QA task imported");
-    await requireText(page, "MissingExact browser versions");
+    await requireText(page, "Exact browser versions");
     await page.getByRole("button", { name: "Ask clarification" }).click();
     await requireText(page, "Browser targets are confirmed.");
     await page.getByRole("button", { name: "Convert" }).click();
@@ -209,6 +214,7 @@ async function runSmoke() {
       page,
       "Verified checkout QA with clarified browser targets."
     );
+
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
     await page.getByRole("button", { name: "Start sourced proof" }).click();
     await page

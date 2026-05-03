@@ -1,6 +1,9 @@
 import { describe, expect, it } from "vitest";
 import {
+  buildHackathonReadinessChecklist,
+  classifyHackathonPrizeRequirement,
   importEthGlobalPrizeLeads,
+  importGitHubContributionHistory,
   importGitHubIssueLead,
   parseGitHubIssueUrl
 } from "../src/index";
@@ -22,6 +25,85 @@ describe("parseGitHubIssueUrl", () => {
     expect(() =>
       parseGitHubIssueUrl("https://github.com/polkadot-js/api/pulls/4821")
     ).toThrow("Expected a GitHub issue URL");
+  });
+});
+
+describe("importGitHubContributionHistory", () => {
+  it("imports GitHub account history as observed contributions only", async () => {
+    const requestedUrls: string[] = [];
+    const result = await importGitHubContributionHistory({
+      login: "alex-dev",
+      now: new Date("2026-05-03T12:00:00.000Z"),
+      fetch: async (url) => {
+        requestedUrls.push(url);
+        const isPrSearch = url.includes("type%3Apr");
+        return {
+          ok: true,
+          status: 200,
+          json: async () => ({
+            items: isPrSearch
+              ? [
+                  {
+                    html_url: "https://github.com/oss/docsync/pull/42",
+                    title: "Improve install docs",
+                    state: "closed",
+                    repository_url: "https://api.github.com/repos/oss/docsync",
+                    created_at: "2026-04-20T10:00:00.000Z",
+                    closed_at: "2026-04-21T10:00:00.000Z",
+                    pull_request: {
+                      merged_at: "2026-04-21T10:00:00.000Z"
+                    }
+                  }
+                ]
+              : [
+                  {
+                    html_url: "https://github.com/oss/docsync/issues/17",
+                    title: "Docs install flow fails on Ubuntu",
+                    state: "open",
+                    repository_url: "https://api.github.com/repos/oss/docsync",
+                    created_at: "2026-04-19T10:00:00.000Z"
+                  }
+                ]
+          })
+        };
+      }
+    });
+
+    expect(requestedUrls).toHaveLength(2);
+    expect(result).toMatchObject({
+      source: "github",
+      login: "alex-dev",
+      claimBoundary: "observed_history_is_not_accepted_credit"
+    });
+    expect(result.observed).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          kind: "issue",
+          sourceUrl: "https://github.com/oss/docsync/issues/17",
+          acceptanceSignal: "open",
+          proofStatus: "observed_not_accepted_credit"
+        }),
+        expect.objectContaining({
+          kind: "pull_request",
+          sourceUrl: "https://github.com/oss/docsync/pull/42",
+          acceptanceSignal: "merged",
+          proofStatus: "observed_not_accepted_credit"
+        })
+      ])
+    );
+  });
+
+  it("rejects unsafe GitHub login input", async () => {
+    await expect(
+      importGitHubContributionHistory({
+        login: "alex/dev",
+        fetch: async () => ({
+          ok: true,
+          status: 200,
+          json: async () => ({ items: [] })
+        })
+      })
+    ).rejects.toThrow("GitHub login");
   });
 });
 
@@ -125,11 +207,40 @@ describe("importEthGlobalPrizeLeads", () => {
     expect(result.leads[0].sponsor).toBe("Uniswap Foundation");
     expect(result.leads[0].submissionRequirements).toEqual(
       expect.arrayContaining([
+        expect.objectContaining({ label: "Feedback file" }),
+        expect.objectContaining({ label: "Agent framework proof" }),
+        expect.objectContaining({ label: "Protocol-use proof" }),
         expect.objectContaining({ label: "Sponsor qualification" })
+      ])
+    );
+    expect(buildHackathonReadinessChecklist(result.leads[0])).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          category: "feedback_file",
+          evidenceField: "feedbackArtifact"
+        }),
+        expect.objectContaining({
+          category: "sponsor_acceptance",
+          status: "blocked"
+        })
       ])
     );
     expect(result.leads[0].blockedActions).toContain(
       "sign transactions or spend funds"
+    );
+  });
+
+  it("classifies hackathon bounty wording into proof artifacts", () => {
+    expect(
+      classifyHackathonPrizeRequirement(
+        "Deploy the contract on testnet, add an architecture diagram, and submit a demo video."
+      )
+    ).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({ category: "deployment" }),
+        expect.objectContaining({ category: "architecture" }),
+        expect.objectContaining({ category: "demo" })
+      ])
     );
   });
 });

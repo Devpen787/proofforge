@@ -1,13 +1,16 @@
 import React from "react";
 import { generatedProofSummary } from "../demo";
 import type { ActiveMission } from "../app/types";
+import { buildShareUrl, type SharedAppState } from "../app/shareRecords";
 import { StatusBlock } from "../components/ui";
 
 export function PublicProofScreen({
   activeMission,
+  shareState,
   onBack
 }: {
   activeMission: ActiveMission;
+  shareState: SharedAppState;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -70,7 +73,14 @@ export function PublicProofScreen({
           </small>
           <button
             className="primary-action full"
-            onClick={() => setCopied(true)}
+            onClick={async () => {
+              setCopied(true);
+              const url = buildShareUrl("public-proof", {
+                ...shareState,
+                accepted: true
+              });
+              await navigator.clipboard?.writeText(url).catch(() => undefined);
+            }}
           >
             {copied ? "Public link copied" : "Copy public link"}
           </button>

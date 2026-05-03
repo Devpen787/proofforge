@@ -4,10 +4,14 @@ import { StatusRow } from "../components/ui";
 
 export function SettingsScreen({
   agentRegistered,
+  onExportWorkspace,
+  onExportNetworkRecord,
   onAgentSetup,
   onHelp
 }: {
   agentRegistered: boolean;
+  onExportWorkspace: () => void;
+  onExportNetworkRecord: () => Promise<void>;
   onAgentSetup: () => void;
   onHelp: () => void;
 }) {
@@ -53,6 +57,25 @@ export function SettingsScreen({
         <StatusRow label="Method" value="Manual / external" tone="good" />
         <StatusRow label="Wallet" value="Receipt reference only" tone="bad" />
         <StatusRow label="Release" value="After acceptance" tone="good" />
+      </section>
+
+      <section className="panel utility-panel">
+        <p className="small-label">Network records</p>
+        <h2>Portable persistence</h2>
+        <StatusRow label="Reviewer links" value="Share state" tone="good" />
+        <StatusRow label="Public proof" value="Share state" tone="good" />
+        <StatusRow label="0G" value="Export-ready JSON" tone="good" />
+        <div className="utility-action-stack">
+          <button className="secondary-action full" onClick={onExportWorkspace}>
+            Export workspace
+          </button>
+          <button
+            className="secondary-action full"
+            onClick={() => void onExportNetworkRecord()}
+          >
+            Export network record
+          </button>
+        </div>
       </section>
 
       <details className="panel wide utility-disclosure">

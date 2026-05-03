@@ -13,6 +13,7 @@
     "convert:lead": "tsx apps/runner/src/convertWorkLead.ts",
     "import:ethglobal": "tsx apps/runner/src/importEthGlobalPrizes.ts",
     "import:github": "tsx apps/runner/src/importGitHubIssue.ts",
+    "import:github-history": "tsx apps/runner/src/importGitHubHistory.ts",
     "0g:check": "tsx apps/runner/src/checkZeroGConfig.ts",
     "0g:set-key": "tsx apps/runner/src/setZeroGPrivateKey.ts",
     "demo:packet": "tsx apps/runner/src/demoPacket.ts",

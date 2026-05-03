@@ -11,3 +11,8 @@ export interface StorageAdapter {
     contentType: string;
   }): Promise<StorageReceipt>;
 }
+
+export interface JsonStore<T> {
+  read(): Promise<T | undefined>;
+  write(value: T): Promise<StorageReceipt>;
+}

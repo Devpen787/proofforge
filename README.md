@@ -68,6 +68,9 @@ funds, escrow funds, issue tokens, or settle payments automatically.
 For the exact V1/V2/V3 Web3 boundaries, see
 [docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md](docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md).
 
+For the credential-light network persistence model, see
+[docs/NETWORK_PERSISTENCE_V1.md](docs/NETWORK_PERSISTENCE_V1.md).
+
 ## Evidence Packet
 
 An evidence packet is the unit of value in ProofForge.

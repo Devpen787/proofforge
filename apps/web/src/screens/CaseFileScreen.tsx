@@ -7,6 +7,7 @@ import {
   generatedProofSummary
 } from "../demo";
 import type { ActiveMission } from "../app/types";
+import { buildShareUrl, type SharedAppState } from "../app/shareRecords";
 import { StatusRow } from "../components/ui";
 
 export function CaseFileScreen({
@@ -14,14 +15,18 @@ export function CaseFileScreen({
   revisionRequested,
   rejected,
   activeMission,
+  shareState,
   onSubmit
 }: {
   submitted: boolean;
   revisionRequested: boolean;
   rejected: boolean;
   activeMission: ActiveMission;
+  shareState: SharedAppState;
   onSubmit: () => void;
 }) {
+  const [copiedReviewLink, setCopiedReviewLink] = React.useState(false);
+  const [copiedGitHubComment, setCopiedGitHubComment] = React.useState(false);
   const packet =
     activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission =
@@ -37,6 +42,32 @@ export function CaseFileScreen({
       : submitted
         ? "Submitted"
         : "Maintainer-ready";
+  const copyReviewerLink = async () => {
+    setCopiedReviewLink(true);
+    const url = buildShareUrl("maintainer", {
+      ...shareState,
+      submitted: true
+    });
+    await navigator.clipboard?.writeText(url).catch(() => undefined);
+  };
+  const copyGitHubComment = async () => {
+    setCopiedGitHubComment(true);
+    const comment = [
+      "ProofForge packet ready for maintainer review.",
+      "",
+      `- Packet: ${packet.id}`,
+      `- Mission: ${mission.title}`,
+      `- Result: ${packet.result}`,
+      `- Verifier: ${generatedProofSummary.verifierStatus}`,
+      `- Storage: ${
+        generatedProofSummary.protocolRefs.storageUri ??
+        generatedProofSummary.protocolRefs.storageProvider
+      }`,
+      "",
+      "The proof node ran in evidence-only mode. It did not open a PR, post before approval, access secrets, or spend funds."
+    ].join("\n");
+    await navigator.clipboard?.writeText(comment).catch(() => undefined);
+  };
 
   return (
     <section className="page-grid packet-grid">
@@ -177,6 +208,20 @@ export function CaseFileScreen({
               disabled={submitted}
             >
               {submitted ? "Submitted to Maintainer Inbox" : "Submit Packet"}
+            </button>
+            <button
+              className="secondary-action full"
+              onClick={copyReviewerLink}
+            >
+              {copiedReviewLink ? "Reviewer link copied" : "Copy reviewer link"}
+            </button>
+            <button
+              className="secondary-action full"
+              onClick={copyGitHubComment}
+            >
+              {copiedGitHubComment
+                ? "GitHub comment copied"
+                : "Copy GitHub comment"}
             </button>
           </section>
         </aside>

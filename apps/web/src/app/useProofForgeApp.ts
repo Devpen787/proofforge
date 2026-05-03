@@ -2,6 +2,8 @@ import React from "react";
 import type { Screen } from "../routes";
 import type { ActiveMission, AppActions, AppState } from "./types";
 import { screenFromHash } from "./helpers";
+import { createNetworkRecord, downloadJson } from "./networkRecords";
+import { readSharedStateFromHash } from "./shareRecords";
 
 type SavedAppState = Omit<AppState, "screen">;
 
@@ -29,15 +31,19 @@ function readSavedAppState(): SavedAppState {
   if (typeof window === "undefined") return defaultSavedState;
   try {
     const raw = window.localStorage.getItem(PERSIST_KEY);
-    if (!raw) return defaultSavedState;
-    const parsed = JSON.parse(raw) as Partial<SavedAppState>;
+    const parsed = raw ? (JSON.parse(raw) as Partial<SavedAppState>) : {};
+    const shared = readSharedStateFromHash() ?? {};
     return {
       ...defaultSavedState,
       ...parsed,
+      ...shared,
       activeMission:
-        parsed.activeMission === "checkout" || parsed.activeMission === "docs"
-          ? parsed.activeMission
-          : defaultSavedState.activeMission
+        shared.activeMission === "checkout" || shared.activeMission === "docs"
+          ? shared.activeMission
+          : parsed.activeMission === "checkout" ||
+              parsed.activeMission === "docs"
+            ? parsed.activeMission
+            : defaultSavedState.activeMission
     };
   } catch {
     return defaultSavedState;
@@ -186,6 +192,13 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     suggestWork: () => {
       setProjectWorkSuggested(true);
       setScreen("work-queue");
+    },
+    exportWorkspace: () => {
+      downloadJson("proofforge-workspace.json", readSavedAppState());
+    },
+    exportNetworkRecord: async () => {
+      const record = await createNetworkRecord("workspace_snapshot", state);
+      downloadJson(`${record.id}.proof-network-record.json`, record);
     }
   };
 
