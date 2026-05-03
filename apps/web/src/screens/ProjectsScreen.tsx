@@ -230,7 +230,11 @@ export function ProjectsScreen({
                   {agentAttached ? "Attached to project" : "Ready to attach"}
                 </b>
               </span>
-              <button className="secondary-action" onClick={onAttachAgent}>
+              <button
+                className="secondary-action"
+                onClick={onAttachAgent}
+                disabled={agentAttached}
+              >
                 {agentAttached ? "Attached" : "Attach agent"}
               </button>
             </div>
@@ -240,7 +244,11 @@ export function ProjectsScreen({
                 <strong>{inviteSent ? "sam@builder.dev" : "Open seat"}</strong>
                 <b>{inviteSent ? "Invite pending" : "Invite not sent"}</b>
               </span>
-              <button className="secondary-action" onClick={onInvite}>
+              <button
+                className="secondary-action"
+                onClick={onInvite}
+                disabled={inviteSent}
+              >
                 {inviteSent ? "Pending" : "Invite"}
               </button>
             </div>
@@ -254,7 +262,11 @@ export function ProjectsScreen({
                   {projectStarted ? "Accepting proof" : "Needs steward start"}
                 </b>
               </span>
-              <button className="secondary-action" onClick={onStartProject}>
+              <button
+                className="secondary-action"
+                onClick={onStartProject}
+                disabled={projectStarted}
+              >
                 {projectStarted ? "Started" : "Start project"}
               </button>
             </div>

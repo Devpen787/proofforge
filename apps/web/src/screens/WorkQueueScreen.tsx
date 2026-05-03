@@ -255,6 +255,7 @@ export function WorkQueueScreen({
               <button
                 className={activeFilter === filter ? "active" : ""}
                 key={filter}
+                disabled={activeFilter === filter}
                 onClick={() => setActiveFilter(filter)}
               >
                 {filter}

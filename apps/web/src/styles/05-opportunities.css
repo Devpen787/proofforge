@@ -32,6 +32,7 @@
   border-color: #a7f3d0;
   background: #ecfdf5;
   color: #047857;
+  cursor: default;
 }
 
 .opportunity-card-list,
