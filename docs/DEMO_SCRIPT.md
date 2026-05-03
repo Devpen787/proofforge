@@ -16,7 +16,7 @@ Do this before recording so the video stays tight.
 cd "/Users/devinsonpena/Documents/New project 6/proofforge"
 npm test
 npm run build
-npm run ens:check -- --name <your-agent.eth> --address <agent-wallet>
+npm run ens:check -- --name proofrunner.jevpen.eth --address 0x8BB09dcB204794de58957dC594dE35FEA769D141
 npm run demo:packet
 npm run sync:web-proof
 npm run dev
@@ -171,14 +171,14 @@ Voiceover:
 
 Click:
 
-- Click `Review Packet` if needed.
 - Click `Accept & Mark Earned`.
 
 ### 1:45-2:05 - Show Earned Value And Public Proof
 
 Screen:
 
-- Show My Work at `/#scoreboard`.
+- Show the accepted Home state after maintainer acceptance.
+- Then use My Work (`/#my-work`) only if you want a fuller work ledger shot.
 - Show accepted proof, earned payout, release state, reputation, and activity.
 
 Voiceover:
@@ -237,7 +237,7 @@ Use at least one terminal shot so judges see this is not only a clickable mock.
 ```bash
 npm test
 npm run build
-npm run ens:check -- --name <your-agent.eth> --address <agent-wallet>
+npm run ens:check -- --name proofrunner.jevpen.eth --address 0x8BB09dcB204794de58957dC594dE35FEA769D141
 npm run demo:packet
 npm run sync:web-proof
 ```
