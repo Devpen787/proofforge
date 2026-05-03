@@ -30,6 +30,8 @@ export interface ProofForgeNetworkRecord {
     walletAddress?: string;
     walletProvider?: string;
     walletSignature?: string;
+    walletMessage?: string;
+    walletVerification?: "not_signed" | "browser_verifiable" | "local_demo";
     payoutReceipt?: string;
     zeroGReceipt?: string;
   };
@@ -88,6 +90,12 @@ export async function createNetworkRecord(
       walletAddress: state.walletAddress || undefined,
       walletProvider: state.walletProvider || undefined,
       walletSignature: state.acceptanceSignature || undefined,
+      walletMessage: state.acceptanceMessage || undefined,
+      walletVerification: state.acceptanceSignature
+        ? state.walletProvider === "browser"
+          ? "browser_verifiable"
+          : "local_demo"
+        : "not_signed",
       payoutReceipt: state.payoutReceiptRef || undefined,
       zeroGReceipt: state.zeroGReceiptUri || undefined
     },

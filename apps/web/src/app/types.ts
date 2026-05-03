@@ -24,6 +24,7 @@ export interface AppState {
   walletAddress: string;
   walletProvider: WalletProviderMode;
   acceptanceSignature: string;
+  acceptanceMessage: string;
   payoutReceiptRef: string;
   zeroGReceiptUri: string;
 }

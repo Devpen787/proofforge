@@ -94,7 +94,13 @@ export function SettingsScreen({
         <StatusRow label="Release" value="After acceptance" tone="good" />
         <StatusRow
           label="Signature"
-          value={acceptanceSignature ? "Acceptance signed" : "Optional"}
+          value={
+            acceptanceSignature
+              ? walletProvider === "browser"
+                ? "Recoverable signature"
+                : "Demo signature"
+              : "Optional"
+          }
           tone={acceptanceSignature ? "good" : "bad"}
         />
         <button className="secondary-action full" onClick={onConnectWallet}>

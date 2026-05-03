@@ -37,6 +37,7 @@ const defaultSavedState: SavedAppState = {
   walletAddress: "",
   walletProvider: "none",
   acceptanceSignature: "",
+  acceptanceMessage: "",
   payoutReceiptRef: "",
   zeroGReceiptUri: ""
 };
@@ -150,6 +151,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [acceptanceSignature, setAcceptanceSignature] = React.useState(
     savedState.acceptanceSignature
   );
+  const [acceptanceMessage, setAcceptanceMessage] = React.useState(
+    savedState.acceptanceMessage
+  );
   const [payoutReceiptRef, setPayoutReceiptRef] = React.useState(
     savedState.payoutReceiptRef
   );
@@ -165,6 +169,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     setRevisionRequested(false);
     setRejected(false);
     setAcceptanceSignature("");
+    setAcceptanceMessage("");
     setPayoutReceiptRef("");
   }, []);
 
@@ -190,6 +195,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setWalletAddress(normalized.walletAddress);
       setWalletProvider(normalized.walletProvider);
       setAcceptanceSignature(normalized.acceptanceSignature);
+      setAcceptanceMessage(normalized.acceptanceMessage);
       setPayoutReceiptRef(normalized.payoutReceiptRef);
       setZeroGReceiptUri(normalized.zeroGReceiptUri);
       saveAppState(normalized);
@@ -324,6 +330,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
         packet: "packet_docs_install_demo",
         at: new Date().toISOString()
       });
+      setAcceptanceMessage(message);
       const ethereum = getEthereumProvider();
       if (ethereum && walletAddress && walletProvider === "browser") {
         const signature = await ethereum.request({
@@ -370,6 +377,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     walletAddress,
     walletProvider,
     acceptanceSignature,
+    acceptanceMessage,
     payoutReceiptRef,
     zeroGReceiptUri
   };
@@ -395,6 +403,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       walletAddress,
       walletProvider,
       acceptanceSignature,
+      acceptanceMessage,
       payoutReceiptRef,
       zeroGReceiptUri
     });
@@ -418,6 +427,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     walletAddress,
     walletProvider,
     acceptanceSignature,
+    acceptanceMessage,
     payoutReceiptRef,
     zeroGReceiptUri
   ]);

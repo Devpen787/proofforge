@@ -13,6 +13,8 @@ people.
 - Settings can export a ProofForge network record as JSON.
 - MetaMask can sign an accepted proof when a browser wallet is available.
 - Demo/local signing remains explicit when no browser wallet provider exists.
+- `npm run verify:acceptance -- <record.json>` can recover and check browser
+  wallet signatures from exported records.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 

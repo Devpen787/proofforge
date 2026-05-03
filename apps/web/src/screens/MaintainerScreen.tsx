@@ -71,6 +71,14 @@ export function MaintainerScreen({
     {
       label: "Wallet",
       value: walletAddress || "Not connected"
+    },
+    {
+      label: "Verification",
+      value: acceptanceSignature
+        ? walletProvider === "browser"
+          ? "Recoverable"
+          : "Demo only"
+        : "Not signed"
     }
   ];
   return (
