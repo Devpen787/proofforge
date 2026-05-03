@@ -440,7 +440,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       const chainId = await getBrowserChainId();
       const acceptanceInput = {
         chainId,
-        accepted,
+        accepted: true,
         activeMission,
         submitted,
         packetId: "packet_docs_install_demo",

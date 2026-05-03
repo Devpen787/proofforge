@@ -11,6 +11,15 @@ import type { WalletProviderMode } from "../app/types";
 import { proofSourceIssueUrl } from "../app/githubWriteback";
 import { StatusBlock } from "../components/ui";
 
+function hasSourceIssueAuthority(url: string) {
+  const trimmed = url.trim();
+  return (
+    trimmed.startsWith(`${proofSourceIssueUrl}#issuecomment-`) ||
+    trimmed.startsWith(`${proofSourceIssueUrl}#issue-`) ||
+    trimmed === proofSourceIssueUrl
+  );
+}
+
 export function MaintainerScreen({
   submitted,
   accepted,
@@ -63,6 +72,8 @@ export function MaintainerScreen({
     activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission =
     activeMission === "checkout" ? demoConvertedMission : demoMission;
+  const githubAuthorityRecorded = hasSourceIssueAuthority(githubAcceptanceUrl);
+  const githubInputMatchesSource = hasSourceIssueAuthority(githubUrlInput);
   const hasReviewPacket = submitted || !accepted;
   const decisionState = accepted
     ? "Accepted"
@@ -112,7 +123,11 @@ export function MaintainerScreen({
     },
     {
       label: "GitHub post",
-      value: githubAcceptanceUrl ? "Recorded" : "Needed"
+      value: githubAuthorityRecorded
+        ? "Source-linked"
+        : githubAcceptanceUrl
+          ? "Recorded, check source"
+          : "Needed"
     }
   ];
   return (
@@ -171,7 +186,7 @@ export function MaintainerScreen({
                 Connect MetaMask
               </button>
             )}
-            {accepted && (
+            {walletConnected && (
               <button
                 className="secondary-action full"
                 onClick={() => void onSignAcceptance()}
@@ -180,6 +195,49 @@ export function MaintainerScreen({
                 {acceptanceSignature ? "Acceptance signed" : "Sign acceptance"}
               </button>
             )}
+            <form
+              className="github-writeback-form"
+              onSubmit={(event) => {
+                event.preventDefault();
+                onRecordGitHubAcceptance(githubUrlInput);
+              }}
+            >
+              <label>
+                <small>GitHub acceptance URL</small>
+                <input
+                  value={githubUrlInput}
+                  onChange={(event) =>
+                    setGithubUrlInput(event.currentTarget.value)
+                  }
+                  placeholder={`${proofSourceIssueUrl}#issuecomment-...`}
+                />
+              </label>
+              <button className="secondary-action full" type="submit">
+                {githubAuthorityRecorded
+                  ? "GitHub source verified"
+                  : githubAcceptanceUrl
+                    ? "Update GitHub post"
+                    : "Record GitHub post"}
+              </button>
+              <button
+                className="secondary-action full"
+                type="button"
+                onClick={() => window.open(proofSourceIssueUrl, "_blank")}
+              >
+                Open source issue
+              </button>
+              <small
+                className={
+                  githubUrlInput && !githubInputMatchesSource
+                    ? "error-note"
+                    : ""
+                }
+              >
+                {githubInputMatchesSource
+                  ? "Matches the source issue."
+                  : "Use the source issue or its maintainer comment URL."}
+              </small>
+            </form>
             {accepted && !proofRegistryAddress && (
               <button
                 className="secondary-action full"
@@ -216,38 +274,6 @@ export function MaintainerScreen({
               <small className={onchainError ? "error-note" : ""}>
                 {onchainError || proofRegistryStatus}
               </small>
-            )}
-            {accepted && (
-              <form
-                className="github-writeback-form"
-                onSubmit={(event) => {
-                  event.preventDefault();
-                  onRecordGitHubAcceptance(githubUrlInput);
-                }}
-              >
-                <label>
-                  <small>GitHub acceptance URL</small>
-                  <input
-                    value={githubUrlInput}
-                    onChange={(event) =>
-                      setGithubUrlInput(event.currentTarget.value)
-                    }
-                    placeholder={`${proofSourceIssueUrl}#issuecomment-...`}
-                  />
-                </label>
-                <button className="secondary-action full" type="submit">
-                  {githubAcceptanceUrl
-                    ? "GitHub post recorded"
-                    : "Record GitHub post"}
-                </button>
-                <button
-                  className="secondary-action full"
-                  type="button"
-                  onClick={() => window.open(proofSourceIssueUrl, "_blank")}
-                >
-                  Open source issue
-                </button>
-              </form>
             )}
             {!accepted && (
               <>

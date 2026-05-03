@@ -202,7 +202,7 @@ async function runSmoke() {
         "https://github.com/Devpen787/proofforge/issues/1#issuecomment-proof"
       );
     await page.getByRole("button", { name: "Record GitHub post" }).click();
-    await requireText(page, "GitHub post recorded");
+    await requireText(page, "GitHub source verified");
     await page.getByRole("button", { name: "Sign acceptance" }).click();
     await requireText(page, "Acceptance signed");
     await page.goto(`${baseUrl}/#opportunity`, { waitUntil: "networkidle" });
