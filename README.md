@@ -62,8 +62,9 @@ GitHub issue / bounty URL / DAO proposal
 -> optional wallet, tx hash, receipt, grant, bounty, or treasury reference
 ```
 
-V1 tracks wallet, bounty, and onchain receipt references. It does not custody
-funds, escrow funds, issue tokens, or settle payments automatically.
+V1 tracks wallet, bounty, and onchain receipt references. Browser wallets can
+sign accepted proof records when available. ProofForge does not custody funds,
+escrow funds, issue tokens, or settle payments automatically.
 
 For the exact V1/V2/V3 Web3 boundaries, see
 [docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md](docs/ETHEREUM_WEB3_BOUNTY_INTEGRATION.md).

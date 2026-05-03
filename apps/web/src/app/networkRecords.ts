@@ -27,6 +27,8 @@ export interface ProofForgeNetworkRecord {
     storage: "0g-ready";
   };
   receipts: {
+    walletAddress?: string;
+    walletProvider?: string;
     walletSignature?: string;
     payoutReceipt?: string;
     zeroGReceipt?: string;
@@ -83,6 +85,8 @@ export async function createNetworkRecord(
       storage: "0g-ready"
     },
     receipts: {
+      walletAddress: state.walletAddress || undefined,
+      walletProvider: state.walletProvider || undefined,
       walletSignature: state.acceptanceSignature || undefined,
       payoutReceipt: state.payoutReceiptRef || undefined,
       zeroGReceipt: state.zeroGReceiptUri || undefined

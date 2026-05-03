@@ -11,6 +11,8 @@ people.
 - Public proof links carry the accepted proof state in the URL hash.
 - Settings can export the current workspace as JSON.
 - Settings can export a ProofForge network record as JSON.
+- MetaMask can sign an accepted proof when a browser wallet is available.
+- Demo/local signing remains explicit when no browser wallet provider exists.
 - The network record includes the packet identity, project, verifier, storage
   reference, authority posture, and explicit boundaries.
 

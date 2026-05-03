@@ -192,7 +192,7 @@ async function runSmoke() {
       .click();
     await requireText(page, "Proof accepted.");
     await page.goto(`${baseUrl}/#maintainer`, { waitUntil: "networkidle" });
-    await page.getByRole("button", { name: "Connect wallet" }).click();
+    await page.getByRole("button", { name: "Connect MetaMask" }).click();
     await requireText(page, "Ready");
     await page.getByRole("button", { name: "Sign acceptance" }).click();
     await requireText(page, "Acceptance signed");

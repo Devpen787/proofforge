@@ -7,6 +7,7 @@ import {
   generatedProofSummary
 } from "../demo";
 import type { ActiveMission } from "../app/types";
+import type { WalletProviderMode } from "../app/types";
 import { StatusBlock } from "../components/ui";
 
 export function MaintainerScreen({
@@ -14,6 +15,8 @@ export function MaintainerScreen({
   accepted,
   activeMission,
   walletConnected,
+  walletAddress,
+  walletProvider,
   acceptanceSignature,
   onAccept,
   onConnectWallet,
@@ -26,6 +29,8 @@ export function MaintainerScreen({
   accepted: boolean;
   activeMission: ActiveMission;
   walletConnected: boolean;
+  walletAddress: string;
+  walletProvider: WalletProviderMode;
   acceptanceSignature: string;
   onAccept: () => void;
   onConnectWallet: () => void;
@@ -56,10 +61,16 @@ export function MaintainerScreen({
     {
       label: "Reviewer signature",
       value: acceptanceSignature
-        ? "Wallet signed"
+        ? walletProvider === "browser"
+          ? "MetaMask signed"
+          : "Demo signed"
         : walletConnected
           ? "Ready"
           : "Wallet optional"
+    },
+    {
+      label: "Wallet",
+      value: walletAddress || "Not connected"
     }
   ];
   return (
@@ -115,7 +126,7 @@ export function MaintainerScreen({
                 className="secondary-action full"
                 onClick={onConnectWallet}
               >
-                Connect wallet
+                Connect MetaMask
               </button>
             )}
             {accepted && (

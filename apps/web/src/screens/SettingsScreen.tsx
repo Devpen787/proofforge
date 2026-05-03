@@ -1,10 +1,13 @@
 import React from "react";
 import { demoAgentIdentity } from "../demo";
+import type { WalletProviderMode } from "../app/types";
 import { StatusRow } from "../components/ui";
 
 export function SettingsScreen({
   agentRegistered,
   walletConnected,
+  walletAddress,
+  walletProvider,
   acceptanceSignature,
   payoutReceiptRef,
   onExportWorkspace,
@@ -17,6 +20,8 @@ export function SettingsScreen({
 }: {
   agentRegistered: boolean;
   walletConnected: boolean;
+  walletAddress: string;
+  walletProvider: WalletProviderMode;
   acceptanceSignature: string;
   payoutReceiptRef: string;
   onExportWorkspace: () => void;
@@ -73,9 +78,18 @@ export function SettingsScreen({
         <StatusRow
           label="Wallet"
           value={
-            walletConnected ? "Connected locally" : "Receipt reference only"
+            walletConnected
+              ? walletProvider === "browser"
+                ? "MetaMask connected"
+                : "Local demo signer"
+              : "Receipt reference only"
           }
           tone={walletConnected ? "good" : "bad"}
+        />
+        <StatusRow
+          label="Address"
+          value={walletAddress || "Not connected"}
+          tone={walletAddress ? "good" : "bad"}
         />
         <StatusRow label="Release" value="After acceptance" tone="good" />
         <StatusRow
@@ -84,7 +98,7 @@ export function SettingsScreen({
           tone={acceptanceSignature ? "good" : "bad"}
         />
         <button className="secondary-action full" onClick={onConnectWallet}>
-          {walletConnected ? "Wallet connected" : "Connect wallet"}
+          {walletConnected ? "Wallet connected" : "Connect MetaMask"}
         </button>
       </section>
 

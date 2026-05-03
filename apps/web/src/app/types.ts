@@ -1,6 +1,7 @@
 import type { Screen } from "../routes";
 
 export type ActiveMission = "docs" | "checkout";
+export type WalletProviderMode = "none" | "browser" | "local-demo";
 
 export interface AppState {
   screen: Screen;
@@ -20,6 +21,8 @@ export interface AppState {
   activeMission: ActiveMission;
   agentRegistered: boolean;
   walletConnected: boolean;
+  walletAddress: string;
+  walletProvider: WalletProviderMode;
   acceptanceSignature: string;
   payoutReceiptRef: string;
   zeroGReceiptUri: string;
@@ -54,7 +57,7 @@ export interface AppActions {
   exportWorkspace: () => void;
   importWorkspaceFile: (file: File) => Promise<void>;
   exportNetworkRecord: () => Promise<void>;
-  connectWallet: () => void;
+  connectWallet: () => Promise<void>;
   signAcceptance: () => Promise<void>;
   recordPayoutReceipt: (receipt: string) => void;
 }

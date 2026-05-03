@@ -1,11 +1,19 @@
 import React from "react";
 import type { Screen } from "../routes";
-import type { ActiveMission, AppActions, AppState } from "./types";
+import type {
+  ActiveMission,
+  AppActions,
+  AppState,
+  WalletProviderMode
+} from "./types";
 import { screenFromHash } from "./helpers";
 import { createNetworkRecord, downloadJson } from "./networkRecords";
 import { readSharedStateFromHash } from "./shareRecords";
 
 type SavedAppState = Omit<AppState, "screen">;
+type EthereumProvider = {
+  request: (args: { method: string; params?: unknown[] }) => Promise<unknown>;
+};
 
 const PERSIST_KEY = "proofforge.v1.demo-state";
 
@@ -26,6 +34,8 @@ const defaultSavedState: SavedAppState = {
   activeMission: "docs",
   agentRegistered: false,
   walletConnected: false,
+  walletAddress: "",
+  walletProvider: "none",
   acceptanceSignature: "",
   payoutReceiptRef: "",
   zeroGReceiptUri: ""
@@ -57,6 +67,21 @@ function readSavedAppState(): SavedAppState {
 function saveAppState(state: SavedAppState) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(PERSIST_KEY, JSON.stringify(state));
+}
+
+function getEthereumProvider(): EthereumProvider | null {
+  if (typeof window === "undefined") return null;
+  const candidate = (window as Window & { ethereum?: EthereumProvider })
+    .ethereum;
+  return candidate?.request ? candidate : null;
+}
+
+async function sha256Hex(value: string) {
+  const bytes = new TextEncoder().encode(value);
+  const digest = await crypto.subtle.digest("SHA-256", bytes);
+  return [...new Uint8Array(digest)]
+    .map((byte) => byte.toString(16).padStart(2, "0"))
+    .join("");
 }
 
 function useHashScreen() {
@@ -117,6 +142,11 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [walletConnected, setWalletConnected] = React.useState(
     savedState.walletConnected
   );
+  const [walletAddress, setWalletAddress] = React.useState(
+    savedState.walletAddress
+  );
+  const [walletProvider, setWalletProvider] =
+    React.useState<WalletProviderMode>(savedState.walletProvider);
   const [acceptanceSignature, setAcceptanceSignature] = React.useState(
     savedState.acceptanceSignature
   );
@@ -157,6 +187,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setActiveMission(normalized.activeMission);
       setAgentRegistered(normalized.agentRegistered);
       setWalletConnected(normalized.walletConnected);
+      setWalletAddress(normalized.walletAddress);
+      setWalletProvider(normalized.walletProvider);
       setAcceptanceSignature(normalized.acceptanceSignature);
       setPayoutReceiptRef(normalized.payoutReceiptRef);
       setZeroGReceiptUri(normalized.zeroGReceiptUri);
@@ -262,22 +294,54 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       const record = await createNetworkRecord("workspace_snapshot", state);
       downloadJson(`${record.id}.proof-network-record.json`, record);
     },
-    connectWallet: () => setWalletConnected(true),
+    connectWallet: async () => {
+      const ethereum = getEthereumProvider();
+      if (ethereum) {
+        const accounts = await ethereum.request({
+          method: "eth_requestAccounts"
+        });
+        const address = Array.isArray(accounts)
+          ? String(accounts[0] ?? "")
+          : "";
+        if (!address) throw new Error("Wallet did not return an address.");
+        setWalletConnected(true);
+        setWalletAddress(address);
+        setWalletProvider("browser");
+        return;
+      }
+
+      setWalletConnected(true);
+      setWalletAddress("local-demo-reviewer");
+      setWalletProvider("local-demo");
+    },
     signAcceptance: async () => {
-      const signatureSeed = JSON.stringify({
+      const message = JSON.stringify({
+        domain: "ProofForge",
+        action: "accept-proof",
         accepted,
         activeMission,
         submitted,
+        packet: "packet_docs_install_demo",
         at: new Date().toISOString()
       });
-      const bytes = new TextEncoder().encode(signatureSeed);
-      const digest = await crypto.subtle.digest("SHA-256", bytes);
-      const signature = [...new Uint8Array(digest)]
-        .map((byte) => byte.toString(16).padStart(2, "0"))
-        .join("")
-        .slice(0, 32);
-      setWalletConnected(true);
-      setAcceptanceSignature(`local-wallet-sig:${signature}`);
+      const ethereum = getEthereumProvider();
+      if (ethereum && walletAddress && walletProvider === "browser") {
+        const signature = await ethereum.request({
+          method: "personal_sign",
+          params: [message, walletAddress]
+        });
+        setAcceptanceSignature(String(signature));
+        return;
+      }
+
+      if (!walletConnected) {
+        setWalletConnected(true);
+        setWalletAddress("local-demo-reviewer");
+        setWalletProvider("local-demo");
+      }
+      setAcceptanceSignature(
+        `local-demo-sig:${(await sha256Hex(message)).slice(0, 32)}`
+      );
     },
     recordPayoutReceipt: (receipt) => {
       setPayoutReceiptRef(receipt.trim());
@@ -303,6 +367,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     activeMission,
     agentRegistered,
     walletConnected,
+    walletAddress,
+    walletProvider,
     acceptanceSignature,
     payoutReceiptRef,
     zeroGReceiptUri
@@ -326,6 +392,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       activeMission,
       agentRegistered,
       walletConnected,
+      walletAddress,
+      walletProvider,
       acceptanceSignature,
       payoutReceiptRef,
       zeroGReceiptUri
@@ -347,6 +415,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     activeMission,
     agentRegistered,
     walletConnected,
+    walletAddress,
+    walletProvider,
     acceptanceSignature,
     payoutReceiptRef,
     zeroGReceiptUri

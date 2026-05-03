@@ -146,6 +146,8 @@ function renderScreen(
           accepted={state.accepted}
           activeMission={state.activeMission}
           walletConnected={state.walletConnected}
+          walletAddress={state.walletAddress}
+          walletProvider={state.walletProvider}
           acceptanceSignature={state.acceptanceSignature}
           onAccept={actions.acceptPacket}
           onConnectWallet={actions.connectWallet}
@@ -168,6 +170,8 @@ function renderScreen(
         <SettingsScreen
           agentRegistered={state.agentRegistered}
           walletConnected={state.walletConnected}
+          walletAddress={state.walletAddress}
+          walletProvider={state.walletProvider}
           acceptanceSignature={state.acceptanceSignature}
           payoutReceiptRef={state.payoutReceiptRef}
           onExportWorkspace={actions.exportWorkspace}
