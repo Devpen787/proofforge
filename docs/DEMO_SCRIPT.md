@@ -13,10 +13,10 @@ verified evidence packets, maintainer acceptance, and tracked credit or payout.
 Do this before recording so the video stays tight.
 
 ```bash
-cd "/Users/devinsonpena/Documents/New project 6/proofforge"
+cd /path/to/proofforge
 npm test
 npm run build
-npm run ens:check -- --name proofrunner.jevpen.eth --address 0x8BB09dcB204794de58957dC594dE35FEA769D141
+npm run ens:check -- --name <agent-name.eth> --address <agent-wallet-address>
 npm run demo:packet
 npm run sync:web-proof
 npm run dev
@@ -147,7 +147,7 @@ Click `Release payout`, then `View public proof`.
 
 ### 1:55-2:10 - Public Proof And Close
 
-Show `/#public-proof`: accepted proof, `proofrunner.jevpen.eth`, 0G storage,
+Show `/#public-proof`: accepted proof, agent identity, 0G storage,
 artifacts, and credit.
 
 Say:
@@ -174,7 +174,7 @@ Use at least one terminal shot so judges see this is not only a clickable mock.
 ```bash
 npm test
 npm run build
-npm run ens:check -- --name proofrunner.jevpen.eth --address 0x8BB09dcB204794de58957dC594dE35FEA769D141
+npm run ens:check -- --name <agent-name.eth> --address <agent-wallet-address>
 npm run demo:packet
 npm run sync:web-proof
 ```

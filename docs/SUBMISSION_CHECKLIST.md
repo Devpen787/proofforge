@@ -4,7 +4,7 @@ Use this before final hackathon submission.
 
 ## Required Links
 
-- Public GitHub repository: `https://github.com/Devpen787/proofforge`
+- Public GitHub repository: `<public repository URL>`
 - Local demo URL: `http://localhost:5173/#opportunity`
 - Deployed demo URL: add after deployment
 - Demo video URL: add after recording

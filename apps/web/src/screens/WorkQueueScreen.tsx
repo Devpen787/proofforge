@@ -35,7 +35,7 @@ export function WorkQueueScreen({
 }) {
   const [activeFilter, setActiveFilter] = React.useState("Best fit");
   const [githubUrl, setGithubUrl] = React.useState(
-    "https://github.com/Devpen787/proofforge/issues/1"
+    "https://github.com/proofforge-demo/proofforge/issues/1"
   );
   const [liveImport, setLiveImport] = React.useState<WorkSourceImport | null>(
     null

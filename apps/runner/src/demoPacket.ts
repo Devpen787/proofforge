@@ -339,7 +339,7 @@ function buildSubmissionEvidence(input: {
         productUse:
           "Maintainer packet can be prepared as a GitHub issue comment and posted only with explicit human approval/token.",
         proofCommand:
-          "npm run submit:github-comment -- --issue https://github.com/Devpen787/proofforge/issues/1 --post",
+          "npm run submit:github-comment -- --issue https://github.com/proofforge-demo/proofforge/issues/1 --post",
         output: "github-maintainer-comment.json"
       }
     ],

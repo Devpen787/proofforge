@@ -280,7 +280,7 @@ async function main(): Promise<void> {
       status: githubComment?.status ?? "packet-ready",
       issueUrl:
         githubComment?.issueUrl ??
-        "https://github.com/Devpen787/proofforge/issues/1",
+        "https://github.com/proofforge-demo/proofforge/issues/1",
       commentUrl: githubComment?.commentUrl
     },
     projectCredit: {

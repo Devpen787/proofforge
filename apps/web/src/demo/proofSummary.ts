@@ -47,8 +47,8 @@ export const generatedProofSummary = {
       "0x4a6c9914ddeb46d20f6b04ce5ab9305d56bc4b13b3b7180293b9e998388ec741",
     storageTxShort: "0x4a6c9914...8ec741",
     identityRef:
-      "ens:proofrunner.jevpen.eth;addr:0x8BB09dcB204794de58957dC594dE35FEA769D141;local:docs-runner-01;erc-8004-ready",
-    identityLabel: "proofrunner.jevpen.eth",
+      "ens:proofrunner.proofforge.eth;addr:0x1111111111111111111111111111111111111111;local:docs-runner-01;erc-8004-ready",
+    identityLabel: "proofrunner.proofforge.eth",
     messageTraceId: "trace:docs-runner-01:verifier-01:packager-01"
   },
   payout: {
@@ -70,7 +70,7 @@ export const generatedProofSummary = {
   maintainerSubmission: {
     provider: "GitHub",
     status: "packet-ready",
-    issueUrl: "https://github.com/Devpen787/proofforge/issues/1"
+    issueUrl: "https://github.com/proofforge-demo/proofforge/issues/1"
   },
   projectCredit: {
     rewardPool: "$240",
@@ -122,9 +122,9 @@ export const generatedProofSummary = {
     {
       source: "github",
       title: "ProofForge demo source: validate install proof flow",
-      sourceUrl: "https://github.com/Devpen787/proofforge/issues/1",
-      repo: "Devpen787/proofforge",
-      acceptanceOwner: "@Devpen787",
+      sourceUrl: "https://github.com/proofforge-demo/proofforge/issues/1",
+      repo: "proofforge-demo/proofforge",
+      acceptanceOwner: "@proofforge-demo",
       status: "needs_triage",
       proofability: "57%",
       valuePath: "reputation",
