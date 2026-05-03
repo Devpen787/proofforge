@@ -147,6 +147,17 @@
   line-height: 1.45;
 }
 
+.maintainer-decision-rail small {
+  overflow-wrap: anywhere;
+  color: #047857;
+  font-weight: 800;
+  line-height: 1.35;
+}
+
+.maintainer-decision-rail .error-note {
+  color: #b91c1c;
+}
+
 .maintainer-review-grid {
   grid-template-columns: minmax(0, 1fr) minmax(260px, 0.7fr);
 }

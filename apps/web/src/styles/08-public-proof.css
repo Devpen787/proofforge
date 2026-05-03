@@ -89,9 +89,15 @@
 }
 
 .public-safe-panel,
+.public-onchain-panel,
 .public-boundary-panel,
 .public-credit-panel {
   align-self: start;
+}
+
+.public-onchain-panel {
+  border-color: #bfdbfe;
+  background: #eff6ff;
 }
 
 .public-boundary-panel {

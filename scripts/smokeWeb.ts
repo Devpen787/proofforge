@@ -204,6 +204,7 @@ async function runSmoke() {
     await requireText(page, "Public proof and credit are ready.");
     await page.getByRole("button", { name: "View public proof" }).click();
     await requireText(page, "Public proof");
+    await requireText(page, "Onchain acceptance");
     await requireText(page, "Shared artifacts.");
     await requireText(page, "Credit");
     await page.getByRole("button", { name: "Copy public link" }).click();

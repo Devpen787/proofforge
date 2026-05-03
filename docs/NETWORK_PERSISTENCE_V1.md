@@ -84,5 +84,12 @@ the same record shape through one or more of:
 - GUN or OrbitDB for local-first peer sync
 - EVM events for accepted credit anchors and payout receipt references
 
+V1 now includes the first EVM anchor through `contracts/ProofRegistry.sol`.
+Maintainer Review can deploy the registry through MetaMask when no configured
+address exists, and can submit an accepted proof transaction when a registry is
+available. The registry stores accepted proof references and hashes; it does not
+store private packet contents, custody funds, or replace GitHub/reviewer
+authority.
+
 The product should keep the same authority boundary: ProofForge should not
 become a custodial marketplace or repository permission system.

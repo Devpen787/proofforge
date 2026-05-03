@@ -25,6 +25,7 @@ export interface ProofForgeNetworkRecord {
     wallet: "local-signature";
     payout: "external-receipt";
     storage: "0g-ready";
+    onchain: "proof-registry";
   };
   receipts: {
     walletAddress?: string;
@@ -34,6 +35,9 @@ export interface ProofForgeNetworkRecord {
     walletVerification?: "not_signed" | "browser_verifiable" | "local_demo";
     payoutReceipt?: string;
     zeroGReceipt?: string;
+    proofRegistryAddress?: string;
+    proofRegistryTxHash?: string;
+    proofRegistryPacketHash?: string;
   };
   boundaries: string[];
 }
@@ -84,7 +88,8 @@ export async function createNetworkRecord(
       github: "handoff",
       wallet: "local-signature",
       payout: "external-receipt",
-      storage: "0g-ready"
+      storage: "0g-ready",
+      onchain: "proof-registry"
     },
     receipts: {
       walletAddress: state.walletAddress || undefined,
@@ -97,13 +102,17 @@ export async function createNetworkRecord(
           : "local_demo"
         : "not_signed",
       payoutReceipt: state.payoutReceiptRef || undefined,
-      zeroGReceipt: state.zeroGReceiptUri || undefined
+      zeroGReceipt: state.zeroGReceiptUri || undefined,
+      proofRegistryAddress: state.proofRegistryAddress || undefined,
+      proofRegistryTxHash: state.proofRegistryTxHash || undefined,
+      proofRegistryPacketHash: state.proofRegistryPacketHash || undefined
     },
     boundaries: [
       "ProofForge does not hold GitHub credentials by default.",
       "Reviewer links carry state without a server session.",
       "Payouts are recorded after external wallet/platform settlement.",
-      "0G storage is export-ready unless an upload adapter is configured."
+      "0G storage is export-ready unless an upload adapter is configured.",
+      "Onchain acceptance records anchor proof hashes and references, not private packet contents."
     ]
   };
 }

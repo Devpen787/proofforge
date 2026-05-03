@@ -18,9 +18,15 @@ export function MaintainerScreen({
   walletAddress,
   walletProvider,
   acceptanceSignature,
+  proofRegistryAddress,
+  proofRegistryDeployTxHash,
+  proofRegistryTxHash,
+  proofRegistryStatus,
   onAccept,
   onConnectWallet,
   onSignAcceptance,
+  onDeployRegistry,
+  onAnchorProof,
   onReview,
   onRevision,
   onReject
@@ -32,13 +38,20 @@ export function MaintainerScreen({
   walletAddress: string;
   walletProvider: WalletProviderMode;
   acceptanceSignature: string;
+  proofRegistryAddress: string;
+  proofRegistryDeployTxHash: string;
+  proofRegistryTxHash: string;
+  proofRegistryStatus: string;
   onAccept: () => void;
   onConnectWallet: () => void;
   onSignAcceptance: () => Promise<void>;
+  onDeployRegistry: () => Promise<void>;
+  onAnchorProof: () => Promise<void>;
   onReview: () => void;
   onRevision: () => void;
   onReject: () => void;
 }) {
+  const [onchainError, setOnchainError] = React.useState("");
   const packet =
     activeMission === "checkout" ? demoConvertedPacket : demoPacket;
   const mission =
@@ -79,6 +92,16 @@ export function MaintainerScreen({
           ? "Recoverable"
           : "Demo only"
         : "Not signed"
+    },
+    {
+      label: "Onchain",
+      value: proofRegistryTxHash
+        ? "Anchored"
+        : proofRegistryAddress
+          ? "Registry ready"
+          : proofRegistryDeployTxHash
+            ? "Deploy pending"
+            : "Ready to deploy"
     }
   ];
   return (
@@ -145,6 +168,43 @@ export function MaintainerScreen({
               >
                 {acceptanceSignature ? "Acceptance signed" : "Sign acceptance"}
               </button>
+            )}
+            {accepted && !proofRegistryAddress && (
+              <button
+                className="secondary-action full"
+                onClick={() => {
+                  setOnchainError("");
+                  void onDeployRegistry().catch((error: unknown) =>
+                    setOnchainError(
+                      error instanceof Error ? error.message : "Deploy failed"
+                    )
+                  );
+                }}
+                disabled={walletProvider !== "browser"}
+              >
+                Deploy proof registry
+              </button>
+            )}
+            {accepted && proofRegistryAddress && (
+              <button
+                className="secondary-action full"
+                onClick={() => {
+                  setOnchainError("");
+                  void onAnchorProof().catch((error: unknown) =>
+                    setOnchainError(
+                      error instanceof Error ? error.message : "Anchor failed"
+                    )
+                  );
+                }}
+                disabled={Boolean(proofRegistryTxHash)}
+              >
+                {proofRegistryTxHash ? "Proof anchored" : "Anchor onchain"}
+              </button>
+            )}
+            {(proofRegistryStatus || onchainError) && (
+              <small className={onchainError ? "error-note" : ""}>
+                {onchainError || proofRegistryStatus}
+              </small>
             )}
             {!accepted && (
               <>

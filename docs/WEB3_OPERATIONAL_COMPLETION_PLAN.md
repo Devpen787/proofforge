@@ -119,8 +119,9 @@ V1:
 
 V2:
 
+- Minimal ProofRegistry contract for accepted proof anchors from MetaMask.
 - Optional EAS schema and attestation payload for public accepted proof.
-- Later onchain EAS submission after user wallet confirmation.
+- Later EAS submission after user wallet confirmation.
 
 ### 0G Upload From App Flow
 

@@ -149,9 +149,15 @@ function renderScreen(
           walletAddress={state.walletAddress}
           walletProvider={state.walletProvider}
           acceptanceSignature={state.acceptanceSignature}
+          proofRegistryAddress={state.proofRegistryAddress}
+          proofRegistryDeployTxHash={state.proofRegistryDeployTxHash}
+          proofRegistryTxHash={state.proofRegistryTxHash}
+          proofRegistryStatus={state.proofRegistryStatus}
           onAccept={actions.acceptPacket}
           onConnectWallet={actions.connectWallet}
           onSignAcceptance={actions.signAcceptance}
+          onDeployRegistry={actions.deployProofRegistry}
+          onAnchorProof={actions.anchorAcceptedProof}
           onReview={actions.openCaseFile}
           onRevision={actions.requestRevision}
           onReject={actions.rejectPacket}
@@ -162,6 +168,9 @@ function renderScreen(
         <PublicProofScreen
           activeMission={state.activeMission}
           shareState={extractShareState(state)}
+          proofRegistryAddress={state.proofRegistryAddress}
+          proofRegistryTxHash={state.proofRegistryTxHash}
+          proofRegistryPacketHash={state.proofRegistryPacketHash}
           onBack={() => actions.setScreen("opportunity")}
         />
       );

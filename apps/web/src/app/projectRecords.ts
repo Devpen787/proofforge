@@ -33,7 +33,11 @@ export interface ProofForgeProjectRecord {
     status: "ready" | "running" | "submitted" | "accepted" | "released";
   }>;
   ledger: Array<{
-    type: "accepted_proof" | "payout_receipt" | "network_record";
+    type:
+      | "accepted_proof"
+      | "payout_receipt"
+      | "network_record"
+      | "onchain_anchor";
     label: string;
     ref: string;
   }>;
@@ -140,13 +144,23 @@ export async function createProjectRecord(
               ref: state.zeroGReceiptUri
             }
           ]
+        : []),
+      ...(state.proofRegistryTxHash
+        ? [
+            {
+              type: "onchain_anchor" as const,
+              label: "Proof registry transaction",
+              ref: state.proofRegistryTxHash
+            }
+          ]
         : [])
     ],
     boundaries: [
       "GitHub remains the repo permission system.",
       "ProofForge project sync stores metadata and proof references, not repo write authority.",
       "Accepted proof creates credit; payout release remains external unless a receipt is attached.",
-      "0G stores immutable proof records; mutable collaboration can move to Ceramic, GUN, or OrbitDB."
+      "0G stores immutable proof records; mutable collaboration can move to Ceramic, GUN, or OrbitDB.",
+      "Onchain registry entries anchor accepted proof hashes without replacing human maintainer review."
     ]
   };
 }

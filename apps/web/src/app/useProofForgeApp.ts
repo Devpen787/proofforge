@@ -18,6 +18,11 @@ import {
   publishProjectRecordToGun,
   pullProjectRecordFromGun
 } from "./gunProjectSync";
+import {
+  anchorAcceptedProof,
+  deployProofRegistry,
+  getConfiguredProofRegistryAddress
+} from "./onchainProofRegistry";
 import { readSharedStateFromHash } from "./shareRecords";
 
 type SavedAppState = Omit<AppState, "screen">;
@@ -49,7 +54,12 @@ const defaultSavedState: SavedAppState = {
   acceptanceSignature: "",
   acceptanceMessage: "",
   payoutReceiptRef: "",
-  zeroGReceiptUri: ""
+  zeroGReceiptUri: "",
+  proofRegistryAddress: getConfiguredProofRegistryAddress(),
+  proofRegistryDeployTxHash: "",
+  proofRegistryTxHash: "",
+  proofRegistryPacketHash: "",
+  proofRegistryStatus: ""
 };
 
 function normalizeSavedState(input: Partial<SavedAppState>): SavedAppState {
@@ -181,6 +191,20 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [zeroGReceiptUri, setZeroGReceiptUri] = React.useState(
     savedState.zeroGReceiptUri
   );
+  const [proofRegistryAddress, setProofRegistryAddress] = React.useState(
+    savedState.proofRegistryAddress
+  );
+  const [proofRegistryDeployTxHash, setProofRegistryDeployTxHash] =
+    React.useState(savedState.proofRegistryDeployTxHash);
+  const [proofRegistryTxHash, setProofRegistryTxHash] = React.useState(
+    savedState.proofRegistryTxHash
+  );
+  const [proofRegistryPacketHash, setProofRegistryPacketHash] = React.useState(
+    savedState.proofRegistryPacketHash
+  );
+  const [proofRegistryStatus, setProofRegistryStatus] = React.useState(
+    savedState.proofRegistryStatus
+  );
 
   const resetProof = React.useCallback(() => {
     setPacketReady(false);
@@ -192,6 +216,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     setAcceptanceSignature("");
     setAcceptanceMessage("");
     setPayoutReceiptRef("");
+    setProofRegistryTxHash("");
+    setProofRegistryPacketHash("");
+    setProofRegistryStatus("");
   }, []);
 
   const applySavedState = React.useCallback(
@@ -219,6 +246,13 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setAcceptanceMessage(normalized.acceptanceMessage);
       setPayoutReceiptRef(normalized.payoutReceiptRef);
       setZeroGReceiptUri(normalized.zeroGReceiptUri);
+      setProofRegistryAddress(
+        normalized.proofRegistryAddress || getConfiguredProofRegistryAddress()
+      );
+      setProofRegistryDeployTxHash(normalized.proofRegistryDeployTxHash);
+      setProofRegistryTxHash(normalized.proofRegistryTxHash);
+      setProofRegistryPacketHash(normalized.proofRegistryPacketHash);
+      setProofRegistryStatus(normalized.proofRegistryStatus);
       saveAppState(normalized);
     },
     []
@@ -415,6 +449,54 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
         `local-demo-sig:${(await sha256Hex(fallbackMessage)).slice(0, 32)}`
       );
     },
+    deployProofRegistry: async () => {
+      const ethereum = getEthereumProvider();
+      if (!ethereum) {
+        throw new Error("Connect MetaMask to deploy the proof registry.");
+      }
+      if (!walletAddress || walletProvider !== "browser") {
+        throw new Error("Connect a browser wallet before deploying.");
+      }
+      setProofRegistryStatus("Deploying registry...");
+      const deployment = await deployProofRegistry({
+        ethereum,
+        from: walletAddress
+      });
+      setProofRegistryDeployTxHash(deployment.transactionHash);
+      if (deployment.registryAddress) {
+        setProofRegistryAddress(deployment.registryAddress);
+        setProofRegistryStatus("Registry deployed");
+      } else {
+        setProofRegistryStatus("Registry deployment submitted");
+      }
+    },
+    anchorAcceptedProof: async () => {
+      const ethereum = getEthereumProvider();
+      if (!ethereum) {
+        throw new Error("Connect MetaMask to anchor accepted proof.");
+      }
+      if (!walletAddress || walletProvider !== "browser") {
+        throw new Error("Connect a browser wallet before anchoring proof.");
+      }
+      const registryAddress =
+        proofRegistryAddress || getConfiguredProofRegistryAddress();
+      if (!registryAddress) {
+        throw new Error(
+          "Deploy a registry or set VITE_PROOF_REGISTRY_ADDRESS."
+        );
+      }
+      setProofRegistryStatus("Anchoring accepted proof...");
+      const result = await anchorAcceptedProof({
+        ethereum,
+        from: walletAddress,
+        registryAddress,
+        payoutReceiptRef
+      });
+      setProofRegistryAddress(result.registryAddress);
+      setProofRegistryTxHash(result.transactionHash);
+      setProofRegistryPacketHash(result.packetHash);
+      setProofRegistryStatus("Accepted proof anchored");
+    },
     recordPayoutReceipt: (receipt) => {
       setPayoutReceiptRef(receipt.trim());
       if (receipt.trim()) setReleased(true);
@@ -444,7 +526,12 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     acceptanceSignature,
     acceptanceMessage,
     payoutReceiptRef,
-    zeroGReceiptUri
+    zeroGReceiptUri,
+    proofRegistryAddress,
+    proofRegistryDeployTxHash,
+    proofRegistryTxHash,
+    proofRegistryPacketHash,
+    proofRegistryStatus
   };
 
   React.useEffect(() => {
@@ -470,7 +557,12 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       acceptanceSignature,
       acceptanceMessage,
       payoutReceiptRef,
-      zeroGReceiptUri
+      zeroGReceiptUri,
+      proofRegistryAddress,
+      proofRegistryDeployTxHash,
+      proofRegistryTxHash,
+      proofRegistryPacketHash,
+      proofRegistryStatus
     });
   }, [
     packetReady,
@@ -494,7 +586,12 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     acceptanceSignature,
     acceptanceMessage,
     payoutReceiptRef,
-    zeroGReceiptUri
+    zeroGReceiptUri,
+    proofRegistryAddress,
+    proofRegistryDeployTxHash,
+    proofRegistryTxHash,
+    proofRegistryPacketHash,
+    proofRegistryStatus
   ]);
 
   return { state, actions };

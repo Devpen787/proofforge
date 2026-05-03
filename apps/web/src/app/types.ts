@@ -27,6 +27,11 @@ export interface AppState {
   acceptanceMessage: string;
   payoutReceiptRef: string;
   zeroGReceiptUri: string;
+  proofRegistryAddress: string;
+  proofRegistryDeployTxHash: string;
+  proofRegistryTxHash: string;
+  proofRegistryPacketHash: string;
+  proofRegistryStatus: string;
 }
 
 export interface AppActions {
@@ -69,6 +74,8 @@ export interface AppActions {
   }) => Promise<string>;
   connectWallet: () => Promise<void>;
   signAcceptance: () => Promise<void>;
+  deployProofRegistry: () => Promise<void>;
+  anchorAcceptedProof: () => Promise<void>;
   recordPayoutReceipt: (receipt: string) => void;
 }
 

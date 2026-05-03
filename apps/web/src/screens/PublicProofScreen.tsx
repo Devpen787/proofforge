@@ -7,10 +7,16 @@ import { StatusBlock } from "../components/ui";
 export function PublicProofScreen({
   activeMission,
   shareState,
+  proofRegistryAddress,
+  proofRegistryTxHash,
+  proofRegistryPacketHash,
   onBack
 }: {
   activeMission: ActiveMission;
   shareState: SharedAppState;
+  proofRegistryAddress: string;
+  proofRegistryTxHash: string;
+  proofRegistryPacketHash: string;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -102,6 +108,37 @@ export function PublicProofScreen({
               />
             ))}
           </div>
+        </div>
+      </div>
+      <div className="panel public-onchain-panel">
+        <p className="small-label">Onchain acceptance</p>
+        <h2>
+          {proofRegistryTxHash
+            ? "Accepted proof is anchored."
+            : "Accepted proof is ready to anchor."}
+        </h2>
+        <div className="artifact-row rich-artifact-row">
+          <span>
+            <strong>Registry</strong>
+            <small>
+              {proofRegistryAddress || "Deploy from Maintainer Review"}
+            </small>
+          </span>
+          <small>{proofRegistryAddress ? "Ready" : "Not deployed"}</small>
+        </div>
+        <div className="artifact-row rich-artifact-row">
+          <span>
+            <strong>Packet hash</strong>
+            <small>{proofRegistryPacketHash || "Created during anchor"}</small>
+          </span>
+          <small>{proofRegistryPacketHash ? "Recorded" : "Pending"}</small>
+        </div>
+        <div className="artifact-row rich-artifact-row">
+          <span>
+            <strong>Transaction</strong>
+            <small>{proofRegistryTxHash || "No tx yet"}</small>
+          </span>
+          <small>{proofRegistryTxHash ? "Submitted" : "Pending"}</small>
         </div>
       </div>
       <div className="panel public-safe-panel">
