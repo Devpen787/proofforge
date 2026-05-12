@@ -76,57 +76,155 @@ export function OpportunityScreen({
           ? onRelease
           : onStart;
   const selectedWork = demoWork[1] || demoWork[0];
+  const readyWork = demoProject.opportunities.filter(
+    (work) => work.state === "Ready to run"
+  );
+  const needsTriage = demoProject.opportunities.filter(
+    (work) => work.state === "Needs triage"
+  );
+  const registryMetrics = [
+    { label: "Active project", value: "1", detail: demoProject.name },
+    {
+      label: "Open work",
+      value: String(demoProject.opportunities.length),
+      detail: "source-backed"
+    },
+    {
+      label: "Ready missions",
+      value: String(readyWork.length),
+      detail: "proofable now"
+    },
+    {
+      label: "Accepted proof",
+      value: demoProject.acceptedProof,
+      detail: "project ledger"
+    },
+    {
+      label: "Earned value",
+      value: generatedProofSummary.payout.amount,
+      detail: accepted || released ? packetState : "available on accept"
+    }
+  ];
+  const proofFlow = ["Source", "Mission", "Node", "Packet", "Accept", "Credit"];
 
   return (
-    <section className="page-grid pf-home-reference">
-      <div className="pf-home-hero">
-        <div className="pf-home-copy">
-          <span className="pf-state-chip">{packetState}</span>
-          <h1>{heroTitle}</h1>
-          <p>{heroBody}</p>
+    <section className="pf-registry-page">
+      <header className="pf-registry-hero">
+        <div className="pf-registry-kicker">
+          <span>Contribution registry</span>
+          <b>{packetState}</b>
+        </div>
+        <div className="pf-registry-headline">
+          <div>
+            <h1>{heroTitle}</h1>
+            <p>{heroBody}</p>
+          </div>
           <div className="pf-home-actions">
             <button className="primary-action" onClick={handlePrimary}>
               {primaryAction}
             </button>
             <button className="secondary-action" onClick={onViewOpportunities}>
-              View source-backed work
+              Browse work
             </button>
           </div>
         </div>
 
-        <aside className="pf-selected-mission" aria-label="Selected mission">
-          <div className="pf-selected-topline">
-            <span>Selected mission</span>
-            <b>{agentRegistered ? "Ready" : "Node needed"}</b>
-          </div>
-          <h2>{selectedWork.title}</h2>
-          <div className="pf-selected-card">
-            <span className="pf-play-dot" aria-hidden="true">
-              ▶
+        <div className="pf-registry-metrics" aria-label="Registry metrics">
+          {registryMetrics.map((metric) => (
+            <span key={metric.label}>
+              <small>{metric.label}</small>
+              <strong>{metric.value}</strong>
+              <em>{metric.detail}</em>
             </span>
-            <div>
-              <strong>
-                {selectedWork.risk} · {selectedWork.runtime}
-              </strong>
-              <small>Accepted by {selectedWork.owner}</small>
-            </div>
+          ))}
+        </div>
+      </header>
+
+      <section className="pf-registry-main">
+        <article className="pf-registry-panel pf-current-proof">
+          <div className="pf-panel-heading">
+            <span>Current proof object</span>
+            <b>{agentRegistered ? "Node ready" : "Node setup required"}</b>
           </div>
-          <dl>
-            <div>
-              <dt>Reward</dt>
-              <dd>{selectedWork.reward} + rep + credits</dd>
-            </div>
-            <div>
-              <dt>Approval</dt>
-              <dd>Before submit</dd>
-            </div>
+          <h2>
+            {accepted || released
+              ? generatedProofSummary.mission
+              : selectedWork.title}
+          </h2>
+          <p>
+            {accepted || released
+              ? generatedProofSummary.evidenceSummary
+              : `${selectedWork.repo} · accepted by ${selectedWork.owner}`}
+          </p>
+
+          <div className="pf-proof-flow" aria-label="Proof flow">
+            {proofFlow.map((step, index) => (
+              <span
+                key={step}
+                className={
+                  accepted || released || index < 2 ? "is-active" : undefined
+                }
+              >
+                {step}
+              </span>
+            ))}
+          </div>
+
+          <dl className="pf-current-proof-facts">
             <div>
               <dt>Project</dt>
               <dd>{demoProject.name}</dd>
             </div>
+            <div>
+              <dt>Acceptance</dt>
+              <dd>
+                {accepted || released
+                  ? generatedProofSummary.acceptedBy
+                  : selectedWork.owner}
+              </dd>
+            </div>
+            <div>
+              <dt>Value</dt>
+              <dd>
+                {accepted || released
+                  ? generatedProofSummary.payout.amount
+                  : `${selectedWork.reward} if accepted`}
+              </dd>
+            </div>
+            <div>
+              <dt>Proof node</dt>
+              <dd>{agentRegistered ? "docs-runner-01" : "not registered"}</dd>
+            </div>
+          </dl>
+        </article>
+
+        <aside className="pf-registry-panel pf-registry-side">
+          <div className="pf-panel-heading">
+            <span>Project state</span>
+            <b>{demoProject.status}</b>
+          </div>
+          <h2>{demoProject.name}</h2>
+          <p>{demoProject.purpose}</p>
+          <dl>
+            <div>
+              <dt>Pool</dt>
+              <dd>{demoProject.pool}</dd>
+            </div>
+            <div>
+              <dt>Ready</dt>
+              <dd>{readyWork.length}</dd>
+            </div>
+            <div>
+              <dt>Needs triage</dt>
+              <dd>{needsTriage.length}</dd>
+            </div>
+            <div>
+              <dt>Proof nodes</dt>
+              <dd>{demoProject.agents}</dd>
+            </div>
           </dl>
         </aside>
-      </div>
+      </section>
 
       {accepted || released ? (
         <section className="pf-accepted-summary" aria-label="Accepted proof">
@@ -149,14 +247,14 @@ export function OpportunityScreen({
         </section>
       ) : null}
 
-      <section className="pf-work-table-card">
+      <section className="pf-work-table-card" aria-label="Ready work">
         <div className="pf-table-heading">
           <div>
-            <p className="small-label">Ready work for you</p>
-            <h2>Choose useful work with a clear proof path.</h2>
+            <p className="small-label">Work to prove</p>
+            <h2>Ready source-backed missions.</h2>
           </div>
           <button className="secondary-action" onClick={onViewOpportunities}>
-            View all opportunities
+            View inventory
           </button>
         </div>
 

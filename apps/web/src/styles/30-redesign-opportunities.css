@@ -5,43 +5,226 @@
 
 .work-queue-grid > .pf-page-surface {
   width: 100%;
+  border-radius: var(--pf-radius);
+  background: transparent;
+  box-shadow: none;
+}
+
+.work-queue-grid .pf-page-header {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 18px;
+}
+
+.work-queue-grid .pf-page-header h1 {
+  font-size: clamp(42px, 4.8vw, 70px);
+  letter-spacing: -0.05em;
+}
+
+.work-queue-grid .pf-metric-strip {
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.work-queue-grid .pf-metric {
+  border: 0;
+  border-right: 1px solid var(--pf-line);
+  border-radius: 0;
+  background: transparent;
+  padding: 16px 18px;
+}
+
+.work-queue-grid .pf-metric:last-child {
+  border-right: 0;
 }
 
 .work-queue-grid .pf-opportunity-layout {
-  grid-template-columns: minmax(0, 1fr) minmax(270px, 320px);
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 350px);
+  gap: 20px;
+  align-items: start;
+}
+
+.work-queue-grid .pf-row-list {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
 }
 
 .work-queue-grid .pf-source-head,
 .work-queue-grid .pf-source-row {
+  display: grid;
   grid-template-columns:
-    minmax(220px, 1.25fr) minmax(82px, 0.55fr) minmax(96px, 0.65fr)
-    58px 74px 74px;
+    minmax(180px, 1.25fr) minmax(74px, 0.46fr) minmax(98px, 0.58fr)
+    54px 58px 56px 66px;
   gap: 10px;
+  align-items: center;
+}
+
+.work-queue-grid .pf-source-head {
+  border: 1px solid var(--pf-line);
+  border-bottom: 0;
+  border-radius: var(--pf-radius) var(--pf-radius) 0 0;
+  background: #07131a;
+  color: rgba(248, 250, 252, 0.72);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.06em;
+  padding: 12px 14px;
+  text-transform: uppercase;
 }
 
 .work-queue-grid .pf-source-row {
-  padding: 14px 12px;
+  border: 0;
+  border-bottom: 1px solid var(--pf-line);
+  border-radius: 0;
+  background: transparent;
+  padding: 15px 14px;
 }
 
+.work-queue-grid .pf-source-row:last-child {
+  border-bottom: 0;
+}
+
+.work-queue-grid .pf-source-row.selected {
+  background: var(--pf-green-soft);
+  box-shadow: inset 3px 0 0 var(--pf-green);
+}
+
+.work-queue-grid .pf-source-row > div,
+.work-queue-grid .pf-source-row > span,
+.work-queue-grid .pf-source-row > b {
+  min-width: 0;
+}
+
+.work-queue-grid .pf-source-row strong,
+.work-queue-grid .pf-source-row small,
 .work-queue-grid .pf-source-row > span,
 .work-queue-grid .pf-source-row b {
-  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.work-queue-grid .pf-source-row strong {
+  color: var(--pf-ink);
+  font-size: 0.98rem;
+  font-weight: 950;
+}
+
+.work-queue-grid .pf-source-row small,
+.work-queue-grid .pf-source-row > span {
+  color: var(--pf-muted);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
+.work-queue-grid .pf-source-row b {
+  color: var(--pf-ink);
+  font-size: 0.96rem;
+  font-weight: 950;
 }
 
 .work-queue-grid .pf-source-row .primary-action,
 .work-queue-grid .pf-source-row .secondary-action {
   min-width: 0;
+  min-height: 36px;
   padding-inline: 8px;
 }
 
 .work-queue-grid .pf-source-import-row {
+  display: grid;
   grid-template-columns: minmax(0, 1fr) 88px 88px;
+  gap: 10px;
+  align-items: end;
+  border-bottom: 1px solid var(--pf-line);
+  background: #f7f9fb;
+  padding: 14px;
 }
 
-@media (max-width: 980px) {
+.work-queue-grid .pf-source-import-row strong,
+.work-queue-grid .pf-source-import-row small {
+  display: block;
+}
+
+.work-queue-grid .pf-source-import-row input {
+  width: 100%;
+  margin-top: 8px;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius-sm);
+  background: var(--pf-surface);
+  padding: 10px 12px;
+  color: var(--pf-ink);
+  font: inherit;
+  font-weight: 760;
+}
+
+.work-queue-grid .pf-source-import-row small {
+  margin-top: 6px;
+  color: var(--pf-muted);
+  font-size: 0.82rem;
+  font-weight: 760;
+}
+
+.work-queue-grid .pf-detail-pane {
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.work-queue-grid .pf-detail-pane h2 {
+  font-size: 1.8rem;
+  letter-spacing: -0.04em;
+}
+
+.work-queue-grid .status-row {
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 10px;
+}
+
+.work-queue-grid .status-row:last-of-type {
+  border-bottom: 0;
+}
+
+@media (max-width: 1100px) {
+  .work-queue-grid {
+    width: 100%;
+  }
+
   .work-queue-grid .pf-opportunity-layout,
   .work-queue-grid .pf-source-import-row {
     grid-template-columns: 1fr;
+  }
+
+  .work-queue-grid .pf-source-head,
+  .work-queue-grid .pf-source-row {
+    grid-template-columns:
+      minmax(180px, 1.25fr) minmax(74px, 0.46fr)
+      minmax(98px, 0.58fr) 54px 58px 56px 66px;
+  }
+}
+
+@media (max-width: 760px) {
+  .work-queue-grid .pf-page-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .work-queue-grid .pf-metric-strip {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .work-queue-grid .pf-metric:nth-child(2n) {
+    border-right: 0;
+  }
+
+  .work-queue-grid .pf-source-head {
+    display: none;
   }
 
   .work-queue-grid .pf-source-row {
@@ -50,54 +233,21 @@
     padding: 13px 14px;
   }
 
-  .work-queue-grid .pf-source-head {
-    display: none;
-  }
-
   .work-queue-grid .pf-source-row > div {
     grid-column: 1 / 2;
   }
 
   .work-queue-grid .pf-source-row > span,
   .work-queue-grid .pf-source-row > b {
-    font-size: 0.78rem;
-  }
-
-  .work-queue-grid .pf-source-row > span:nth-of-type(1),
-  .work-queue-grid .pf-source-row > span:nth-of-type(2),
-  .work-queue-grid .pf-source-row > span:nth-of-type(3),
-  .work-queue-grid .pf-source-row > b {
     grid-column: 1 / 2;
-  }
-
-  .work-queue-grid .pf-source-row > span:nth-of-type(1),
-  .work-queue-grid .pf-source-row > span:nth-of-type(2) {
-    display: inline-block;
-  }
-
-  .work-queue-grid .pf-source-row > span:nth-of-type(3) {
-    width: fit-content;
-    border-radius: 999px;
-    background: var(--pf-green-soft);
-    color: var(--pf-green);
-    padding: 4px 8px;
+    font-size: 0.78rem;
   }
 
   .work-queue-grid .pf-source-row .primary-action,
   .work-queue-grid .pf-source-row .secondary-action {
     grid-column: 2 / 3;
-    grid-row: 1 / 5;
+    grid-row: 1 / 7;
     align-self: center;
-    min-height: 42px;
-    width: 74px;
-  }
-
-  .work-queue-grid .pf-source-import-row {
-    gap: 8px;
-  }
-
-  .work-queue-grid .pf-source-import-row .secondary-action,
-  .work-queue-grid .pf-source-import-row .primary-action {
-    min-height: 40px;
+    width: 78px;
   }
 }

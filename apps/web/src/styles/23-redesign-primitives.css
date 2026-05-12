@@ -189,8 +189,8 @@
   display: grid;
   gap: 6px;
   border: 1px solid var(--pf-line);
-  border-radius: 18px;
-  background: var(--pf-surface-muted);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
   padding: 18px;
 }
 
@@ -213,7 +213,7 @@
 }
 
 .pf-agent-skills span {
-  border-radius: 999px;
+  border-radius: var(--pf-radius-sm);
   background: var(--pf-green-soft);
   color: var(--pf-green);
   padding: 6px 10px;
@@ -225,7 +225,8 @@
   display: grid;
   overflow: hidden;
   border: 1px solid var(--pf-line);
-  border-radius: 18px;
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
 }
 
 .pf-permission-table > div {
@@ -243,8 +244,8 @@
 }
 
 .pf-permission-head {
-  color: var(--pf-muted);
-  background: var(--pf-surface-muted) !important;
+  color: rgba(248, 250, 252, 0.72);
+  background: #07131a !important;
   font-size: 12px;
   font-weight: 900;
   text-transform: uppercase;

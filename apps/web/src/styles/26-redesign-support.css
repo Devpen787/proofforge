@@ -1,7 +1,44 @@
 .pf-passport-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.pf-passport-strip .status-row {
+  border-bottom: 0;
+  border-right: 1px solid var(--pf-line);
+  padding: 14px 16px;
+}
+
+.pf-passport-strip .status-row:last-child {
+  border-right: 0;
+}
+
+.pf-passport-surface,
+.pf-settings-surface,
+.pf-help-surface {
+  border-radius: var(--pf-radius);
+  background: transparent;
+  box-shadow: none;
+}
+
+.pf-passport-surface .pf-page-header,
+.pf-settings-surface .pf-page-header,
+.pf-help-surface .pf-page-header {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 18px;
+}
+
+.pf-passport-surface .pf-page-header h1,
+.pf-settings-surface .pf-page-header h1,
+.pf-help-surface .pf-page-header h1 {
+  font-size: clamp(42px, 4.8vw, 68px);
+  letter-spacing: -0.05em;
 }
 
 .pf-passport-layout,
@@ -38,10 +75,12 @@
 
 .pf-passport-row.head,
 .pf-help-row.head {
-  color: var(--pf-muted);
+  background: #07131a;
+  color: rgba(248, 250, 252, 0.72);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.08em;
+  padding-inline: 14px;
   text-transform: uppercase;
 }
 
@@ -68,9 +107,29 @@
   display: grid;
   gap: 12px;
   border: 1px solid var(--pf-line);
-  border-radius: 18px;
-  background: var(--pf-surface-muted);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
   padding: 18px;
+}
+
+.pf-passport-table,
+.pf-help-table,
+.pf-recommendation-list {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.pf-passport-table .pf-passport-row,
+.pf-help-table .pf-help-row,
+.pf-recommendation-list .pf-recommendation-row {
+  padding-inline: 14px;
+}
+
+.pf-recommendation-row:hover {
+  background: var(--pf-green-soft);
 }
 
 .pf-passport-detail h2,
@@ -110,8 +169,10 @@
 .pf-settings-groups section {
   display: grid;
   gap: 8px;
-  border-bottom: 1px solid var(--pf-line);
-  padding-bottom: 16px;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+  padding: 16px;
 }
 
 .pf-help-detail {

@@ -1,14 +1,39 @@
 .pf-project-command {
   gap: 18px;
+  border-radius: var(--pf-radius);
+  background: transparent;
+  box-shadow: none;
 }
 
 .pf-project-command .pf-page-header {
-  align-items: flex-start;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 18px;
 }
 
 .pf-project-command .pf-page-header h1 {
   max-width: 900px;
   font-size: clamp(44px, 4.4vw, 68px);
+  letter-spacing: -0.05em;
+}
+
+.pf-project-command .pf-metric-strip {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.pf-project-command .pf-metric {
+  border: 0;
+  border-right: 1px solid var(--pf-line);
+  border-radius: 0;
+  background: transparent;
+}
+
+.pf-project-command .pf-metric:last-child {
+  border-right: 0;
 }
 
 .pf-project-command .tag-row {
@@ -80,13 +105,17 @@
   align-items: center;
   min-height: 72px;
   border-bottom: 1px solid var(--pf-line);
-  background: var(--pf-surface);
+  background: transparent;
   padding: 12px 14px;
 }
 
 .pf-project-work-row:last-child,
 .pf-project-request-row:last-child {
   border-bottom: 0;
+}
+
+.pf-project-work-row:hover {
+  background: var(--pf-green-soft);
 }
 
 .pf-project-request-row {
@@ -133,15 +162,22 @@
 .pf-project-board {
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 10px;
+  overflow: hidden;
+  gap: 0;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
 }
 
 .pf-project-board > div {
-  min-height: 112px;
-  border: 1px solid var(--pf-line);
-  border-radius: var(--pf-radius);
-  background: var(--pf-surface-muted);
-  padding: 14px;
+  min-height: 104px;
+  border-right: 1px solid var(--pf-line);
+  background: transparent;
+  padding: 14px 16px;
+}
+
+.pf-project-board > div:last-child {
+  border-right: 0;
 }
 
 .pf-project-board span,

@@ -49,6 +49,7 @@ function WorkRow({
       <span>{item.source}</span>
       <span>{item.acceptedBy}</span>
       <b>{item.reward}</b>
+      <span>{item.proofability}</span>
       <span>{item.safety}</span>
       <button
         className={ready ? "primary-action" : "secondary-action"}
@@ -276,9 +277,9 @@ export function WorkQueueScreen({
     <section className="page-grid work-queue-grid">
       <PageSurface className="wide">
         <PageHeader
-          eyebrow="Opportunities"
+          eyebrow="Work to prove"
           title="Choose source-backed work."
-          subtitle="Only scoped work becomes a mission. Raw requests stay in triage until owner, proof, and value path are clear."
+          subtitle="Every runnable mission needs a source, acceptance owner, proof requirement, and value path."
           actions={
             <button className="secondary-action" onClick={onImport}>
               Import work
@@ -302,6 +303,7 @@ export function WorkQueueScreen({
               <span>Source</span>
               <span>Accepts</span>
               <span>Value</span>
+              <span>Proof</span>
               <span>Safety</span>
               <span />
             </div>
@@ -316,6 +318,7 @@ export function WorkQueueScreen({
                   <span>Project request</span>
                   <span>{projectRequest.acceptanceOwner}</span>
                   <b>{projectRequest.reward}</b>
+                  <span>Needs scope</span>
                   <span>Safe</span>
                   <button
                     className="primary-action"

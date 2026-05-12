@@ -44,7 +44,7 @@ export function AgentSetupScreen({
 }) {
   return (
     <section className="page-grid agent-setup-grid">
-      <PageSurface className="pf-agent-surface">
+      <PageSurface className="wide pf-agent-surface">
         <PageHeader
           eyebrow="Agent setup"
           title="Register the proof node."

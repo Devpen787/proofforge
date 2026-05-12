@@ -103,17 +103,71 @@
 }
 .pf-preflight-summary {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 10px;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
 }
 .mission-detail-grid .pf-page-header {
-  display: grid;
+  align-items: flex-end;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 18px;
+}
+.agent-setup-grid .pf-agent-surface,
+.first-run-grid .first-run-contract {
+  border-radius: var(--pf-radius);
+  background: transparent;
+  box-shadow: none;
+}
+.agent-setup-grid {
+  grid-template-columns: minmax(0, 1fr);
+  width: min(100%, calc(100vw - 232px));
+}
+.agent-setup-grid .pf-page-header {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 18px;
+}
+.agent-setup-grid .pf-page-header h1,
+.first-run-contract-copy h1 {
+  font-size: clamp(42px, 4.8vw, 68px);
+  letter-spacing: -0.05em;
+}
+.agent-setup-grid .pf-action-bar {
+  justify-content: flex-start;
 }
 .mission-detail-grid .pf-page-header h1 {
-  font-size: clamp(34px, 4vw, 48px);
+  font-size: clamp(42px, 4.8vw, 68px);
+  letter-spacing: -0.05em;
 }
-.mission-detail-grid .pf-page-actions {
-  justify-content: flex-start;
+.mission-detail-grid > .pf-page-surface,
+.runner-grid > .pf-page-surface,
+.packet-grid > .pf-page-surface {
+  border-radius: var(--pf-radius);
+  background: transparent;
+  box-shadow: none;
+}
+.mission-detail-grid .pf-page-actions,
+.runner-grid .pf-page-actions,
+.packet-grid .pf-page-actions {
+  justify-content: flex-end;
+}
+.pf-preflight-summary .status-row {
+  border-bottom: 0;
+  border-right: 1px solid var(--pf-line);
+  padding: 14px 16px;
+}
+.pf-preflight-summary .status-row:last-child {
+  border-right: 0;
+}
+.pf-mission-layout {
+  grid-template-columns: minmax(0, 1fr) 340px;
+}
+.pf-mission-layout .pf-detail-pane {
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
 }
 .pf-section-title h2,
 .pf-proof-package h2 {
@@ -130,10 +184,12 @@
   grid-template-columns: 28px 1fr;
   gap: 12px;
   align-items: center;
-  border: 1px solid var(--pf-line);
-  border-radius: 16px;
-  background: var(--pf-surface-muted);
-  padding: 14px;
+  border-bottom: 1px solid var(--pf-line);
+  background: var(--pf-surface);
+  padding: 14px 0;
+}
+.pf-check-list > div:last-child {
+  border-bottom: 0;
 }
 .pf-check-list span {
   display: grid;
@@ -151,8 +207,8 @@
   gap: 18px;
   margin-top: 18px;
   border: 1px solid var(--pf-line);
-  border-radius: 18px;
-  background: var(--pf-surface-muted);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
   padding: 18px;
 }
 .pf-proof-package > div:last-child {
@@ -212,8 +268,8 @@
 .pf-case-document,
 .pf-case-submit {
   border: 1px solid var(--pf-line);
-  border-radius: 18px;
-  background: var(--pf-surface-muted);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
   padding: 18px;
 }
 .pf-runner-status h2,
@@ -263,7 +319,7 @@
 }
 .pf-runner-terminal pre {
   margin: 16px 0 0;
-  border-radius: 16px;
+  border-radius: var(--pf-radius);
   background: #07141d;
   padding: 18px;
   color: #bbf7d0;
@@ -313,7 +369,7 @@
   flex-wrap: wrap;
   gap: 8px;
   border: 1px solid var(--pf-line);
-  border-radius: 16px;
+  border-radius: var(--pf-radius);
   background: var(--pf-surface);
   padding: 14px;
 }
@@ -342,6 +398,13 @@
   .pf-opportunity-layout,
   .pf-preflight-summary {
     grid-template-columns: 1fr;
+  }
+  .pf-preflight-summary .status-row {
+    border-right: 0;
+    border-bottom: 1px solid var(--pf-line);
+  }
+  .pf-preflight-summary .status-row:last-child {
+    border-bottom: 0;
   }
   .pf-source-row {
     grid-template-columns: minmax(180px, 1fr) 76px 88px 48px 72px;

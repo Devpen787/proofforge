@@ -1,7 +1,41 @@
 .pf-money-strip {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 10px;
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.pf-money-strip .status-row {
+  border-bottom: 0;
+  border-right: 1px solid var(--pf-line);
+  padding: 14px 16px;
+}
+
+.pf-money-strip .status-row:last-child {
+  border-right: 0;
+}
+
+.pf-money-surface,
+.pf-trust-surface {
+  border-radius: var(--pf-radius);
+  background: transparent;
+  box-shadow: none;
+}
+
+.pf-money-surface .pf-page-header,
+.pf-trust-surface .pf-page-header {
+  align-items: flex-end;
+  border-bottom: 1px solid var(--pf-line);
+  padding-bottom: 18px;
+}
+
+.pf-money-surface .pf-page-header h1,
+.pf-trust-surface .pf-page-header h1 {
+  font-size: clamp(42px, 4.8vw, 68px);
+  letter-spacing: -0.05em;
 }
 
 .pf-money-layout,
@@ -37,11 +71,27 @@
 
 .pf-money-row.head,
 .pf-trust-row.head {
-  color: var(--pf-muted);
+  background: #07131a;
+  color: rgba(248, 250, 252, 0.72);
   font-size: 11px;
   font-weight: 900;
   letter-spacing: 0.08em;
+  padding-inline: 14px;
   text-transform: uppercase;
+}
+
+.pf-money-layout .pf-row-list,
+.pf-trust-layout .pf-row-list {
+  gap: 0;
+  overflow: hidden;
+  border: 1px solid var(--pf-line);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
+}
+
+.pf-money-layout .pf-money-row,
+.pf-trust-layout .pf-trust-row {
+  padding-inline: 14px;
 }
 
 .pf-money-row span,
@@ -70,8 +120,8 @@
   display: grid;
   gap: 12px;
   border: 1px solid var(--pf-line);
-  border-radius: 18px;
-  background: var(--pf-surface-muted);
+  border-radius: var(--pf-radius);
+  background: var(--pf-surface);
   padding: 18px;
 }
 

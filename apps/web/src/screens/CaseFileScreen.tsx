@@ -226,7 +226,9 @@ export function CaseFileScreen({
               className="secondary-action full"
               onClick={copyGitHubComment}
             >
-              {copiedGitHubComment ? "Comment copied" : "Copy GitHub comment"}
+              {copiedGitHubComment
+                ? "GitHub comment copied"
+                : "Copy GitHub comment"}
             </button>
             {mission.sourceUrl.startsWith("http") ? (
               <button className="secondary-action full" onClick={openSource}>
