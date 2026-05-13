@@ -2,10 +2,12 @@ import { describe, expect, it } from "vitest";
 import {
   evidencePacketSchema,
   isEvidencePacket,
-  parseEvidencePacket
+  parseEvidencePacket,
+  proofForgeEvidenceProtocolVersion
 } from "../src/index";
 
 const validPacket = {
+  pfepVersion: proofForgeEvidenceProtocolVersion,
   id: "packet_001",
   createdAt: "2026-05-01T10:00:00.000Z",
   status: "verified",
@@ -90,10 +92,19 @@ const validPacket = {
 describe("evidencePacketSchema", () => {
   it("accepts a complete evidence packet", () => {
     expect(isEvidencePacket(validPacket)).toBe(true);
-    expect(parseEvidencePacket(validPacket).id).toBe("packet_001");
-    expect(
-      parseEvidencePacket(validPacket).requirementsSatisfied[0].status
-    ).toBe("satisfied");
+    const packet = parseEvidencePacket(validPacket);
+    expect(packet.id).toBe("packet_001");
+    expect(packet.pfepVersion).toBe(proofForgeEvidenceProtocolVersion);
+    expect(packet.requirementsSatisfied[0].status).toBe("satisfied");
+  });
+
+  it("defaults legacy packets to PFEP-v0 for compatibility", () => {
+    const legacyPacket = Object.fromEntries(
+      Object.entries(validPacket).filter(([key]) => key !== "pfepVersion")
+    );
+    expect(parseEvidencePacket(legacyPacket).pfepVersion).toBe(
+      proofForgeEvidenceProtocolVersion
+    );
   });
 
   it("rejects packets without verifier output", () => {

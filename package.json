@@ -35,6 +35,7 @@
     "sync:pull-record": "tsx apps/runner/src/syncNetworkRecord.ts pull",
     "sync:pull-project": "tsx apps/runner/src/syncProjectRecord.ts pull",
     "verify:acceptance": "tsx apps/runner/src/verifyAcceptanceSignature.ts",
+    "verify:packet": "tsx apps/runner/src/verifyPacket.ts",
     "smoke:web": "tsx scripts/smokeWeb.ts",
     "test": "vitest run",
     "typecheck": "tsc -p tsconfig.json --noEmit"

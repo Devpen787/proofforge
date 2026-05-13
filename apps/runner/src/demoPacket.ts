@@ -458,7 +458,7 @@ if (
   process.argv[1] &&
   import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
-  runDemoPacket()
+  runDemoPacket(process.argv[2] ? resolve(process.argv[2]) : undefined)
     .then(printDemoPacketResult)
     .catch((error: unknown) => {
       console.error(error instanceof Error ? error.message : error);

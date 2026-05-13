@@ -18,6 +18,8 @@ export const evidencePacketStatuses = [
 
 export const riskLevels = ["low", "medium", "high"] as const;
 
+export const proofForgeEvidenceProtocolVersion = "PFEP-v0" as const;
+
 export const artifactRefSchema = z.object({
   id: z.string().min(1),
   label: z.string().min(1),
@@ -77,6 +79,9 @@ export const requirementCheckSchema = z.object({
 });
 
 export const evidencePacketSchema = z.object({
+  pfepVersion: z
+    .literal(proofForgeEvidenceProtocolVersion)
+    .default(proofForgeEvidenceProtocolVersion),
   id: z.string().min(1),
   createdAt: z.string().datetime(),
   status: z.enum(evidencePacketStatuses),
@@ -224,6 +229,7 @@ export async function buildEvidencePacket(
     input.verifierResult.status === "passed" ? "verified" : "generated";
 
   return parseEvidencePacket({
+    pfepVersion: proofForgeEvidenceProtocolVersion,
     id: input.id,
     createdAt: new Date().toISOString(),
     status,

@@ -11,6 +11,7 @@ import { verifyRunnerArtifacts } from "../../../packages/verifier/src/index";
 import {
   buildEvidencePacket,
   evidencePacketSchema,
+  proofForgeEvidenceProtocolVersion,
   writeEvidencePacketFiles
 } from "../src/index";
 
@@ -73,6 +74,7 @@ describe("buildEvidencePacket", () => {
     });
 
     expect(evidencePacketSchema.safeParse(packet).success).toBe(true);
+    expect(packet.pfepVersion).toBe(proofForgeEvidenceProtocolVersion);
     expect(packet.status).toBe("verified");
     expect(packet.artifacts).toHaveLength(3);
     expect(packet.humanApproval.status).toBe("approved");

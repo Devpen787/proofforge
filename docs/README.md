@@ -23,6 +23,8 @@ Use this page to avoid doc sprawl.
 | [`SUBMISSION_CHECKLIST.md`](./SUBMISSION_CHECKLIST.md)                         | Final hackathon submission gate.                                                       |
 | [`DEMO_SCRIPT.md`](./DEMO_SCRIPT.md)                                           | Demo recording flow and talking points.                                                |
 | [`DEPENDENCY_AUDIT.md`](./DEPENDENCY_AUDIT.md)                                 | Current dependency risk and mitigation notes.                                          |
+| [`PRODUCTION_HARDENING.md`](./PRODUCTION_HARDENING.md)                         | Production-readiness boundaries and hardening checklist.                               |
+| [`NETWORK_PERSISTENCE_V1.md`](./NETWORK_PERSISTENCE_V1.md)                     | Credential-light record sharing, acceptance verification, and sync boundaries.         |
 
 ## Reference Only
 
@@ -50,3 +52,20 @@ PRODUCT_STORYBOARD.md
 ```
 
 If an older reference doc conflicts with them, the operating guide wins.
+
+## Production Proof Commands
+
+Use these when checking whether ProofForge evidence is real, not just visible in
+the UI:
+
+```bash
+npm run demo:packet
+npm run verify:packet -- demo-output/docs-install/packet/evidence-packet.json
+npm run verify:acceptance -- <record.json>
+```
+
+`verify:packet` is the PFEP-v0 packet verification gate. It validates the
+explicit `pfepVersion` marker, schema, artifact hashes, verifier consistency,
+privacy review, protocol references, and prints the packet digest used to
+connect proof records to later acceptance, storage, ledger, and public-proof
+surfaces.

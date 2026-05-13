@@ -7,6 +7,11 @@ needs these controls before broad production use.
 ## Already In V1
 
 - Source authority stays with GitHub, bounty platforms, or project owners.
+- Evidence Packets carry an explicit `pfepVersion` marker and can be verified
+  from the CLI with `npm run verify:packet`. The verifier checks PFEP-v0
+  compatibility, runner/verifier consistency, artifact hashes where local files
+  are available, privacy review, protocol references, and emits a stable packet
+  digest.
 - GitHub writeback is user-owned: ProofForge copies comments and records posted
   URLs, but does not hold GitHub tokens.
 - Wallet acceptance can be signed through MetaMask.
@@ -26,6 +31,7 @@ needs these controls before broad production use.
 - Add 0G receipt verification in the browser or a local helper.
 - Add privacy review for all public proof fields and imported URLs.
 - Add backup/export reminders for local-first users.
+- Add stronger packet version migration policy once PFEP evolves beyond v0.
 
 ## Boundaries To Preserve
 

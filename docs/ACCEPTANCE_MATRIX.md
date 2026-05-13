@@ -193,7 +193,7 @@ Current intended labels:
 | Wallet/payout recipient fields    | Modeled locally unless wallet connection is implemented         |
 | Bounty/DAO/grant source metadata  | Modeled locally / manual source reference                       |
 | Onchain receipt/tx hash reference | Modeled locally unless chain verification is implemented        |
-| ENS identity                      | Planned roadmap unless implemented and verified                 |
+| ENS identity                      | Implemented but CLI/RPC-configured through `npm run ens:check`  |
 | AXL communication                 | Planned roadmap unless implemented and verified                 |
 | Wallet collection                 | Planned roadmap unless implemented and verified                 |
 | NFT/proof badge issuance          | Planned roadmap unless implemented and verified                 |

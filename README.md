@@ -372,6 +372,7 @@ Generate the first evidence packet:
 
 ```bash
 npm run demo:packet
+npm run verify:packet -- demo-output/docs-install/packet/evidence-packet.json
 npm run sync:web-proof
 ```
 
@@ -385,6 +386,14 @@ demo-output/docs-install/packet/public-packet.json
 demo-output/docs-install/packet/payout.json
 demo-output/docs-install/packet/project.json
 ```
+
+`verify:packet` checks the Evidence Packet as a PFEP-v0 proof object. Generated
+packets carry an explicit `pfepVersion` marker, and legacy packets without the
+marker are accepted with a warning. The verifier validates the packet schema,
+runner/verifier consistency, local artifact hashes where files are available,
+privacy review, protocol references, and prints a stable packet digest. A packet
+can have warnings, but verification fails on missing artifacts, hash mismatches,
+unsafe privacy review, unsupported protocol refs, or incoherent verifier state.
 
 `sync:web-proof` copies sanitized generated packet, verifier, policy, payout, and project-credit fields into the browser demo without exposing local filesystem paths or raw logs.
 
