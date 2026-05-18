@@ -96,6 +96,9 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
   const [proofEvents, setProofEvents] = React.useState<ProofEvent[]>(
     savedState.proofEvents
   );
+  const [publicProofPublished, setPublicProofPublished] = React.useState(
+    savedState.publicProofPublished
+  );
 
   const resetProof = React.useCallback(() => {
     setPacketReady(false);
@@ -104,6 +107,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     setReleased(false);
     setRevisionRequested(false);
     setRejected(false);
+    setPublicProofPublished(false);
   }, []);
 
   const applyImportedState = React.useCallback(
@@ -133,6 +137,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setPayoutReceipt(nextState.payoutReceipt ?? null);
       setWalletIdentity(nextState.walletIdentity ?? null);
       setProofEvents(nextState.proofEvents ?? []);
+      setPublicProofPublished(Boolean(nextState.publicProofPublished));
     },
     []
   );
@@ -245,6 +250,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setRejected(false);
       setAccepted(true);
       setReleased(false);
+      setPublicProofPublished(false);
       appendEvent("packet_accepted");
       setScreen("my-work");
     },
@@ -259,6 +265,7 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
       setSubmitted(false);
       setAccepted(false);
       setReleased(false);
+      setPublicProofPublished(false);
       setRevisionRequested(false);
       setRejected(true);
       appendEvent("packet_rejected");
@@ -312,6 +319,19 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     },
     exportPacket: () => {
       downloadJson("proofforge-proof-packet.json", proofPacket());
+    },
+    publishPublicProof: () => {
+      if (!accepted) return;
+      setPublicProofPublished(true);
+      appendEvent("public_proof_published", {
+        visibility: "public-proof",
+        payout: "hidden",
+        identity: "public-label"
+      });
+    },
+    hidePublicProof: () => {
+      setPublicProofPublished(false);
+      appendEvent("public_proof_hidden", { visibility: "private" });
     },
     importWorkspace: (nextState) => {
       applyImportedState(nextState);
@@ -393,7 +413,8 @@ export function useProofForgeApp(): { state: AppState; actions: AppActions } {
     importedMission,
     payoutReceipt,
     walletIdentity,
-    proofEvents
+    proofEvents,
+    publicProofPublished
   };
 
   React.useEffect(() => {

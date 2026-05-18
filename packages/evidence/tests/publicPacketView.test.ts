@@ -22,8 +22,14 @@ const acceptedPacket = {
   protocolRefs: {
     storageUri: "0g://root/hash",
     identityRef: "runner-01.proofforge.eth"
+  },
+  privacyReview: {
+    secretsDetected: 0,
+    localPathsMasked: true,
+    rawLogsPublic: false,
+    notes: []
   }
-} as EvidencePacket;
+} as unknown as EvidencePacket;
 
 describe("createPublicPacketView", () => {
   it("removes local artifact paths from the public share view", () => {
@@ -66,5 +72,22 @@ describe("createPublicPacketView", () => {
 
     expect(view.proofRefs.storageUri).toBeUndefined();
     expect(JSON.stringify(view)).not.toContain("file://");
+  });
+
+  it("blocks public views when privacy review is unsafe", () => {
+    expect(() =>
+      createPublicPacketView({
+        packet: {
+          ...acceptedPacket,
+          privacyReview: {
+            secretsDetected: 0,
+            localPathsMasked: true,
+            rawLogsPublic: true,
+            notes: ["raw logs requested"]
+          }
+        } as EvidencePacket,
+        project: "Docs Sprint"
+      })
+    ).toThrow("raw logs");
   });
 });

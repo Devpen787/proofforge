@@ -246,6 +246,11 @@ async function runSmoke() {
     await page.getByRole("button", { name: "Release payout" }).first().click();
     await requireText(page, "Your accepted proof is now portable.");
     await page.getByRole("button", { name: "View public proof" }).click();
+    await requireText(page, "Nothing is public yet.");
+    await page
+      .getByRole("button", { name: "Publish scoped proof" })
+      .first()
+      .click();
     await requireText(page, "Public proof");
     await requireText(page, "Shared artifacts.");
     await requireText(page, "Credit");

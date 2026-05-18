@@ -45,7 +45,8 @@ export const defaultSavedState: SavedAppState = {
   importedMission: null,
   payoutReceipt: null,
   walletIdentity: null,
-  proofEvents: []
+  proofEvents: [],
+  publicProofPublished: false
 };
 
 export function normalizeSavedState(
@@ -66,7 +67,8 @@ export function normalizeSavedState(
     importedMission: parsed.importedMission ?? null,
     payoutReceipt: parsed.payoutReceipt ?? null,
     walletIdentity: parsed.walletIdentity ?? null,
-    proofEvents: parsed.proofEvents ?? []
+    proofEvents: parsed.proofEvents ?? [],
+    publicProofPublished: Boolean(parsed.publicProofPublished)
   };
 }
 

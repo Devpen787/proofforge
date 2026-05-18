@@ -182,6 +182,7 @@ export function createPublicPacketView(input: {
       "Only submitted or reviewed packets can produce a public view."
     );
   }
+  assertPublicSafePacket(input.packet);
 
   return publicPacketViewSchema.parse({
     id: `public_${input.packet.id}`,
@@ -203,6 +204,18 @@ export function createPublicPacketView(input: {
       identityRef: input.packet.protocolRefs.identityRef
     }
   });
+}
+
+function assertPublicSafePacket(packet: EvidencePacket): void {
+  if (packet.privacyReview.secretsDetected > 0) {
+    throw new Error("Public proof blocked: secrets were detected.");
+  }
+  if (!packet.privacyReview.localPathsMasked) {
+    throw new Error("Public proof blocked: local paths are not masked.");
+  }
+  if (packet.privacyReview.rawLogsPublic) {
+    throw new Error("Public proof blocked: raw logs are marked public.");
+  }
 }
 
 function publicStorageUri(uri: string | undefined): string | undefined {

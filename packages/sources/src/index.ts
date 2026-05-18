@@ -165,6 +165,51 @@ export interface EthAgentSourceCatalogEntry {
   blockedClaims: string[];
 }
 
+export const sourceIntakeStatuses = [
+  "ready_to_qualify",
+  "needs_triage",
+  "blocked_missing_owner",
+  "blocked_missing_proof",
+  "blocked_unsafe"
+] as const;
+
+export type SourceIntakeStatus = (typeof sourceIntakeStatuses)[number];
+
+export interface SourceIntakeInput {
+  sourceUrl: string;
+  title?: string;
+  description?: string;
+  project?: string;
+  acceptanceOwner?: string;
+  proofRequirement?: string;
+  valuePath?: string;
+  sourceId?: string;
+  now?: Date;
+}
+
+export interface SourceIntakeDiagnosis {
+  status: SourceIntakeStatus;
+  sourceClass:
+    | "github"
+    | "marketplace"
+    | "bounty_or_grant"
+    | "docs"
+    | "project_request"
+    | "unknown";
+  missing: string[];
+  unsafeReasons: string[];
+  proofability: number;
+  recommendation: string;
+}
+
+export interface SourceIntakeResult {
+  source: "source_registry";
+  importedAt: string;
+  sourceId: string;
+  lead: WorkLead;
+  diagnosis: SourceIntakeDiagnosis;
+}
+
 export const ethAgentSourceCatalog: EthAgentSourceCatalogEntry[] = [
   {
     id: "github-issues",
@@ -515,6 +560,83 @@ export function getEthAgentSourceCatalogEntry(
   const entry = ethAgentSourceCatalog.find((source) => source.id === id);
   if (!entry) throw new Error(`Unknown ETH agent source: ${id}.`);
   return entry;
+}
+
+export function createWorkLeadFromSourceIntake(
+  input: SourceIntakeInput
+): SourceIntakeResult {
+  const parsedUrl = parseStableSourceUrl(input.sourceUrl);
+  const sourceClass = classifySourceUrl(parsedUrl);
+  const unsafeReasons = diagnoseUnsafeSource(input, parsedUrl);
+  const missing = diagnoseMissingSourceIntake(input, sourceClass);
+  const proofability = scoreSourceIntake(sourceClass, missing, unsafeReasons);
+  const status = intakeStatusFor(missing, unsafeReasons);
+  const sourceType = sourceTypeForIntake(sourceClass, parsedUrl);
+  const sourceId = input.sourceId ?? sourceIdFor(parsedUrl, sourceClass);
+  const title = normalizeOptional(input.title) ?? titleForSource(parsedUrl);
+  const acceptanceOwner =
+    normalizeOptional(input.acceptanceOwner) ??
+    defaultAcceptanceOwner(sourceClass, parsedUrl);
+  const project = normalizeOptional(input.project) ?? projectFor(parsedUrl);
+  const proofRequirement =
+    normalizeOptional(input.proofRequirement) ??
+    defaultProofRequirement(sourceClass);
+  const valuePath =
+    normalizeOptional(input.valuePath) ?? defaultValuePath(sourceClass);
+
+  const lead = parseWorkLead({
+    id: sourceId,
+    sourceType,
+    sourceUrl: parsedUrl.toString(),
+    title,
+    rawRequest: normalizeOptional(input.description) ?? title,
+    repo: project,
+    acceptanceOwner,
+    sponsor: sponsorFor(sourceClass, parsedUrl),
+    bountyUrl:
+      sourceType === "bounty_source" || sourceType === "foundation_backlog"
+        ? parsedUrl.toString()
+        : undefined,
+    desiredEvidence: [proofRequirement],
+    submissionRequirements: [
+      {
+        label: "Stable source URL",
+        detail: parsedUrl.toString(),
+        required: true
+      },
+      {
+        label: "Acceptance owner",
+        detail: acceptanceOwner,
+        required: true
+      },
+      {
+        label: "Value path",
+        detail: valuePath,
+        required: true
+      }
+    ],
+    riskLevel: riskLevelFor(sourceClass, unsafeReasons),
+    proofability,
+    status: status === "ready_to_qualify" ? "proofable" : "needs_triage",
+    reward: rewardFor(valuePath),
+    missing: [...missing, ...unsafeReasons],
+    blockedActions: blockedActionsFor(sourceClass)
+  });
+
+  return {
+    source: "source_registry",
+    importedAt: (input.now ?? new Date()).toISOString(),
+    sourceId,
+    lead,
+    diagnosis: {
+      status,
+      sourceClass,
+      missing,
+      unsafeReasons,
+      proofability,
+      recommendation: recommendationForIntake(status, sourceClass, missing)
+    }
+  };
 }
 
 export function classifyHackathonPrizeRequirement(
@@ -1262,4 +1384,325 @@ function slugify(value: string): string {
     .toLowerCase()
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
+}
+
+function parseStableSourceUrl(input: string): URL {
+  let parsed: URL;
+  try {
+    parsed = new URL(input);
+  } catch {
+    throw new Error("Source intake requires a valid URL.");
+  }
+
+  if (!["https:", "http:"].includes(parsed.protocol)) {
+    throw new Error("Source intake supports only http or https URLs.");
+  }
+
+  parsed.hash = "";
+  return parsed;
+}
+
+function classifySourceUrl(url: URL): SourceIntakeDiagnosis["sourceClass"] {
+  const hostname = url.hostname.toLowerCase();
+  const path = url.pathname.toLowerCase();
+
+  if (hostname === "github.com") return "github";
+  if (hostname.includes("docs.") || path.includes("/docs")) return "docs";
+  if (
+    [
+      "dework.xyz",
+      "dealwork.ai",
+      "toku.agency",
+      "ugig.net",
+      "mulerun.com",
+      "poe.com",
+      "agent.ai",
+      "apify.com"
+    ].some((known) => hostname === known || hostname.endsWith(`.${known}`))
+  ) {
+    return "marketplace";
+  }
+  if (
+    [
+      "gitcoin.co",
+      "grants.gitcoin.co",
+      "bountycaster.xyz",
+      "immunefi.com",
+      "cantina.xyz",
+      "esp.ethereum.foundation",
+      "ethereum.foundation"
+    ].some((known) => hostname === known || hostname.endsWith(`.${known}`))
+  ) {
+    return "bounty_or_grant";
+  }
+  if (hostname === "proofforge.local" || path.includes("project-request")) {
+    return "project_request";
+  }
+
+  return "unknown";
+}
+
+function diagnoseUnsafeSource(input: SourceIntakeInput, url: URL): string[] {
+  const unsafe: string[] = [];
+  const hostname = url.hostname.toLowerCase();
+  const joined = [
+    input.sourceUrl,
+    input.title,
+    input.description,
+    input.proofRequirement,
+    input.valuePath
+  ]
+    .filter(Boolean)
+    .join("\n")
+    .toLowerCase();
+
+  if (
+    hostname === "localhost" ||
+    hostname === "127.0.0.1" ||
+    hostname.endsWith(".local")
+  ) {
+    unsafe.push("source URL is not externally reviewable");
+  }
+  if (
+    /\bprivate[_-]?key\b/.test(joined) ||
+    /\bseed phrase\b/.test(joined) ||
+    /\bmnemonic\b/.test(joined)
+  ) {
+    unsafe.push("request appears to involve secrets");
+  }
+  if (/\bexploit\b/.test(joined) && !/\bsafe harbor\b/.test(joined)) {
+    unsafe.push("security work needs explicit safe-harbor terms");
+  }
+
+  return unsafe;
+}
+
+function diagnoseMissingSourceIntake(
+  input: SourceIntakeInput,
+  sourceClass: SourceIntakeDiagnosis["sourceClass"]
+): string[] {
+  const missing: string[] = [];
+  if (!normalizeOptional(input.acceptanceOwner))
+    missing.push("acceptance owner");
+  if (!normalizeOptional(input.proofRequirement))
+    missing.push("proof requirement");
+  if (!normalizeOptional(input.valuePath)) missing.push("value path");
+  if (
+    sourceClass === "unknown" &&
+    !normalizeOptional(input.project) &&
+    !normalizeOptional(input.description)
+  ) {
+    missing.push("source context");
+  }
+  return missing;
+}
+
+function intakeStatusFor(
+  missing: string[],
+  unsafeReasons: string[]
+): SourceIntakeStatus {
+  if (unsafeReasons.length) return "blocked_unsafe";
+  if (missing.includes("acceptance owner")) return "blocked_missing_owner";
+  if (missing.includes("proof requirement")) return "blocked_missing_proof";
+  if (missing.length) return "needs_triage";
+  return "ready_to_qualify";
+}
+
+function scoreSourceIntake(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"],
+  missing: string[],
+  unsafeReasons: string[]
+): number {
+  const base =
+    sourceClass === "github"
+      ? 72
+      : sourceClass === "marketplace"
+        ? 66
+        : sourceClass === "bounty_or_grant"
+          ? 64
+          : sourceClass === "docs"
+            ? 70
+            : sourceClass === "project_request"
+              ? 62
+              : 52;
+
+  return Math.max(
+    0,
+    Math.min(100, base + 24 - missing.length * 12 - unsafeReasons.length * 28)
+  );
+}
+
+function sourceTypeForIntake(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"],
+  url: URL
+): WorkLead["sourceType"] {
+  if (sourceClass === "github") {
+    return url.pathname.includes("/pull/") ? "github_pr" : "github_issue";
+  }
+  if (sourceClass === "marketplace") return "marketplace_task";
+  if (sourceClass === "bounty_or_grant") {
+    return url.hostname.includes("grant") ||
+      url.hostname.includes("foundation") ||
+      url.hostname.includes("gitcoin")
+      ? "foundation_backlog"
+      : "bounty_source";
+  }
+  if (sourceClass === "docs") return "docs_url";
+  if (sourceClass === "project_request") return "private_request";
+  return "private_request";
+}
+
+function sourceIdFor(
+  url: URL,
+  sourceClass: SourceIntakeDiagnosis["sourceClass"]
+): string {
+  return `source_${sourceClass}_${slugify(`${url.hostname}-${url.pathname}`)}`;
+}
+
+function titleForSource(url: URL): string {
+  const tail = url.pathname.split("/").filter(Boolean).at(-1);
+  return tail ? `Review ${tail}` : `Review ${url.hostname}`;
+}
+
+function defaultAcceptanceOwner(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"],
+  url: URL
+): string {
+  if (sourceClass === "github") {
+    return url.pathname.split("/").filter(Boolean)[0] ?? "GitHub maintainer";
+  }
+  return "Needs owner";
+}
+
+function projectFor(url: URL): string {
+  if (url.hostname === "github.com") {
+    const [owner, repo] = url.pathname.split("/").filter(Boolean);
+    if (owner && repo) return `${owner}/${repo}`;
+  }
+  return url.hostname;
+}
+
+function defaultProofRequirement(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"]
+): string {
+  switch (sourceClass) {
+    case "github":
+      return "maintainer-ready reproduction, verification, or patch evidence";
+    case "marketplace":
+      return "buyer-ready completion packet with requested artifacts";
+    case "bounty_or_grant":
+      return "reviewer-ready milestone or bounty evidence";
+    case "docs":
+      return "command transcript and environment evidence";
+    case "project_request":
+      return "steward-ready proof of completed request";
+    case "unknown":
+      return "manual proof requirement needed";
+  }
+}
+
+function defaultValuePath(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"]
+): string {
+  switch (sourceClass) {
+    case "github":
+      return "project credit or reputation unless a bounty is attached";
+    case "marketplace":
+      return "external marketplace acceptance and payout receipt";
+    case "bounty_or_grant":
+      return "external bounty, grant, or milestone decision";
+    case "docs":
+      return "project credit";
+    case "project_request":
+      return "steward-defined credit or payout";
+    case "unknown":
+      return "value path needs triage";
+  }
+}
+
+function sponsorFor(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"],
+  url: URL
+): string | undefined {
+  if (sourceClass === "github") {
+    return url.pathname.split("/").filter(Boolean)[0];
+  }
+  if (sourceClass === "unknown") return undefined;
+  return url.hostname;
+}
+
+function riskLevelFor(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"],
+  unsafeReasons: string[]
+): WorkLead["riskLevel"] {
+  if (unsafeReasons.length) return "high";
+  if (sourceClass === "bounty_or_grant" || sourceClass === "marketplace") {
+    return "medium";
+  }
+  return "low";
+}
+
+function rewardFor(valuePath: string): WorkLead["reward"] {
+  const normalized = valuePath.toLowerCase();
+  if (/\$\s*\d+|\busdc\b|\beth\b|\bpayout\b|\breward\b/.test(normalized)) {
+    return { amount: 0, currency: "external", type: "external" };
+  }
+  if (/\breputation\b/.test(normalized)) {
+    return { amount: 0, currency: "reputation", type: "reputation" };
+  }
+  if (/\bcredit\b/.test(normalized)) {
+    return { amount: 0, currency: "credit", type: "credit" };
+  }
+  return { amount: 0, currency: "none", type: "none" };
+}
+
+function blockedActionsFor(
+  sourceClass: SourceIntakeDiagnosis["sourceClass"]
+): string[] {
+  const common = [
+    "post externally without approval",
+    "spend funds without approval",
+    "publish secrets or private logs"
+  ];
+  if (sourceClass === "github") {
+    return [
+      "open pull requests without approval",
+      "post public comments without approval",
+      "use repository secrets",
+      ...common
+    ];
+  }
+  if (sourceClass === "bounty_or_grant") {
+    return [
+      "submit findings outside source rules",
+      "claim acceptance before reviewer decision",
+      ...common
+    ];
+  }
+  return common;
+}
+
+function recommendationForIntake(
+  status: SourceIntakeStatus,
+  sourceClass: SourceIntakeDiagnosis["sourceClass"],
+  missing: string[]
+): string {
+  if (status === "ready_to_qualify") {
+    return "Ready to qualify into a mission once the user confirms risk, permissions, and proof boundaries.";
+  }
+  if (status === "blocked_missing_owner") {
+    return "Add the maintainer, buyer, steward, or reviewer who can accept the work.";
+  }
+  if (status === "blocked_missing_proof") {
+    return "Define the evidence that would prove the work before running agents.";
+  }
+  if (status === "blocked_unsafe") {
+    return "Keep blocked until unsafe source, secret, or disclosure terms are resolved.";
+  }
+  return `Keep as ${sourceClass} Work Lead until ${missing.join(", ")} is resolved.`;
+}
+
+function normalizeOptional(value: string | undefined): string | undefined {
+  const normalized = value?.trim();
+  return normalized ? normalized : undefined;
 }

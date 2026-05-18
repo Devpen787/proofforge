@@ -5,7 +5,6 @@ import { buildShareUrl, type ShareState } from "../app/shareRecords";
 import type {
   ActiveMission,
   ImportedMission,
-  PayoutReceipt,
   ProjectRequest
 } from "../app/types";
 import { StatusBlock } from "../components/ui";
@@ -14,15 +13,19 @@ export function PublicProofScreen({
   activeMission,
   projectRequest,
   importedMission,
-  payoutReceipt,
   shareState,
+  published,
+  onPublish,
+  onHide,
   onBack
 }: {
   activeMission: ActiveMission;
   projectRequest: ProjectRequest;
   importedMission: ImportedMission | null;
-  payoutReceipt: PayoutReceipt | null;
   shareState: ShareState;
+  published: boolean;
+  onPublish: () => void;
+  onHide: () => void;
   onBack: () => void;
 }) {
   const [copied, setCopied] = React.useState(false);
@@ -40,20 +43,20 @@ export function PublicProofScreen({
     },
     { label: "Accepted", value: generatedProofSummary.acceptedDate },
     {
-      label: "Reward outcome",
-      value: `${mission.reward} accepted`
+      label: "Value",
+      value: "Tracked privately"
     },
     {
       label: "Stored on",
       value: generatedProofSummary.protocolRefs.storageProvider
     },
     {
-      label: "Agent identity",
-      value: generatedProofSummary.protocolRefs.identityLabel
+      label: "Public identity",
+      value: "ProofForge Builder"
     },
     {
-      label: "Release tx",
-      value: payoutReceipt?.txHash ?? "Pending"
+      label: "Payout",
+      value: "Hidden by owner"
     }
   ];
   const publicEvidence = generatedProofSummary.publicArtifacts.map(
@@ -64,6 +67,7 @@ export function PublicProofScreen({
     })
   );
   const copyPublicLink = async () => {
+    if (!published) return;
     const url = buildShareUrl("public-proof", {
       ...shareState,
       accepted: true
@@ -71,6 +75,76 @@ export function PublicProofScreen({
     await navigator.clipboard?.writeText(url.toString()).catch(() => undefined);
     setCopied(true);
   };
+
+  if (!published) {
+    return (
+      <section className="page-grid public-proof-grid">
+        <header className="page-header">
+          <span>Public Proof / private</span>
+          <button className="secondary-action" onClick={onBack}>
+            Project ledger
+          </button>
+        </header>
+
+        <div className="public-share-hero wide">
+          <div>
+            <p className="small-label">Private by default</p>
+            <h1>Nothing is public yet.</h1>
+            <p>
+              Publish a scoped receipt for this accepted proof without exposing
+              your full account, wallet, payouts, bids, failed runs, or agent
+              history.
+            </p>
+            <div className="public-badge-row">
+              <span className="status-pill warning">Private workspace</span>
+              <span className="status-pill safe">Privacy review passed</span>
+            </div>
+          </div>
+          <aside
+            className="public-proof-id-card"
+            aria-label="Private proof publication controls"
+          >
+            <span className="status-pill safe">Scoped receipt</span>
+            <strong>{mission.title}</strong>
+            <small>Public identity: ProofForge Builder</small>
+            <button className="primary-action full" onClick={onPublish}>
+              Publish scoped proof
+            </button>
+          </aside>
+        </div>
+
+        <div className="panel public-safe-panel">
+          <p className="small-label">Will be public</p>
+          <h2>Source, proof, verifier, acceptance.</h2>
+          {[
+            ["Source", mission.sourceUrl],
+            ["Mission", mission.title],
+            ["Verifier", generatedProofSummary.verifierStatus],
+            ["Artifacts", "Labels and SHA-256 hashes only"]
+          ].map(([label, value]) => (
+            <div className="artifact-row rich-artifact-row" key={label}>
+              <span>
+                <strong>{label}</strong>
+                <small>{value}</small>
+              </span>
+              <small>public-safe</small>
+            </div>
+          ))}
+        </div>
+
+        <div className="decision-panel public-credit-panel">
+          <p className="small-label">Will stay private</p>
+          <h2>Account history and income.</h2>
+          <div className="public-credit-stats">
+            <StatusBlock label="Wallet / ENS" value="Hidden" />
+            <StatusBlock label="Payout amount" value="Hidden" />
+            <StatusBlock label="Failed runs" value="Hidden" />
+            <StatusBlock label="Marketplace bids" value="Hidden" />
+          </div>
+        </div>
+      </section>
+    );
+  }
 
   return (
     <section className="page-grid public-proof-grid">
@@ -84,9 +158,7 @@ export function PublicProofScreen({
         <div>
           <p className="small-label">Public proof</p>
           <h1>{mission.title}</h1>
-          <p>
-            Accepted by {proofFacts[2].value}. Earned {mission.reward}.
-          </p>
+          <p>Accepted by {proofFacts[2].value}. Value tracked privately.</p>
           <div className="public-badge-row">
             <span className="status-pill safe">Accepted</span>
           </div>
@@ -103,6 +175,9 @@ export function PublicProofScreen({
           </small>
           <button className="primary-action full" onClick={copyPublicLink}>
             {copied ? "Public link copied" : "Copy public link"}
+          </button>
+          <button className="secondary-action full" onClick={onHide}>
+            Make private
           </button>
         </aside>
       </div>
@@ -133,15 +208,6 @@ export function PublicProofScreen({
             <small>{generatedProofSummary.protocolRefs.storageStatus}</small>
           </div>
         )}
-        {generatedProofSummary.payout.settlement.txHash && (
-          <div className="artifact-row rich-artifact-row">
-            <span>
-              <strong>0G payout release</strong>
-              <small>{generatedProofSummary.payout.settlement.txHash}</small>
-            </span>
-            <small>{generatedProofSummary.payout.settlement.amount}</small>
-          </div>
-        )}
         {publicEvidence.map((artifact) => (
           <div className="artifact-row rich-artifact-row" key={artifact.label}>
             <span>
@@ -161,7 +227,7 @@ export function PublicProofScreen({
             label="Accepted"
             value={generatedProofSummary.acceptedDate}
           />
-          <StatusBlock label="Earned" value={mission.reward} />
+          <StatusBlock label="Value" value="Private" />
           <StatusBlock
             label="Reputation"
             value={`+${generatedProofSummary.projectCredit.points}`}

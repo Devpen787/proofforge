@@ -28,6 +28,7 @@ export function BuilderPassportScreen({
       />
 
       <div className="pf-passport-strip">
+        <StatusRow label="Profile" value="Private" tone="bad" />
         <StatusRow
           label="Observed"
           value={String(demoBuilderPassport.observedCount)}

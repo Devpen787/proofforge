@@ -12,6 +12,9 @@ Related source-of-truth docs:
 - [`WORK_SOURCE_QUALIFICATION.md`](./WORK_SOURCE_QUALIFICATION.md)
 - [`VALUE_AND_OWNERSHIP_MODEL.md`](./VALUE_AND_OWNERSHIP_MODEL.md)
 - [`ACCEPTANCE_MATRIX.md`](./ACCEPTANCE_MATRIX.md)
+- [`PUBLICATION_PRIVACY_MODEL.md`](./PUBLICATION_PRIVACY_MODEL.md)
+- [`SOURCE_MARKETPLACE_OPERATING_MODEL.md`](./SOURCE_MARKETPLACE_OPERATING_MODEL.md)
+- [`AGENTOPS_LANE_STATE.md`](./AGENTOPS_LANE_STATE.md)
 
 ## North Star
 
@@ -29,7 +32,7 @@ source-backed work
 -> evidence packet
 -> maintainer acceptance
 -> credit / payout / reputation state
--> public-safe proof
+-> optional scoped public-safe proof
 ```
 
 The upgrade target is not a prettier dashboard. It is a more legible
@@ -151,7 +154,7 @@ Required visible answers:
 Goal: inspect a public-safe accepted proof.
 
 ```text
-Public proof link
+Explicitly published public proof link
 -> Accepted proof summary
 -> Public artifacts
 -> Credit / project / acceptance record
@@ -162,7 +165,8 @@ Required visible answers:
 - What was proven?
 - Who accepted it?
 - What public-safe evidence exists?
-- What credit, reputation, or payout state resulted?
+- What public-safe credit or project outcome resulted?
+- What private details are intentionally withheld?
 
 ## Page Registry
 
@@ -170,44 +174,44 @@ Each screen must have one dominant object, one obvious current state, and one
 clear next action. Repeated objects should be rendered as tables or dense lists,
 not loose stacks of cards.
 
-| Route               | Dominant object             | Primary action                      | Supporting data surface                   | Must not do                                      |
-| ------------------- | --------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------------ |
-| `#opportunity`      | Contribution registry state | Start or continue the next proof    | Registry metrics and latest proof/work    | Become a landing page or theory explainer        |
-| `#agent-setup`      | Proof node identity         | Register / confirm proof node       | Owner, ENS/wallet, permissions, skills    | Hide blocked actions or pretend autonomy exists  |
-| `#first-run`        | Guided first proof path     | Continue setup or work selection    | Minimal first-run checklist               | Duplicate Home permanently                       |
-| `#projects`         | Selected project            | Choose/publish useful work          | Open work, active missions, proof ledger  | Become generic project management                |
-| `#work-queue`       | Source-backed work item     | Assess / run selected work          | Scannable inventory table/list            | Show empty or indistinguishable opportunity rows |
-| `#mission-detail`   | Proof contract              | Authorize bounded run               | Source, acceptance owner, value, risk     | Skip proofability and safety terms               |
-| `#run`              | Proof node session          | Review generated packet             | Live output and trace                     | Look like an agent chat room                     |
-| `#case-file`        | Evidence packet             | Submit to maintainer                | Summary, artifacts, privacy, receipts     | Overflow, raw-noise default, unclear submit      |
-| `#maintainer`       | Submitted proof decision    | Accept, revise, or reject           | Maintainer summary and value impact       | Make acceptance feel automatic or fake           |
-| `#my-work`          | Contributor credit record   | Continue / release / view proof     | Active work and accepted ledger           | Mix pending work with accepted value carelessly  |
-| `#builder-passport` | Portable contribution graph | Inspect / connect proof history     | Observed vs accepted contribution states  | Count observed history as accepted credit        |
-| `#earnings`         | Payout state                | Prepare / record release            | Earned, released, receipt references      | Imply automatic settlement when manual           |
-| `#trust-center`     | Safety boundary             | Inspect / configure trust posture   | Policies, blocked actions, audit status   | Push V2/V3 theory into core workflow             |
-| `#public-proof`     | Public accepted proof       | Copy/share public proof             | Redacted artifacts and acceptance summary | Expose private logs, local paths, or secrets     |
-| `#settings`         | Connections and readiness   | Connect / prepare operational flows | Wallet, ENS, GitHub handoff, 0G receipts  | Become the main product experience               |
-| `#help`             | Product education           | Learn / return to workflow          | Caveats, roadmap, operational model       | Carry private strategy or internal agent notes   |
+| Route               | Dominant object             | Primary action                      | Supporting data surface                   | Must not do                                                                                 |
+| ------------------- | --------------------------- | ----------------------------------- | ----------------------------------------- | ------------------------------------------------------------------------------------------- |
+| `#opportunity`      | Contribution registry state | Start or continue the next proof    | Registry metrics and latest proof/work    | Become a landing page or theory explainer                                                   |
+| `#agent-setup`      | Proof node identity         | Register / confirm proof node       | Owner, ENS/wallet, permissions, skills    | Hide blocked actions or pretend autonomy exists                                             |
+| `#first-run`        | Guided first proof path     | Continue setup or work selection    | Minimal first-run checklist               | Duplicate Home permanently                                                                  |
+| `#projects`         | Selected project            | Choose/publish useful work          | Open work, active missions, proof ledger  | Become generic project management                                                           |
+| `#work-queue`       | Source-backed work item     | Assess / run selected work          | Scannable inventory table/list            | Show empty or indistinguishable opportunity rows                                            |
+| `#mission-detail`   | Proof contract              | Authorize bounded run               | Source, acceptance owner, value, risk     | Skip proofability and safety terms                                                          |
+| `#run`              | Proof node session          | Review generated packet             | Live output and trace                     | Look like an agent chat room                                                                |
+| `#case-file`        | Evidence packet             | Submit to maintainer                | Summary, artifacts, privacy, receipts     | Overflow, raw-noise default, unclear submit                                                 |
+| `#maintainer`       | Submitted proof decision    | Accept, revise, or reject           | Maintainer summary and value impact       | Make acceptance feel automatic or fake                                                      |
+| `#my-work`          | Contributor credit record   | Continue / release / view proof     | Active work and accepted ledger           | Mix pending work with accepted value carelessly                                             |
+| `#builder-passport` | Portable contribution graph | Inspect / connect proof history     | Observed vs accepted contribution states  | Count observed history as accepted credit                                                   |
+| `#earnings`         | Payout state                | Prepare / record release            | Earned, released, receipt references      | Imply automatic settlement when manual                                                      |
+| `#trust-center`     | Safety boundary             | Inspect / configure trust posture   | Policies, blocked actions, audit status   | Push V2/V3 theory into core workflow                                                        |
+| `#public-proof`     | Scoped public proof receipt | Publish / make private / copy proof | Redacted artifacts and acceptance summary | Auto-publish accepted proof or expose private logs, local paths, wallet, payout, or secrets |
+| `#settings`         | Connections and readiness   | Connect / prepare operational flows | Wallet, ENS, GitHub handoff, 0G receipts  | Become the main product experience                                                          |
+| `#help`             | Product education           | Learn / return to workflow          | Caveats, roadmap, operational model       | Carry private strategy or internal agent notes                                              |
 
 ## Proof Gate Contract
 
 These gates are product rules, not decoration. A screen can be redesigned only
 if the relevant gate remains visible or enforced.
 
-| Gate                     | Required before passing                                 | Enforced / shown in routes                                  |
-| ------------------------ | ------------------------------------------------------- | ----------------------------------------------------------- |
-| Source gate              | Source type, URL/reference, project or owner context    | `#work-queue`, `#mission-detail`, `#case-file`              |
-| Project gate             | Project bucket or explicit unassigned state             | `#projects`, `#work-queue`, `#mission-detail`               |
-| Acceptance gate          | Maintainer, steward, buyer, or reviewer                 | `#work-queue`, `#mission-detail`, `#maintainer`             |
-| Proofability gate        | Objective proof requirement and expected evidence       | `#work-queue`, `#mission-detail`                            |
-| Value gate               | Credit, reputation, benefit, payout, or no-value state  | `#mission-detail`, `#maintainer`, `#my-work`, `#earnings`   |
-| Agent readiness gate     | Proof node identity, owner, skills, permissions         | `#agent-setup`, `#mission-detail`, `#run`                   |
-| Run safety gate          | Sandbox, blocked external actions, no spend, no posting | `#agent-setup`, `#run`, `#case-file`, `#trust-center`       |
-| Packet quality gate      | Evidence, verifier result, artifacts, privacy review    | `#run`, `#case-file`                                        |
-| Maintainer decision gate | Accept, revise, or reject                               | `#maintainer`                                               |
-| Value creation gate      | Accepted proof plus defined value rule                  | `#maintainer`, `#my-work`, `#builder-passport`, `#earnings` |
-| Release gate             | Earned payout plus release method or receipt            | `#earnings`, `#my-work`, `#settings`                        |
-| Public proof gate        | Accepted proof plus redaction/privacy pass              | `#case-file`, `#public-proof`                               |
+| Gate                     | Required before passing                                          | Enforced / shown in routes                                  |
+| ------------------------ | ---------------------------------------------------------------- | ----------------------------------------------------------- |
+| Source gate              | Source type, URL/reference, project or owner context             | `#work-queue`, `#mission-detail`, `#case-file`              |
+| Project gate             | Project bucket or explicit unassigned state                      | `#projects`, `#work-queue`, `#mission-detail`               |
+| Acceptance gate          | Maintainer, steward, buyer, or reviewer                          | `#work-queue`, `#mission-detail`, `#maintainer`             |
+| Proofability gate        | Objective proof requirement and expected evidence                | `#work-queue`, `#mission-detail`                            |
+| Value gate               | Credit, reputation, benefit, payout, or no-value state           | `#mission-detail`, `#maintainer`, `#my-work`, `#earnings`   |
+| Agent readiness gate     | Proof node identity, owner, skills, permissions                  | `#agent-setup`, `#mission-detail`, `#run`                   |
+| Run safety gate          | Sandbox, blocked external actions, no spend, no posting          | `#agent-setup`, `#run`, `#case-file`, `#trust-center`       |
+| Packet quality gate      | Evidence, verifier result, artifacts, privacy review             | `#run`, `#case-file`                                        |
+| Maintainer decision gate | Accept, revise, or reject                                        | `#maintainer`                                               |
+| Value creation gate      | Accepted proof plus defined value rule                           | `#maintainer`, `#my-work`, `#builder-passport`, `#earnings` |
+| Release gate             | Earned payout plus release method or receipt                     | `#earnings`, `#my-work`, `#settings`                        |
+| Public proof gate        | Accepted proof, explicit publication, and redaction/privacy pass | `#case-file`, `#public-proof`                               |
 
 Hard rules:
 
@@ -217,6 +221,11 @@ Hard rules:
 - A packet cannot submit without privacy/security review.
 - Accepted proof always creates credit.
 - Earned payout and released payout are separate states.
+- Accepted proof stays private until the user explicitly publishes a scoped
+  public proof receipt.
+- Public proof must not include wallet/ENS identity, payout totals, payout
+  receipts, local paths, raw logs, failed work, bids, or account history unless
+  a later explicit product control allows the user to reveal that field.
 - Observed GitHub history, wallet receipts, marketplace snapshots, and
   credentials do not count as accepted credit unless linked to accepted proof.
 

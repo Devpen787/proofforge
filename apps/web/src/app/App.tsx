@@ -115,6 +115,7 @@ function renderScreen(
           onRelease={actions.releasePayout}
           onRecordPayout={actions.recordPayoutReceipt}
           onPublicProof={actions.openPublicProof}
+          publicProofPublished={state.publicProofPublished}
         />
       );
     case "builder-passport":
@@ -211,8 +212,10 @@ function renderScreen(
           activeMission={state.activeMission}
           projectRequest={state.projectRequest}
           importedMission={state.importedMission}
-          payoutReceipt={state.payoutReceipt}
           shareState={extractShareState(state)}
+          published={state.publicProofPublished}
+          onPublish={actions.publishPublicProof}
+          onHide={actions.hidePublicProof}
           onBack={() => actions.setScreen("projects")}
         />
       );

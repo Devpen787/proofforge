@@ -61,7 +61,9 @@ export type ProofEventType =
   | "packet_accepted"
   | "revision_requested"
   | "packet_rejected"
-  | "payout_receipt_recorded";
+  | "payout_receipt_recorded"
+  | "public_proof_published"
+  | "public_proof_hidden";
 
 export interface ProofEvent {
   id: string;
@@ -98,6 +100,7 @@ export interface AppState {
   payoutReceipt: PayoutReceipt | null;
   walletIdentity: WalletIdentity | null;
   proofEvents: ProofEvent[];
+  publicProofPublished: boolean;
 }
 
 export interface AppActions {
@@ -105,6 +108,8 @@ export interface AppActions {
   registerAgent: () => void;
   startProofJourney: () => void;
   openPublicProof: () => void;
+  publishPublicProof: () => void;
+  hidePublicProof: () => void;
   openOpportunities: () => void;
   openCaseFile: () => void;
   openEarnings: () => void;

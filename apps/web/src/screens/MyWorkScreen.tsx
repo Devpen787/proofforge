@@ -27,7 +27,8 @@ export function MyWorkScreen({
   onEarnings,
   onRelease,
   onRecordPayout,
-  onPublicProof
+  onPublicProof,
+  publicProofPublished
 }: {
   agentRegistered: boolean;
   submitted: boolean;
@@ -47,6 +48,7 @@ export function MyWorkScreen({
   onRelease: () => void;
   onRecordPayout: (receipt: PayoutReceipt) => void;
   onPublicProof: () => void;
+  publicProofPublished: boolean;
 }) {
   const mission = getMissionDisplay({
     activeMission,
@@ -80,14 +82,16 @@ export function MyWorkScreen({
         ? {
             label:
               mission.reward === "Credit"
-                ? "View public proof"
+                ? publicProofPublished
+                  ? "View public proof"
+                  : "Publish proof"
                 : "Release payout",
             title:
               mission.reward === "Credit"
-                ? "The proof is accepted. Record payout only if one happens."
-                : "The payout is earned. Record release when it happens.",
+                ? "The proof is accepted. Publish a scoped proof only if you want it public."
+                : "The payout is earned. Publish proof and release payout as separate choices.",
             detail:
-              "Maintainer acceptance created credit and an earned payout. Release is a separate manual step in V1.",
+              "Maintainer acceptance created private credit. Public proof is opt-in and scoped.",
             action: mission.reward === "Credit" ? onPublicProof : onRelease
           }
         : accepted && released
@@ -190,8 +194,8 @@ export function MyWorkScreen({
         />
         <StatusRow
           label="Public"
-          value={accepted ? "Ready" : "Hidden"}
-          tone={accepted ? "good" : "bad"}
+          value={publicProofPublished ? "Published" : "Private"}
+          tone={publicProofPublished ? "good" : "bad"}
         />
       </div>
 
@@ -285,6 +289,18 @@ export function MyWorkScreen({
           </div>
         </aside>
       </div>
+
+      <section className="pf-support-section">
+        <div>
+          <p className="small-label">Privacy</p>
+          <h2>My Work is private by default.</h2>
+        </div>
+        <p>
+          Accepted proof can be shared as a scoped public receipt. Your full
+          work history, failed runs, bids, wallet details, and payout totals
+          stay in this workspace unless you publish a specific proof.
+        </p>
+      </section>
     </PageSurface>
   );
 }
