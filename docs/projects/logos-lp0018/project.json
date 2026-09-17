@@ -54,12 +54,12 @@
   "missionStatus": {
     "M00": {
       "status": "running_triage",
-      "reason": "The official QML tutorial ran at commit c58b7c9ea71269ca9383dcbd6eaba78f7ec66cc8 with 50/57 steps passing. The LP-0018-relevant Basecamp path passed end-to-end, including LGX packaging, lgpm installation, Basecamp launch/use, portable build, and UI integration tests. Seven failures collapse into one unresolved logoscore load-module/runtime chain and are being triaged before M00 is closed.",
+      "reason": "The official QML tutorial ran at commit c58b7c9ea71269ca9383dcbd6eaba78f7ec66cc8 with 50/57 steps passing. The LP-0018-relevant Basecamp path passed end-to-end. A manual isolated logoscore reproduction with explicit --config-dir also passed end-to-end: daemon boot, client config emission, load-module, module-info, factorial(5)=120, fibonacci(10)=55, libVersion=1.0.0, and clean shutdown. The remaining defect is therefore narrowed to the tutorial/doctest orchestration or implicit config-dir lane, not the module or macOS runtime itself.",
       "evidence": [
         "docs/projects/logos-lp0018/evidence/M00_PREFLIGHT_2026-09-17.md",
         "docs/projects/logos-lp0018/evidence/M00_TUTORIAL_RUN_2026-09-17.md"
       ],
-      "next": "Extract the first logoscore load-module failure's exact stderr/stdout and daemon-start context. Do not patch upstream yet. If the issue is upstream/docs/runtime-specific and the Basecamp path remains valid, close M00 as verified-with-known-upstream-friction after independent review."
+      "next": "Run one final reproduction using only LOGOSCORE_CONFIG_DIR, matching logos-doctest behavior. If that succeeds, classify the defect in logos-doctest/background process orchestration; if it fails, classify it in logoscore environment-variable config-dir handling. Then draft upstream feedback and close M00 as verified-with-known-upstream-friction after independent review."
     },
     "M01": {
       "status": "initial_extraction_complete",
