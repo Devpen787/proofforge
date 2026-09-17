@@ -2,7 +2,7 @@
 
 Mission: **M00 — Dogfood current Logos Basecamp module creation/loading path**
 
-Evidence status: `basecamp-path-passed-logoscore-triage-pending`
+Evidence status: `basecamp-and-manual-logoscore-passed-doctest-triage-pending`
 
 ## Frozen upstream source
 
@@ -51,7 +51,7 @@ This is strong local evidence that the current macOS Apple Silicon environment c
 
 This is **not** yet LP-0018 macOS support evidence for our future implementation.
 
-## Failures
+## Doctest failure chain
 
 Seven reported failures:
 
@@ -65,26 +65,97 @@ Call methods
 ./logos/bin/logoscore stop
 ```
 
-Interpretation: treat these as one failure chain until proven otherwise. `load-module` is the first critical failure; the subsequent `module-info` / `call` / `stop` steps depend on the daemon/module state created earlier.
+The first causal error was identical across the chain:
 
-The same generated module later passed the Basecamp and UI integration path, so there is not currently evidence that the module build itself is broken.
+```json
+{"code":"NO_DAEMON","message":"No client config at .../.logoscore/client/config.json. Start a daemon in this session (it writes one on boot), or install a dial spec with `logosctl client config set FILE` alongside the matching token file.","status":"error"}
+```
+
+The tutorial's daemon step is:
+
+```bash
+./logos/bin/logoscore -D -m ./modules &
+sleep 3
+```
+
+The background shell launch was marked PASS even though the daemon had not produced the local client config required by the next command.
+
+## Manual isolated logoscore reproduction
+
+To separate module/runtime health from doctest orchestration, the same generated module was tested manually with an explicit isolated config directory:
+
+```bash
+./logos/bin/logoscore \
+  --config-dir "$PWD/m00-logoscore-repro" \
+  -D \
+  -m ./modules \
+  > ./m00-logoscore-daemon.log 2>&1 &
+```
+
+Observed daemon result:
+
+- process remained alive;
+- `daemon/state.json` created;
+- `daemon/tokens.json` created;
+- `daemon/tokens/auto.json` created;
+- `client/config.json` created;
+- `client/auto.json` created;
+- `status` reported daemon running;
+- `capability_module` loaded;
+- `modules_state` loaded;
+- `calc_module` discovered as `not_loaded`.
+
+The following manual client path then passed end-to-end against the same config directory:
+
+```text
+load-module calc_module          -> Loaded module: calc_module (v1.0.0)
+module-info calc_module          -> methods/events correctly visible
+call calc_module factorial 5     -> 120
+call calc_module fibonacci 10    -> 55
+call calc_module libVersion      -> 1.0.0
+stop                             -> clean shutdown initiated
+```
+
+This is strong counter-evidence against a module-build failure or a general macOS/aarch64 logoscore runtime failure.
+
+## Upstream behavior relevant to triage
+
+Current `logoscore` documentation states that successful daemon startup emits local client configuration under the selected config directory. It also documents config-directory resolution as:
+
+```text
+--config-dir -> LOGOSCORE_CONFIG_DIR -> ~/.logoscore
+```
+
+Current `logos-doctest` intentionally sets `LOGOSCORE_CONFIG_DIR` to `<workdir>/.logoscore` per spec so daemon state is isolated. Its source comments explicitly note that commands backgrounded with `&` can fail silently while the launch step itself appears successful.
+
+Therefore the remaining defect is narrowed to one of:
+
+1. `logos-doctest` background-process orchestration / readiness detection;
+2. environment-only `LOGOSCORE_CONFIG_DIR` behavior in this exact invocation path;
+3. another doctest-specific interaction with the per-spec config directory.
+
+It is no longer classified as:
+
+- Nix installation failure;
+- module build failure;
+- LGX failure;
+- Basecamp failure;
+- general logoscore/macOS runtime failure.
 
 ## Evidence paths on test machine
 
 - `~/Developer/logos-m00/logos-tutorial/m00-qml-report.html`
 - `~/Developer/logos-m00/logos-tutorial/m00-qml-terminal.log`
 - `~/Developer/logos-m00/logos-tutorial/m00-output/`
+- `~/Developer/logos-m00/logos-tutorial/m00-output/logos-calc-module/m00-logoscore-daemon.log`
+- `~/Developer/logos-m00/logos-tutorial/m00-output/logos-calc-module/m00-logoscore-repro/`
 
-## Next triage target
+## Final triage target
 
-Extract the first `logoscore` failure's exact stdout/stderr and daemon-start context from the report/log. Do not patch the tutorial yet.
+Run one final fresh daemon using **only** `LOGOSCORE_CONFIG_DIR` and no `--config-dir` flag, matching the mechanism `logos-doctest` uses.
 
-Determine whether the failure is:
+If that succeeds, classify the defect as doctest/background orchestration or readiness detection.
 
-1. upstream tutorial drift;
-2. `logoscore` runtime/macOS-specific behavior;
-3. stale/missing daemon state or persistence path;
-4. module discovery/path mismatch;
-5. local environment-specific.
+If that fails, classify it as environment-variable config-dir handling in logoscore and narrow further before upstreaming.
 
-No upstream issue should be filed until the exact failure is reproduced/minimized and compared against current upstream docs/issues.
+Do not post upstream until this final distinction is established.
