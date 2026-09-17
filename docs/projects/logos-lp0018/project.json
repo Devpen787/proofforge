@@ -53,10 +53,10 @@
   "activeMissions": ["M00"],
   "missionStatus": {
     "M00": {
-      "status": "blocked",
-      "reason": "Nix is not installed on the macOS Apple Silicon test machine.",
+      "status": "running",
+      "reason": "Official Nix 2.35.2 multi-user installation completed on the macOS Apple Silicon test machine; fresh-shell verification and flakes/module-builder resolution are next.",
       "evidence": "docs/projects/logos-lp0018/evidence/M00_PREFLIGHT_2026-09-17.md",
-      "next": "Install and verify Nix, then rerun preflight and execute the official Logos tutorial path."
+      "next": "Open a fresh Terminal, verify Nix and flakes, resolve logos-module-builder, then execute the official Logos tutorial path."
     },
     "M01": {
       "status": "initial_extraction_complete",
