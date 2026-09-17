@@ -3,7 +3,7 @@
   "projectId": "logos-lp0018-palantir-pilot",
   "title": "Logos LP-0018 x ProofForge x Palantir Pilot",
   "startedAt": "2026-09-17",
-  "status": "active_setup",
+  "status": "active_execution",
   "proofForge": {
     "repository": "Devpen787/proofforge",
     "branch": "feat/logos-lp0018-palantir-pilot",
@@ -50,7 +50,19 @@
     "planned",
     "blocked"
   ],
-  "activeMissions": ["M00", "M01"],
+  "activeMissions": ["M00"],
+  "missionStatus": {
+    "M00": {
+      "status": "blocked",
+      "reason": "Nix is not installed on the macOS Apple Silicon test machine.",
+      "evidence": "docs/projects/logos-lp0018/evidence/M00_PREFLIGHT_2026-09-17.md",
+      "next": "Install and verify Nix, then rerun preflight and execute the official Logos tutorial path."
+    },
+    "M01": {
+      "status": "initial_extraction_complete",
+      "next": "Refresh/diff against the canonical LP-0018 source before material scope or submission decisions."
+    }
+  },
   "missionDependencies": {
     "M02": ["M00", "M01"],
     "M03": ["M01", "M02"],
