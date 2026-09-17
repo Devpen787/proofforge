@@ -54,9 +54,9 @@
   "missionStatus": {
     "M00": {
       "status": "running",
-      "reason": "Official Nix 2.35.2 multi-user installation completed on the macOS Apple Silicon test machine; fresh-shell verification and flakes/module-builder resolution are next.",
+      "reason": "The macOS Apple Silicon test machine now has Nix 2.35.2 with nix-command and flakes enabled, and the official Logos module-builder flake resolves successfully at revision 9bbe0aa4c40d93669ecd9847bf171c77ce31f651.",
       "evidence": "docs/projects/logos-lp0018/evidence/M00_PREFLIGHT_2026-09-17.md",
-      "next": "Open a fresh Terminal, verify Nix and flakes, resolve logos-module-builder, then execute the official Logos tutorial path."
+      "next": "Execute the official logos-doctest QML tutorial chain in a clean workspace, preserve the first-pass report and outputs, then continue toward LGX packaging and Basecamp loading."
     },
     "M01": {
       "status": "initial_extraction_complete",
