@@ -31,12 +31,12 @@
     "note": "Human stated: Not a Logos CC. Re-check if circumstances change before submission."
   },
   "implementation": {
-    "repository": null,
-    "plannedRepository": "Devpen787/logos-osm-distribution",
-    "status": "m02_scaffold_prepared_repository_creation_pending",
+    "repository": "Devpen787/logos-osm-distribution",
+    "url": "https://github.com/Devpen787/logos-osm-distribution",
+    "defaultBranch": "main",
+    "status": "active",
     "role": "logos_deliverable",
-    "scaffold": "docs/projects/logos-lp0018/m02-repo-template/",
-    "connectorConstraint": "The currently exposed GitHub connector can write to existing repositories but does not expose repository creation. The public repository itself therefore cannot be created from this chat with the available GitHub actions.",
+    "currentBranch": "feat/m03-geofabrik-discovery",
     "mustRemainIndependentOf": ["Palantir runtime", "ProofForge runtime"]
   },
   "palantir": {
@@ -46,7 +46,6 @@
     "blockingForLogosDelivery": false
   },
   "humanGates": [
-    "create final public Logos implementation repository when tooling permits or via explicit user action",
     "open or update external Logos PRs/issues where acting under the user's identity",
     "submit lambdaPrize solution",
     "publish adoption requests or prize claims under the user's identity",
@@ -63,7 +62,7 @@
     "planned",
     "blocked"
   ],
-  "activeMissions": ["M02"],
+  "activeMissions": ["M03"],
   "missionStatus": {
     "M00": {
       "status": "locally_verified_with_known_upstream_friction",
@@ -82,11 +81,13 @@
       "next": "Continue diffing the canonical LP-0018 source as implementation proceeds."
     },
     "M02": {
-      "status": "approved_scaffold_prepared_repository_creation_pending",
+      "status": "locally_verified",
+      "truthLabel": "locally-verified",
       "humanApproval": "Not a Logos CC. Approve M02.",
-      "plannedRepository": "Devpen787/logos-osm-distribution",
-      "scaffold": "docs/projects/logos-lp0018/m02-repo-template/",
-      "prepared": [
+      "repository": "Devpen787/logos-osm-distribution",
+      "evidence": "docs/projects/logos-lp0018/evidence/M02_REPOSITORY_BOOTSTRAP_2026-09-17.md",
+      "verified": [
+        "public repository",
         "README.md",
         "AGENTS.md",
         "LICENSE-MIT",
@@ -95,8 +96,23 @@
         "docs/ACCEPTANCE_MATRIX.md",
         "docs/MISSIONS.md"
       ],
-      "blocker": "Current GitHub connector lacks a create-repository action; no suitable existing empty repository was found to reuse.",
-      "next": "Create public repository Devpen787/logos-osm-distribution, copy the prepared scaffold to its default branch, verify clean clone, then mark M02 locally verified and start M03."
+      "next": "No blocking work. M03 is active."
+    },
+    "M03": {
+      "status": "in_progress",
+      "requirements": ["F-01", "R-02"],
+      "repository": "Devpen787/logos-osm-distribution",
+      "branch": "feat/m03-geofabrik-discovery",
+      "decision": "Use Rust for shared domain/Geofabrik core based on current logos-module-builder Rust support and Rust-native SPEL/LEZ tooling.",
+      "next": "Implement frozen LP-0018 region identities, Geofabrik index parsing/resolution, streaming MD5 verification, deterministic tests, then run one real predefined-region proof."
+    },
+    "M04": {
+      "status": "ready",
+      "next": "Start after M03 core domain is stable enough to share verified snapshot types."
+    },
+    "M05": {
+      "status": "ready",
+      "next": "Start after shared registry/domain types are established; keep local/standalone evidence distinct from testnet."
     }
   },
   "missionDependencies": {
