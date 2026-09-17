@@ -14,11 +14,15 @@
     "id": "LP-0018",
     "title": "OpenStreetMap Integration — Decentralized Map Data Distribution",
     "canonicalUrl": "https://github.com/logos-co/lambda-prize/blob/master/prizes/LP-0018.md",
-    "observedSourceCommit": "f303e56871d30bf172afdc0415ac22ce55b6dd10",
+    "observedSourceCommit": "43c72fd59ef9b1ef148e1629a8e7981bee401de5",
+    "previousObservedSourceCommit": "f303e56871d30bf172afdc0415ac22ce55b6dd10",
     "observedStatus": "open",
     "observedPrizeUsd": 1500,
     "observedEffort": "medium",
-    "freshnessRule": "Refresh canonical source before material scope, submission, payout, or public eligibility claims."
+    "observedCompetition": "No open LP-0018/OSM solution PR found in logos-co/lambda-prize during the 2026-09-17 refresh; private/unpublished competition remains unknown.",
+    "sourceChangeNote": "The source moved due to a 2026-09-17 legal/spec-header/Terms rollout. Core LP-0018 technical and adoption criteria remain substantively unchanged from M01.",
+    "eligibilityGate": "Participant must not be a Logos service provider, contractor, subcontractor, or an individual/entity engaged by such a provider under the current Logos CC exclusion. Human confirmation required before public prize positioning.",
+    "freshnessRule": "Refresh canonical source and public solution-PR competition before material scope, repository creation, submission, payout, or public priority claims."
   },
   "implementation": {
     "repository": null,
@@ -33,6 +37,7 @@
     "blockingForLogosDelivery": false
   },
   "humanGates": [
+    "confirm participant eligibility under current Logos CC exclusion",
     "create final public Logos implementation repository",
     "open or update external Logos PRs/issues where acting under the user's identity",
     "submit lambdaPrize solution",
@@ -64,12 +69,13 @@
       "next": "No blocking work. Keep ProofForge issue #3 as optional upstream-tooling follow-up unless the same problem affects LP-0018 implementation or CI."
     },
     "M01": {
-      "status": "initial_extraction_complete",
-      "next": "Refresh/diff against the canonical LP-0018 source before material scope, repository creation, or submission decisions."
+      "status": "initial_extraction_complete_and_refreshed",
+      "evidence": "docs/projects/logos-lp0018/evidence/OPPORTUNITY_REFRESH_2026-09-17.md",
+      "next": "Continue diffing the canonical LP-0018 source as implementation proceeds."
     },
     "M02": {
       "status": "ready_human_gate",
-      "next": "Refresh LP-0018 status/competition first. If still worth pursuing, obtain human approval to create the clean public Logos implementation repository and freeze its architecture/acceptance skeleton."
+      "next": "Human confirms current Logos CC eligibility and approves creation of the clean public Logos implementation repository. Then freeze architecture, licenses, acceptance matrix, and first vertical-slice missions."
     }
   },
   "missionDependencies": {
