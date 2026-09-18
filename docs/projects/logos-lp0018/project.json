@@ -36,7 +36,7 @@
     "defaultBranch": "main",
     "status": "active",
     "role": "logos_deliverable",
-    "currentBranch": "feat/m03-geofabrik-discovery",
+    "currentBranch": "feat/m04-logos-storage-proof",
     "mustRemainIndependentOf": [
       "Palantir runtime",
       "ProofForge runtime"
@@ -129,18 +129,35 @@
         "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_SOURCE_MAPPING_AUDIT_2026-09-18.md",
         "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_FINAL_MACOS_2026-09-18.md"
       ],
-      "next": "Merge implementation PR #1 to main and begin M04 Logos Storage proof."
+      "next": "Complete. M04 active.",
+      "mergedToMain": true,
+      "mergeCommit": "58fa0cfcfdbbe952661658baf12dc8a65163ec0c"
     },
     "M04": {
-      "status": "active",
+      "status": "active_local_proof_pending",
       "requirements": [
         "F-02 foundation",
         "F-03 foundation",
         "R-01 foundation"
       ],
       "repository": "Devpen787/logos-osm-distribution",
-      "goal": "Store already-verified snapshot bytes through the current Logos Storage path, receive a CID, retrieve by CID, and prove byte/hash identity. Record retryable vs terminal error semantics. Do not register on LEZ in M04.",
-      "next": "Refresh the current official Logos Storage integration path and pin upstream versions/refs before implementation."
+      "branch": "feat/m04-logos-storage-proof",
+      "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/2",
+      "upstream": {
+        "repository": "logos-co/logos-storage-module",
+        "commit": "bcc29f05e2a7b4a2d215d09640aaa7436359906b",
+        "moduleVersion": "2.1.3",
+        "observedAt": "2026-09-18"
+      },
+      "proofTarget": "M03-verified Ethiopia PBF -> real storage_module uploadUrl -> CID -> exists -> downloadToUrl(local=true) -> byte-for-byte cmp -> Geofabrik MD5 verification.",
+      "truthBoundary": "A successful M04 is a locally-verified real Logos Storage proof. It is not testnet verification, remote replication, LEZ registration, or adoption coverage.",
+      "evidence": [
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/evidence/M04_UPSTREAM_SNAPSHOT_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/M04_STORAGE_PROOF.md"
+      ],
+      "runner": "scripts/m04-local-storage-proof.sh",
+      "ci": "green: shell syntax, rustfmt, workspace tests, clippy",
+      "next": "Run scripts/m04-local-storage-proof.sh on the macOS Apple Silicon proof machine using the existing M03 Ethiopia PBF. Preserve .tmp/m04 logs, CID, manifests, and verification JSON."
     },
     "M05": {
       "status": "ready",
