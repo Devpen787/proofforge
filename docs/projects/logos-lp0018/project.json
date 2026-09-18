@@ -1,0 +1,310 @@
+{
+  "schemaVersion": "proofforge-pilot-v1",
+  "projectId": "logos-lp0018-palantir-pilot",
+  "title": "Logos LP-0018 x ProofForge x Palantir Pilot",
+  "startedAt": "2026-09-17",
+  "status": "active_execution",
+  "proofForge": {
+    "repository": "Devpen787/proofforge",
+    "branch": "feat/logos-lp0018-palantir-pilot",
+    "role": "control_evidence_workspace"
+  },
+  "externalOpportunity": {
+    "provider": "Logos lambdaPrize",
+    "id": "LP-0018",
+    "title": "OpenStreetMap Integration — Decentralized Map Data Distribution",
+    "canonicalUrl": "https://github.com/logos-co/lambda-prize/blob/master/prizes/LP-0018.md",
+    "observedSourceCommit": "43c72fd59ef9b1ef148e1629a8e7981bee401de5",
+    "previousObservedSourceCommit": "f303e56871d30bf172afdc0415ac22ce55b6dd10",
+    "observedStatus": "open",
+    "observedPrizeUsd": 1500,
+    "observedEffort": "medium",
+    "observedCompetition": "No open LP-0018/OSM solution PR found in logos-co/lambda-prize during the 2026-09-17 refresh; private/unpublished competition remains unknown.",
+    "sourceChangeNote": "The source moved due to a 2026-09-17 legal/spec-header/Terms rollout. Core LP-0018 technical and adoption criteria remain substantively unchanged from M01.",
+    "eligibilityGate": "Participant must not be a Logos service provider, contractor, subcontractor, or an individual/entity engaged by such a provider under the current Logos CC exclusion.",
+    "freshnessRule": "Refresh canonical source and public solution-PR competition before material scope, submission, payout, or public priority claims."
+  },
+  "eligibility": {
+    "logosCcSelfAttestation": "not_a_logos_cc",
+    "confirmedByHuman": true,
+    "confirmedAt": "2026-09-17",
+    "note": "Human stated: Not a Logos CC. Re-check if circumstances change before submission."
+  },
+  "implementation": {
+    "repository": "Devpen787/logos-osm-distribution",
+    "url": "https://github.com/Devpen787/logos-osm-distribution",
+    "defaultBranch": "main",
+    "status": "active",
+    "role": "logos_deliverable",
+    "currentBranch": "feat/m05-lez-registry-proof",
+    "mustRemainIndependentOf": [
+      "Palantir runtime",
+      "ProofForge runtime"
+    ]
+  },
+  "palantir": {
+    "environment": null,
+    "status": "not_yet_initialized",
+    "role": "operational_control_plane_experiment",
+    "blockingForLogosDelivery": false
+  },
+  "humanGates": [
+    "open or update external Logos PRs/issues where acting under the user's identity",
+    "submit lambdaPrize solution",
+    "publish adoption requests or prize claims under the user's identity",
+    "sign or spend funds",
+    "claim prize payout"
+  ],
+  "truthLabels": [
+    "source-confirmed",
+    "implemented",
+    "locally-verified",
+    "testnet-verified",
+    "externally-verified",
+    "adoption-confirmed",
+    "planned",
+    "blocked"
+  ],
+  "activeMissions": [
+    "M05"
+  ],
+  "missionStatus": {
+    "M00": {
+      "status": "locally_verified_with_known_upstream_friction",
+      "truthLabel": "locally-verified",
+      "reason": "The current Logos module/Basecamp development path is locally verified on macOS Apple Silicon. The official chained doctest reported 50/57 passes, but all 7 failures collapsed to one NO_DAEMON condition. Manual reproductions then verified Basecamp, logoscore daemon startup, config emission, module discovery/load/introspection, factorial(5)=120, fibonacci(10)=55, libVersion=1.0.0, clean shutdown, LOGOSCORE_CONFIG_DIR behavior, and Python subprocess shell-background execution. The remaining anomaly is isolated to the specific original doctest run context and is non-blocking.",
+      "evidence": [
+        "docs/projects/logos-lp0018/evidence/M00_PREFLIGHT_2026-09-17.md",
+        "docs/projects/logos-lp0018/evidence/M00_TUTORIAL_RUN_2026-09-17.md",
+        "https://github.com/Devpen787/proofforge/issues/3"
+      ],
+      "next": "No blocking work. Keep ProofForge issue #3 as optional upstream-tooling follow-up unless the same problem affects LP-0018 implementation or CI."
+    },
+    "M01": {
+      "status": "initial_extraction_complete_and_refreshed",
+      "evidence": "docs/projects/logos-lp0018/evidence/OPPORTUNITY_REFRESH_2026-09-17.md",
+      "next": "Continue diffing the canonical LP-0018 source as implementation proceeds."
+    },
+    "M02": {
+      "status": "locally_verified",
+      "truthLabel": "locally-verified",
+      "humanApproval": "Not a Logos CC. Approve M02.",
+      "repository": "Devpen787/logos-osm-distribution",
+      "evidence": "docs/projects/logos-lp0018/evidence/M02_REPOSITORY_BOOTSTRAP_2026-09-17.md",
+      "verified": [
+        "public repository",
+        "README.md",
+        "AGENTS.md",
+        "LICENSE-MIT",
+        "LICENSE-APACHE-v2",
+        "docs/ARCHITECTURE.md",
+        "docs/ACCEPTANCE_MATRIX.md",
+        "docs/MISSIONS.md"
+      ],
+      "next": "No blocking work. M03 is active."
+    },
+    "M03": {
+      "status": "locally_verified",
+      "truthLabel": "locally-verified",
+      "requirements": [
+        "F-01",
+        "R-02"
+      ],
+      "repository": "Devpen787/logos-osm-distribution",
+      "branch": "feat/m03-geofabrik-discovery",
+      "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/1",
+      "verified": [
+        "Linux CI green: rustfmt, workspace tests, clippy",
+        "macOS Apple Silicon final tests: geofabrik 7/7, osm-domain 5/5",
+        "current live Geofabrik index resolved all 72 LP-0018 frozen leaves",
+        "Ireland mapping passed",
+        "Malaysia mapping passed",
+        "all 8 required US mappings passed",
+        "live Ethiopia source-version probe returned Unix version, Last-Modified, ETag, and Content-Length",
+        "earlier real Ethiopia PBF MD5 matched Geofabrik exactly",
+        "PBF replication timestamp/sequence/base URL decoded"
+      ],
+      "evidence": [
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_LIVE_MACOS_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_SOURCE_MAPPING_AUDIT_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_FINAL_MACOS_2026-09-18.md"
+      ],
+      "next": "Complete. M04 active.",
+      "mergedToMain": true,
+      "mergeCommit": "58fa0cfcfdbbe952661658baf12dc8a65163ec0c"
+    },
+    "M04": {
+      "status": "locally_verified",
+      "truthLabel": "locally-verified",
+      "requirements": [
+        "F-02 foundation",
+        "F-03 foundation"
+      ],
+      "repository": "Devpen787/logos-osm-distribution",
+      "branch": "feat/m04-logos-storage-proof",
+      "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/2",
+      "upstream": {
+        "storageRepository": "logos-co/logos-storage-module",
+        "storageCommit": "bcc29f05e2a7b4a2d215d09640aaa7436359906b",
+        "storageModuleVersion": "2.1.3",
+        "logoscoreCommit": "ab1ae3509070163c949afdc30f5d5db8898fd5b0",
+        "storageRuntimeRevision": "0.4.5-e3225940"
+      },
+      "verified": [
+        "M03 Ethiopia PBF reverified before Storage at 139733363 bytes and MD5 426bd510159627dc139d4d0ad3bc6acd",
+        "logoscore, lgpm, and pinned Storage LGX built successfully on macOS Apple Silicon",
+        "storage_module 2.1.3 installed and loaded",
+        "Storage node init/start succeeded",
+        "verified PBF uploaded through storage_module.uploadUrl",
+        "Storage CID produced: zDvZRwzmDq9DKvNkN9JJhhN81TeQpcRPz3W1Aj4z1KHKqGmQL7vK",
+        "Storage manifest recorded exact dataset size 139733363 and block size 65536",
+        "exists(cid) returned true",
+        "downloadToUrl(cid, local=true) completed",
+        "byte-for-byte cmp passed",
+        "retrieved MD5 matched Geofabrik exactly",
+        "Storage stop/destroy and logoscore shutdown succeeded cleanly"
+      ],
+      "truthBoundary": [
+        "M04 is a local real-Storage proof only",
+        "no remote replication claim",
+        "no Logos testnet claim",
+        "no LEZ registration claim",
+        "no adoption/evaluator coverage claim",
+        "R-01 retry/backoff remains unaddressed until M10"
+      ],
+      "evidence": [
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/evidence/M04_UPSTREAM_SNAPSHOT_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/evidence/M04_FIRST_RUN_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/evidence/M04_FINAL_MACOS_2026-09-18.md"
+      ],
+      "next": "Complete. M05 active.",
+      "mergedToMain": true,
+      "mergeCommit": "fb9e621ee6e2911550835378cab415b764d9c243"
+    },
+    "M05": {
+      "status": "active_ci_verification_before_local_lez_proof",
+      "requirements": [
+        "F-07",
+        "R-03",
+        "S-05"
+      ],
+      "repository": "Devpen787/logos-osm-distribution",
+      "branch": "feat/m05-lez-registry-proof",
+      "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/3",
+      "upstream": {
+        "spelRepository": "logos-co/spel",
+        "spelCommit": "512e95912a4e374686435601d6614b60a179a183",
+        "spelFrameworkVersion": "0.7.0",
+        "lezRepository": "logos-blockchain/logos-execution-zone",
+        "lezTag": "v0.2.4",
+        "lezTagCommit": "47eba256479f6f785acbd138834340703cd03401",
+        "scaffoldRepository": "logos-co/scaffold",
+        "scaffoldCommit": "fbde92521710209a171820c570ad8d955b399009",
+        "scaffoldVersion": "0.3.1"
+      },
+      "architecture": [
+        "crates/osm-registry-core: deterministic registry state, validation, idempotency, current-region replacement, queries",
+        "methods/guest/src/bin/osm_registry.rs: thin SPEL PDA/instruction wrapper",
+        "artifacts/osm-registry.idl.json: generated interface contract",
+        "scripts/m05-local-registry-proof.sh: standalone LEZ proof runner",
+        "scripts/m05-report.sh: compact evidence reporter"
+      ],
+      "registrySemantics": {
+        "identity": "region (unique Geofabrik path)",
+        "currentState": "one current entry per region",
+        "idempotency": "same snapshot/status replay is skipped even with a later observation timestamp",
+        "update": "new snapshot replaces current entry only with newer timestamp and non-decreasing source version",
+        "failClosed": [
+          "duplicate region inside one batch",
+          "parent/level shape change",
+          "stale timestamp",
+          "source-version downgrade"
+        ],
+        "ordering": "global timestamp descending, then source version descending, then region ascending"
+      },
+      "truth": {
+        "F07": "in_progress",
+        "R03": "implemented",
+        "S05": "in_progress"
+      },
+      "proofTarget": "Standalone local LEZ: deploy registry, initialize PDA, register real M04 Ethiopia CID, fetch/decode PDA data, query by region/parent/CID, prove idempotent replay and stale-write fail-closed behavior.",
+      "truthBoundary": "M05 local proof only. No Logos testnet 0.3 claim until M11; synthetic query fixtures are never coverage/adoption evidence.",
+      "next": "Wait for PR #3 CI to pass the corrected unique-region core, guest, IDL freshness and clippy. Then run scripts/m05-local-registry-proof.sh on macOS and return scripts/m05-report.sh output."
+    }
+  },
+  "missionDependencies": {
+    "M02": [
+      "M00",
+      "M01"
+    ],
+    "M03": [
+      "M01",
+      "M02"
+    ],
+    "M04": [
+      "M00",
+      "M02"
+    ],
+    "M05": [
+      "M01",
+      "M02"
+    ],
+    "M06": [
+      "M03",
+      "M04",
+      "M05"
+    ],
+    "M07": [
+      "M06"
+    ],
+    "M08": [
+      "M06",
+      "M00"
+    ],
+    "M09": [
+      "M08",
+      "M03",
+      "M04"
+    ],
+    "M10": [
+      "M09"
+    ],
+    "M11": [
+      "M06"
+    ],
+    "M12": [
+      "M07",
+      "M08",
+      "M09",
+      "M10"
+    ],
+    "M13": [
+      "M08",
+      "M09"
+    ],
+    "M14": [
+      "M11"
+    ],
+    "M15": [
+      "M08"
+    ],
+    "M16": [
+      "M11"
+    ],
+    "M17": [
+      "required technical missions",
+      "required adoption missions"
+    ],
+    "M18": [
+      "M17",
+      "human approval"
+    ]
+  },
+  "nonGoals": [
+    "rebuild the Logos deliverable inside Palantir",
+    "make Palantir mandatory for evaluators",
+    "copy TrailPassport code by default",
+    "manufacture independent adoption",
+    "let agents autonomously submit prize claims"
+  ]
+}

@@ -1,0 +1,103 @@
+{
+  "schemaVersion": "lp0018-requirements-v1",
+  "opportunityId": "LP-0018",
+  "title": "OpenStreetMap Integration — Decentralized Map Data Distribution",
+  "source": {
+    "repository": "logos-co/lambda-prize",
+    "path": "prizes/LP-0018.md",
+    "commit": "f303e56871d30bf172afdc0415ac22ce55b6dd10",
+    "blobSha": "8cf6c02d9863cce66451e2fbe5a859d0ea7dad2e",
+    "canonicalUrl": "https://github.com/logos-co/lambda-prize/blob/master/prizes/LP-0018.md",
+    "frozenUrl": "https://github.com/logos-co/lambda-prize/blob/f303e56871d30bf172afdc0415ac22ce55b6dd10/prizes/LP-0018.md",
+    "observedAt": "2026-09-17",
+    "observedStatus": "Open",
+    "prizeUsd": 1500,
+    "effort": "Medium"
+  },
+  "states": ["unaddressed", "planned", "implemented", "locally-verified", "testnet-verified", "externally-verified", "adoption-confirmed", "blocked", "not-applicable"],
+  "requirements": [
+    {"id":"F-01","category":"Functionality","summary":"Fetch the Geofabrik index and display predefined regions with version and country/subregion level.","required":true,"missions":["M03","M09"],"evidence":["source fixture/index response","region parser tests","UI/CLI output","closed-set validation"],"state":"unaddressed"},
+    {"id":"F-02","category":"Functionality","summary":"Host workflow: Geofabrik PBF -> Logos Storage -> on-chain OSM registry.","required":true,"missions":["M06","M09"],"evidence":["download record","storage CID","registry transaction/program state","end-to-end run log"],"state":"unaddressed"},
+    {"id":"F-03","category":"Functionality","summary":"Download hosted regions from Logos Storage, otherwise direct-fallback to Geofabrik; hosted-file trust comes from CID integrity.","required":true,"missions":["M06","M09"],"evidence":["hosted download proof","fallback proof","byte/hash verification"],"state":"unaddressed"},
+    {"id":"F-04","category":"Functionality","summary":"Bulk host multiple predefined non-overlapping regions with per-region opt-out; warn on parent/child overlap if extra non-partition regions are exposed.","required":true,"missions":["M10"],"evidence":["bulk selection tests","batch-host run","overlap guard tests if applicable"],"state":"unaddressed"},
+    {"id":"F-05","category":"Functionality","summary":"Local PBF import verifies Geofabrik MD5 at import time, then stores and registers by CID.","required":true,"missions":["M03","M07","M09","M10"],"evidence":["valid import run","invalid checksum rejection","storage CID","registry entry"],"state":"unaddressed"},
+    {"id":"F-06","category":"Functionality","summary":"Compare central Geofabrik versions with registry per region path and notify about updates.","required":true,"missions":["M07","M09","M10"],"evidence":["version comparison tests","stale/current fixtures","UI/CLI update output"],"state":"unaddressed"},
+    {"id":"F-07","category":"Functionality","summary":"On-chain LEZ OSM registry stores required region metadata, uses Geofabrik path identity, supports query by region/parent/CID, and batch registration.","required":true,"missions":["M05","M06","M10"],"evidence":["SPEL source","IDL","schema tests","register/query/batch transaction evidence"],"state":"unaddressed","fields":["region","parent","level","cid","source_url","checksum","version","hosted","timestamp"]},
+    {"id":"F-08","category":"Functionality","summary":"OSM registry operates end-to-end on Logos testnet 0.3.","required":true,"missions":["M11"],"evidence":["deployed program ID","testnet transaction/state evidence","reproducible commands"],"state":"unaddressed"},
+    {"id":"F-09","category":"Functionality","summary":"Self-contained OSM registry Basecamp SDK/module has stable documented API, minimal embedding example, full API for the distribution app, and is independently publishable.","required":true,"missions":["M08","M13"],"evidence":["SDK source/API docs","embedding example","distribution-app use of SDK","catalog artifact"],"state":"unaddressed"},
+
+    {"id":"U-01","category":"Usability","summary":"Provide a Logos Basecamp GUI with local build instructions, downloadable assets, and loadability in Basecamp.","required":true,"missions":["M00","M09","M12","M13"],"evidence":["build instructions","module artifact","Basecamp load proof","clean-clone reproduction"],"state":"unaddressed"},
+    {"id":"U-02","category":"Usability","summary":"SDK/module can be used by other Basecamp apps/modules, with published API docs and a minimal standalone embedding example.","required":true,"missions":["M08"],"evidence":["API docs","example consumer module","build/run proof"],"state":"unaddressed"},
+    {"id":"U-03","category":"Usability","summary":"CLI covers host, batch-register, lookup by region/parent/CID, update check, download, and local import.","required":true,"missions":["M07"],"evidence":["CLI help/output","command tests","end-to-end command examples"],"state":"unaddressed"},
+    {"id":"U-04","category":"Usability","summary":"UX clearly shows hosted/not-hosted state, version numbers, and verification results.","required":true,"missions":["M09"],"evidence":["UI state tests","screenshots/video as supporting evidence","manual walkthrough"],"state":"unaddressed"},
+
+    {"id":"R-01","category":"Reliability","summary":"Storage uploads retry transient failures with exponential backoff and surface a clear final error.","required":true,"missions":["M04","M10"],"evidence":["retry unit/integration tests","failure logs","backoff policy"],"state":"unaddressed"},
+    {"id":"R-02","category":"Reliability","summary":"Import-time checksum failure is graceful and clearly explained.","required":true,"missions":["M03","M10"],"evidence":["bad-checksum fixture","error-path test","user-visible error"],"state":"unaddressed"},
+    {"id":"R-03","category":"Reliability","summary":"Registry entries are ordered by timestamp for version sorting.","required":true,"missions":["M05","M10"],"evidence":["query/order tests","multi-version fixture"],"state":"unaddressed"},
+    {"id":"R-04","category":"Reliability","summary":"No mandatory centralized services beyond permitted Logos components and Geofabrik roles; optional third-party services are disclosed/disableable; hosted regions work without Geofabrik; analytics opt-in only.","required":true,"missions":["M06","M10","M17"],"evidence":["dependency audit","offline/hosted-region test","config documentation","analytics audit"],"state":"unaddressed"},
+
+    {"id":"P-01","category":"Performance","summary":"Document cycle-count usage for register and batch-register on-chain operations.","required":true,"missions":["M05","M11","M17"],"evidence":["cycle_bench output","methodology","documented measurements"],"state":"unaddressed"},
+
+    {"id":"S-01","category":"Supportability","summary":"Deploy and test against the canonical Logos testnet 0.3 zone.","required":true,"missions":["M11"],"evidence":["program ID","zone/testnet evidence","reproduction steps"],"state":"unaddressed"},
+    {"id":"S-02","category":"Supportability","summary":"Build and run end-to-end on macOS Apple Silicon and Linux x86_64.","required":true,"missions":["M12"],"evidence":["platform-specific clean builds","test results","environment metadata"],"state":"unaddressed"},
+    {"id":"S-03","category":"Supportability","summary":"Distribution app and SDK/module are built with logos-module-builder using mkLogosModule.","required":true,"missions":["M00","M08","M09"],"evidence":["build definitions","module-builder version/ref","successful builds"],"state":"unaddressed"},
+    {"id":"S-04","category":"Supportability","summary":"Publish Basecamp modules to a module catalog fork using logos-modules-release-action and provide logos-repo.json URL.","required":true,"missions":["M13"],"evidence":["catalog repository","release workflow/run","logos-repo.json URL","install proof"],"state":"unaddressed"},
+    {"id":"S-05","category":"Supportability","summary":"Generate and provide the OSM registry IDL with SPEL.","required":true,"missions":["M05","M17"],"evidence":["IDL artifact","generation command","source-to-IDL trace"],"state":"unaddressed"},
+    {"id":"S-06","category":"Supportability","summary":"End-to-end host -> query -> download integration tests run against a real standalone sequencer and are in green default-branch CI.","required":true,"missions":["M12"],"evidence":["integration test source","CI URL/run","sequencer environment details","green default branch"],"state":"unaddressed"},
+    {"id":"S-07","category":"Supportability","summary":"README documents setup, deployed program ID, region list, and step-by-step CLI/Basecamp usage.","required":true,"missions":["M17"],"evidence":["README review checklist","clean-reader walkthrough"],"state":"unaddressed"},
+    {"id":"S-08","category":"Supportability","summary":"SDK docs include a worked example resolving region to CID and metadata.","required":true,"missions":["M08","M17"],"evidence":["worked example","example test/build"],"state":"unaddressed"},
+
+    {"id":"A-01","category":"AdoptionRequired","summary":"Cover at least 15 countries and 25 total verified region entries on official Logos testnet 0.3 with Logos Storage bytes matching Geofabrik MD5.","required":true,"missions":["M14"],"evidence":["on-chain registry entries","CIDs","retrieved bytes","MD5 verification","country/entry counts"],"state":"unaddressed","thresholds":{"countries":15,"verifiedRegionEntries":25}},
+    {"id":"A-02","category":"AdoptionRequired","summary":"At least 5 genuinely independent modules, including at least 3 Basecamp UI modules, consume the OSM distribution/SDK with public genuine commit history and inspectable code use.","required":true,"missions":["M15"],"evidence":["5 public repositories","3+ Basecamp UI modules","code-inspection references","independence review"],"state":"unaddressed","thresholds":{"independentModules":5,"basecampUiModules":3}},
+    {"id":"AD-01","category":"AdoptionDiscretionary","summary":"Redundant mirroring: covered region hosted by more than 5 distinct operators.","required":false,"missions":["M16"],"evidence":["same CID hosted by distinct accounts","operator-independence signals"],"state":"unaddressed"},
+    {"id":"AD-02","category":"AdoptionDiscretionary","summary":"Community vouching from people who actually hosted or used a region, with real account history.","required":false,"missions":["M16"],"evidence":["Discord/X references","usage context","account-history review"],"state":"unaddressed"},
+
+    {"id":"SUB-01","category":"Submission","summary":"Public implementation repository contains registry, SDK/module, CLI, and distribution Basecamp app and is dual licensed MIT + Apache-2.0.","required":true,"missions":["M02","M17","M18"],"evidence":["public repo","license files","component paths"],"state":"unaddressed"},
+    {"id":"SUB-02","category":"Submission","summary":"Provide registry IDL and deployed Logos testnet 0.3 program ID.","required":true,"missions":["M11","M17","M18"],"evidence":["IDL","program ID","deployment proof"],"state":"unaddressed"},
+    {"id":"SUB-03","category":"Submission","summary":"Provide module-catalog release and logos-repo.json URL installable through package manager/lgpd.","required":true,"missions":["M13","M17","M18"],"evidence":["catalog/release URLs","install proof"],"state":"unaddressed"},
+    {"id":"SUB-04","category":"Submission","summary":"Provide evidence for required adoption: independent module links and on-chain region/CID coverage sufficient for evaluator verification.","required":true,"missions":["M14","M15","M17","M18"],"evidence":["adoption evidence index","coverage evidence index"],"state":"unaddressed"},
+    {"id":"SUB-05","category":"Submission","summary":"Provide FURPS self-assessment in the solution submission.","required":true,"missions":["M17","M18"],"evidence":["completed self-assessment mapped to evidence"],"state":"unaddressed"},
+    {"id":"SUB-06","category":"Submission","summary":"A solution PR in logos-co/lambda-prize is required to claim the prize; first qualifying solution PR wins under the observed rules.","required":true,"missions":["M18"],"evidence":["solution PR URL","fresh prize-status check"],"state":"unaddressed"},
+    {"id":"SUB-07","category":"Submission","summary":"Maximum 3 submissions per prize and at most one submission/review per week under observed program rules.","required":true,"missions":["M18"],"evidence":["submission history check"],"state":"unaddressed"}
+  ],
+  "scopeConstraints": [
+    {"id":"SC-IN-01","direction":"in","summary":"On-chain OSM registry register/batch/query built with SPEL."},
+    {"id":"SC-IN-02","direction":"in","summary":"PBF snapshots in Logos Storage; Geofabrik canonical for index/import checksums/unhosted fallback."},
+    {"id":"SC-IN-03","direction":"in","summary":"Host workflow including bulk host and local import."},
+    {"id":"SC-IN-04","direction":"in","summary":"Download hosted regions by CID."},
+    {"id":"SC-IN-05","direction":"in","summary":"Region discovery/update check limited to predefined non-overlapping set."},
+    {"id":"SC-IN-06","direction":"in","summary":"Distribution Basecamp app, SDK/module, and CLI."},
+    {"id":"SC-OUT-01","direction":"out","summary":"Map viewers/rendering/tile servers/geocoding/routing/navigation."},
+    {"id":"SC-OUT-02","direction":"out","summary":"Live/incremental OSM sync."},
+    {"id":"SC-OUT-03","direction":"out","summary":"Custom regions or extra tree levels for prize coverage."},
+    {"id":"SC-OUT-04","direction":"out","summary":"Hosted relay/backend; logic should run on permitted Logos stack components."}
+  ],
+  "eligibility": [
+    {"id":"EL-01","summary":"Open to individual or team; submission must be original work and submitters hold rights to submitted code."},
+    {"id":"EL-02","summary":"Submitted implementation must be dual licensed MIT and Apache-2.0."}
+  ],
+  "closedRegionSet": {
+    "rule": "Frozen non-overlapping leaf set from the observed LP-0018 source. Country files for US, India, China, and Russia are excluded; listed subregions represent them.",
+    "countryLevel": [
+      "germany","france","great-britain","italy","spain","poland","netherlands","belgium","switzerland","austria","czech-republic","sweden","norway","denmark","finland","portugal","greece","ireland","hungary","romania","bulgaria","ukraine","belarus","turkey",
+      "canada","mexico",
+      "japan","south-korea","indonesia","thailand","vietnam","malaysia","philippines","pakistan","bangladesh","iran",
+      "australia",
+      "brazil","argentina","colombia","peru","chile",
+      "south-africa","egypt","nigeria","kenya","morocco","ethiopia"
+    ],
+    "subregions": {
+      "us": ["us/california","us/texas","us/florida","us/new-york","us/washington","us/illinois","us/georgia","us/pennsylvania"],
+      "india": ["india/central-zone","india/eastern-zone","india/north-eastern-zone","india/northern-zone","india/southern-zone","india/western-zone"],
+      "china": ["china/guangdong","china/jiangsu","china/shandong","china/zhejiang","china/sichuan","china/henan"],
+      "russia": ["russia/central-fed-district","russia/northwestern-fed-district","russia/volga-fed-district","russia/siberian-fed-district"]
+    },
+    "leafEntryCount": 72,
+    "representedCountryCount": 52
+  },
+  "notes": [
+    "This file is a traceability artifact, not a substitute for the canonical LP-0018 specification.",
+    "Refresh and diff the canonical source before submission or when upstream changes are suspected.",
+    "A requirement may be internally verified without being externally accepted by Logos."
+  ]
+}
