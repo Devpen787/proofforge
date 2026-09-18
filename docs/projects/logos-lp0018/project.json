@@ -66,7 +66,7 @@
     "blocked"
   ],
   "activeMissions": [
-    "M03"
+    "M04"
   ],
   "missionStatus": {
     "M00": {
@@ -104,7 +104,8 @@
       "next": "No blocking work. M03 is active."
     },
     "M03": {
-      "status": "final_macos_live_audit_pending",
+      "status": "locally_verified",
+      "truthLabel": "locally-verified",
       "requirements": [
         "F-01",
         "R-02"
@@ -112,48 +113,34 @@
       "repository": "Devpen787/logos-osm-distribution",
       "branch": "feat/m03-geofabrik-discovery",
       "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/1",
-      "truth": {
-        "R02": "locally-verified",
-        "F01": "in_progress"
-      },
-      "sourceAudit": {
-        "completedAt": "2026-09-18",
-        "result": "All 72 frozen leaves cross-checked against current Geofabrik index. Special selectors patched for Ireland, Malaysia, and all eight US state leaves.",
-        "specialMappings": [
-          "Ireland -> ireland-and-northern-ireland / europe",
-          "Malaysia -> malaysia-singapore-brunei / asia",
-          "US leaves -> source id us/<state>, source parent north-america, registry parent us"
-        ]
-      },
-      "versionSemantics": {
-        "version": "Unix seconds parsed from final PBF HTTP Last-Modified",
-        "evidence": [
-          "raw Last-Modified",
-          "ETag",
-          "Content-Length"
-        ],
-        "snapshotMetadata": [
-          "PBF replication timestamp",
-          "PBF replication sequence",
-          "PBF replication base URL"
-        ],
-        "integrity": "Geofabrik MD5"
-      },
       "verified": [
-        "Linux CI green after current-source mapping and version-probe changes",
-        "macOS Apple Silicon workspace tests passed on earlier live run",
-        "live Ethiopia PBF MD5 matched Geofabrik exactly",
-        "Ethiopia PBF header metadata decoded"
+        "Linux CI green: rustfmt, workspace tests, clippy",
+        "macOS Apple Silicon final tests: geofabrik 7/7, osm-domain 5/5",
+        "current live Geofabrik index resolved all 72 LP-0018 frozen leaves",
+        "Ireland mapping passed",
+        "Malaysia mapping passed",
+        "all 8 required US mappings passed",
+        "live Ethiopia source-version probe returned Unix version, Last-Modified, ETag, and Content-Length",
+        "earlier real Ethiopia PBF MD5 matched Geofabrik exactly",
+        "PBF replication timestamp/sequence/base URL decoded"
       ],
       "evidence": [
         "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_LIVE_MACOS_2026-09-18.md",
-        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_SOURCE_MAPPING_AUDIT_2026-09-18.md"
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_SOURCE_MAPPING_AUDIT_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_FINAL_MACOS_2026-09-18.md"
       ],
-      "next": "On macOS: pull latest branch, rerun live resolve-all to confirm 72/72, then run the new version command for Ethiopia. If both pass, mark F-01 locally verified, close M03, and advance M04."
+      "next": "Merge implementation PR #1 to main and begin M04 Logos Storage proof."
     },
     "M04": {
-      "status": "ready",
-      "next": "Start after M03 core domain is stable enough to share verified snapshot types."
+      "status": "active",
+      "requirements": [
+        "F-02 foundation",
+        "F-03 foundation",
+        "R-01 foundation"
+      ],
+      "repository": "Devpen787/logos-osm-distribution",
+      "goal": "Store already-verified snapshot bytes through the current Logos Storage path, receive a CID, retrieve by CID, and prove byte/hash identity. Record retryable vs terminal error semantics. Do not register on LEZ in M04.",
+      "next": "Refresh the current official Logos Storage integration path and pin upstream versions/refs before implementation."
     },
     "M05": {
       "status": "ready",
