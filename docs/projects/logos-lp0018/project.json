@@ -37,7 +37,10 @@
     "status": "active",
     "role": "logos_deliverable",
     "currentBranch": "feat/m03-geofabrik-discovery",
-    "mustRemainIndependentOf": ["Palantir runtime", "ProofForge runtime"]
+    "mustRemainIndependentOf": [
+      "Palantir runtime",
+      "ProofForge runtime"
+    ]
   },
   "palantir": {
     "environment": null,
@@ -62,7 +65,9 @@
     "planned",
     "blocked"
   ],
-  "activeMissions": ["M03"],
+  "activeMissions": [
+    "M03"
+  ],
   "missionStatus": {
     "M00": {
       "status": "locally_verified_with_known_upstream_friction",
@@ -99,12 +104,34 @@
       "next": "No blocking work. M03 is active."
     },
     "M03": {
-      "status": "in_progress",
-      "requirements": ["F-01", "R-02"],
+      "status": "live_partial_pass_ireland_mapping_patched_rerun_pending",
+      "requirements": [
+        "F-01",
+        "R-02"
+      ],
       "repository": "Devpen787/logos-osm-distribution",
       "branch": "feat/m03-geofabrik-discovery",
-      "decision": "Use Rust for shared domain/Geofabrik core based on current logos-module-builder Rust support and Rust-native SPEL/LEZ tooling.",
-      "next": "Implement frozen LP-0018 region identities, Geofabrik index parsing/resolution, streaming MD5 verification, deterministic tests, then run one real predefined-region proof."
+      "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/1",
+      "truth": {
+        "R02": "locally-verified",
+        "F01": "in_progress"
+      },
+      "verified": [
+        "Linux CI green before live proof: rustfmt, workspace tests, clippy",
+        "macOS Apple Silicon workspace tests passed",
+        "live Geofabrik index downloaded",
+        "live Ethiopia region resolved",
+        "real Ethiopia PBF downloaded",
+        "expected and observed Geofabrik MD5 matched: 426bd510159627dc139d4d0ad3bc6acd",
+        "real snapshot byte length recorded: 139733363",
+        "HTTP Last-Modified and ETag captured",
+        "PBF replication timestamp/sequence/base URL decoded"
+      ],
+      "discoveredGap": "The first live resolve-all stopped at the Ireland entry because current Geofabrik uses ireland-and-northern-ireland rather than ireland. The implementation mapping has been patched to the real Geofabrik path with a regression test.",
+      "evidence": [
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_LIVE_MACOS_2026-09-18.md"
+      ],
+      "next": "Pull the Ireland mapping patch on the macOS test machine and rerun only the live resolve-all audit. Do not redownload the Ethiopia PBF. If 72/72 resolves and CI is green, close M03 as locally verified and advance M04."
     },
     "M04": {
       "status": "ready",
@@ -116,23 +143,72 @@
     }
   },
   "missionDependencies": {
-    "M02": ["M00", "M01"],
-    "M03": ["M01", "M02"],
-    "M04": ["M00", "M02"],
-    "M05": ["M01", "M02"],
-    "M06": ["M03", "M04", "M05"],
-    "M07": ["M06"],
-    "M08": ["M06", "M00"],
-    "M09": ["M08", "M03", "M04"],
-    "M10": ["M09"],
-    "M11": ["M06"],
-    "M12": ["M07", "M08", "M09", "M10"],
-    "M13": ["M08", "M09"],
-    "M14": ["M11"],
-    "M15": ["M08"],
-    "M16": ["M11"],
-    "M17": ["required technical missions", "required adoption missions"],
-    "M18": ["M17", "human approval"]
+    "M02": [
+      "M00",
+      "M01"
+    ],
+    "M03": [
+      "M01",
+      "M02"
+    ],
+    "M04": [
+      "M00",
+      "M02"
+    ],
+    "M05": [
+      "M01",
+      "M02"
+    ],
+    "M06": [
+      "M03",
+      "M04",
+      "M05"
+    ],
+    "M07": [
+      "M06"
+    ],
+    "M08": [
+      "M06",
+      "M00"
+    ],
+    "M09": [
+      "M08",
+      "M03",
+      "M04"
+    ],
+    "M10": [
+      "M09"
+    ],
+    "M11": [
+      "M06"
+    ],
+    "M12": [
+      "M07",
+      "M08",
+      "M09",
+      "M10"
+    ],
+    "M13": [
+      "M08",
+      "M09"
+    ],
+    "M14": [
+      "M11"
+    ],
+    "M15": [
+      "M08"
+    ],
+    "M16": [
+      "M11"
+    ],
+    "M17": [
+      "required technical missions",
+      "required adoption missions"
+    ],
+    "M18": [
+      "M17",
+      "human approval"
+    ]
   },
   "nonGoals": [
     "rebuild the Logos deliverable inside Palantir",
