@@ -36,7 +36,7 @@
     "defaultBranch": "main",
     "status": "active",
     "role": "logos_deliverable",
-    "currentBranch": "feat/m04-logos-storage-proof",
+    "currentBranch": "feat/m05-lez-registry-proof",
     "mustRemainIndependentOf": [
       "Palantir runtime",
       "ProofForge runtime"
@@ -177,19 +177,59 @@
         "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/evidence/M04_FIRST_RUN_2026-09-18.md",
         "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m04-logos-storage-proof/docs/evidence/M04_FINAL_MACOS_2026-09-18.md"
       ],
-      "next": "Merge PR #2 to main, then begin M05 minimal SPEL/LEZ OSM registry proof."
+      "next": "Complete. M05 active.",
+      "mergedToMain": true,
+      "mergeCommit": "fb9e621ee6e2911550835378cab415b764d9c243"
     },
     "M05": {
-      "status": "active_upstream_refresh_pending",
+      "status": "active_ci_verification_before_local_lez_proof",
       "requirements": [
         "F-07",
         "R-03",
         "S-05"
       ],
       "repository": "Devpen787/logos-osm-distribution",
-      "goal": "Implement the smallest SPEL/LEZ registry covering required fields, register/query by region/parent/CID, timestamp ordering, batch-register API, and generated IDL in a local/standalone environment.",
-      "truthBoundary": "M05 must not claim testnet verification. Testnet deployment remains M11.",
-      "next": "Refresh and pin current Logos Execution Zone and SPEL upstream refs, inspect current registry/program examples, then scaffold the smallest local program and tests."
+      "branch": "feat/m05-lez-registry-proof",
+      "pullRequest": "https://github.com/Devpen787/logos-osm-distribution/pull/3",
+      "upstream": {
+        "spelRepository": "logos-co/spel",
+        "spelCommit": "512e95912a4e374686435601d6614b60a179a183",
+        "spelFrameworkVersion": "0.7.0",
+        "lezRepository": "logos-blockchain/logos-execution-zone",
+        "lezTag": "v0.2.4",
+        "lezTagCommit": "47eba256479f6f785acbd138834340703cd03401",
+        "scaffoldRepository": "logos-co/scaffold",
+        "scaffoldCommit": "fbde92521710209a171820c570ad8d955b399009",
+        "scaffoldVersion": "0.3.1"
+      },
+      "architecture": [
+        "crates/osm-registry-core: deterministic registry state, validation, idempotency, current-region replacement, queries",
+        "methods/guest/src/bin/osm_registry.rs: thin SPEL PDA/instruction wrapper",
+        "artifacts/osm-registry.idl.json: generated interface contract",
+        "scripts/m05-local-registry-proof.sh: standalone LEZ proof runner",
+        "scripts/m05-report.sh: compact evidence reporter"
+      ],
+      "registrySemantics": {
+        "identity": "region (unique Geofabrik path)",
+        "currentState": "one current entry per region",
+        "idempotency": "same snapshot/status replay is skipped even with a later observation timestamp",
+        "update": "new snapshot replaces current entry only with newer timestamp and non-decreasing source version",
+        "failClosed": [
+          "duplicate region inside one batch",
+          "parent/level shape change",
+          "stale timestamp",
+          "source-version downgrade"
+        ],
+        "ordering": "global timestamp descending, then source version descending, then region ascending"
+      },
+      "truth": {
+        "F07": "in_progress",
+        "R03": "implemented",
+        "S05": "in_progress"
+      },
+      "proofTarget": "Standalone local LEZ: deploy registry, initialize PDA, register real M04 Ethiopia CID, fetch/decode PDA data, query by region/parent/CID, prove idempotent replay and stale-write fail-closed behavior.",
+      "truthBoundary": "M05 local proof only. No Logos testnet 0.3 claim until M11; synthetic query fixtures are never coverage/adoption evidence.",
+      "next": "Wait for PR #3 CI to pass the corrected unique-region core, guest, IDL freshness and clippy. Then run scripts/m05-local-registry-proof.sh on macOS and return scripts/m05-report.sh output."
     }
   },
   "missionDependencies": {
