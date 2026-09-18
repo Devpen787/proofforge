@@ -104,7 +104,7 @@
       "next": "No blocking work. M03 is active."
     },
     "M03": {
-      "status": "live_partial_pass_ireland_mapping_patched_rerun_pending",
+      "status": "final_macos_live_audit_pending",
       "requirements": [
         "F-01",
         "R-02"
@@ -116,22 +116,40 @@
         "R02": "locally-verified",
         "F01": "in_progress"
       },
+      "sourceAudit": {
+        "completedAt": "2026-09-18",
+        "result": "All 72 frozen leaves cross-checked against current Geofabrik index. Special selectors patched for Ireland, Malaysia, and all eight US state leaves.",
+        "specialMappings": [
+          "Ireland -> ireland-and-northern-ireland / europe",
+          "Malaysia -> malaysia-singapore-brunei / asia",
+          "US leaves -> source id us/<state>, source parent north-america, registry parent us"
+        ]
+      },
+      "versionSemantics": {
+        "version": "Unix seconds parsed from final PBF HTTP Last-Modified",
+        "evidence": [
+          "raw Last-Modified",
+          "ETag",
+          "Content-Length"
+        ],
+        "snapshotMetadata": [
+          "PBF replication timestamp",
+          "PBF replication sequence",
+          "PBF replication base URL"
+        ],
+        "integrity": "Geofabrik MD5"
+      },
       "verified": [
-        "Linux CI green before live proof: rustfmt, workspace tests, clippy",
-        "macOS Apple Silicon workspace tests passed",
-        "live Geofabrik index downloaded",
-        "live Ethiopia region resolved",
-        "real Ethiopia PBF downloaded",
-        "expected and observed Geofabrik MD5 matched: 426bd510159627dc139d4d0ad3bc6acd",
-        "real snapshot byte length recorded: 139733363",
-        "HTTP Last-Modified and ETag captured",
-        "PBF replication timestamp/sequence/base URL decoded"
+        "Linux CI green after current-source mapping and version-probe changes",
+        "macOS Apple Silicon workspace tests passed on earlier live run",
+        "live Ethiopia PBF MD5 matched Geofabrik exactly",
+        "Ethiopia PBF header metadata decoded"
       ],
-      "discoveredGap": "The first live resolve-all stopped at the Ireland entry because current Geofabrik uses ireland-and-northern-ireland rather than ireland. The implementation mapping has been patched to the real Geofabrik path with a regression test.",
       "evidence": [
-        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_LIVE_MACOS_2026-09-18.md"
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_LIVE_MACOS_2026-09-18.md",
+        "https://github.com/Devpen787/logos-osm-distribution/blob/feat/m03-geofabrik-discovery/docs/evidence/M03_SOURCE_MAPPING_AUDIT_2026-09-18.md"
       ],
-      "next": "Pull the Ireland mapping patch on the macOS test machine and rerun only the live resolve-all audit. Do not redownload the Ethiopia PBF. If 72/72 resolves and CI is green, close M03 as locally verified and advance M04."
+      "next": "On macOS: pull latest branch, rerun live resolve-all to confirm 72/72, then run the new version command for Ethiopia. If both pass, mark F-01 locally verified, close M03, and advance M04."
     },
     "M04": {
       "status": "ready",
